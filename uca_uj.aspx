@@ -73,6 +73,7 @@
 				bbmMask = [];
 				q_mask(bbmMask);
 				q_cmbParse("cmbTypea", q_getPara('uca.typea'));
+				q_cmbParse("cmbGroupdno", '訂單,全-訂,半-訂,共-訂,成-計,半-計');
 				
 				$('#txtNoa').change(function(){
 					var thisVal = $.trim($(this).val());
