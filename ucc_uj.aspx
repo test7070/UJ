@@ -442,7 +442,7 @@
                     <tr>
                     	<td><span> </span><a id="lbl" class="lbl">MOQ</a></td>
                         <td><input id="txtStdmount" type="text" class="txt num c1"/></td>
-                        <td><span> </span><a class="lbl">銷售屬性</a></td>
+                        <td><span> </span><a class="lbl">屬性</a></td>
                         <td><select id="cmbArea" class="txt c1"></select></td>
                     </tr>
                      <tr>
