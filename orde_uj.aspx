@@ -715,7 +715,7 @@
 							q_bodyId($(this).attr('id'));
 							b_seq = t_IdSeq;
 							
-							t_where = "noa='" + $('#txtProductno_'+b_seq).val() + "'";
+							t_where = "noa='" + $('#txtProductno_'+b_seq).val() +"' and packway='" + $('#txtCustno').val() + "'";
 							q_box("pack2_b.aspx?" + r_userno + ";" + r_name + ";" + q_time + ";" + t_where, 'pack2', "95%", "95%", '包裝方式');
 						});
 						
