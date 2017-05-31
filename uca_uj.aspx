@@ -723,7 +723,7 @@
 						<td><span> </span><a id="lblSpec_uj" class="lbl">寬幅或序號</a></td>
 						<td><input id="txtSpec" type="text" class="txt c1"/></td>
 						<td><span> </span><a id="lblMechs_uj" class="lbl">寬(mm)</a></td>
-						<td><input id="txtMech" type="text" class="txt num c1"/></td>
+						<td><input id="txtMechs" type="text" class="txt num c1"/></td>
 						<td><span> </span><a id="lblSize_uj" class="lbl">寬幅</a></td>
 						<td><input id="txtSize" type="text" class="txt c1"/></td>
 					</tr>
