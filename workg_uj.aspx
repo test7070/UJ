@@ -40,7 +40,6 @@
 			q_desc = 1;
 			//brwCount2 = 6;//03/28自動
 			aPop = new Array(
-				['txtFactno', 'lblFactno', 'factory', 'noa,factory', 'txtFactno,txtFact', 'factory_b.aspx'],
 				['txtCustno', 'lblCustno', 'cust', 'noa,nick', 'txtCustno,txtComp', 'cust_b.aspx'],
 				['txtProductno', 'lblProduct', 'uca', 'noa,product', 'txtProductno,txtProduct', 'uca_b.aspx'],
 				['txtProductno_', 'btnProduct_', 'uca', 'noa,product,style', 'txtProductno_,txtProduct_,txtStyle_', 'uca_b.aspx'],
@@ -95,114 +94,14 @@
 							$('#txtWbdate').val(q_cdn($('#txtBdate').val(),-dec(q_getPara('orde.preborn'))));
 						if(emp($('#txtWedate').val()))
 							$('#txtWedate').val(q_cdn($('#txtEdate').val(),-dec(q_getPara('orde.preborn'))));
-						
-						var sbdate='',sedate='';
-						if (emp($('#txtSfbdate').val())) {
-							sbdate=q_date();
-						}else{
-							sbdate=$('#txtSfbdate').val();
-						}
-						if (emp($('#txtSfedate').val())) {
-							sedate=r_picd;
-						}else{
-							sedate=$('#txtSfedate').val();
-						}
-
-						if (!emp($('#txtBdate').val()) && !emp($('#txtEdate').val())) {
-							var t_where = "where=^^ ['" + q_date() + "','','') where productno=a.productno ^^";
-						
-							var t_where1 = "where[1]=^^ ";
-							if(!emp($('#txtCustno').val()))
-								t_where1=t_where1+"b.custno='"+$('#txtCustno').val()+"' and ";
-							if(!emp($('#txtProductno').val()))
-								t_where1=t_where1+"a.productno='"+$('#txtProductno').val()+"' and ";	
-							t_where1=t_where1+" isnull(a.enda,0)!=1 and (a.datea between '" + $('#txtBdate').val() + "' and '" + $('#txtEdate').val() + "') and exists (select noa from uca where noa=a.productno) and charindex(a.noa+'-'+a.no2,isnull((select ordeno+',' from view_workgs where noa!='"+$('#txtNoa').val()+"' FOR XML PATH('')),''))=0 group by a.productno,a.style ^^";
-
-							var t_where2 = "where[2]=^^e.enda!='1' and e.productno=a.productno and (e.datea between '" + $('#txtBdate').val() + "' and '" + $('#txtEdate').val() + "') and exists (select noa from uca where noa=e.productno) and charindex(e.noa+'-'+e.no2,isnull((select ordeno+',' from view_workgs where noa!='"+$('#txtNoa').val()+"' FOR XML PATH('')),''))=0 ^^";
-							var t_where3 = "where[3]=^^ (c.datea between '" + $('#txtBdate').val() + "' and '" + $('#txtEdate').val() + "') and d.stype='5' and c.productno=a.productno and c.enda!='1' ^^"
 							
-							var t_where4 = "where[4]=^^ ";
-							if(!emp($('#txtCustno').val()))
-								t_where4=t_where4+"d.custno='"+$('#txtCustno').val()+"' and "
-							t_where4=t_where4+"(c.datea < '" + $('#txtBdate').val() + "') and c.productno=a.productno and c.enda!='1' ^^"
-							
-							var t_where5 = "where[5]=^^ sb.productno=a.productno and (sb.datea between '"+sbdate+"' and '"+sedate+"') ^^"
-							var t_where6 = "where[6]=^^ wb.productno=a.productno and (wa.sfedate between '"+sbdate+"' and '"+sedate+"') and wa.noa!='"+$('#txtNoa').val()+"' ^^"
-							q_gt('workg_orde', t_where + t_where1 + t_where2 + t_where3 + t_where4+t_where5+t_where6, 0, 0, 0, "", r_accy);
-						}
-					}
-				});
-				
-				$('#btnWorkg').click(function() {
-					if (q_cur == 1 || q_cur == 2) {
-						//0418 不顯示預測為0的資料
-						var sbdate='',sedate='';
-						if (emp($('#txtSfbdate').val())) {
-							sbdate=q_date();
-						}else{
-							sbdate=$('#txtSfbdate').val();
-						}
 						
-						if(emp($('#txtWbdate').val()))
-							$('#txtWbdate').val(q_cdn(sbdate,-dec(q_getPara('orde.preborn'))));
-						
-						if (emp($('#txtSfedate').val())) {
-							sedate=r_picd;
-						}else{
-							sedate=$('#txtSfedate').val();
-							if(emp($('#txtWedate').val()))
-								$('#txtWedate').val(q_cdn($('#txtSfedate').val(),-dec(q_getPara('orde.preborn'))));
-						}
-						var t_where = "where=^^ ['" + q_date() + "','','') where productno=b.productno ^^"
-						
-						var t_where1 = "where[1]=^^ ";
-						if(!emp($('#txtCustno').val()))
-							t_where1=t_where1+"wa.custno='"+$('#txtCustno').val()+"' and "
-						t_where1=t_where1+"wb.productno=b.productno and (wa.sfedate between '"+sbdate+"' and '"+sedate+"') and wa.noa!='"+$('#txtNoa').val()+"'^^"
-						
-						var t_where2 = "where[2]=^^ ";
-						if(!emp($('#txtCustno').val()))
-							t_where2=t_where2+"d.custno='"+$('#txtCustno').val()+"' and "
-						t_where2=t_where2+"c.productno=b.productno and (case when isnull(c.datea,'')='' then d.odate else c.datea end < '"+$('#txtBdate').val()+"') and c.enda!='1' and d.enda!='1' ^^"
-						
-						var t_where3 = "where[3]=^^ ";
-						if(!emp($('#txtCustno').val()))
-							t_where3=t_where3+"d.custno='"+$('#txtCustno').val()+"' and "
-						t_where3=t_where3+"c.productno=b.productno and (case when isnull(c.datea,'')='' then d.odate else c.datea end between '"+$('#txtBdate').val()+"' and '"+$('#txtEdate').val()+"') and c.enda!='1' and d.enda!='1' ^^"
-						
-						var t_where4 = "where[4]=^^ ";
-						if(!emp($('#txtCustno').val()))
-							t_where4=t_where4+"d.custno='"+$('#txtCustno').val()+"' and "
-						t_where4=t_where4+"c.productno=b.productno and (case when isnull(c.datea,'')='' then d.odate else c.datea end between '"+$('#txtBdate').val()+"' and '"+$('#txtEdate').val()+"') and c.enda!='1' and d.enda!='1' ^^"
-						
-						//1030417應客戶需要所以即使沒有打產品也要帶入
-						//var t_bbspno="1=0";
-						/*for (var i = 0; i < q_bbsCount; i++) {
-							if(!emp($('#txtProductno_'+i).val())){
-								t_bbspno+=" or b.productno='"+$('#txtProductno_'+i).val()+"'";
-							}
-						}*/
-						//var t_where5 = "where[5]=^^ ("+t_bbspno+") and (b.datea between '"+sbdate+"' and '"+sedate+"') and b.productno in (select noa from uca)^^";
-						
-						var t_where5 = "where[5]=^^ ";
-						if(!emp($('#txtCustno').val()))
-							t_where5=t_where5+"a.custno='"+$('#txtCustno').val()+"' and "							
-						//排除已匯入的產品
-						for (var i = 0; i < q_bbsCount; i++) {
-							if(!emp($('#txtProductno_'+i).val())){
-								t_where5+="b.productno!='"+$('#txtProductno_'+i).val()+"' and ";
-							}
-						}	
-						t_where5=t_where5+"(b.datea between '"+sbdate+"' and '"+sedate+"') and b.productno in (select noa from uca) ^^"
-							
-						q_gt('workg_saleforecast', t_where + t_where1 + t_where2 + t_where3 + t_where4 + t_where5 , 0, 0, 0, "", r_accy);
 						
 					}
 				});
-				
 				
 				$('#btnWork').click(function() {
-					if (q_cur != 1 && q_cur != 2) {
+					if(q_cur != 1 && q_cur != 2) {
 						if(!emp($('#txtOrdbno').val())){
 							alert('製令單已請購-禁止重新產生製令單!!');
 							return;
@@ -216,37 +115,23 @@
 						if (worked && t_gmount > 0)
 							alert('製令單已領料-禁止重新產生製令單!!');
 						else {
-							q_func('workg.genWork', r_accy + ',' + $('#txtNoa').val() + ',' + r_name);
-							$('#btnWork').val('產生中...').attr('disabled', 'disabled');
+							//q_func('workg.genWork', r_accy + ',' + $('#txtNoa').val() + ',' + r_name);
+							//$('#btnWork').val('產生中...').attr('disabled', 'disabled');
 						}
 					}
 				});
-				//針對全部的物料需求
-				/*$('#btnCuap').click(function(){
-				q_box('z_cuap.aspx'+ "?;;;;"+r_accy+";", 'cup', "95%", "95%", q_getMsg("popPrint"));
-				});*/
+				
 				//針對workg的物料需求
 				$('#btnWorkg2ordb').click(function() {
 					q_box('z_workg2ordb.aspx' + "?;;;;" + r_accy + ";", 'workg2ordb', "95%", "95%", q_getMsg("popPrint"));
 				});
 				
-				$('#btnWorkgv').click(function() {
-					q_box('z_workgv.aspx' + "?;;;;" + r_accy + ";", 'workgv', "95%", "95%", q_getMsg("popPrint"));
-				});
-
 				$('#btnWorkPrint').click(function() {
 					q_box('z_workp.aspx' + "?;;;noa='" + $('#txtNoa').val() + "';" + r_accy + ";", '', "95%", "95%", q_getMsg("popPrint"));
 				});
 				
 				$('#lblOrdbno').click(function() {
 					q_box('ordb.aspx' + "?;;;charindex(noa,'" + $('#txtOrdbno').val() + "')>0;" + r_accy + ";", '', "95%", "95%", q_getMsg("lblOrdbno"));
-				});
-				
-				$('#txtSfbmon').blur(function() {
-					change_field();
-				});
-				$('#txtSfemon').blur(function() {
-					change_field();
 				});
 				
 				$('#cmbStype').change(function() {
@@ -264,182 +149,6 @@
 						t_works = _q_appendData("view_works", "", true);
 						for (var i = 0; i < t_works.length; i++) {
 							t_gmount = t_gmount + dec(t_works[i].gmount);
-						}
-						break;
-					case 'workg_orde':
-						var as = _q_appendData("view_ordes", "", true);
-						if (as[0] != undefined) {
-							//清空bbs資料
-							if (q_cur == 1) {
-								for (var i = 0; i < q_bbsCount; i++) {
-									$('#btnMinus_' + i).click();
-								}
-							}
-							//計算//1030226將計畫生產移到後面
-							for (var i = 0; i < as.length; i++) {
-								var t_mount = 0;
-								//t_mount=dec(as[i].unmount)+dec(as[i].ordemount)+dec(as[i].planmount)-dec(as[i].stkmount);
-								t_mount = dec(as[i].stkmount) - dec(as[i].unmount) - dec(as[i].ordemount);
-								as[i].availmount = t_mount;
-
-								as[i].rworkdate = '';
-								as[i].ordeno = as[i].ordeno.substr(0, as[i].ordeno.length - 1);
-							}
-							q_gridAddRow(bbsHtm, 'tbbs', 'txtRworkdate,txtProductno,txtProduct,txtSpec,txtUnmount,txtOrdemount,txtPlanmount,txtStkmount,txtIntmount,txtPurmount,txtAvailmount,txtMount,txtOrdeno,txtStationno,txtStation,txtSaleforecast,txtPrepare,txtUnprepare,txtStyle'
-							, as.length, as
-							, 'rworkdate,productno,product,spec,unmount,ordemount,planmount,stkmount,inmount,purmount,availmount,bornmount,ordeno,stationno,station,saleforecast,prepare,unprepare,style', 'txtProductno');
-							change_field();
-						} else {
-							alert('無訂單資料!!。');
-						}
-						break;
-					case 'workg_bbs':
-						var as = _q_appendData("view_ordes", "", true);
-						
-						if (as[0] != undefined) {
-							for (var i = 0; i < as.length; i++) {
-								var t_mount = 0;
-								t_mount = dec(as[i].stkmount) - dec(as[i].unmount) - dec(as[i].ordemount);
-								as[i].availmount = t_mount;
-								as[i].ordeno = as[i].ordeno.substr(0, as[i].ordeno.length - 1);
-							}
-							
-							for (var i = 0; i < q_bbsCount; i++) {
-								for (var j = 0; j < as.length; j++) {
-									if($('#txtProductno_' + i).val()==as[j].productno)
-									{
-										//重新帶入資料
-										$('#txtUnmount_' + i).val(as[j].unmount);
-										$('#txtOrdemount_' + i).val(as[j].ordemount);
-										$('#txtPlanmount_' + i).val(as[j].planmount);
-										$('#txtStkmount_' + i).val(as[j].stkmount);
-										$('#txtIntmount_' + i).val(as[j].inmount);
-										$('#txtPurmount_' + i).val(as[j].purmount);
-										$('#txtAvailmount_' + i).val(as[j].availmount);
-										$('#txtMount_' + i).val(as[j].bornmount);
-										$('#txtOrdeno_' + i).val(as[j].ordeno);
-										$('#txtStationno_' + i).val(as[j].stationno);
-										$('#txtStation_' + i).val(as[j].station);
-										$('#txtSaleforecast_' + i).val(as[j].saleforecast);
-										$('#txtPrepare_' + i).val(as[j].prepare);
-										$('#txtUnprepare_' + i).val(as[j].unprepare);
-										as.splice(j, 1);
-                                    	j--;
-										break;	
-									}
-								}
-							}
-							
-							q_gridAddRow(bbsHtm, 'tbbs', 'txtRworkdate,txtProductno,txtProduct,txtStyle,txtUnmount,txtOrdemount,txtPlanmount,txtStkmount,txtIntmount,txtPurmount,txtAvailmount,txtMount,txtOrdeno,txtStationno,txtStation,txtSaleforecast,txtPrepare,txtUnprepare'
-							, as.length, as
-							, 'rworkdate,productno,product,style,unmount,ordemount,planmount,stkmount,inmount,purmount,availmount,bornmount,ordeno,stationno,station,saleforecast,prepare,unprepare', 'txtProductno');
-							change_field();
-							ordedate=true;
-						} else {
-							//alert('無排產資料!!。');
-							ordedate=false;
-						}
-						
-						//抓取沒有訂單的資料
-						var sbdate='',sedate='';
-						if (emp($('#txtSfbdate').val())) {
-							sbdate=q_date();
-						}else{
-							sbdate=$('#txtSfbdate').val();
-						}
-						if (emp($('#txtSfedate').val())) {
-							sedate=r_picd;
-						}else{
-							sedate=$('#txtSfedate').val();
-						}
-						var t_where = "where=^^ ['" + q_date() + "','','') where productno=b.productno ^^"
-						
-						var t_where1 = "where[1]=^^ ";
-						if(!emp($('#txtCustno').val()))
-							t_where1=t_where1+"wa.custno='"+$('#txtCustno').val()+"' and "
-						t_where1=t_where1+"wb.productno=b.productno and (wa.sfedate between '"+sbdate+"' and '"+sedate+"') and wa.noa!='"+$('#txtNoa').val()+"'^^"
-						
-						var t_where2 = "where[2]=^^ ";
-						if(!emp($('#txtCustno').val()))
-							t_where2=t_where2+"d.custno='"+$('#txtCustno').val()+"' and "
-						t_where2=t_where2+"c.productno=b.productno and (case when isnull(c.datea,'')='' then d.odate else c.datea end < '"+$('#txtBdate').val()+"') and c.enda!='1' and d.enda!='1' ^^"
-						
-						var t_where3 = "where[3]=^^ ";
-						if(!emp($('#txtCustno').val()))
-							t_where3=t_where3+"d.custno='"+$('#txtCustno').val()+"' and "
-						t_where3=t_where3+"c.productno=b.productno and (case when isnull(c.datea,'')='' then d.odate else c.datea end between '"+$('#txtBdate').val()+"' and '"+$('#txtEdate').val()+"') and c.enda!='1' and d.enda!='1' ^^"
-						
-						var t_where4 = "where[4]=^^ ";
-						if(!emp($('#txtCustno').val()))
-							t_where4=t_where4+"d.custno='"+$('#txtCustno').val()+"' and "
-						t_where4=t_where4+"c.productno=b.productno and (case when isnull(c.datea,'')='' then d.odate else c.datea end between '"+$('#txtBdate').val()+"' and '"+$('#txtEdate').val()+"') and c.enda!='1' and d.enda!='1' ^^"
-						
-						//1030417應客戶需要所以即使沒有打產品也要帶入
-						//var t_bbspno="1=0";
-						/*for (var i = 0; i < q_bbsCount; i++) {
-							if(!emp($('#txtProductno_'+i).val())){
-								t_bbspno+=" or b.productno='"+$('#txtProductno_'+i).val()+"'";
-							}
-						}*/
-						//var t_where5 = "where[5]=^^ ("+t_bbspno+") and (b.datea between '"+sbdate+"' and '"+sedate+"') and b.productno in (select noa from uca)^^";
-						
-						var t_where5 = "where[5]=^^ ";
-						if(!emp($('#txtCustno').val()))
-							t_where5=t_where5+"a.custno='"+$('#txtCustno').val()+"' and "							
-						//排除已匯入的產品
-						for (var i = 0; i < q_bbsCount; i++) {
-							if(!emp($('#txtProductno_'+i).val())){
-								t_where5+="b.productno!='"+$('#txtProductno_'+i).val()+"' and ";
-							}
-						}	
-						t_where5=t_where5+"(b.datea between '"+sbdate+"' and '"+sedate+"') and b.productno in (select noa from uca) ^^"
-							
-						q_gt('workg_saleforecast', t_where + t_where1 + t_where2 + t_where3 + t_where4 + t_where5 , 0, 0, 0, "", r_accy);
-						
-						break;
-					case 'workg_saleforecast':
-						var as = _q_appendData("view_workg", "", true);
-						if (as[0] != undefined) {
-							for (var i = 0; i < as.length; i++) {
-								var t_mount = 0;
-								t_mount = dec(as[i].stkmount) - dec(as[i].unmount) - dec(as[i].ordemount);
-								as[i].availmount = t_mount;
-								as[i].ordeno = as[i].ordeno.substr(0, as[i].ordeno.length - 1);
-							}
-							
-							for (var i = 0; i < q_bbsCount; i++) {
-								for (var j = 0; j < as.length; j++) {
-									if($('#txtProductno_' + i).val()==as[j].productno)
-									{
-										//重新帶入資料
-										$('#txtUnmount_' + i).val(as[j].unmount);
-										$('#txtOrdemount_' + i).val(as[j].ordemount);
-										$('#txtPlanmount_' + i).val(as[j].planmount);
-										$('#txtStkmount_' + i).val(as[j].stkmount);
-										$('#txtIntmount_' + i).val(as[j].inmount);
-										$('#txtPurmount_' + i).val(as[j].purmount);
-										$('#txtAvailmount_' + i).val(as[j].availmount);
-										$('#txtMount_' + i).val(as[j].bornmount);
-										$('#txtOrdeno_' + i).val(as[j].ordeno);
-										$('#txtStationno_' + i).val(as[j].stationno);
-										$('#txtStation_' + i).val(as[j].station);
-										$('#txtSaleforecast_' + i).val(as[j].saleforecast);
-										$('#txtPrepare_' + i).val(as[j].prepare);
-										$('#txtUnprepare_' + i).val(as[j].unprepare);
-										$('#txtStyle_' + i).val(as[j].style);
-										as.splice(j, 1);
-                                    	j--;
-										break;	
-									}
-								}
-							}
-							q_gridAddRow(bbsHtm, 'tbbs', 'txtRworkdate,txtProductno,txtProduct,txtStyle,txtUnmount,txtOrdemount,txtPlanmount,txtStkmount,txtIntmount,txtPurmount,txtAvailmount,txtMount,txtOrdeno,txtStationno,txtStation,txtSaleforecast,txtPrepare,txtUnprepare,txtStyle'
-							, as.length, as
-							, 'rworkdate,productno,product,style,unmount,ordemount,planmount,stkmount,inmount,purmount,availmount,bornmount,ordeno,stationno,station,saleforecast,prepare,unprepare,style', 'txtProductno');
-							change_field();
-						} else {
-							//if(!ordedate)
-								alert('無排產資料!!。');
 						}
 						break;
 					case 'check_view':
@@ -539,11 +248,6 @@
 					return;
 				_btnModi();
 				$('#txtProductno').focus();
-				//07/06 暫時不鎖
-				/*for (var i = 0; i < q_bbsCount; i++) {
-					var t_where = "where=^^ cuano ='" + $('#txtNoa').val() + "' and cuanoq='" + $('#txtNoq_' + i).val() + "'^^";
-					q_gt('work', t_where, 0, 0, 0, "modiwork_" + i, r_accy);
-				}*/
 			}
 
 			function btnPrint() {
@@ -733,7 +437,8 @@
 				}
 			}
 			function q_funcPost(t_func, result) {
-				if (t_func == 'workg.genWork') {
+				/*後面調整產生製令單*/
+				/*if (t_func == 'workg.genWork') {
 					var workno = result.split(';')
 					for (var j = 0; j < q_bbsCount; j++) {
 						abbsNow[j]['workno'] = workno[(j * 3) + 1];
@@ -754,7 +459,7 @@
 							break;                                      
 						}
 					}
-				}
+				}*/
 			}
 
 		</script>
@@ -920,10 +625,9 @@
 				<table class="tview" id="tview" >
 					<tr>
 						<td style="width:24px; color:black;"><a id='vewChk'> </a></td>
-						<td style="width:102px; color:black;"><a id='vewNoa'> </a></td>
-						<td style="width:80px; color:black;"><a id='vewStype'> </a></td>
-						<!--<td style="color:black;"><a id='vewProduct'> </a></td>-->
-						<td style="width:150px; color:black;"><a id='vewRang'> </a></td>
+						<td style="width:110px; color:black;"><a id='vewNoa'> </a></td>
+						<td style="width:50px; color:black;"><a id='vewStype'> </a></td>
+						<td style="width:170px; color:black;"><a id='vewRang'> </a></td>
 						<td style="width:50px; color:black;"><a id='vewUnwork'> </a></td>
 						<td style="width:50px; color:black;"><a id='vewUnordb'> </a></td>
 						<td style="width:50px; color:black;"><a id='vewUnorda'> </a></td>
@@ -932,7 +636,6 @@
 						<td><input id="chkBrow.*" type="checkbox" style=''/></td>
 						<td id='noa' style="text-align: center;">~noa</td>
 						<td align="center" id='stype=workg.stype'>~stype=workg.stype</td>
-						<!--<td id='product' style="text-align: center;">~product</td>-->
 						<td id='bdate edate' style="text-align: center;">~bdate - ~edate</td>
 						<td id='unwork' style="text-align: center;">~unwork</td>
 						<td id='unordb' style="text-align: center;">~unordb</td>
@@ -952,7 +655,12 @@
 					</tr>
 					<tr>
 						<td><span> </span><a id="lblDatea" class="lbl"> </a></td>
-						<td><input id="txtDatea" type="text" class="txt c1"/></td>
+						<td>
+							<input id="txtDatea" type="text" class="txt c1"/>
+							<input id="txtWadate" type="hidden"/>
+							<input id="txtSfbdate" type="hidden"/>
+							<input id="txtSfedate" type="hidden"/>
+						</td>
 						<td><span> </span><a id="lblNoa" class="lbl"> </a></td>
 						<td colspan="2"><input id="txtNoa" type="text" class="txt c1"/></td>
 					</tr>
@@ -977,19 +685,6 @@
 							<input id="txtWedate" type="text" class="txt c2"/>
 						</td>
 					</tr>
-					<!--<tr>
-						<td> </td>
-						<td colspan="2"><span> </span><a id="lblSfdate" class="lbl" > </a></td>
-						<td colspan="2">
-							<input id="txtSfbdate" type="text" class="txt c2"/>
-							<a style="float: left;">~</a>
-							<input id="txtSfedate" type="text" class="txt c2"/>
-						</td>
-						<td>
-							<input id="btnWorkg" type="button"/>
-							<input id="btnWorkgv" type="button" />
-						</td>
-					</tr>-->
 					<tr>
 						<td><span> </span><a id="lblCustno" class="lbl btn"> </a></td>
 						<td colspan="4">
@@ -1064,7 +759,7 @@
 						<td style="width:150px;"><a id='lblMech_uj_s'>指定機台別</a></td>
 						<td style="width:100px;"><a id='lblTypea_uj_s'>生產屬性</a></td>
 						<td style="width:100px;"><a id='lblC5_uj_s'>筆數</a></td>
-						<td style="width:60px;"><a id='lblIsUnschedule_uj_s'>未排程</a></td>
+						<td style="width:60px;"><a id='lblIsunschedule_uj_s'>未排程</a></td>
 						<td style="width:100px;">
 							<a id='lblM1_uj_s' class="finished">(未排程)<BR>同紙箱</a>
 							<a id='lblM12_uj_s' class="semi">(未排程)<BR>同紙</a>
@@ -1114,7 +809,7 @@
 						</td>
 						<td><input id="txtTypea.*" type="text" class="txt c1"/></td>
 						<td><input id="textC5.*" type="text" class="txt num c1"/></td>
-						<td><input id="chkIsUnschedule.*" type="checkbox" class="txt c1"/></td>
+						<td><input id="chkIsunschedule.*" type="checkbox" class="txt c1"/></td>
 						<td><input id="textM1.*" type="text" class="txt num c1"/></td>
 						<td><input id="textC1.*" type="text" class="txt num c1"/></td>
 						<td><input id="textM2.*" type="text" class="txt num c1"/></td>
