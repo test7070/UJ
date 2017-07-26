@@ -666,11 +666,11 @@
 		</div>
 		<div id='dmain' style="overflow:hidden; width: 1260px;">
 			<!--#include file="../inc/toolbar.inc"-->
-			<div class="dview" id="dview" style="float: left; width:400px;" >
+			<div class="dview" id="dview" style="float: left; width:410px;" >
 				<table class="tview" id="tview" border="1" cellpadding='2' cellspacing='0' style="background-color: #FFFF66;word-break:break-all;">
 					<tr>
-						<td align="center" style="width:40px"><a id='vewChk'> </a></td>
-						<td align="center" style="width:150px"><a id='vewNoa'> </a></td>
+						<td align="center" style="width:20px"><a id='vewChk'> </a></td>
+						<td align="center" style="width:180px"><a id='vewNoa'> </a></td>
 						<td align="center" style="width:210px"><a id='vewProduct'> </a></td>
 					</tr>
 					<tr>
@@ -705,6 +705,12 @@
 						<td><span> </span><a id="lblGroupdno_uj" class="lbl">銷售屬性</a></td>
 						<td><select id="cmbGroupdno" class="txt c1"> </select></td>
 					</tr>
+					<tr>
+                        <td><span> </span><a id="lblStationgno" class="lbl">客戶</a></td>
+                        <td><input id="txtStationgno" type="text" class="txt c1"/></td>
+                        <td><span> </span><a id="lblUnit" class="lbl"> </a></td>
+                        <td><input id="txtUnit" type="text" class="txt c1"/></td>
+                    </tr>
 					<tr>
 						<td><span> </span><a id="lblRev_uj" class="lbl">系列</a></td>
 						<td><input id="txtRev" type="text" class="txt c1"/></td>
@@ -826,7 +832,10 @@
 						<td><span> </span><a id="lblWorker2" class="lbl"> </a></td>
 						<td><input id="txtWorker2" type="text" class="txt c1"/></td>
 					</tr>
-					
+					<tr>
+                        <td><span> </span><a id="lblMemo_jr" class="lbl">注意事項</a></td>
+                        <td colspan='5'><input id="txtMemo" type="text" class="txt c1"/></td>
+                    </tr>
 				</table>
 			</div>
 		</div>
