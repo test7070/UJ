@@ -74,6 +74,7 @@ declare @tmp table(
 	stationgno nvarchar(50),
 	pro1 nvarchar(50),
 	pro2 nvarchar(50),
+	pro5 nvarchar(50),
 	pno3 nvarchar(50),
 	prom3 float,
 	pro3 nvarchar(50),
@@ -119,6 +120,11 @@ update @tmp
 set pno4=b.productno,prom4=b.mount,pro4=b.product
 from @tmp a left join ucas b on a.noa=b.noa
 where b.memo='膠號2'
+
+update @tmp
+set pro5=b.productno,prom4=b.mount,pro4=b.product
+from @tmp a left join ucas b on a.noa=b.noa
+where b.memo='材料(面材或底材)'
 
 select * from @tmp
 ;
