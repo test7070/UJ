@@ -59,3 +59,66 @@ where c.groupano='9B'
 
 select * from @tmp
 ;
+------------------------------------------------------------------------------------------------
+z_ucap_uj2:--z_ucap_uj2
+declare @t_bproduct nvarchar(20) = case when '#non'=[2] then '' else [2] end
+declare @t_eproduct nvarchar(20) = case when '#non'=[3] then char(255) else [3] end
+declare @t_groupdno nvarchar(20) = case when '#non'=[5] then '' else [5] end
+
+declare @tmp table(
+	gno nvarchar(1),	
+	rr int,
+	noa nvarchar(50),
+	product nvarchar(100),
+	rev nvarchar(50),
+	stationgno nvarchar(50),
+	pro1 nvarchar(50),
+	pro2 nvarchar(50),
+	pno3 nvarchar(50),
+	prom3 float,
+	pro3 nvarchar(50),
+	pno4 nvarchar(50),
+	prom4 float,
+	pro4 nvarchar(50),
+	style1 nvarchar(50),
+	style2 nvarchar(50),
+	hsec float,
+	modelno nvarchar(50),
+	team float,
+	memo nvarchar(max)
+)
+insert @tmp(gno,noa,product,rev,stationgno,style1,style2,hsec,modelno,team,memo)
+select '0',noa,product,rev,stationgno
+,replace(replace(SUBSTRING(right(style,14), 1, CHARINDEX('#^#', right(style,14)) - 1),'^',''),'#','')
+,replace(replace(SUBSTRING(right(style,14), CHARINDEX('#^#', right(style,14)) + 3,5),'^',''),'#','')
+,hsec,modelno,team,memo
+from uca
+where typea='3'
+and(noa between @t_bproduct and @t_eproduct)
+
+update a
+set rr=rx
+from (select ROW_NUMBER()over(partition by gno order by noa)rx,rr from @tmp)a
+
+update @tmp
+set pro1=b.productno
+from @tmp a left join ucas b on a.noa=b.noa
+where b.noq='001'
+
+update @tmp
+set pro2=b.productno
+from @tmp a left join ucas b on a.noa=b.noa
+where b.noq='002'
+
+update @tmp
+set pno3=b.productno,prom3=b.mount,pro3=b.product
+from @tmp a left join ucas b on a.noa=b.noa
+where b.memo='膠號1'
+
+update @tmp
+set pno4=b.productno,prom4=b.mount,pro4=b.product
+from @tmp a left join ucas b on a.noa=b.noa
+where b.memo='膠號2'
+
+select * from @tmp
+;
