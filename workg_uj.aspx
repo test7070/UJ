@@ -699,7 +699,7 @@
 							<span> </span><a id="lblUcc2_uj" class="lbl btn">底材</a>
 						</td>
 						<td colspan="2"><input id="txtUcc2no" type="text" class="txt c1" style="width: 155px;"/></td>
-						<td><input id="btnWorkgg" type="button"/></td>
+						<td><input id="btnWork" type="button"/></td>
 					</tr>
 					<tr>
 						<td><span> </span><a id="lblMemo" class="lbl" > </a></td>
@@ -712,9 +712,7 @@
 							<input id="txtOrdbno" type="text" class="txt c1"/>
 							<input id="txtOrdano" type="text" class="txt c1" style="display: none;"/>
 						</td>
-						<td>
-							<input id="btnWorkPrint" type="button" />
-						</td>
+						<td><input id="btnWorkgg" type="button"/></td>
 					</tr>
 					<tr>
 						<td><span> </span><a id="lblWorker" class="lbl"> </a></td>
@@ -722,7 +720,7 @@
 						<td><span> </span><a id="lblWorker2" class="lbl"> </a></td>
 						<td><input id="txtWorker2" type="text" class="txt c1"/></td>
 						<td> </td>
-						<td><input id="btnWork" type="button"/></td>
+						<td><input id="btnWorkPrint" type="button" /></td>
 					</tr>
 				</table>
 			</div>
