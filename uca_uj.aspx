@@ -827,13 +827,19 @@
 							<input id="textS8" type="text" class="txt c1"/>
 							<input id="txtStyle" type="hidden"/>
 						</td>
+						<td><span> </span><a id="lblPacks_uj" class="lbl">裝箱支數</a></td>
+						<td><input id="txtPacks" type="text" class="txt num c1"/></td>
+						<td><span> </span><a id="lblStationg_uj" class="lbl">塞頭</a></td>
+						<td><input id="txtStationg" type="text" class="txt c1"/></td>
+					</tr>
+					<tr>
 						<td><span> </span><a id="lblWorker" class="lbl"> </a></td>
 						<td><input id="txtWorker" type="text" class="txt c1"/></td>
 						<td><span> </span><a id="lblWorker2" class="lbl"> </a></td>
 						<td><input id="txtWorker2" type="text" class="txt c1"/></td>
 					</tr>
 					<tr>
-                        <td><span> </span><a id="lblMemo_jr" class="lbl">注意事項</a></td>
+                        <td><span> </span><a id="lblMemo_uj" class="lbl">注意事項</a></td>
                         <td colspan='5'><input id="txtMemo" type="text" class="txt c1"/></td>
                     </tr>
 				</table>
