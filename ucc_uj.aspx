@@ -1,7 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" dir="ltr">
     <head>
-        <title></title>
+        <title> </title>
         <script src="../script/jquery.min.js" type="text/javascript"></script>
         <script src='../script/qj2.js' type="text/javascript"></script>
         <script src='qset.js' type="text/javascript"></script>
@@ -395,11 +395,11 @@
             <div class="dbbm">
                 <table class="tbbm"  id="tbbm">
                     <tr style="height:1px;">
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td class="tdZ"></td>
+                        <td> </td>
+                        <td> </td>
+                        <td> </td>
+                        <td> </td>
+                        <td class="tdZ"> </td>
                     </tr>
                     <tr>
                         <td><span> </span><a id="lblNoa" class="lbl"> </a></td>
@@ -410,51 +410,51 @@
                         <td colspan="3"><input id="txtProduct" type="text" class="txt c1"/></td>
                     </tr>
                     <tr>
-                    	<td><span> </span><a id="lbl" class="lbl">長</a></td>
+                    	<td><span> </span><a id="lblReserve_uj" class="lbl">長</a></td>
                         <td><input id="txtReserve" type="text" class="txt num c1"/></td>
-                        <td><span> </span><a id="lbl" class="lbl">寬</a></td>
+                        <td><span> </span><a id="lblDrcr_uj" class="lbl">寬</a></td>
                         <td><input id="txtDrcr" type="text" class="txt num c1"/></td>
                     </tr>
                     <tr>
-                    	<td><span> </span><a id="lbl" class="lbl">高</a></td>
+                    	<td><span> </span><a id="lblInprice_uj" class="lbl">高</a></td>
                         <td><input id="txtInprice" type="text" class="txt num c1"/></td>
-                        <td><span> </span><a id="lbl" class="lbl">厚</a></td>
+                        <td><span> </span><a id="lblSaleprice_uj" class="lbl">厚</a></td>
                         <td><input id="txtSaleprice" type="text" class="txt num c1"/></td>
                     </tr>
                     <tr>
                     	<td><span> </span><a id="lblUnit" class="lbl"> </a></td>
                         <td><input id="txtUnit" type="text" class="txt c1"/></td>
-                        <td><a id='lblType' class="lbl"> </a></td>
+                        <td><span> </span><a id='lblType' class="lbl"> </a></td>
 						<td><select id="cmbTypea" class="txt c1"> </select></td>
                     </tr>
                     <tr>
-                    	<td><span> </span><a class="lbl">安全數量</a></td>
+                    	<td><span> </span><a id="lblSafemount_uj" class="lbl">安全數量</a></td>
                         <td><input id="txtSafemount" type="text" class="txt num c1"/></td>
                         <td><span> </span><a id='lblGroupano' class="lbl"> </a></td>
-						<td><select id="cmbGroupano" class="txt c1"></select></td>
+						<td><select id="cmbGroupano" class="txt c1"> </select></td>
                     </tr>
                     <tr>
                     	<td><span> </span><a id="lblUweight" class="lbl"> </a></td>
                         <td><input id="txtUweight" type="text" class="txt num c1"/></td>
-                        <td><span> </span><a id='lblGroupbno' class="lbl">中類群組</a></td>
-						<td><select id="cmbGroupbno" class="txt c1"></select></td>
+                        <td><span> </span><a id='lblGroupbno_uj' class="lbl">中類群組</a></td>
+						<td><select id="cmbGroupbno" class="txt c1"> </select></td>
                     </tr>
                     <tr>
-                    	<td><span> </span><a id="lbl" class="lbl">MOQ</a></td>
+                    	<td><span> </span><a id="lblStdmount_uj" class="lbl">MOQ</a></td>
                         <td><input id="txtStdmount" type="text" class="txt num c1"/></td>
-                        <td><span> </span><a class="lbl">屬性</a></td>
-                        <td><select id="cmbArea" class="txt c1"></select></td>
+                        <td><span> </span><a class="lblArea_uj">屬性</a></td>
+                        <td><select id="cmbArea" class="txt c1"> </select></td>
                     </tr>
                      <tr>
-                     	<td><span> </span><a id="lblColor" class="lbl"></a></td>
+                     	<td><span> </span><a id="lblColor_uj" class="lbl"> </a></td>
                         <td><input id="txtColor" type="text" class="txt c1"/></td>
-                    	<td><span> </span><a id="lbl" class="lbl">預估採購天數</a></td>
+                    	<td><span> </span><a id="lblDays_uj" class="lbl">預估採購天數</a></td>
                         <td><input id="txtDays" type="text" class="txt num c1"/></td>
                     </tr>
                     <tr>
-                    	<td><span> </span><a id="lbl" class="lbl">皮料/支(M)</a></td>
+                    	<td><span> </span><a id="lblBeginmount_uj" class="lbl">皮料/支(M)</a></td>
                         <td><input id="txtBeginmount" type="text" class="txt num c1"/></td>
-                        <td><span> </span><a id="lbl" class="lbl">裝箱支數</a></td>
+                        <td><span> </span><a id="lblBeginmoney_uj" class="lbl">裝箱支數</a></td>
                         <td><input id="txtBeginmoney" type="text" class="txt num c1"/></td>
                     </tr>
                     <tr>
@@ -464,7 +464,7 @@
 						<td><input id="btnTgg" type="button" style='width: auto; font-size: medium;'/></td>
                     </tr>
                     <tr>
-                    	<td><span> </span><a class="lbl">備註</a></td>
+                    	<td><span> </span><a id='lblMemo_uj' class="lbl">備註</a></td>
                         <td colspan="3"><input id="txtMemo" type="text"  class="txt c1"/></td>
                     </tr>
                     <tr>
