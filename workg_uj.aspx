@@ -17,8 +17,8 @@
 			this.errorHandler = null;
 			q_tables = 't';
 			var q_name = "workg";
-			var q_readonly = ['txtNoa','txtFact', 'txtDatea', 'txtWorker', 'txtWorker2', 'txtOrdbno'];//105/03/30 開放 'txtWadate' 
-			var q_readonlys = ['txtWorkno','txtWorkhno', 'txtIndate', 'txtInmount', 'txtWmount', 'txtOrdeno','txtNoq','txtUindate'];
+			var q_readonly = ['txtNoa','txtFact', 'txtDatea', 'txtWorker', 'txtWorker2', 'txtOrdbno'];
+			var q_readonlys = ['txtWorkno','txtWorkhno', 'txtIndate', 'txtInmount', 'txtWmount', 'txtOrdeno','txtNoq','txtUindate','txtMemo2'];
 			var q_readonlyt = [];
 			var bbmNum = [];
 			var bbsNum = [
@@ -71,15 +71,17 @@
                 }
 				
 				bbmMask = [['txtDatea', r_picd], ['txtBdate', r_picd], ['txtEdate', r_picd], ['txtSfbdate', r_picd], ['txtSfedate', r_picd], ['txtWadate', r_picd], ['txtWbdate', r_picd], ['txtWedate', r_picd]];
-				bbsMask = [['txtRworkdate', r_picd], ['txtCuadate', r_picd], ['txtIndate', r_picd], ['txtUindate', r_picd]];
+				bbsMask = [['txtOdatea', r_picd]];
 				q_mask(bbmMask);
 				q_cmbParse("cmbStype", '製造,加工');	
 				
-				 $('#btnWorkgg').click(function() {
+				document.title='製造/加工排成表';
+				
+				 $('#btnWorkgg_uj').click(function() {
                 	q_box("z_workgg.aspx", 'z_workgg', "95%", "95%", q_getMsg("btnWorkgg"));
 				});
 				
-				$('#btnOrde').click(function() {
+				$('#btnOrde_uj').click(function() {
 					if (q_cur == 1 || q_cur == 2) {
 						if (emp($('#txtBdate').val()) && emp($('#txtEdate').val())) {
 							alert(q_getMsg('lblBdate') + '請先填寫。');
@@ -90,17 +92,25 @@
 							return;
 						}
 						
-						if(emp($('#txtWbdate').val()))
-							$('#txtWbdate').val(q_cdn($('#txtBdate').val(),-dec(q_getPara('orde.preborn'))));
-						if(emp($('#txtWedate').val()))
-							$('#txtWedate').val(q_cdn($('#txtEdate').val(),-dec(q_getPara('orde.preborn'))));
-							
+						var t_typea=!emp($('#cmbStype').val())?$('#cmbStype').val():'#non';
+						var t_bdate=!emp($('#txtBdate').val())?$('#txtBdate').val():'#non';
+						var t_edate=!emp($('#txtEdate').val())?$('#txtEdate').val():'#non';
+						var t_custno=!emp($('#txtCustno').val())?$('#txtCustno').val():'#non';
+						var t_ucc1no=!emp($('#txtUcc1no').val())?$('#txtUcc1no').val():'#non';
+						var t_ucc2no=!emp($('#txtUcc2no').val())?$('#txtUcc2no').val():'#non';
 						
+						q_func('qtxt.query.cub_import_uj', 'orde_uj.txt,cub_import_uj,' 
+						+ encodeURI(t_typea)+';'+encodeURI(t_bdate)+';'+encodeURI(t_edate)+';'+encodeURI(t_custno)+';'+encodeURI(t_ucc1no)+';'+encodeURI(t_ucc2no)
+						,r_accy,1);
+	                	var as = _q_appendData("tmp0", "", true, true);
+	                	q_gridAddRow(bbsHtm, 'tbbs'
+						, 'txtOdatea,txtOrdeno,txtProductno,txtMount,txtWidth,txtLengthb,txtMechno,txtMech,txtStyle,txtDime,txtTypea,txtUcano,txtUcc1no,txtUcc2no,txtUcc3no,txtUcc4no,txtUcc5no,txtUcc6no,txtUcc2no,txtGen', as.length, as
+						, 'datea,ordeno,productno,mount,width,lengthb,mechno,mech,style,dime,typea,ucano,ucc1no,ucc2no,ucc3no,ucc4no,ucc5no,ucc6no,gen', 'txtOrdeno,txtProductno');
 						
 					}
 				});
 				
-				$('#btnWork').click(function() {
+				$('#btnWork_uj').click(function() {
 					if(q_cur != 1 && q_cur != 2) {
 						if(!emp($('#txtOrdbno').val())){
 							alert('製令單已請購-禁止重新產生製令單!!');
@@ -122,11 +132,11 @@
 				});
 				
 				//針對workg的物料需求
-				$('#btnWorkg2ordb').click(function() {
+				$('#btnWorkg2ordb_uj').click(function() {
 					q_box('z_workg2ordb.aspx' + "?;;;;" + r_accy + ";", 'workg2ordb', "95%", "95%", q_getMsg("popPrint"));
 				});
 				
-				$('#btnWorkPrint').click(function() {
+				$('#btnWorkPrint_uj').click(function() {
 					q_box('z_workp.aspx' + "?;;;noa='" + $('#txtNoa').val() + "';" + r_accy + ";", '', "95%", "95%", q_getMsg("popPrint"));
 				});
 				
@@ -571,7 +581,7 @@
 				font-size: medium;
 			}
 			.dbbs {
-				width: 3300px;
+				width: 3100px;
 			}
 			.dbbs .tbbs {
 				margin: 0;
@@ -673,9 +683,9 @@
 							<a style="float: left;">~</a>
 							<input id="txtEdate" type="text" class="txt c2"/>
 						</td>
-						<td><input id="btnOrde" type="button"/></td>
+						<td><input id="btnOrde_uj" type="button" value="訂單彙總表匯入"/></td>
 					</tr>
-					<tr>
+					<!--<tr>
 						<td> </td>
 						<td> </td>
 						<td><span> </span><a id="lblWbdate" class="lbl"> </a></td>
@@ -684,7 +694,7 @@
 							<a style="float: left;">~</a>
 							<input id="txtWedate" type="text" class="txt c2"/>
 						</td>
-					</tr>
+					</tr>-->
 					<tr>
 						<td><span> </span><a id="lblCustno" class="lbl btn"> </a></td>
 						<td colspan="4">
@@ -699,12 +709,12 @@
 							<span> </span><a id="lblUcc2_uj" class="lbl btn">底材</a>
 						</td>
 						<td colspan="2"><input id="txtUcc2no" type="text" class="txt c1" style="width: 155px;"/></td>
-						<td><input id="btnWork" type="button"/></td>
+						<td><input id="btnWork_uj" type="button" value="製令產出"/></td>
 					</tr>
 					<tr>
 						<td><span> </span><a id="lblMemo" class="lbl" > </a></td>
 						<td colspan="4"><input id="txtMemo" type="text" class="txt c1"/></td>
-						<td><input id="btnWorkg2ordb" type="button" /></td>
+						<td><input id="btnWorkg2ordb_uj" type="button" value="物料需求表" /></td>
 					</tr>
 					<tr>
 						<td><span> </span><a id="lblOrdbno" class="lbl btn"> </a></td>
@@ -712,7 +722,7 @@
 							<input id="txtOrdbno" type="text" class="txt c1"/>
 							<input id="txtOrdano" type="text" class="txt c1" style="display: none;"/>
 						</td>
-						<td><input id="btnWorkgg" type="button"/></td>
+						<td><input id="btnWorkgg_uj" type="button" value="工作線別負荷表"/></td>
 					</tr>
 					<tr>
 						<td><span> </span><a id="lblWorker" class="lbl"> </a></td>
@@ -720,7 +730,7 @@
 						<td><span> </span><a id="lblWorker2" class="lbl"> </a></td>
 						<td><input id="txtWorker2" type="text" class="txt c1"/></td>
 						<td> </td>
-						<td><input id="btnWorkPrint" type="button" /></td>
+						<td><input id="btnWorkPrint_uj" type="button" value="製令列印" /></td>
 					</tr>
 				</table>
 			</div>
@@ -736,10 +746,6 @@
 							<a id='lblProductno_uj_s' class="finished">成品料號</a>
 							<a id='lblProductno2_uj_s' class="semi">半成品料號</a>
 						</td>
-						<td style="width:210px;">
-							<a id='lblProduct_uj_s' class="finished">成品名稱</a>
-							<a id='lblProduct2_uj_s' class="semi">半成品名稱</a>
-						</td>
 						<td style="width:100px;" class="finished"><a id='lblMount_uj_s'>加工成品(支)</a></td>
 						<td style="width:100px;" class="finished"><a id='lblWidth_uj_s'>寬幅(mm)</a></td>
 						<td style="width:100px;">
@@ -747,16 +753,16 @@
 							<a id='lblLengthb2_uj_s' class="semi">長度(M)</a>
 						</td>
 						<td style="width:60px;"><a id='lblIsprearranged_uj_s'>預排</a></td>
+						<td style="width:100px;"><a id='lblLatedate_uj_s'>最遲到料日</a></td>
 						<td style="width:100px;">
 							<a id='lblRworkdate_uj_s' class="finished">加工日</a>
 							<a id='lblRworkdate2_uj_s' class="semi">上膠日</a>
 						</td>
-						<td style="width:100px;"><a id='lblStyle_uj_s'>膠號</a></td>
+						<td style="width:100px;" class="semi"><a id='lblStyle_uj_s'>膠號</a></td>
 						<td style="width:100px;" class="semi"><a id='lblDime_uj_s'>膠厚</a></td>
-						<td style="width:100px;"><a id='lblLatedate_uj_s'>最遲到料日</a></td>
 						<td style="width:150px;"><a id='lblMech_uj_s'>指定機台別</a></td>
-						<td style="width:100px;"><a id='lblTypea_uj_s'>生產屬性</a></td>
-						<td style="width:100px;"><a id='lblC5_uj_s'>筆數</a></td>
+						<td style="width:100px;" class="semi"><a id='lblTypea_uj_s'>生產屬性</a></td>
+						<td style="width:100px;" class="semi"><a id='lblC5_uj_s'>筆數</a></td>
 						<td style="width:60px;"><a id='lblIsunschedule_uj_s'>未排程</a></td>
 						<td style="width:100px;">
 							<a id='lblM1_uj_s' class="finished">(未排程)<BR>同紙箱</a>
@@ -792,21 +798,20 @@
 						<td><input id="txtOdatea.*" type="text" class="txt c1"/></td>
 						<td><input id="txtOrdeno.*" type="text" class="txt c1"/></td>
 						<td><input id="txtProductno.*" type="text" class="txt c1"/></td>
-						<td><input id="txtProduct.*" type="text" class="txt c1"/></td>
 						<td class="finished"><input id="txtMount.*" type="text" class="txt num c1"/></td>
 						<td class="finished"><input id="txtWidth.*" type="text" class="txt num c1"/></td>
 						<td><input id="txtLengthb.*" type="text" class="txt num c1"/></td>
 						<td><input id="chkIsprearranged.*" type="checkbox" class="txt c1"/></td>
-						<td><input id="txtRworkdate.*" type="text" class="txt c1"/></td>
-						<td><input id="txtStyle.*" type="text" class="txt c1"/></td>
-						<td class="semi"><input id="txtDime.*" type="text" class="txt num c1"/></td>
 						<td><input id="txtLatedate.*" type="text" class="txt c1"/></td>
+						<td><input id="txtRworkdate.*" type="text" class="txt c1"/></td>
+						<td class="semi"><input id="txtStyle.*" type="text" class="txt c1"/></td>
+						<td class="semi"><input id="txtDime.*" type="text" class="txt num c1"/></td>
 						<td>
 							<input id="txtMechno.*" type="text" class="txt c1"/>
 							<input id="txtMech.*" type="text" class="txt c1"/>
 						</td>
-						<td><input id="txtTypea.*" type="text" class="txt c1"/></td>
-						<td><input id="textC5.*" type="text" class="txt num c1"/></td>
+						<td class="semi"><input id="txtTypea.*" type="text" class="txt c1"/></td>
+						<td class="semi"><input id="textC5.*" type="text" class="txt num c1"/></td>
 						<td><input id="chkIsunschedule.*" type="checkbox" class="txt c1"/></td>
 						<td><input id="textM1.*" type="text" class="txt num c1"/></td>
 						<td><input id="textC1.*" type="text" class="txt num c1"/></td>
@@ -824,7 +829,10 @@
 						<td class="finished"><input id="txtUcc5no.*" type="text" class="txt c1"/></td>
 						<td class="finished"><input id="txtUcc6no.*" type="text" class="txt c1"/></td>
 						<td><input id="txtGen.*" type="text" class="txt num c1"/></td>
-						<td><input id="txtMemo.*" type="text" class="txt c1"/></td>
+						<td>
+							<input id="txtMemo.*" type="text" class="txt c1"/>
+							<input id="txtMemo2.*" type="text" class="txt c1"/><!--cub單號-->
+						</td>
 					</tr>
 				</table>
 			</div>

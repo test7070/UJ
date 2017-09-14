@@ -1243,9 +1243,18 @@
 						<td><input id="txtY02.*" type="text" class="txt num c1"/></td>
 						<td><input id="txtY03.*" type="text" class="txt num c1"/></td>
 						<td><input id="txtY04.*" type="text" class="txt num c1"/></td>
-						<td><input id="txtY08.*" type="text" class="txt num c1"/></td>
-						<td><input id="txtY09.*" type="text" class="txt num c1"/></td>
-						<td><input id="txtY10.*" type="text" class="txt num c1"/></td>
+						<td>
+							<input id="txtY08.*" type="text" class="txt num c1"/>
+							<input id="txtProcessno.*" type="hidden"/><!--紙管料號-->
+						</td>
+						<td>
+							<input id="txtY09.*" type="text" class="txt num c1"/>
+							<input id="txtCno.*" type="hidden"/><!--紙箱料號-->
+						</td>
+						<td>
+							<input id="txtY10.*" type="text" class="txt num c1"/>
+							<input id="txtTggno.*" type="hidden"/><!--塞頭料號-->
+						</td>
 						<td><input id="txtMakeno.*" type="text" class="txt c1"/></td>
 						<td><input id="txtDate3.*" type="text" class="txt c1"/></td>
 						<td><input id="btnP4.*" type="button" value="+"/></td>
