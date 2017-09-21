@@ -18,7 +18,12 @@
 			q_tables = 't';
 			var q_name = "workg";
 			var q_readonly = ['txtNoa','txtFact', 'txtDatea', 'txtWorker', 'txtWorker2', 'txtOrdbno'];
-			var q_readonlys = ['txtWorkno','txtWorkhno', 'txtIndate', 'txtInmount', 'txtWmount', 'txtOrdeno','txtNoq','txtUindate','txtMemo2'];
+			var q_readonlys = ['txtNoq','txtOdatea','txtOrdeno','txtProductno','txtLengthb','txtMount','txtWidth'
+			,'txtStyle','txtStyle','txtDime'
+			,'txtMech','txtTypea','txtUcano','txtUcc1no','txtUcc2no','txtUcc3no','txtUcc4no','txtUcc5no','txtUcc6no'
+			,'txtGen','txtMemo2'
+			,'textM1','textC1','textM2','textC2','textM3','textC3','textM4','textC4','textC5'
+			];
 			var q_readonlyt = [];
 			var bbmNum = [];
 			var bbsNum = [
@@ -41,10 +46,10 @@
 			//brwCount2 = 6;//03/28自動
 			aPop = new Array(
 				['txtCustno', 'lblCustno', 'cust', 'noa,nick', 'txtCustno,txtComp', 'cust_b.aspx'],
-				['txtProductno', 'lblProduct', 'uca', 'noa,product', 'txtProductno,txtProduct', 'uca_b.aspx'],
-				['txtProductno_', 'btnProduct_', 'uca', 'noa,product,style', 'txtProductno_,txtProduct_,txtStyle_', 'uca_b.aspx'],
-				['txtStationno_', 'btnStation_', 'station', 'noa,station', 'txtStationno_,txtStation_', 'station_b.aspx'],
-				['txtProductno__', 'btnProduct__', 'uca', 'noa,product,style', 'txtProductno__,txtProduct__,txtStyle__', 'uca_b.aspx']
+				['txtUcc1no', 'lblUcc1_uj', 'ucc', 'noa,product', 'txtUcc1no', 'ucc_b.aspx'],
+				['txtUcc2no', 'lblUcc2_uj', 'ucc', 'noa,product', 'txtUcc2no', 'ucc_b.aspx'],
+				['txtMechno_', '', 'mech', 'noa,mech', 'txtMechno_,txtMech_', 'mech_b.aspx']
+				
 			);
 
 			$(document).ready(function() {
@@ -71,11 +76,11 @@
                 }
 				
 				bbmMask = [['txtDatea', r_picd], ['txtBdate', r_picd], ['txtEdate', r_picd], ['txtSfbdate', r_picd], ['txtSfedate', r_picd], ['txtWadate', r_picd], ['txtWbdate', r_picd], ['txtWedate', r_picd]];
-				bbsMask = [['txtOdatea', r_picd]];
+				bbsMask = [['txtOdatea', r_picd],['txtLatedate', r_picd],['txtRworkdate', r_picd]];
 				q_mask(bbmMask);
 				q_cmbParse("cmbStype", '製造,加工');	
 				
-				document.title='製造/加工排成表';
+				document.title='製造/加工排程表';
 				
 				 $('#btnWorkgg_uj').click(function() {
                 	q_box("z_workgg.aspx", 'z_workgg', "95%", "95%", q_getMsg("btnWorkgg"));
@@ -104,31 +109,15 @@
 						,r_accy,1);
 	                	var as = _q_appendData("tmp0", "", true, true);
 	                	q_gridAddRow(bbsHtm, 'tbbs'
-						, 'txtOdatea,txtOrdeno,txtProductno,txtMount,txtWidth,txtLengthb,txtMechno,txtMech,txtStyle,txtDime,txtTypea,txtUcano,txtUcc1no,txtUcc2no,txtUcc3no,txtUcc4no,txtUcc5no,txtUcc6no,txtUcc2no,txtGen', as.length, as
-						, 'datea,ordeno,productno,mount,width,lengthb,mechno,mech,style,dime,typea,ucano,ucc1no,ucc2no,ucc3no,ucc4no,ucc5no,ucc6no,gen', 'txtOrdeno,txtProductno');
+						, 'txtOdatea,txtOrdeno,txtProductno,txtMount,txtWidth,txtLengthb,txtMechno,txtMech,txtStyle,txtDime,txtTypea,txtUcano,txtUcc1no,txtUcc2no,txtUcc3no,txtUcc4no,txtUcc5no,txtUcc6no,txtGen,txtMemo2', as.length, as
+						, 'datea,ordeno,productno,mount,width,lengthb,mechno,mech,style,dime,typea,ucano,ucc1no,ucc2no,ucc3no,ucc4no,ucc5no,ucc6no,gen,memo2', 'txtOrdeno,txtProductno,txtMemo2');
 						
+						bbsretotal();
 					}
 				});
 				
 				$('#btnWork_uj').click(function() {
-					if(q_cur != 1 && q_cur != 2) {
-						if(!emp($('#txtOrdbno').val())){
-							alert('製令單已請購-禁止重新產生製令單!!');
-							return;
-						}
-						
-						var worked = false;
-						for (var i = 0; i < q_bbsCount; i++) {
-							if (!emp($('#txtWorkno_' + i).val()))
-								worked = true;
-						}
-						if (worked && t_gmount > 0)
-							alert('製令單已領料-禁止重新產生製令單!!');
-						else {
-							//q_func('workg.genWork', r_accy + ',' + $('#txtNoa').val() + ',' + r_name);
-							//$('#btnWork').val('產生中...').attr('disabled', 'disabled');
-						}
-					}
+					
 				});
 				
 				//針對workg的物料需求
@@ -145,9 +134,105 @@
 				});
 				
 				$('#cmbStype').change(function() {
+					for (var i = 0; i < q_bbsCount; i++) {
+						$('#btnMinus_'+i).click();
+					}
 					change_field();
 				});
 				
+			}
+			
+			function bbsretotal() {
+				for (var i = 0; i < q_bbsCount; i++) {
+					$('#textM1_'+i).val('');
+					$('#textC1_'+i).val('');
+					$('#textM3_'+i).val('');
+					$('#textC3_'+i).val('');
+					$('#textM2_'+i).val('');
+					$('#textC2_'+i).val('');
+					$('#textM4_'+i).val('');
+					$('#textC4_'+i).val('');
+					$('#textC5_'+i).val('');
+					var t_m1=0,t_c1=0,t_m3=0,t_c3=0;
+					var t_m2=0,t_c2=0,t_m4=0,t_c4=0;
+					var t_c5=0;
+					for (var j = 0; j < q_bbsCount; j++) {
+						if($('#cmbStype').val()=='製造'){
+							if(!emp($('#txtUcc2no_'+i).val())){
+								//同紙未排
+								if(i!=j && $('#txtUcc2no_'+i).val()==$('#txtUcc2no_'+j).val() && emp($('#txtRworkdate_'+j).val())){
+									t_m1=q_add(t_m1,dec($('#txtLengthb_'+j).val()));
+									t_c1++;
+								}
+								//同紙已排
+								if($('#txtUcc2no_'+i).val()==$('#txtUcc2no_'+j).val() && !emp($('#txtRworkdate_'+j).val())){
+									t_m3=q_add(t_m3,dec($('#txtLengthb_'+j).val()));
+									t_c3++;
+								}
+							}
+							if(!emp($('#txtUcano_'+i).val())){
+								//同半未排
+								if(i!=j && $('#txtUcano_'+i).val()==$('#txtUcano_'+j).val() && emp($('#txtRworkdate_'+j).val())){
+									t_m2=q_add(t_m2,dec($('#txtLengthb_'+j).val()));
+									t_c2++;
+								}
+								//同半已排
+								if($('#txtUcano_'+i).val()==$('#txtUcano_'+j).val() && !emp($('#txtRworkdate_'+j).val())){
+									t_m4=q_add(t_m4,dec($('#txtLengthb_'+j).val()));
+									t_c4++;
+								}
+							}
+							if(!emp($('#txtTypea_'+i).val())){
+								//生產屬性
+								if($('#txtTypea_'+i).val()==$('#txtTypea_'+j).val() && emp($('#txtRworkdate_'+j).val())){
+									t_c5++;
+								}
+							}
+						}else if($('#cmbStype').val()=='加工'){
+							if(!emp($('#txtUcc4no_'+i).val())){
+								//同紙箱未排
+								if(i!=j && $('#txtUcc4no_'+i).val()==$('#txtUcc4no_'+j).val() && emp($('#txtRworkdate_'+j).val())){
+									t_m1=q_add(t_m1,dec($('#txtMount_'+j).val()));
+									t_c1++;
+								}
+								//同紙箱已排
+								if($('#txtUcc4no_'+i).val()==$('#txtUcc4no_'+j).val() && !emp($('#txtRworkdate_'+j).val())){
+									t_m3=q_add(t_m3,dec($('#txtMount_'+j).val()));
+									t_c3++;
+								}
+							}
+							if(!emp($('#txtUcano_'+i).val())){
+								//同半未排
+								if(i!=j && $('#txtUcano_'+i).val()==$('#txtUcano_'+j).val() && emp($('#txtRworkdate_'+j).val())){
+									t_m2=q_add(t_m2,dec($('#txtMount_'+j).val()));
+									t_c2++;
+								}
+								//同半已排
+								if($('#txtUcano_'+i).val()==$('#txtUcano_'+j).val() && !emp($('#txtRworkdate_'+j).val())){
+									t_m4=q_add(t_m4,dec($('#txtMount_'+j).val()));
+									t_c4++;
+								}
+							}
+						}
+					}
+					$('#textM1_'+i).val(t_m1);
+					if(emp($('#txtRworkdate_'+i).val())){
+						$('#textC1_'+i).val(t_c1);
+					}
+					$('#textM3_'+i).val(t_m3);
+					$('#textC3_'+i).val(t_c3);
+					
+					$('#textM2_'+i).val(t_m2);
+					if(emp($('#txtRworkdate_'+i).val())){
+						$('#textC2_'+i).val(t_c2);
+					}
+					$('#textM4_'+i).val(t_m4);
+					$('#textC4_'+i).val(t_c4);
+					
+					if($('#cmbStype').val()=='製造'){
+						$('#textC5_'+i).val(t_c5);
+					}
+				}
 			}
 			
 			var ordedate=false;
@@ -332,9 +417,11 @@
 				if($('#cmbStype').val()=='製造'){
 					$('.semi').show();
 					$('.finished').hide();
+					$('.dbbs').css('width','3100px');
 				}else{
 					$('.finished').show();
 					$('.semi').hide();
+					$('.dbbs').css('width','3400px');
 				}
 			}
 
@@ -359,16 +446,114 @@
 			function btnPlut(org_htm, dest_tag, afield) {
 				_btnPlus(org_htm, dest_tag, afield);
 			}
+			
+			function bbssort(tField) {
+				if(q_cur==1 || q_cur==2){
+					var t_bbs=new Array();
+					for (var i = 0; i < q_bbsCount; i++) {
+						if(!emp($('#txtProductno_'+i).val()) || !emp($('#txtOdatea_'+i).val())){
+		               		var t_bbss=new Array();
+		               		for (var j = 0; j < fbbs.length; j++) {
+		               			t_bbss[fbbs[j]]=$('#'+fbbs[j]+'_'+i).val();
+		               		}
+		               		t_bbs.push(t_bbss);
+		               	}
+						$('#btnMinus_'+i).click();
+					}
+					
+					if(t_bbs.length!=0){
+						t_bbs.sort(function compare(a,b) {
+							if (eval('a.'+tField)< eval('b.'+tField)) return -1;
+							if (eval('a.'+tField)> eval('b.'+tField)) return 1;
+							return 0;
+						});
+						for (var i = 0; i < t_bbs.length; i++) {
+			              		for (var j = 0; j < fbbs.length; j++) {
+			              			if(fbbs[j]!='txtNoq')
+			              				$('#'+fbbs[j]+'_'+i).val(t_bbs[i][fbbs[j]]);
+			              		}
+						}
+					}
+					//清除NOQ 以避免重新排序
+					for (var i = 0; i < q_bbsCount; i++) {
+						$('#txtNoq_'+i).val('');
+					}
+				}
+			}
 
 			function bbsAssign() {
 				for (var i = 0; i < q_bbsCount; i++) {
 					$('#lblNo_' + i).text(i + 1);
 					if (!$('#btnMinus_' + i).hasClass('isAssign')) {
-						
+						$('#txtRworkdate_'+i).focusout(function() {
+							if(q_cur==1 || q_cur==2)
+								bbsretotal();
+						});
 					}
 				}
 				_bbsAssign();
 				change_field();
+				bbsretotal();
+				
+				if(q_cur==1 || q_cur==2){
+					$('#btnOrderUcc1no').removeAttr('disabled');
+					$('#btnOrderUcc2no').removeAttr('disabled');
+				}else{
+					$('#btnOrderUcc1no').attr('disabled', 'disabled');
+					$('#btnOrderUcc2no').attr('disabled', 'disabled');
+				}
+				
+				//面材排序
+				$('#btnOrderUcc1no').unbind('click');
+				$('#btnOrderUcc1no').click(function() {
+					if(q_cur==1 || q_cur==2){
+						bbssort('txtUcc1no');
+					}
+				});
+				
+				//底材排序
+				$('#btnOrderUcc2no').unbind('click');
+				$('#btnOrderUcc2no').click(function() {
+					if(q_cur==1 || q_cur==2){
+						bbssort('txtUcc2no');
+					}
+				});
+				
+				//加工日排序
+				$('#btnOrderRworkdate').unbind('click');
+				$('#btnOrderRworkdate').click(function() {
+					if(q_cur==1 || q_cur==2){
+						bbssort('txtRworkdate');
+					}
+				});
+				
+				//生產屬性排序
+				$('#btnOrderTypea').unbind('click');
+				$('#btnOrderTypea').click(function() {
+					if(q_cur==1 || q_cur==2){
+						bbssort('txtTypea');
+					}
+				});
+				
+				//半成品排序
+				$('#btnOrderUcano').unbind('click');
+				$('#btnOrderUcano').click(function() {
+					if(q_cur==1 || q_cur==2){
+						bbssort('txtUcano');
+					}
+				});
+				
+				//紙箱排序
+				$('#btnOrderUcc4no').unbind('click');
+				$('#btnOrderUcc4no').click(function() {
+					if(q_cur==1 || q_cur==2){
+						bbssort('txtUcc4no');
+					}
+					//清除NOQ 以避免重新排序
+					for (var i = 0; i < q_bbsCount; i++) {
+						$('#txtNoq_'+i).val('');
+					}
+				});
 			}
 
 			function bbtAssign() {
@@ -740,9 +925,9 @@
 						<td style="width:20px;"><input id="btnPlus" type="button" style="font-size: medium; font-weight: bold;" value="＋"/></td>
 						<td style="width:20px;display: none;"> </td>
 						<td style="width:60px;"><a id='lblNoq_s'> </a></td>
-						<td style="width:120px;"><a id="lblOdatea_uj_s">交期</a></td>
-						<td style="width:150px;"><a id='lblOrdeno_uj_s'>訂單號碼</a></td>
-						<td style="width:140px;">
+						<td style="width:100px;"><a id="lblOdatea_uj_s">交期</a></td>
+						<td style="width:170px;"><a id='lblOrdeno_uj_s'>訂單號碼</a></td>
+						<td style="width:160px;">
 							<a id='lblProductno_uj_s' class="finished">成品料號</a>
 							<a id='lblProductno2_uj_s' class="semi">半成品料號</a>
 						</td>
@@ -757,13 +942,13 @@
 						<td style="width:100px;">
 							<a id='lblRworkdate_uj_s' class="finished">加工日</a>
 							<a id='lblRworkdate2_uj_s' class="semi">上膠日</a>
+							<input id="btnOrderRworkdate" type="button" value="≡" >
 						</td>
 						<td style="width:100px;" class="semi"><a id='lblStyle_uj_s'>膠號</a></td>
 						<td style="width:100px;" class="semi"><a id='lblDime_uj_s'>膠厚</a></td>
 						<td style="width:150px;"><a id='lblMech_uj_s'>指定機台別</a></td>
-						<td style="width:100px;" class="semi"><a id='lblTypea_uj_s'>生產屬性</a></td>
+						<td style="width:100px;" class="semi"><a id='lblTypea_uj_s'>生產屬性</a><input id="btnOrderTypea" type="button" value="≡" ></td>
 						<td style="width:100px;" class="semi"><a id='lblC5_uj_s'>筆數</a></td>
-						<td style="width:60px;"><a id='lblIsunschedule_uj_s'>未排程</a></td>
 						<td style="width:100px;">
 							<a id='lblM1_uj_s' class="finished">(未排程)<BR>同紙箱</a>
 							<a id='lblM12_uj_s' class="semi">(未排程)<BR>同紙</a>
@@ -778,13 +963,13 @@
 						<td style="width:100px;"><a id='lblC3_uj_s'>(已排程)<BR>筆數</a></td>
 						<td style="width:100px;"><a id='lblM4_uj_s'>(已排程)<BR>同半成品</a></td>
 						<td style="width:100px;"><a id='lblC4_uj_s'>(已排程)<BR>筆數</a></td>
-						<td style="width:120px;"><a id='lblUcano_uj_s'>半成品料號</a></td>
-						<td style="width:120px;"><a id='lblUcc1no_uj_s'>面材</a></td>
-						<td style="width:120px;"><a id='lblUcc2no_uj_s'>底材</a></td>
-						<td style="width:120px;"><a id='lblUcc3no_uj_s'>材料</a></td>
-						<td style="width:120px;" class="finished"><a id='lblUcc4no_uj_s'>紙箱</a></td>
-						<td style="width:120px;" class="finished"><a id='lblUcc5no_uj_s'>紙管</a></td>
-						<td style="width:120px;" class="finished"><a id='lblUcc6no_uj_s'>塞頭</a></td>
+						<td style="width:160px;"><a id='lblUcano_uj_s'>半成品料號</a><input id="btnOrderUcano" type="button" value="≡" ></td>
+						<td style="width:160px;"><a id='lblUcc1no_uj_s'>面材</a><input id="btnOrderUcc1no" type="button" value="≡" ></td>
+						<td style="width:160px;"><a id='lblUcc2no_uj_s'>底材</a><input id="btnOrderUcc2no" type="button" value="≡" ></td>
+						<td style="width:160px;"><a id='lblUcc3no_uj_s'>材料</a></td>
+						<td style="width:160px;" class="finished"><a id='lblUcc4no_uj_s'>紙箱</a><input id="btnOrderUcc4no" type="button" value="≡" ></td>
+						<td style="width:160px;" class="finished"><a id='lblUcc5no_uj_s'>紙管</a></td>
+						<td style="width:160px;" class="finished"><a id='lblUcc6no_uj_s'>塞頭</a></td>
 						<td style="width:100px;">
 							<a id='lblGen_uj_s' class="finished">生產時間(Hr)</a>
 							<a id='lblGen2_uj_s' class="semi">製造速度(M/min)</a>
@@ -812,7 +997,6 @@
 						</td>
 						<td class="semi"><input id="txtTypea.*" type="text" class="txt c1"/></td>
 						<td class="semi"><input id="textC5.*" type="text" class="txt num c1"/></td>
-						<td><input id="chkIsunschedule.*" type="checkbox" class="txt c1"/></td>
 						<td><input id="textM1.*" type="text" class="txt num c1"/></td>
 						<td><input id="textC1.*" type="text" class="txt num c1"/></td>
 						<td><input id="textM2.*" type="text" class="txt num c1"/></td>
