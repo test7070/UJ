@@ -170,21 +170,21 @@ case when cmount2<moq then moq-cmount2 else 0 end end
 update a
 set ymount1=case when len(a.productno3)=0 or a.tmount3=0 then 0 else
 ISNULL((select SUM(xa.lengthb) from view_workgs xa left join view_workg xb on xa.noa=xb.noa 
-where xa.ucc2no=a.productno3 and isnull(xa.rworkdate,'')!='' and isnull(xb.iscugu,0)=0 ),0) end
+where xa.ucc2no=a.productno3 and isnull(xa.rworkdate,'')!='' and isnull(xb.iscugu,0)=0 and xb.style='製造'),0) end
 from @tmp a
 
 --同半成品(已排程) ymount2
 update a
 set ymount2=case when len(a.productno3)=0 or a.tmount3=0 then 0 else
 ISNULL((select SUM(xa.lengthb) from view_workgs xa left join view_workg xb on xa.noa=xb.noa 
-where xa.ucano=a.productno2 and isnull(xa.rworkdate,'')!='' and isnull(xb.iscugu,0)=0 ),0) end
+where xa.ucano=a.productno2 and isnull(xa.rworkdate,'')!='' and isnull(xb.iscugu,0)=0 and xb.style='製造'),0) end
 from @tmp a
 
 --同紙(未排程) xmount1
 update a
 set xmount1=case when len(a.productno3)=0 or a.tmount3=0 then 0 else
 ISNULL((select SUM(xa.lengthb) from view_workgs xa left join view_workg xb on xa.noa=xb.noa 
-where xa.ucc2no=a.productno3 and isnull(xa.rworkdate,'')='' and isnull(xb.iscugu,0)=0 ),0)-a.tmount3 end
+where xa.ucc2no=a.productno3 and isnull(xa.rworkdate,'')='' and isnull(xb.iscugu,0)=0 and xb.style='製造'),0)-a.tmount3 end
 +ISNULL(a.ymount1,0)
 from @tmp a
 
@@ -192,7 +192,7 @@ from @tmp a
 update a
 set xmount2=case when len(a.productno3)=0 or a.tmount3=0 then 0 else
 ISNULL((select SUM(xa.lengthb) from view_workgs xa left join view_workg xb on xa.noa=xb.noa 
-where xa.ucano=a.productno2 and isnull(xa.rworkdate,'')='' and isnull(xb.iscugu,0)=0 ),0)-a.tmount3 end
+where xa.ucano=a.productno2 and isnull(xa.rworkdate,'')='' and isnull(xb.iscugu,0)=0 and xb.style='製造'),0)-a.tmount3 end
 +ISNULL(a.ymount2,0)
 from @tmp a
 
@@ -375,21 +375,21 @@ case when cmount2<moq then moq-cmount2 else 0 end end
 update a
 set ymount1=case when len(a.productno3)=0 or a.tmount3=0 then 0 else
 ISNULL((select SUM(xa.lengthb) from view_workgs xa left join view_workg xb on xa.noa=xb.noa 
-where xa.ucc2no=a.productno3 and isnull(xa.rworkdate,'')!='' and isnull(xb.iscugu,0)=0 ),0) end
+where xa.ucc2no=a.productno3 and isnull(xa.rworkdate,'')!='' and isnull(xb.iscugu,0)=0 and xb.style='製造'),0) end
 from @tmp a
 
 --同半成品(已排程) ymount2
 update a
 set ymount2=case when len(a.productno3)=0 or a.tmount3=0 then 0 else
 ISNULL((select SUM(xa.lengthb) from view_workgs xa left join view_workg xb on xa.noa=xb.noa 
-where xa.ucano=a.productno2 and isnull(xa.rworkdate,'')!='' and isnull(xb.iscugu,0)=0 ),0) end
+where xa.ucano=a.productno2 and isnull(xa.rworkdate,'')!='' and isnull(xb.iscugu,0)=0 and xb.style='製造'),0) end
 from @tmp a
 
 --同紙(未排程) xmount1
 update a
 set xmount1=case when len(a.productno3)=0 or a.tmount3=0 then 0 else
 ISNULL((select SUM(xa.lengthb) from view_workgs xa left join view_workg xb on xa.noa=xb.noa 
-where xa.ucc2no=a.productno3 and isnull(xa.rworkdate,'')='' and isnull(xb.iscugu,0)=0 ),0)-a.tmount3 end
+where xa.ucc2no=a.productno3 and isnull(xa.rworkdate,'')='' and isnull(xb.iscugu,0)=0 and xb.style='製造'),0)-a.tmount3 end
 +ISNULL(a.ymount1,0)
 from @tmp a
 
@@ -397,7 +397,7 @@ from @tmp a
 update a
 set xmount2=case when len(a.productno3)=0 or a.tmount3=0 then 0 else
 ISNULL((select SUM(xa.lengthb) from view_workgs xa left join view_workg xb on xa.noa=xb.noa 
-where xa.ucano=a.productno2 and isnull(xa.rworkdate,'')='' and isnull(xb.iscugu,0)=0 ),0)-a.tmount3 end
+where xa.ucano=a.productno2 and isnull(xa.rworkdate,'')='' and isnull(xb.iscugu,0)=0 and xb.style='製造'),0)-a.tmount3 end
 +ISNULL(a.ymount2,0)
 from @tmp a
 
@@ -440,6 +440,7 @@ SUM(case when a.ucc2no=@pno3 and isnull(a.rworkdate,'')='' then a.lengthb else 0
 SUM(case when a.ucano=@pno2 and isnull(a.rworkdate,'')='' then a.lengthb else 0 end) xmount2
 from view_workgs a left join view_workg b on a.noa=b.noa 
 where isnull(b.iscugu,0)=0 --表示產生製令開工
+and b.style='製造'
 ;
 -----------------------------------------------------------------------------------------------
 cub_import_uj:--cub_import_uj--uj訂單彙總表匯入
@@ -449,6 +450,7 @@ declare @t_edate nvarchar(50)=case when '#non'=[3] then char(255) else [3] end
 declare @t_custno nvarchar(50)=case when '#non'=[4] then '' else [4] end
 declare @t_ucc1no nvarchar(50)=case when '#non'=[5] then '' else [5] end
 declare @t_ucc2no nvarchar(50)=case when '#non'=[6] then '' else [6] end
+declare @t_noa nvarchar(50)=case when '#non'=[7] then '' else [7] end
 
 if(@t_typea='製造')
 begin
@@ -475,7 +477,8 @@ begin
 	and (len(@t_ucc1no)=0 or isnull(a.makeno,'')=@t_ucc1no)
 	and (len(@t_ucc2no)=0 or isnull(a.ordcno,'')=@t_ucc2no)
 	and isnull(a.productno2,'')!=''
-	and not exists (select * from view_workgs where memo2=a.noa+'-'+a.noq and isnull(rworkdate,'')!='')
+	and not exists (select * from view_workgs wa left join view_workg wb on wa.noa=wb.noa
+	where wa.memo2=a.noa+'-'+a.noq and isnull(wa.rworkdate,'')!='' and wb.style='製造' and wa.noa!=@t_noa)
 end
 else
 begin
@@ -502,6 +505,7 @@ begin
 	and (len(@t_ucc1no)=0 or isnull(a.makeno,'')=@t_ucc1no)
 	and (len(@t_ucc2no)=0 or isnull(a.ordcno,'')=@t_ucc2no)
 	and isnull(a.productno,'')!=''
-	and not exists (select * from view_workgs where memo2=a.noa+'-'+a.noq and isnull(rworkdate,'')!='')
+	and not exists (select * from view_workgs wa left join view_workg wb on wa.noa=wb.noa
+	where wa.memo2=a.noa+'-'+a.noq and isnull(wa.rworkdate,'')!='' and wb.style='加工' and wa.noa!=@t_noa)
 end
 ;

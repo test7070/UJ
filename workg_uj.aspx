@@ -103,21 +103,37 @@
 						var t_custno=!emp($('#txtCustno').val())?$('#txtCustno').val():'#non';
 						var t_ucc1no=!emp($('#txtUcc1no').val())?$('#txtUcc1no').val():'#non';
 						var t_ucc2no=!emp($('#txtUcc2no').val())?$('#txtUcc2no').val():'#non';
+						var t_noa=!emp($('#txtNoa').val())?$('#txtNoa').val():'#non';
 						
 						q_func('qtxt.query.cub_import_uj', 'orde_uj.txt,cub_import_uj,' 
-						+ encodeURI(t_typea)+';'+encodeURI(t_bdate)+';'+encodeURI(t_edate)+';'+encodeURI(t_custno)+';'+encodeURI(t_ucc1no)+';'+encodeURI(t_ucc2no)
+						+ encodeURI(t_typea)+';'+encodeURI(t_bdate)+';'+encodeURI(t_edate)+';'+encodeURI(t_custno)+';'+encodeURI(t_ucc1no)+';'+encodeURI(t_ucc2no)+';'+encodeURI(t_noa)
 						,r_accy,1);
 	                	var as = _q_appendData("tmp0", "", true, true);
-	                	q_gridAddRow(bbsHtm, 'tbbs'
-						, 'txtOdatea,txtOrdeno,txtProductno,txtMount,txtWidth,txtLengthb,txtMechno,txtMech,txtStyle,txtDime,txtTypea,txtUcano,txtUcc1no,txtUcc2no,txtUcc3no,txtUcc4no,txtUcc5no,txtUcc6no,txtGen,txtMemo2', as.length, as
-						, 'datea,ordeno,productno,mount,width,lengthb,mechno,mech,style,dime,typea,ucano,ucc1no,ucc2no,ucc3no,ucc4no,ucc5no,ucc6no,gen,memo2', 'txtOrdeno,txtProductno,txtMemo2');
-						
-						bbsretotal();
+	                	
+	                	if (as[0] != undefined) {
+		                	for (var i = 0; i < q_bbsCount; i++) {
+								$('#btnMinus_'+i).click();
+							}
+		                	q_gridAddRow(bbsHtm, 'tbbs'
+							, 'txtOdatea,txtOrdeno,txtProductno,txtMount,txtWidth,txtLengthb,txtMechno,txtMech,txtStyle,txtDime,txtTypea,txtUcano,txtUcc1no,txtUcc2no,txtUcc3no,txtUcc4no,txtUcc5no,txtUcc6no,txtGen,txtMemo2', as.length, as
+							, 'datea,ordeno,productno,mount,width,lengthb,mechno,mech,style,dime,typea,ucano,ucc1no,ucc2no,ucc3no,ucc4no,ucc5no,ucc6no,gen,memo2', 'txtOrdeno,txtProductno,txtMemo2');
+							
+							bbsretotal();
+						}
 					}
 				});
 				
 				$('#btnWork_uj').click(function() {
-					
+					//寫txt 產生work
+					if(q_cur==1 || q_cur==2){
+						if($('#cmbStype').val()=='製造'){
+							
+						}
+						
+						if($('#cmbStype').val()=='加工'){
+							
+						}
+					}
 				});
 				
 				//針對workg的物料需求
@@ -447,6 +463,7 @@
 				_btnPlus(org_htm, dest_tag, afield);
 			}
 			
+			var t_desc=0;
 			function bbssort(tField) {
 				if(q_cur==1 || q_cur==2){
 					var t_bbs=new Array();
@@ -462,11 +479,21 @@
 					}
 					
 					if(t_bbs.length!=0){
-						t_bbs.sort(function compare(a,b) {
-							if (eval('a.'+tField)< eval('b.'+tField)) return -1;
-							if (eval('a.'+tField)> eval('b.'+tField)) return 1;
-							return 0;
-						});
+						if(t_desc==0){
+							t_bbs.sort(function compare(a,b) {
+								if (eval('a.'+tField)< eval('b.'+tField)) return -1;
+								if (eval('a.'+tField)> eval('b.'+tField)) return 1;
+								return 0;
+							});
+							t_desc=1;
+						}else{
+							t_bbs.sort(function compare(a,b) {
+								if (eval('a.'+tField)> eval('b.'+tField)) return -1;
+								if (eval('a.'+tField)< eval('b.'+tField)) return 1;
+								return 0;
+							});
+							t_desc=0;
+						}
 						for (var i = 0; i < t_bbs.length; i++) {
 			              		for (var j = 0; j < fbbs.length; j++) {
 			              			if(fbbs[j]!='txtNoq')
