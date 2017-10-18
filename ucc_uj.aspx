@@ -442,11 +442,11 @@
                     <tr>
                     	<td><span> </span><a id="lblStdmount_uj" class="lbl">MOQ</a></td>
                         <td><input id="txtStdmount" type="text" class="txt num c1"/></td>
-                        <td><span> </span><a class="lblArea_uj">屬性</a></td>
+                        <td><span> </span><a id="lblArea_uj" class="lbl">屬性</a></td>
                         <td><select id="cmbArea" class="txt c1"> </select></td>
                     </tr>
                      <tr>
-                     	<td><span> </span><a id="lblColor_uj" class="lbl"> </a></td>
+                     	<td><span> </span><a id="lblColor_uj" class="lbl">顏色</a></td>
                         <td><input id="txtColor" type="text" class="txt c1"/></td>
                     	<td><span> </span><a id="lblDays_uj" class="lbl">預估採購天數</a></td>
                         <td><input id="txtDays" type="text" class="txt num c1"/></td>
