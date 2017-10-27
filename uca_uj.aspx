@@ -42,9 +42,6 @@
 			aPop = new Array(
 				['txtProcessno', 'lblProcessno_uj', 'mech', 'noa,mech', 'txtProcessno,txtProcess', 'mech_b.aspx'],
 				['txtModelno', 'lblModelno_uj', 'mech', 'noa,mech', 'txtModelno,txtModel', 'mech_b.aspx'],
-				['txtGroupeno', 'lblGroupeno', 'adsize', 'noa,mon', 'txtGroupeno,txtGroupfno', 'adsize_uj_b.aspx'],
-				['txtGroupino', 'lblGroupino', 'adtran', 'noa,mon', 'txtGroupino,txtGroupjno', 'adtran_uj_b.aspx'],
-				['textS4', 'lblS4_uj', 'adpipe', 'noa,mon', 'textS4,textS5', 'adpipe_uj_b.aspx'],
 				['txtProductno_', 'btnProductno_', 'ucaucc', 'noa,product,unit', 'txtProductno_,txtProduct_,txtUnit_', 'ucaucc_b.aspx']
 			);
 			$(document).ready(function() {
@@ -72,8 +69,9 @@
 				q_getFormat();
 				bbmMask = [];
 				q_mask(bbmMask);
-				q_cmbParse("cmbTypea", q_getPara('uca.typea'));
-				q_cmbParse("cmbGroupdno", '訂單,全-訂,半-訂,共-訂,成-計,半-計');
+				//q_cmbParse("cmbTypea", q_getPara('uca.typea'));
+				q_cmbParse("cmbTypea", "2@製成品,3@半成品,8@再製品");//固定避免有問題
+				q_cmbParse("cmbGroupdno", '訂單,成-計,半-計,半-訂,計畫');
 				
 				$('#txtNoa').change(function(){
 					var thisVal = $.trim($(this).val());
@@ -694,7 +692,7 @@
 					<tr>
 						<td><span> </span><a id="lblNoa" class="lbl"> </a></td>
 						<td><input id="txtNoa" type="text" class="txt c1"/></td>
-						<td><span> </span><a id="lblKdate_uj" class="lbl">製造日期</a></td>
+						<td><span> </span><a id="lblKdate" class="lbl"> </a></td>
 						<td><input id="txtKdate" type="text" class="txt c1"/></td>
 						<td><span> </span><a id="lblType" class="lbl"> </a></td>
 						<td><select id="cmbTypea" class="txt c1"> </select></td>
@@ -702,135 +700,92 @@
 					<tr>
 						<td><span> </span><a id="lblProduct" class="lbl"> </a></td>
 						<td colspan='3'><input id="txtProduct" type="text" class="txt c1"/></td>
-						<td><span> </span><a id="lblGroupdno_uj" class="lbl">銷售屬性</a></td>
+						<td><span> </span><a id="lblGroupdno_uj" class="lbl">銷售政策</a></td>
 						<td><select id="cmbGroupdno" class="txt c1"> </select></td>
 					</tr>
 					<tr>
-                        <td><span> </span><a id="lblStationgno" class="lbl">客戶</a></td>
-                        <td><input id="txtStationgno" type="text" class="txt c1"/></td>
-                        <td><span> </span><a id="lblUnit" class="lbl"> </a></td>
+						<td><span> </span><a id="lblUnit" class="lbl"> </a></td>
                         <td><input id="txtUnit" type="text" class="txt c1"/></td>
-                    </tr>
+                        <td><span> </span><a id="lblUweight_uj" class="lbl">幾天生產一次<BR>(計畫性)</a></td>
+						<td><input id="txtUweight" type="text" class="txt num c1"/></td>
+					</tr>
 					<tr>
 						<td><span> </span><a id="lblRev_uj" class="lbl">系列</a></td>
 						<td><input id="txtRev" type="text" class="txt c1"/></td>
-						<td><span> </span><a id="lblGroupeno_uj" class="lbl">印刷</a></td>
-						<td>
-							<input id="txtGroupeno" type="text" class="txt c1" style="width:30%;"/>
-							<input id="txtGroupfno" type="text" class="txt c1" style="width:65%;"/>
-						</td>
-						<td><span> </span><a id="lblGroupino_uj" class="lbl">成品外觀</a></td>
-						<td>
-							<input id="txtGroupino" type="text" class="txt c1" style="width:30%;"/>
-							<input id="txtGroupjno" type="text" class="txt c1" style="width:65%;"/>
-						</td>
+						<td><span> </span><a id="lblStationgno" class="lbl">客戶</a></td>
+                        <td><input id="txtStationgno" type="text" class="txt c1"/></td>
 					</tr>
 					<tr>
-						<td><span> </span><a id="lblSpec_uj" class="lbl">寬幅或序號</a></td>
-						<td><input id="txtSpec" type="text" class="txt c1"/></td>
 						<td><span> </span><a id="lblMechs_uj" class="lbl">寬(mm)</a></td>
 						<td><input id="txtMechs" type="text" class="txt num c1"/></td>
-						<td><span> </span><a id="lblSize_uj" class="lbl">寬幅</a></td>
-						<td><input id="txtSize" type="text" class="txt c1"/></td>
-					</tr>
-					<tr>
-						<td><span> </span><a id="lblVccacc_uj" class="lbl">底材(基重)(膜厚)</a></td>
-						<td><input id="txtVccacc" type="text" class="txt c1"/></td>
 						<td><span> </span><a id="lblTrans_uj" class="lbl">長(M)</a></td>
 						<td><input id="txtTrans" type="text" class="txt num c1"/></td>
 						<td><span> </span><a id="lblMolds_uj" class="lbl">裁切</a></td>
 						<td><input id="txtMolds" type="text" class="txt num c1"/></td>
 					</tr>
 					<tr>
-						<td><span> </span><a id="lblWdate_uj" class="lbl">屬性</a></td>
-						<td><input id="txtWdate" type="text" class="txt c1"/></td>
-						<td><span> </span><a id="lblTeam_uj" class="lbl">MOQ</a></td>
-						<td><input id="txtTeam" type="text" class="txt c1"/></td>
-						<td><span> </span><a id="lblStdmount_uj" class="lbl">MOQ(M)</a></td>
-						<td><input id="txtStdmount" type="text" class="txt num c1"/></td>
-					</tr>
-					<tr style="height: 45px;">
-						<td><span> </span><a id="lblEngpro_uj" class="lbl">物料組合</a></td>
-						<td><input id="txtEngpro" type="text" class="txt c1"/></td>
-						<td><span> </span><a id="lblSec_uj" class="lbl">加工生產速度<BR>(秒/支)</a></td>
-						<td><input id="txtSec" type="text" class="txt num c1"/></td>
-						<td><span> </span><a id="lblProcessno_uj" class="lbl">加工機台別</a></td>
-						<td>
-							<input id="txtProcessno" type="text" class="txt c1" style="width:30%;"/>
-							<input id="txtProcess" type="text" class="txt c1" style="width:65%;"/>
-						</td>
+						<td><span> </span><a id="lblMakes_uj" class="lbl">半-計 交期</a></td>
+						<td><input id="txtMakes" type="text" class="txt num c1"/></td>
+						<td><span> </span><a id="lblPretime_uj" class="lbl">半-訂 交期</a></td>
+						<td><input id="txtPretime" type="text" class="txt num c1"/></td>
+						<td><span> </span><a id="lblPreday_uj" class="lbl">訂單交期</a></td>
+						<td><input id="txtPreday" type="text" class="txt num c1"/></td>
 					</tr>
 					<tr>
-						<td><span> </span><a id="lblGroupgno_uj" class="lbl">製造生產屬性</a></td>
-						<td><input id="txtGroupgno" type="text" class="txt c1"/></td>
-						<td><span> </span><a id="lblHsec_uj" class="lbl">製造速度(M/min)</a></td>
-						<td><input id="txtHsec" type="text" class="txt num c1"/></td>
-						<td><span> </span><a id="lblModelno_uj" class="lbl">製造機台別</a></td>
+						<td><span> </span><a id="lblModelno_uj" class="lbl">機台</a></td>
 						<td>
 							<input id="txtModelno" type="text" class="txt c1" style="width:30%;"/>
 							<input id="txtModel" type="text" class="txt c1" style="width:65%;"/>
 						</td>
-					</tr>
-					<tr style="height: 45px;">
-						<td><span> </span><a id="lblMakes_uj" class="lbl">製成天數<BR>(工作天)</a></td>
-						<td><input id="txtMakes" type="text" class="txt num c1"/></td>
-						<td><span> </span><a id="lblPreday_uj" class="lbl">原料採購最長-天</a></td>
-						<td><input id="txtPreday" type="text" class="txt num c1"/></td>
-						<td><span> </span><a id="lblPretime_uj" class="lbl">製造+備料<BR>-工作天</a></td>
-						<td><input id="txtPretime" type="text" class="txt num c1"/></td>
-					</tr>
-					<tr style="height: 45px;">
-						<td><span> </span><a id="lblWages_uj" class="lbl">半成品熟成<BR>-工作天</a></td>
+						<td><span> </span><a id="lblSec_uj" class="lbl">分條工時(Sec/M)</a></td>
+						<td><input id="txtSec" type="text" class="txt num c1"/></td>
+						<td><span> </span><a id="lblWages_uj" class="lbl">分條人工</a></td>
 						<td><input id="txtWages" type="text" class="txt num c1"/></td>
-						<td><span> </span><a id="lblHours_uj" class="lbl">加工+備料<BR>-工作天</a></td>
-						<td><input id="txtHours" type="text" class="txt num c1"/></td>
-						<td> </td>
-						<td style="text-align: center;"><input id="btnUploadimg" type="button"/></td>
 					</tr>
-					<tr style="height: 45px;">
-						<td><span> </span><a id="lblMinutes_uj" class="lbl">出貨作業(內銷)<BR>-工作天</a></td>
+					<tr><!--成品才顯示-->
+						<td><span> </span><a id="lblMinutes_uj" class="lbl">覆捲工時(Sec/M)</a></td>
 						<td><input id="txtMinutes" type="text" class="txt num c1"/></td>
-						<td><span> </span><a id="lblHminutes_uj" class="lbl">出貨作業(外銷)<BR>-工作天</a></td>
-						<td><input id="txtHminutes" type="text" class="txt num c1"/></td>
-						<td><span> </span><a id="lblBadperc_uj" class="lbl">良率</a></td>
-						<td><input id="txtBadperc" type="text" class="txt num c1"/></td>
-					</tr>
-					<tr style="height: 45px;">
-						<td><span> </span><a id="lblPrice_uj" class="lbl">做成成品頭尾料<BR>消耗(M)</a></td>
-						<td><input id="txtPrice" type="text" class="txt num c1"/></td>
-						<td><span> </span><a id="lblUweight_uj" class="lbl">幾天生產一次<BR>(計畫性)</a></td>
-						<td><input id="txtUweight" type="text" class="txt num c1"/></td>
-						<td><span> </span><a id="lblEngprono_uj" class="lbl">新新皮料</a></td>
-						<td><input id="txtEngprono" type="text" class="txt c1"/></td>
+						<td><span> </span><a id="lblHours_uj" class="lbl">覆捲人工</a></td>
+						<td><input id="txtHours" type="text" class="txt num c1"/></td>
 					</tr>
 					<tr>
-						<td><span> </span><a id="lblS1_uj" class="lbl">膠性</a></td>
+						<td><span> </span><a id="lblS1_uj" class="lbl">換線屬性</a></td>
 						<td><input id="textS1" type="text" class="txt c1"/></td>
-						<td><span> </span><a id="lblS2_uj" class="lbl">膠號</a></td>
+						<td><span> </span><a id="lblS2_uj" class="lbl">上膠面</a></td>
 						<td><input id="textS2" type="text" class="txt c1"/></td>
-						<td><span> </span><a id="lblS3_uj" class="lbl">膠厚</a></td>
+						<td><span> </span><a id="lblS3_uj" class="lbl">補水</a></td>
 						<td><input id="textS3" type="text" class="txt c1"/></td>
 					</tr>
 					<tr>
-						<td><span> </span><a id="lblS4_uj" class="lbl">上膠面</a></td>
-						<td><input id="textS4" type="text" class="txt c1" style="width: 30%;"/>
-							<input id="textS5" type="text" class="txt c1" style="width: 65%;"/>
+						<td><span> </span><a id="lblS4_uj" class="lbl">懸空放</a></td>
+						<td>
+							<input id="textS4" type="text" class="txt c1"/>
+							<input id="textS8" type="hidden" class="txt c1"/><!--保留-->
 						</td>
-						<td><span> </span><a id="lblS6_uj" class="lbl">懸空放</a></td>
+						<td><span> </span><a id="lblBadperc_uj" class="lbl">良率</a></td>
+						<td><input id="txtBadperc" type="text" class="txt num c1"/></td>
+						<td> </td>
+						<td style="text-align: center;"><input id="btnUploadimg" type="button"/></td>
+					</tr>
+					<tr>
+						<td><span> </span><a id="lblS5_uj" class="lbl">外箱長(mm)</a></td>
+						<td><input id="textS5" type="text" class="txt c1"/></td>
+						<td><span> </span><a id="lblS6_uj" class="lbl">外箱寬(mm)</a></td>
 						<td><input id="textS6" type="text" class="txt c1"/></td>
-						<td><span> </span><a id="lblS7_uj" class="lbl">膠色</a></td>
+						<td><span> </span><a id="lblS7_uj" class="lbl">外箱高(mm)</a></td>
 						<td><input id="textS7" type="text" class="txt c1"/></td>
 					</tr>
 					<tr>
-						<td><span> </span><a id="lblS8_uj" class="lbl">吃或不吃水</a></td>
-						<td>
-							<input id="textS8" type="text" class="txt c1"/>
-							<input id="txtStyle" type="hidden"/>
-						</td>
-						<td><span> </span><a id="lblPacks_uj" class="lbl">裝箱支數</a></td>
-						<td><input id="txtPacks" type="text" class="txt num c1"/></td>
-						<td><span> </span><a id="lblStationg_uj" class="lbl">塞頭</a></td>
-						<td><input id="txtStationg" type="text" class="txt c1"/></td>
+						<td><span> </span><a id="lblHsec_uj" class="lbl">標準長小值(M)</a></td>
+						<td><input id="txtHsec" type="text" class="txt c1"/></td>
+						<td><span> </span><a id="lblHminutes_uj" class="lbl">標準長大值(M)</a></td>
+						<td><input id="txtHminutes" type="text" class="txt c1"/></td>
+					</tr>
+					<tr>
+						<td><span> </span><a id="lblTeam_uj" class="lbl">MOQ</a></td>
+						<td><input id="txtTeam" type="text" class="txt c1"/></td>
+						<td><span> </span><a id="lblStdmount_uj" class="lbl">MOQ(M)</a></td>
+						<td><input id="txtStdmount" type="text" class="txt num c1"/></td>
 					</tr>
 					<tr>
 						<td><span> </span><a id="lblWorker" class="lbl"> </a></td>

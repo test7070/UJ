@@ -31,7 +31,7 @@
             brwCount2 = 10;
            	aPop = new Array(['txtTggno', 'lblTggno', 'tgg', 'noa,comp', 'txtTggno,txtTgg', 'tgg_b.aspx']);
            	
-           	t_groupano = "",t_groupbno = "";
+           	var t_groupano = "";
            	q_copy = 1;
             $(document).ready(function() {
                 q_bbsShow = -1;
@@ -53,15 +53,11 @@
                 bbmMask = [['txtDatea', r_picd]];
                 q_mask(bbmMask);
                 q_cmbParse("cmbTypea", q_getPara('ucc.typea'));
-                q_cmbParse("cmbArea",'@,計畫@計畫,訂單@訂單');
+                q_cmbParse("cmbArea",'計畫,訂單');
                 if(t_groupano.length>0)
                 	q_cmbParse("cmbGroupano", t_groupano);
 				if (abbm[q_recno] != undefined) 
 					$("#cmbGroupano").val(abbm[q_recno].groupano);
-				if(t_groupbno.length>0)
-                	q_cmbParse("cmbGroupbno", t_groupbno);
-				if (abbm[q_recno] != undefined) 
-					$("#cmbGroupbno").val(abbm[q_recno].groupbno);
 					
                 $('#btnImport').click(function(e){
                 	
@@ -88,16 +84,6 @@
 							t_groupano = " @ ";
 							for ( i = 0; i < as.length; i++) {
 								t_groupano = t_groupano + (t_groupano.length > 0 ? ',' : '') + as[i].noa + '@' + as[i].noa+' . '+as[i].namea;
-							}
-						}
-						q_gt('uccgb', '', 0, 0, 0, "");
-						break;
-					case 'uccgb':
-						var as = _q_appendData("uccgb", "", true);
-						if (as[0] != undefined) {
-							t_groupbno = " @ ";
-							for ( i = 0; i < as.length; i++) {
-								t_groupbno = t_groupbno + (t_groupbno.length > 0 ? ',' : '') + as[i].noa + '@' + as[i].noa+' . '+as[i].namea;
 							}
 						}
 						q_gt(q_name, q_content, q_sqlCount, 1, 0, '', r_accy);
@@ -431,14 +417,14 @@
                     <tr>
                     	<td><span> </span><a id="lblSpec" class="lbl"> </a></td>
                         <td><input id="txtSpec" type="text" class="txt c1"/></td>
-                        <td><span> </span><a id='lblType' class="lbl"> </a></td>
-						<td><select id="cmbTypea" class="txt c1"> </select></td>
+                        <td><span> </span><a id="lblColor_uj" class="lbl">顏色</a></td>
+                        <td><input id="txtColor" type="text" class="txt c1"/></td>
                     </tr>
                     <tr>
+                    	<td><span> </span><a id='lblType' class="lbl"> </a></td>
+						<td><select id="cmbTypea" class="txt c1"> </select></td>
                     	<td><span> </span><a id='lblGroupano' class="lbl"> </a></td>
 						<td><select id="cmbGroupano" class="txt c1"> </select></td>
-                        <td><span> </span><a id='lblGroupbno' class="lbl"> </a></td>
-						<td><select id="cmbGroupbno" class="txt c1"> </select></td>
                     </tr>
                     <tr>
                     	<td><span> </span><a id="lblStdmount_uj" class="lbl">MOQ(M)</a></td>
@@ -449,24 +435,20 @@
                     <tr>
                         <td><span> </span><a id="lblArea_uj" class="lbl">銷售政策</a></td>
                         <td><select id="cmbArea" class="txt c1"> </select></td>
-                        <td><span> </span><a id="lblColor_uj" class="lbl">顏色</a></td>
-                        <td><input id="txtColor" type="text" class="txt c1"/></td>
+                        <td><span> </span><a id="lblDays_uj" class="lbl">預估採購(含假日)</a></td>
+                        <td><input id="txtDays" type="text" class="txt num c1"/></td>
                     </tr>
                     <tr>
-                    	<td><span> </span><a id="lblDays_uj" class="lbl">預估採購(含假日)</a></td>
-                        <td><input id="txtDays" type="text" class="txt num c1"/></td>
                         <td><span> </span><a id="lblBeginmoney_uj" class="lbl">裝箱支數</a></td>
                         <td><input id="txtBeginmoney" type="text" class="txt num c1"/></td>
+                        <td><span> </span><a id="lblStart_uj" class="lbl">餘料歸零</a></td>
+                        <td><input id="txtStart" type="text" class="txt num c1"/></td>
                     </tr>
                     <tr>
                     	<td><span> </span><a id="lblStkmoney_uj" class="lbl">區間長度(最小值)</a></td>
                         <td><input id="txtStkmoney" type="text" class="txt num c1"/></td>
                         <td><span> </span><a id="lblStkmount_uj" class="lbl">區間長度(最大值)</a></td>
                         <td><input id="txtStkmount" type="text" class="txt num c1"/></td>
-                    </tr>
-                    <tr>
-                    	<td><span> </span><a id="lblStart_uj" class="lbl">餘料歸零</a></td>
-                        <td><input id="txtStart" type="text" class="txt num c1"/></td>
                     </tr>
                     <tr>
 						<td><span> </span><a id='lblTggno' class="lbl btn"> </a></td>
