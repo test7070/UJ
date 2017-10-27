@@ -18,7 +18,8 @@
             var q_name = "ucc";
             var q_readonly = ['txtWorker2', 'txtWorker'];
             var q_readonlys = [];
-            var bbmNum = [];
+            var bbmNum = [['txtReserve', 10, 2, 1],['txtDrcr', 10, 0, 1],['txtInprice', 10, 0, 1],['txtSaleprice', 10, 3, 1],['txtUweight', 10, 2, 1]
+            ,['txtStdmount', 10, 0, 1],['txtSafemount', 10, 0, 1],['txtDays', 10, 0, 1],['txtBeginmoney', 10, 0, 1],['txtStkmoney', 10, 0, 1],['txtStkmount', 10, 0, 1],['txtStart', 10, 0, 1]];
             var bbsNum = [];
             var bbmMask = [];
             var bbsMask = [];
@@ -52,7 +53,7 @@
                 bbmMask = [['txtDatea', r_picd]];
                 q_mask(bbmMask);
                 q_cmbParse("cmbTypea", q_getPara('ucc.typea'));
-                q_cmbParse("cmbArea",' @ ,計畫@計畫,訂單@訂單');
+                q_cmbParse("cmbArea",'@,計畫@計畫,訂單@訂單');
                 if(t_groupano.length>0)
                 	q_cmbParse("cmbGroupano", t_groupano);
 				if (abbm[q_recno] != undefined) 
@@ -422,40 +423,50 @@
                         <td><input id="txtSaleprice" type="text" class="txt num c1"/></td>
                     </tr>
                     <tr>
-                    	<td><span> </span><a id="lblUnit" class="lbl"> </a></td>
+                        <td><span> </span><a id="lblUnit" class="lbl"> </a></td>
                         <td><input id="txtUnit" type="text" class="txt c1"/></td>
+                        <td><span> </span><a id="lblUweight" class="lbl"> </a></td>
+                        <td><input id="txtUweight" type="text" class="txt num c1"/></td>
+                    </tr>
+                    <tr>
+                    	<td><span> </span><a id="lblSpec" class="lbl"> </a></td>
+                        <td><input id="txtSpec" type="text" class="txt c1"/></td>
                         <td><span> </span><a id='lblType' class="lbl"> </a></td>
 						<td><select id="cmbTypea" class="txt c1"> </select></td>
                     </tr>
                     <tr>
-                    	<td><span> </span><a id="lblSafemount_uj" class="lbl">安全數量</a></td>
-                        <td><input id="txtSafemount" type="text" class="txt num c1"/></td>
-                        <td><span> </span><a id='lblGroupano' class="lbl"> </a></td>
+                    	<td><span> </span><a id='lblGroupano' class="lbl"> </a></td>
 						<td><select id="cmbGroupano" class="txt c1"> </select></td>
-                    </tr>
-                    <tr>
-                    	<td><span> </span><a id="lblUweight" class="lbl"> </a></td>
-                        <td><input id="txtUweight" type="text" class="txt num c1"/></td>
-                        <td><span> </span><a id='lblGroupbno_uj' class="lbl">中類群組</a></td>
+                        <td><span> </span><a id='lblGroupbno' class="lbl"> </a></td>
 						<td><select id="cmbGroupbno" class="txt c1"> </select></td>
                     </tr>
                     <tr>
-                    	<td><span> </span><a id="lblStdmount_uj" class="lbl">MOQ</a></td>
+                    	<td><span> </span><a id="lblStdmount_uj" class="lbl">MOQ(M)</a></td>
                         <td><input id="txtStdmount" type="text" class="txt num c1"/></td>
-                        <td><span> </span><a id="lblArea_uj" class="lbl">屬性</a></td>
-                        <td><select id="cmbArea" class="txt c1"> </select></td>
-                    </tr>
-                     <tr>
-                     	<td><span> </span><a id="lblColor_uj" class="lbl">顏色</a></td>
-                        <td><input id="txtColor" type="text" class="txt c1"/></td>
-                    	<td><span> </span><a id="lblDays_uj" class="lbl">預估採購天數</a></td>
-                        <td><input id="txtDays" type="text" class="txt num c1"/></td>
+                    	<td><span> </span><a id="lblSafemount_uj" class="lbl">採購點</a></td>
+                        <td><input id="txtSafemount" type="text" class="txt num c1"/></td>
                     </tr>
                     <tr>
-                    	<td><span> </span><a id="lblBeginmount_uj" class="lbl">皮料/支(M)</a></td>
-                        <td><input id="txtBeginmount" type="text" class="txt num c1"/></td>
+                        <td><span> </span><a id="lblArea_uj" class="lbl">銷售政策</a></td>
+                        <td><select id="cmbArea" class="txt c1"> </select></td>
+                        <td><span> </span><a id="lblColor_uj" class="lbl">顏色</a></td>
+                        <td><input id="txtColor" type="text" class="txt c1"/></td>
+                    </tr>
+                    <tr>
+                    	<td><span> </span><a id="lblDays_uj" class="lbl">預估採購(含假日)</a></td>
+                        <td><input id="txtDays" type="text" class="txt num c1"/></td>
                         <td><span> </span><a id="lblBeginmoney_uj" class="lbl">裝箱支數</a></td>
                         <td><input id="txtBeginmoney" type="text" class="txt num c1"/></td>
+                    </tr>
+                    <tr>
+                    	<td><span> </span><a id="lblStkmoney_uj" class="lbl">區間長度(最小值)</a></td>
+                        <td><input id="txtStkmoney" type="text" class="txt num c1"/></td>
+                        <td><span> </span><a id="lblStkmount_uj" class="lbl">區間長度(最大值)</a></td>
+                        <td><input id="txtStkmount" type="text" class="txt num c1"/></td>
+                    </tr>
+                    <tr>
+                    	<td><span> </span><a id="lblStart_uj" class="lbl">餘料歸零</a></td>
+                        <td><input id="txtStart" type="text" class="txt num c1"/></td>
                     </tr>
                     <tr>
 						<td><span> </span><a id='lblTggno' class="lbl btn"> </a></td>
@@ -464,7 +475,7 @@
 						<td><input id="btnTgg" type="button" style='width: auto; font-size: medium;'/></td>
                     </tr>
                     <tr>
-                    	<td><span> </span><a id='lblMemo_uj' class="lbl">備註</a></td>
+                    	<td><span> </span><a id='lblMemo' class="lbl"> </a></td>
                         <td colspan="3"><input id="txtMemo" type="text"  class="txt c1"/></td>
                     </tr>
                     <tr>
