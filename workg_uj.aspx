@@ -87,40 +87,7 @@
 				});
 				
 				$('#btnOrde_uj').click(function() {
-					if (q_cur == 1 || q_cur == 2) {
-						if (emp($('#txtBdate').val()) && emp($('#txtEdate').val())) {
-							alert(q_getMsg('lblBdate') + '請先填寫。');
-							return;
-						}
-						if ((!emp($('#txtBdate').val()) && emp($('#txtEdate').val())) || (emp($('#txtBdate').val()) && !emp($('#txtEdate').val()))) {
-							alert(q_getMsg('lblBdate') + '錯誤!!。');
-							return;
-						}
-						
-						var t_typea=!emp($('#cmbStype').val())?$('#cmbStype').val():'#non';
-						var t_bdate=!emp($('#txtBdate').val())?$('#txtBdate').val():'#non';
-						var t_edate=!emp($('#txtEdate').val())?$('#txtEdate').val():'#non';
-						var t_custno=!emp($('#txtCustno').val())?$('#txtCustno').val():'#non';
-						var t_ucc1no=!emp($('#txtUcc1no').val())?$('#txtUcc1no').val():'#non';
-						var t_ucc2no=!emp($('#txtUcc2no').val())?$('#txtUcc2no').val():'#non';
-						var t_noa=!emp($('#txtNoa').val())?$('#txtNoa').val():'#non';
-						
-						q_func('qtxt.query.cub_import_uj', 'orde_uj.txt,cub_import_uj,' 
-						+ encodeURI(t_typea)+';'+encodeURI(t_bdate)+';'+encodeURI(t_edate)+';'+encodeURI(t_custno)+';'+encodeURI(t_ucc1no)+';'+encodeURI(t_ucc2no)+';'+encodeURI(t_noa)
-						,r_accy,1);
-	                	var as = _q_appendData("tmp0", "", true, true);
-	                	
-	                	if (as[0] != undefined) {
-		                	for (var i = 0; i < q_bbsCount; i++) {
-								$('#btnMinus_'+i).click();
-							}
-		                	q_gridAddRow(bbsHtm, 'tbbs'
-							, 'txtOdatea,txtOrdeno,txtProductno,txtMount,txtWidth,txtLengthb,txtMechno,txtMech,txtStyle,txtDime,txtTypea,txtUcano,txtUcc1no,txtUcc2no,txtUcc3no,txtUcc4no,txtUcc5no,txtUcc6no,txtGen,txtMemo2', as.length, as
-							, 'datea,ordeno,productno,mount,width,lengthb,mechno,mech,style,dime,typea,ucano,ucc1no,ucc2no,ucc3no,ucc4no,ucc5no,ucc6no,gen,memo2', 'txtOrdeno,txtProductno,txtMemo2');
-							
-							bbsretotal();
-						}
-					}
+					
 				});
 				
 				$('#btnWork_uj').click(function() {
@@ -136,18 +103,7 @@
 					}
 				});
 				
-				//針對workg的物料需求
-				$('#btnWorkg2ordb_uj').click(function() {
-					q_box('z_workg2ordb.aspx' + "?;;;;" + r_accy + ";", 'workg2ordb', "95%", "95%", q_getMsg("popPrint"));
-				});
 				
-				$('#btnWorkPrint_uj').click(function() {
-					q_box('z_workp.aspx' + "?;;;noa='" + $('#txtNoa').val() + "';" + r_accy + ";", '', "95%", "95%", q_getMsg("popPrint"));
-				});
-				
-				$('#lblOrdbno').click(function() {
-					q_box('ordb.aspx' + "?;;;charindex(noa,'" + $('#txtOrdbno').val() + "')>0;" + r_accy + ";", '', "95%", "95%", q_getMsg("lblOrdbno"));
-				});
 				
 				$('#cmbStype').change(function() {
 					for (var i = 0; i < q_bbsCount; i++) {
@@ -158,181 +114,26 @@
 				
 			}
 			
-			function bbsretotal() {
-				for (var i = 0; i < q_bbsCount; i++) {
-					$('#textM1_'+i).val('');
-					$('#textC1_'+i).val('');
-					$('#textM3_'+i).val('');
-					$('#textC3_'+i).val('');
-					$('#textM2_'+i).val('');
-					$('#textC2_'+i).val('');
-					$('#textM4_'+i).val('');
-					$('#textC4_'+i).val('');
-					$('#textC5_'+i).val('');
-					var t_m1=0,t_c1=0,t_m3=0,t_c3=0;
-					var t_m2=0,t_c2=0,t_m4=0,t_c4=0;
-					var t_c5=0;
-					for (var j = 0; j < q_bbsCount; j++) {
-						if($('#cmbStype').val()=='製造'){
-							if(!emp($('#txtUcc2no_'+i).val())){
-								//同紙未排
-								if(i!=j && $('#txtUcc2no_'+i).val()==$('#txtUcc2no_'+j).val() && emp($('#txtRworkdate_'+j).val())){
-									t_m1=q_add(t_m1,dec($('#txtLengthb_'+j).val()));
-									t_c1++;
-								}
-								//同紙已排
-								if($('#txtUcc2no_'+i).val()==$('#txtUcc2no_'+j).val() && !emp($('#txtRworkdate_'+j).val())){
-									t_m3=q_add(t_m3,dec($('#txtLengthb_'+j).val()));
-									t_c3++;
-								}
-							}
-							if(!emp($('#txtUcano_'+i).val())){
-								//同半未排
-								if(i!=j && $('#txtUcano_'+i).val()==$('#txtUcano_'+j).val() && emp($('#txtRworkdate_'+j).val())){
-									t_m2=q_add(t_m2,dec($('#txtLengthb_'+j).val()));
-									t_c2++;
-								}
-								//同半已排
-								if($('#txtUcano_'+i).val()==$('#txtUcano_'+j).val() && !emp($('#txtRworkdate_'+j).val())){
-									t_m4=q_add(t_m4,dec($('#txtLengthb_'+j).val()));
-									t_c4++;
-								}
-							}
-							if(!emp($('#txtTypea_'+i).val())){
-								//生產屬性
-								if($('#txtTypea_'+i).val()==$('#txtTypea_'+j).val() && emp($('#txtRworkdate_'+j).val())){
-									t_c5++;
-								}
-							}
-						}else if($('#cmbStype').val()=='加工'){
-							if(!emp($('#txtUcc4no_'+i).val())){
-								//同紙箱未排
-								if(i!=j && $('#txtUcc4no_'+i).val()==$('#txtUcc4no_'+j).val() && emp($('#txtRworkdate_'+j).val())){
-									t_m1=q_add(t_m1,dec($('#txtMount_'+j).val()));
-									t_c1++;
-								}
-								//同紙箱已排
-								if($('#txtUcc4no_'+i).val()==$('#txtUcc4no_'+j).val() && !emp($('#txtRworkdate_'+j).val())){
-									t_m3=q_add(t_m3,dec($('#txtMount_'+j).val()));
-									t_c3++;
-								}
-							}
-							if(!emp($('#txtUcano_'+i).val())){
-								//同半未排
-								if(i!=j && $('#txtUcano_'+i).val()==$('#txtUcano_'+j).val() && emp($('#txtRworkdate_'+j).val())){
-									t_m2=q_add(t_m2,dec($('#txtMount_'+j).val()));
-									t_c2++;
-								}
-								//同半已排
-								if($('#txtUcano_'+i).val()==$('#txtUcano_'+j).val() && !emp($('#txtRworkdate_'+j).val())){
-									t_m4=q_add(t_m4,dec($('#txtMount_'+j).val()));
-									t_c4++;
-								}
-							}
-						}
-					}
-					$('#textM1_'+i).val(t_m1);
-					if(emp($('#txtRworkdate_'+i).val())){
-						$('#textC1_'+i).val(t_c1);
-					}
-					$('#textM3_'+i).val(t_m3);
-					$('#textC3_'+i).val(t_c3);
-					
-					$('#textM2_'+i).val(t_m2);
-					if(emp($('#txtRworkdate_'+i).val())){
-						$('#textC2_'+i).val(t_c2);
-					}
-					$('#textM4_'+i).val(t_m4);
-					$('#textC4_'+i).val(t_c4);
-					
-					if($('#cmbStype').val()=='製造'){
-						$('#textC5_'+i).val(t_c5);
-					}
-				}
-			}
+			
 			
 			var ordedate=false;
-			var t_works, t_gmount = 0;
 			function q_gtPost(t_name) {
 				switch (t_name) {
-					case 'view_works':
-						t_gmount = 0;
-						t_works = _q_appendData("view_works", "", true);
-						for (var i = 0; i < t_works.length; i++) {
-							t_gmount = t_gmount + dec(t_works[i].gmount);
-						}
-						break;
-					case 'check_view':
-						var as = _q_appendData("workg", "", true);
-						if (as[0] != undefined) {
-							for (var i = 0; i < brwCount; i++) {
-								if($('#vtnoa_'+i).text()!=''){
-									for (var j = 0; j < as.length; j++) {
-										if($('#vtnoa_'+i).text()==as[j].noa){
-											if(as[j].ordbno!=''){
-												$('#vtunordb_'+i).text('');
-											}else{
-												$('#vtunordb_'+i).text('v');
-											}
-											if(as[j].ordano!='' && as[j].ordano.substr(0,2)=='OA'){
-												$('#vtunorda_'+i).text('');
-											}else{
-												$('#vtunorda_'+i).text('v');
-											}
-											$('#vtunwork_'+i).text(as[j].unwork);
-										}
-									}
-								}
-							}
-							
-							for (var j = 0; j < as.length; j++) {
-								if($('#txtNoa').val()==as[j].noa){
-									$('#txtOrdbno').val(as[j].ordbno);
-									$('#txtOrdano').val(as[j].ordano);
-								}
-							}
-						}
-					break;
 					case q_name:
 						if (q_cur == 4)
 							q_Seek_gtPost();
 						break;
-				}
-				if (t_name.substr(0, 9) == 'modiwork_') {
-					var s_works = _q_appendData("works", "", true);
-					var s_gmount = 0;
-					for (var i = 0; i < s_works.length; i++) {
-						s_gmount = s_gmount + dec(s_works[i].gmount);
-					}
-					if (s_gmount > 0) {
-						t_noq = t_name.substr(t_name.indexOf('_') + 1, t_name.length)
-						for (var j = 0; j < fbbs.length; j++) {
-							$('#' + fbbs[j] + '_' + t_noq).attr('disabled', 'disabled');
-
-						}
-						$('#btnMinus_' + t_noq).attr('disabled', 'disabled');
-					}
 				}
 			}
 
 			function q_stPost() {
 				if (!(q_cur == 1 || q_cur == 2))
 					return false;
-				q_func('qtxt.query', 'workg.txt,freeze,' +encodeURI($('#txtNoa').val()));
 			}
 
 			function q_boxClose(s2) {
 				var ret;
 				switch (b_pop) {
-					case 'workg2ordb':
-						//檢查是否有簽核和請購
-						var endnoa=''
-						for (var i = 0; i < brwCount; i++) {
-							if($('#vtnoa_'+i).text()!='')
-								endnoa=$('#vtnoa_'+i).text();
-						}
-						q_gt('workg', "where=^^ noa between '"+endnoa+"' and '"+$('#vtnoa_0').text()+"' ^^" , 0, 0, 0, "check_view", r_accy);
-						break;
 					case q_name + '_s':
 						q_boxClose2(s2);
 						break;
@@ -350,7 +151,6 @@
 				_btnIns();
 				$('#txtNoa').val('AUTO');
 				$('#txtDatea').val(q_date());
-				$('#txtUnorda').val('v');
 				$('#txtBdate').focus();
 			}
 
@@ -362,7 +162,7 @@
 			}
 
 			function btnPrint() {
-				q_box('z_workgp.aspx', '', "95%", "95%", q_getMsg("popPrint"));
+				//q_box('z_workgp.aspx', '', "95%", "95%", q_getMsg("popPrint"));
 			}
 
 			function btnOk() {
@@ -410,34 +210,23 @@
 
 			function refresh(recno) {
 				_refresh(recno);
-				if(q_cur==1){
-					//預設vew的未展排未請購未送簽
-					$('#vtunwork_0').text('v');
-					$('#vtunordb_0').text('v');
-					$('#vtunorda_0').text('v');					
-				}
 				
-				var endnoa=''
-				for (var i = 0; i < brwCount; i++) {
-					if($('#vtnoa_'+i).text()!='')
-						endnoa=$('#vtnoa_'+i).text();
-				}
-				q_gt('workg', "where=^^ noa between '"+endnoa+"' and '"+$('#vtnoa_0').text()+"' ^^" , 0, 0, 0, "check_view", r_accy);
-				
-				var t_where = "where=^^ noa in (select noa from view_work where cuano='" + $('#txtNoa').val() + "') and isnull(gmount,0)>0 ^^";
-				q_gt('view_works', t_where, 0, 0, 0, "", r_accy);
 				change_field();
 			}
 			
 			function change_field () {
 				if($('#cmbStype').val()=='製造'){
-					$('.semi').show();
-					$('.finished').hide();
+					$('.M1').hide();
+					$('.M2').hide();
+					$('.M3').show();
+					$('#lblWadate_uj').text('指定排程日期');
 					$('.dbbs').css('width','3100px');
 				}else{
-					$('.finished').show();
-					$('.semi').hide();
-					$('.dbbs').css('width','3400px');
+					$('.M3').hide();
+					$('.M1').show();
+					$('.M2').show();
+					$('#lblWadate_uj').text('建議加工日');
+					$('.dbbs').css('width','4500px');
 				}
 			}
 
@@ -520,7 +309,6 @@
 				}
 				_bbsAssign();
 				change_field();
-				bbsretotal();
 				
 				if(q_cur==1 || q_cur==2){
 					$('#btnOrderUcc1no').removeAttr('disabled');
@@ -546,41 +334,6 @@
 					}
 				});
 				
-				//加工日排序
-				$('#btnOrderRworkdate').unbind('click');
-				$('#btnOrderRworkdate').click(function() {
-					if(q_cur==1 || q_cur==2){
-						bbssort('txtRworkdate');
-					}
-				});
-				
-				//生產屬性排序
-				$('#btnOrderTypea').unbind('click');
-				$('#btnOrderTypea').click(function() {
-					if(q_cur==1 || q_cur==2){
-						bbssort('txtTypea');
-					}
-				});
-				
-				//半成品排序
-				$('#btnOrderUcano').unbind('click');
-				$('#btnOrderUcano').click(function() {
-					if(q_cur==1 || q_cur==2){
-						bbssort('txtUcano');
-					}
-				});
-				
-				//紙箱排序
-				$('#btnOrderUcc4no').unbind('click');
-				$('#btnOrderUcc4no').click(function() {
-					if(q_cur==1 || q_cur==2){
-						bbssort('txtUcc4no');
-					}
-					//清除NOQ 以避免重新排序
-					for (var i = 0; i < q_bbsCount; i++) {
-						$('#txtNoq_'+i).val('');
-					}
-				});
 			}
 
 			function bbtAssign() {
@@ -635,10 +388,7 @@
 			}
 
 			function btnDele() {
-				if (t_gmount > 0)
-					alert('製令單已領料不能刪除!!');
-				else
-					_btnDele();
+				_btnDele();
 			}
 
 			function btnCancel() {
@@ -651,37 +401,12 @@
 
 			function q_popPost(id) {
 				switch (id) {
-					case 'txtProductno_':
-						$('#txtClass_' + b_seq).focus();
-						break;
 					default:
 						break;
 				}
 			}
 			function q_funcPost(t_func, result) {
-				/*後面調整產生製令單*/
-				/*if (t_func == 'workg.genWork') {
-					var workno = result.split(';')
-					for (var j = 0; j < q_bbsCount; j++) {
-						abbsNow[j]['workno'] = workno[(j * 3) + 1];
-						$('#txtWorkno_' + j).val(workno[(j * 3) + 1]);
-						abbsNow[j]['rworkdate'] = workno[(j * 3) + 2];
-						$('#txtRworkdate_' + j).val(workno[(j * 3) + 2]);
-						abbsNow[j]['workhno'] = workno[(j * 3) + 3];
-						$('#txtWorkhno_' + j).val(workno[(j * 3) + 3]);
-					}
-					alert('製令產出執行完畢!!');
-					$('#vtunwork_'+q_recno).text('');
-					$('#btnWork').val('製令產出').removeAttr('disabled');
-					var obj = $('#tview').find('#noa');
-					var t_noa=$.trim($('#txtNoa').val());
-					for(var i=0;i<obj.length;i++){
-						if(obj.eq(i).html()==t_noa){
-							$('#tview').find('#unordb').eq(i).html('v');
-							break;                                      
-						}
-					}
-				}*/
+				
 			}
 
 		</script>
@@ -692,7 +417,7 @@
 			.dview {
 				float: left;
 				border-width: 0px;
-				width: 575px;
+				width: 420px;
 			}
 			.tview {
 				border: 5px solid gray;
@@ -712,7 +437,7 @@
 			}
 			.dbbm {
 				float: left;
-				width: 695px;
+				width: 840px;
 				border-radius: 5px;
 			}
 			.tbbm {
@@ -849,37 +574,31 @@
 						<td style="width:24px; color:black;"><a id='vewChk'> </a></td>
 						<td style="width:110px; color:black;"><a id='vewNoa'> </a></td>
 						<td style="width:50px; color:black;"><a id='vewStype'> </a></td>
-						<td style="width:170px; color:black;"><a id='vewRang'> </a></td>
-						<td style="width:50px; color:black;"><a id='vewUnwork'> </a></td>
-						<td style="width:50px; color:black;"><a id='vewUnordb'> </a></td>
-						<td style="width:50px; color:black;"><a id='vewUnorda'> </a></td>
+						<td style="width:170px; color:black;"><a id='vewRang_uj'>訂單預交日</a></td>
 					</tr>
 					<tr>
 						<td><input id="chkBrow.*" type="checkbox" style=''/></td>
 						<td id='noa' style="text-align: center;">~noa</td>
 						<td align="center" id='stype=workg.stype'>~stype=workg.stype</td>
 						<td id='bdate edate' style="text-align: center;">~bdate - ~edate</td>
-						<td id='unwork' style="text-align: center;">~unwork</td>
-						<td id='unordb' style="text-align: center;">~unordb</td>
-						<td id='unorda' style="text-align: center;">~unorda</td>
 					</tr>
 				</table>
 			</div>
 			<div class='dbbm'>
 				<table class="tbbm" id="tbbm">
 					<tr style="height: 1px;">
-						<td style="width: 116px;"> </td>
-						<td style="width: 111px;"> </td>
-						<td style="width: 126px;"> </td>
-						<td style="width: 111px;"> </td>
-						<td style="width: 111px;"> </td>
-						<td style="width: 210px;"> </td>
+						<td style="width: 140px;"> </td>
+						<td style="width: 135px;"> </td>
+						<td style="width: 140px;"> </td>
+						<td style="width: 135px;"> </td>
+						<td style="width: 140px;"> </td>
+						<td style="width: 135px;"> </td>
+						<td style="width: 10px;"> </td>
 					</tr>
 					<tr>
 						<td><span> </span><a id="lblDatea" class="lbl"> </a></td>
 						<td>
 							<input id="txtDatea" type="text" class="txt c1"/>
-							<input id="txtWadate" type="hidden"/>
 							<input id="txtSfbdate" type="hidden"/>
 							<input id="txtSfedate" type="hidden"/>
 						</td>
@@ -895,54 +614,46 @@
 							<a style="float: left;">~</a>
 							<input id="txtEdate" type="text" class="txt c2"/>
 						</td>
-						<td><input id="btnOrde_uj" type="button" value="訂單彙總表匯入"/></td>
+						<td><input id="btnCub_uj" type="button" value="生產指令匯入"/></td>
 					</tr>
-					<!--<tr>
-						<td> </td>
-						<td> </td>
-						<td><span> </span><a id="lblWbdate" class="lbl"> </a></td>
-						<td colspan="2">
-							<input id="txtWbdate" type="text" class="txt c2"/>
-							<a style="float: left;">~</a>
-							<input id="txtWedate" type="text" class="txt c2"/>
-						</td>
-					</tr>-->
-					<tr>
+					<tr style="display: none;">
 						<td><span> </span><a id="lblCustno" class="lbl btn"> </a></td>
 						<td colspan="4">
 							<input id="txtCustno" type="text" class="txt c3"/>
 							<input id="txtComp" type="text" class="txt c4"/>
 						</td>
 					</tr>
-					<tr>
-						<td><span> </span><a id="lblUcc1_uj" class="lbl btn">面材</a></td>
-						<td colspan="2">
-							<input id="txtUcc1no" type="text" class="txt c1" style="width: 155px;"/>
-							<span> </span><a id="lblUcc2_uj" class="lbl btn">底材</a>
-						</td>
-						<td colspan="2"><input id="txtUcc2no" type="text" class="txt c1" style="width: 155px;"/></td>
-						<td><input id="btnWork_uj" type="button" value="製令產出"/></td>
+					<tr class="M3">
+						<td><span> </span><a id="lblUcc1_uj" class="lbl btn">製造"上皮"投入</a></td>
+						<td><input id="txtUcc1no" type="text" class="txt c1"/></td>
+						<td><span> </span><a id="lblUcc2_uj" class="lbl btn">製造"上紙"投入</a></td>
+						<td><input id="txtUcc2no" type="text" class="txt c1"/></td>
+					</tr>
+					<tr class="M1 M2 M3">
+						<td><span> </span><a id="lblWadate_uj" class="lbl">建議加工日</a></td>
+						<td><input id="txtWadate" type="text" class="txt c1"/></td>
+						<td><span> </span><a id="lblMount_uj" class="lbl">排程量</a></td>
+						<td><input id="txtMount" type="text" class="txt num c1"/></td>
+					</tr>
+					<tr class="M2">
+						<td><span> </span><a id="lblWbdate_uj" class="lbl">決定分條日</a></td>
+						<td><input id="txtWbdate" type="text" class="txt c1"/></td>
+						<td><span> </span><a id="lblWedate_uj" class="lbl">決定覆捲日</a></td>
+						<td><input id="txtWedate" type="text" class="txt c1"/></td>
+					</tr>
+					<tr class="M2">
+						<td><span> </span><a id="lblOrdano_uj" class="lbl">加工產出回報</a></td>
+						<td><input id="txtOrdano" type="text" class="txt c1"/></td>
 					</tr>
 					<tr>
-						<td><span> </span><a id="lblMemo" class="lbl" > </a></td>
+						<td><span> </span><a id="lblMemo_uj" class="lbl" >備註</a></td>
 						<td colspan="4"><input id="txtMemo" type="text" class="txt c1"/></td>
-						<td><input id="btnWorkg2ordb_uj" type="button" value="物料需求表" /></td>
-					</tr>
-					<tr>
-						<td><span> </span><a id="lblOrdbno" class="lbl btn"> </a></td>
-						<td colspan="4">
-							<input id="txtOrdbno" type="text" class="txt c1"/>
-							<input id="txtOrdano" type="text" class="txt c1" style="display: none;"/>
-						</td>
-						<td><input id="btnWorkgg_uj" type="button" value="工作線別負荷表"/></td>
 					</tr>
 					<tr>
 						<td><span> </span><a id="lblWorker" class="lbl"> </a></td>
 						<td><input id="txtWorker" type="text" class="txt c1"/></td>
 						<td><span> </span><a id="lblWorker2" class="lbl"> </a></td>
 						<td><input id="txtWorker2" type="text" class="txt c1"/></td>
-						<td> </td>
-						<td><input id="btnWorkPrint_uj" type="button" value="製令列印" /></td>
 					</tr>
 				</table>
 			</div>
@@ -951,99 +662,316 @@
 					<tr style='color:white; background:#003366;' >
 						<td style="width:20px;"><input id="btnPlus" type="button" style="font-size: medium; font-weight: bold;" value="＋"/></td>
 						<td style="width:20px;display: none;"> </td>
-						<td style="width:60px;"><a id='lblNoq_s'> </a></td>
-						<td style="width:100px;"><a id="lblOdatea_uj_s">交期</a></td>
-						<td style="width:170px;"><a id='lblOrdeno_uj_s'>訂單號碼</a></td>
-						<td style="width:160px;">
-							<a id='lblProductno_uj_s' class="finished">成品料號</a>
-							<a id='lblProductno2_uj_s' class="semi">半成品料號</a>
-						</td>
-						<td style="width:100px;" class="finished"><a id='lblMount_uj_s'>加工成品(支)</a></td>
-						<td style="width:100px;" class="finished"><a id='lblWidth_uj_s'>寬幅(mm)</a></td>
-						<td style="width:100px;">
-							<a id='lblLengthb_uj_s' class="finished">長(M)</a>
-							<a id='lblLengthb2_uj_s' class="semi">長度(M)</a>
-						</td>
-						<td style="width:60px;"><a id='lblIsprearranged_uj_s'>預排</a></td>
-						<td style="width:100px;"><a id='lblLatedate_uj_s'>最遲到料日</a></td>
-						<td style="width:100px;">
-							<a id='lblRworkdate_uj_s' class="finished">加工日</a>
-							<a id='lblRworkdate2_uj_s' class="semi">上膠日</a>
-							<input id="btnOrderRworkdate" type="button" value="≡" >
-						</td>
-						<td style="width:100px;" class="semi"><a id='lblStyle_uj_s'>膠號</a></td>
-						<td style="width:100px;" class="semi"><a id='lblDime_uj_s'>膠厚</a></td>
-						<td style="width:150px;"><a id='lblMech_uj_s'>指定機台別</a></td>
-						<td style="width:100px;" class="semi"><a id='lblTypea_uj_s'>生產屬性</a><input id="btnOrderTypea" type="button" value="≡" ></td>
-						<td style="width:100px;" class="semi"><a id='lblC5_uj_s'>筆數</a></td>
-						<td style="width:100px;">
-							<a id='lblM1_uj_s' class="finished">(未排程)<BR>同紙箱</a>
-							<a id='lblM12_uj_s' class="semi">(未排程)<BR>同紙</a>
-						</td>
-						<td style="width:100px;"><a id='lblC1_uj_s'>(未排程)<BR>筆數</a></td>
-						<td style="width:100px;"><a id='lblM2_uj_s'>(未排程)<BR>同半成品</a></td>
-						<td style="width:100px;"><a id='lblC2_uj_s'>(未排程)<BR>筆數</a></td>
-						<td style="width:100px;">
-							<a id='lblM3_uj_s' class="finished">(已排程)<BR>同紙箱</a>
-							<a id='lblM32_uj_s' class="semi">(已排程)<BR>同紙</a>
-						</td>
-						<td style="width:100px;"><a id='lblC3_uj_s'>(已排程)<BR>筆數</a></td>
-						<td style="width:100px;"><a id='lblM4_uj_s'>(已排程)<BR>同半成品</a></td>
-						<td style="width:100px;"><a id='lblC4_uj_s'>(已排程)<BR>筆數</a></td>
-						<td style="width:160px;"><a id='lblUcano_uj_s'>半成品料號</a><input id="btnOrderUcano" type="button" value="≡" ></td>
-						<td style="width:160px;"><a id='lblUcc1no_uj_s'>面材</a><input id="btnOrderUcc1no" type="button" value="≡" ></td>
-						<td style="width:160px;"><a id='lblUcc2no_uj_s'>底材</a><input id="btnOrderUcc2no" type="button" value="≡" ></td>
-						<td style="width:160px;"><a id='lblUcc3no_uj_s'>材料</a></td>
-						<td style="width:160px;" class="finished"><a id='lblUcc4no_uj_s'>紙箱</a><input id="btnOrderUcc4no" type="button" value="≡" ></td>
-						<td style="width:160px;" class="finished"><a id='lblUcc5no_uj_s'>紙管</a></td>
-						<td style="width:160px;" class="finished"><a id='lblUcc6no_uj_s'>塞頭</a></td>
-						<td style="width:100px;">
-							<a id='lblGen_uj_s' class="finished">生產時間(Hr)</a>
-							<a id='lblGen2_uj_s' class="semi">製造速度(M/min)</a>
-						</td>
-						<td style="width:200px;"><a id='lblMemo_uj_s'>備註</a></td>
+						<td style="width:60px;"><a id='lblNoq_s'>項次</a></td>
+						<!--原生產指令需求-->
+						<td class="M1 M2" style="width:100px;"><a id="lblA01_uj_s">指令流水號</a></td>
+						<td class="M1 M2" style="width:100px;"><a id="lblA02_uj_s">指令名稱</a></td>
+						<td class="M1 M2" style="width:100px;"><a id="lblA03_uj_s">料號(原成品名)</a></td>
+						<td class="M1 M2" style="width:100px;"><a id="lblA04_uj_s">新成品編碼</a></td>
+						<td class="M1 M2" style="width:100px;"><a id="lblA05_uj_s">交期</a></td>
+						<td class="M1" style="width:100px;"><a id="lblA06_uj_s">成品指令</a></td>
+						<td class="M1" style="width:100px;"><a id="lblA07_uj_s">銷售政策</a></td>
+						<td class="M1 M2" style="width:100px;"><a id="lblA08_uj_s">寬(mm)</a></td>
+						<td class="M1 M2" style="width:100px;"><a id="lblA09_uj_s">長(M)</a></td>
+						<td class="M1 M2" style="width:100px;"><a id="lblA10_uj_s">原需求數量</a></td>
+						<td class="M1 M2" style="width:100px;"><a id="lblA11_uj_s">單位</a></td>
+						<!---->
+						<td class="M1" style="width:100px;"><a id="lblB01_uj_s">手調</a></td>
+						<td class="M1" style="width:100px;"><a id="lblB02_uj_s">數量</a></td>
+						<!--Booking或指定-->
+						<td class="M1" style="width:100px;"><a id="lblC01_uj_s">可動用</a></td>
+						<td class="M1" style="width:100px;"><a id="lblC02_uj_s">Booking手調</a></td>
+						<td class="M1" style="width:100px;"><a id="lblC03_uj_s">Booking</a></td>
+						<td class="M1" style="width:100px;"><a id="lblC04_uj_s">指定</a></td>
+						<td class="M1" style="width:100px;"><a id="lblC05_uj_s">調撥單</a></td>
+						<td class="M1" style="width:100px;"><a id="lblC06_uj_s">Booking到期日</a></td>
+						<td class="M1" style="width:100px;"><a id="lblC07_uj_s">確定</a></td>
+						<!--中繼產品"指定"前預估生產量-->
+						<td class="M1" style="width:100px;"><a id="lblD01_uj_s">應生產量成品</a></td>
+						<td class="M1" style="width:100px;"><a id="lblD02_uj_s">應生產(M)</a></td>
+						<td class="M1" style="width:100px;"><a id="lblD03_uj_s">上膠(M)</a></td>
+						<td class="M1" style="width:100px;"><a id="lblD04_uj_s">手調(M)</a></td>
+						<td class="M1 M2" style="width:100px;"><a id="lblD05_uj_s">生產(M)</a></td>
+						<!---->
+						<td class="M1 M2" style="width:100px;"><a id="lblE01_uj_s">場內可用庫存供貨</a></td>
+						<!--中繼產品-->
+						<td class="M1" style="width:100px;"><a id="lblF01_uj_s">中繼產品料號</a></td>
+						<td class="M1" style="width:100px;"><a id="lblF02_uj_s">場內可用庫存</a></td>
+						<td class="M1 M2" style="width:100px;"><a id="lblF03_uj_s">中繼指定(M)</a></td>
+						<td class="M1" style="width:100px;"><a id="lblF04_uj_s">連接</a></td>
+						<!--再製品-->
+						<td class="M1" style="width:100px;"><a id="lblG01_uj_s">再製品</a></td>
+						<td class="M1" style="width:100px;"><a id="lblG02_uj_s">場內可用庫存</a></td>
+						<td class="M1 M2" style="width:100px;"><a id="lblG03_uj_s">再製品指定(M)</a></td>
+						<td class="M1" style="width:100px;"><a id="lblG04_uj_s">連接</a></td>
+						<!--指定後產出量-->
+						<td class="M1" style="width:100px;"><a id="lblH01_uj_s">指定(%)</a></td>
+						<td class="M1" style="width:100px;"><a id="lblH02_uj_s">指定可產出量</a></td>
+						<td class="M1" style="width:100px;"><a id="lblH03_uj_s">生產成品</a></td>
+						<!---->
+						<td class="M1" style="width:100px;"><a id="lblI01_uj_s">物料需求手調</a></td>
+						<td class="M1" style="width:100px;"><a id="lblI02_uj_s">物料需求(套)</a></td>
+						<td class="M1" style="width:100px;"><a id="lblI03_uj_s">業務成品需求</a></td>
+						<td class="M1" style="width:100px;"><a id="lblI04_uj_s">業務餘料需求</a></td>
+						<td class="M1" style="width:100px;"><a id="lblI05_uj_s">紙管</a></td>
+						<td class="M1" style="width:100px;"><a id="lblI06_uj_s">採購量</a></td>
+						<td class="M1" style="width:100px;"><a id="lblI07_uj_s">貨齊日</a></td>
+						<td class="M1" style="width:100px;"><a id="lblI08_uj_s">紙箱</a></td>
+						<td class="M1" style="width:100px;"><a id="lblI09_uj_s">採購量</a></td>
+						<td class="M1" style="width:100px;"><a id="lblI10_uj_s">貨齊日</a></td>
+						<td class="M1" style="width:100px;"><a id="lblI11_uj_s">塞頭</a></td>
+						<td class="M1" style="width:100px;"><a id="lblI12_uj_s">採購量</a></td>
+						<td class="M1" style="width:100px;"><a id="lblI13_uj_s">貨齊日</a></td>
+						<td class="M1" style="width:100px;"><a id="lblI14_uj_s">物料指定確認</a></td>
+						<td class="M1 M2" style="width:100px;"><a id="lblI15_uj_s">上膠日</a></td>
+						<td class="M1 M2" style="width:100px;"><a id="lblI16_uj_s">熟成(天)</a></td>
+						<td class="M1 M2" style="width:100px;"><a id="lblI17_uj_s">料最快備齊日期</a></td>
+						<td class="M1" style="width:100px;"><a id="lblI18_uj_s">完工狀態(加工)</a></td>
+						<td class="M1" style="width:100px;"><a id="lblI19_uj_s">訂單總量</a></td>
+						<td class="M1" style="width:100px;"><a id="lblI20_uj_s">限定餘數</a></td>
+						
+						<!--加工B-->
+						<td class="M2" style="width:100px;"><a id="lblJ01_uj_s">加工日</a></td>
+						<td class="M2" style="width:100px;"><a id="lblJ02_uj_s">分條機台別</a></td>
+						<td class="M2" style="width:100px;"><a id="lblJ03_uj_s">可分條機台</a></td>
+						<td class="M2" style="width:100px;"><a id="lblJ04_uj_s">不可分條機台</a></td>
+						<td class="M2" style="width:100px;"><a id="lblJ05_uj_s">分條工時(Hr)</a></td>
+						<td class="M2" style="width:100px;"><a id="lblJ06_uj_s">分1</a></td>
+						<td class="M2" style="width:100px;"><a id="lblJ07_uj_s">分2</a></td>
+						<td class="M2" style="width:100px;"><a id="lblJ08_uj_s">分3</a></td>
+						<td class="M2" style="width:100px;"><a id="lblJ09_uj_s">分4</a></td>
+						<td class="M2" style="width:100px;"><a id="lblJ10_uj_s">覆捲日</a></td>
+						<td class="M2" style="width:100px;"><a id="lblJ11_uj_s">覆捲機台別</a></td>
+						<td class="M2" style="width:100px;"><a id="lblJ12_uj_s">覆捲工時(Hr)</a></td>
+						<td class="M2" style="width:100px;"><a id="lblJ13_uj_s">覆1</a></td>
+						<td class="M2" style="width:100px;"><a id="lblJ14_uj_s">覆2</a></td>
+						<td class="M2" style="width:100px;"><a id="lblJ15_uj_s">覆3</a></td>
+						<td class="M2" style="width:100px;"><a id="lblJ16_uj_s">其他</a></td>
+						<td class="M2" style="width:100px;"><a id="lblJ17_uj_s">需求急別</a></td>
+						<td class="M2" style="width:100px;"><a id="lblJ18_uj_s">備註</a></td>
+						<td class="M2" style="width:100px;"><a id="lblJ19_uj_s">產出</a></td>
+						<td class="M2" style="width:100px;"><a id="lblJ20_uj_s">產出率(%)</a></td>
+						<td class="M2" style="width:100px;"><a id="lblJ21_uj_s">完工狀態</a></td>
+						
+						<!--製造-->
+						<td class="M3" style="width:100px;"><a id="lblK01_uj_s">產品別</a></td>
+						<td class="M3" style="width:100px;"><a id="lblK02_uj_s">客戶</a></td>
+						<td class="M3" style="width:100px;"><a id="lblK03_uj_s">半成品</a></td>
+						<td class="M3" style="width:100px;"><a id="lblK04_uj_s">計畫性</a></td>
+						<td class="M3" style="width:100px;"><a id="lblK05_uj_s">需求</a></td>
+						<td class="M3" style="width:100px;"><a id="lblK06_uj_s">原生產量(M)</a></td>
+						<td class="M3" style="width:100px;"><a id="lblK07_uj_s">手調</a></td>
+						<td class="M3" style="width:100px;"><a id="lblK08_uj_s">生產量</a></td>
+						<td class="M3" style="width:100px;"><a id="lblK09_uj_s">下料指令</a></td>
+						<td class="M3" style="width:100px;"><a id="lblK10_uj_s">列管備註</a></td>
+						<td class="M3" style="width:100px;"><a id="lblK11_uj_s">指定進度</a></td>
+						<td class="M3" style="width:100px;"><a id="lblK12_uj_s">指定(紙)%</a></td>
+						<td class="M3" style="width:100px;"><a id="lblK13_uj_s">指定(皮)%</a></td>
+						<td class="M3" style="width:100px;"><a id="lblK14_uj_s">原料最快備齊日期</a></td>
+						<!--決定"上膠日"-->
+						<td class="M3" style="width:100px;"><a id="lblL01_uj_s">換線屬性</a></td>
+						<td class="M3" style="width:100px;"><a id="lblL02_uj_s">補水</a></td>
+						<td class="M3" style="width:100px;"><a id="lblL03_uj_s">上膠日</a></td>
+						<td class="M3" style="width:100px;"><a id="lblL04_uj_s">製造機台別</a></td>
+						<td class="M3" style="width:100px;"><a id="lblL05_uj_s">限定機台別</a></td>
+						<td class="M3" style="width:100px;"><a id="lblL06_uj_s">備料板位</a></td>
+						<!--排程量-->
+						<td class="M3" style="width:100px;"><a id="lblM01_uj_s">A</a></td>
+						<td class="M3" style="width:100px;"><a id="lblM02_uj_s">A工時(小時)</a></td>
+						<td class="M3" style="width:100px;"><a id="lblM03_uj_s">B</a></td>
+						<td class="M3" style="width:100px;"><a id="lblM04_uj_s">B工時(小時)</a></td>
+						<!--製造產出回報-->
+						<td class="M3" style="width:100px;"><a id="lblN01_uj_s">產出(M)</a></td>
+						<td class="M3" style="width:100px;"><a id="lblN02_uj_s">產出率(%)</a></td>
+						<td class="M3" style="width:100px;"><a id="lblN03_uj_s">完工狀態</a></td>
+						<!---->
+						<td class="M3" style="width:100px;"><a id="lblO01_uj_s">完工確認</a></td>
+						<td class="M3" style="width:100px;"><a id="lblO02_uj_s">備註</a></td>
+						<!--上紙段(投入)-->
+						<td class="M3" style="width:100px;"><a id="lblP01_uj_s">上紙(投入)</a></td>
+						<td class="M3" style="width:100px;"><a id="lblP02_uj_s">上紙替代</a></td>
+						<td class="M3" style="width:100px;"><a id="lblP03_uj_s">上紙場內可動用庫存</a></td>
+						<td class="M3" style="width:100px;"><a id="lblP04_uj_s">上紙已採未交</a></td>
+						<td class="M3" style="width:100px;"><a id="lblP05_uj_s">上紙指定(M)</a></td>
+						<td class="M3" style="width:100px;"><a id="lblP06_uj_s">上紙連接</a></td>
+						<!--上皮段(投入)-->
+						<td class="M3" style="width:100px;"><a id="lblQ01_uj_s">上皮(投入)</a></td>
+						<td class="M3" style="width:100px;"><a id="lblQ02_uj_s">上皮替代</a></td>
+						<td class="M3" style="width:100px;"><a id="lblQ03_uj_s">上皮場內可動用庫存</a></td>
+						<td class="M3" style="width:100px;"><a id="lblQ04_uj_s">上皮已採未交</a></td>
+						<td class="M3" style="width:100px;"><a id="lblQ05_uj_s">上皮指定(M)</a></td>
+						<td class="M3" style="width:100px;"><a id="lblQ06_uj_s">上皮連接</a></td>
+						<!---->
+						<td class="M3" style="width:100px;"><a id="lblR01_uj_s">計畫性需求(M)</a></td>
+						<td class="M3" style="width:100px;"><a id="lblR02_uj_s">訂單性需求(M)</a></td>
+						<td class="M3" style="width:100px;"><a id="lblR03_uj_s">成品庫存(M)</a></td>
+						<td class="M3" style="width:100px;"><a id="lblR04_uj_s">半成品庫存(M)</a></td>
+						<td class="M3" style="width:100px;"><a id="lblR05_uj_s">再製品庫存(M)</a></td>
+						<td class="M3" style="width:100px;"><a id="lblR06_uj_s">已排未產(M)</a></td>
+						<td class="M3" style="width:100px;"><a id="lblR07_uj_s">總庫存(M)</a></td>
+						<td class="M3" style="width:100px;"><a id="lblR08_uj_s">工時(Hr)</a></td>
+						<!---->
 					</tr>
 					<tr style='background:#cad3ff;'>
 						<td align="center"><input id="btnMinus.*" type="button" style="font-size: medium; font-weight: bold;" value="－"/></td>
 						<td style="display: none;"><a id="lblNo.*" style="font-weight: bold;text-align: center;display: block;"> </a></td>
 						<td align="center"><input id="txtNoq.*" type="text" class="txt c1"/></td>
-						<td><input id="txtOdatea.*" type="text" class="txt c1"/></td>
-						<td><input id="txtOrdeno.*" type="text" class="txt c1"/></td>
-						<td><input id="txtProductno.*" type="text" class="txt c1"/></td>
-						<td class="finished"><input id="txtMount.*" type="text" class="txt num c1"/></td>
-						<td class="finished"><input id="txtWidth.*" type="text" class="txt num c1"/></td>
-						<td><input id="txtLengthb.*" type="text" class="txt num c1"/></td>
-						<td><input id="chkIsprearranged.*" type="checkbox" class="txt c1"/></td>
-						<td><input id="txtLatedate.*" type="text" class="txt c1"/></td>
-						<td><input id="txtRworkdate.*" type="text" class="txt c1"/></td>
-						<td class="semi"><input id="txtStyle.*" type="text" class="txt c1"/></td>
-						<td class="semi"><input id="txtDime.*" type="text" class="txt num c1"/></td>
-						<td>
-							<input id="txtMechno.*" type="text" class="txt c1"/>
-							<input id="txtMech.*" type="text" class="txt c1"/>
-						</td>
-						<td class="semi"><input id="txtTypea.*" type="text" class="txt c1"/></td>
-						<td class="semi"><input id="textC5.*" type="text" class="txt num c1"/></td>
-						<td><input id="textM1.*" type="text" class="txt num c1"/></td>
-						<td><input id="textC1.*" type="text" class="txt num c1"/></td>
-						<td><input id="textM2.*" type="text" class="txt num c1"/></td>
-						<td><input id="textC2.*" type="text" class="txt num c1"/></td>
-						<td><input id="textM3.*" type="text" class="txt num c1"/></td>
-						<td><input id="textC3.*" type="text" class="txt num c1"/></td>
-						<td><input id="textM4.*" type="text" class="txt num c1"/></td>
-						<td><input id="textC4.*" type="text" class="txt num c1"/></td>
-						<td><input id="txtUcano.*" type="text" class="txt c1"/></td>
-						<td><input id="txtUcc1no.*" type="text" class="txt c1"/></td>
-						<td><input id="txtUcc2no.*" type="text" class="txt c1"/></td>
-						<td><input id="txtUcc3no.*" type="text" class="txt c1"/></td>
-						<td class="finished"><input id="txtUcc4no.*" type="text" class="txt c1"/></td>
-						<td class="finished"><input id="txtUcc5no.*" type="text" class="txt c1"/></td>
-						<td class="finished"><input id="txtUcc6no.*" type="text" class="txt c1"/></td>
-						<td><input id="txtGen.*" type="text" class="txt num c1"/></td>
-						<td>
-							<input id="txtMemo.*" type="text" class="txt c1"/>
-							<input id="txtMemo2.*" type="text" class="txt c1"/><!--cub單號-->
-						</td>
+						<!--原生產指令需求-->
+						<td class="M1 M2"><input id="textA01.*" type="text" class="txt c1"/></td>
+						<td class="M1 M2"><input id="textA02.*" type="text" class="txt c1"/></td>
+						<td class="M1 M2"><input id="textA03.*" type="text" class="txt c1"/></td>
+						<td class="M1 M2"><input id="textA04.*" type="text" class="txt c1"/></td>
+						<td class="M1 M2"><input id="textA05.*" type="text" class="txt c1"/></td>
+						<td class="M1"><input id="textA06.*" type="text" class="txt c1"/></td>
+						<td class="M1"><input id="textA07.*" type="text" class="txt c1"/></td>
+						<td class="M1 M2"><input id="textA08.*" type="text" class="txt num c1"/></td>
+						<td class="M1 M2"><input id="textA09.*" type="text" class="txt num c1"/></td>
+						<td class="M1 M2"><input id="textA10.*" type="text" class="txt num c1"/></td>
+						<td class="M1 M2"><input id="textA11.*" type="text" class="txt c1"/></td>
+						<!---->
+						<td class="M1"><input id="textB01.*" type="text" class="txt num c1"/></td>
+						<td class="M1"><input id="textB02.*" type="text" class="txt num c1"/></td>
+						<!--Booking或指定-->
+						<td class="M1"><input id="textC01.*" type="text" class="txt num c1"/></td>
+						<td class="M1"><input id="textC02.*" type="text" class="txt num c1"/></td>
+						<td class="M1"><input id="textC03.*" type="text" class="txt num c1"/></td>
+						<td class="M1"><input id="btnC04.*" type="button" value="."/></td>
+						<td class="M1"><input id="btnC05.*" type="button" value="."/></td>
+						<td class="M1"><input id="textC06.*" type="text" class="txt c1"/></td>
+						<td class="M1"><input id="checkC07.*" type="checkbox"/></td>
+						<!--中繼產品"指定"前預估生產量-->
+						<td class="M1"><input id="textD01.*" type="text" class="txt num c1"/></td>
+						<td class="M1"><input id="textD02.*" type="text" class="txt num c1"/></td>
+						<td class="M1"><input id="textD03.*" type="text" class="txt num c1"/></td>
+						<td class="M1"><input id="textD04.*" type="text" class="txt num c1"/></td>
+						<td class="M1 M2"><input id="textD05.*" type="text" class="txt num c1"/></td>
+						<!---->
+						<td class="M1 M2"><input id="textE01.*" type="text" class="txt c1"/></td>
+						<!--中繼產品-->
+						<td class="M1"><input id="textF01.*" type="text" class="txt c1"/></td>
+						<td class="M1"><input id="textF02.*" type="text" class="txt num c1"/></td>
+						<td class="M1 M2"><input id="textF03.*" type="text" class="txt num c1"/></td>
+						<td class="M1"><input id="btnF04.*" type="button" value="."/></td>
+						<!--再製品-->
+						<td class="M1"><input id="textG01.*" type="text" class="txt c1"/></td>
+						<td class="M1"><input id="textG02.*" type="text" class="txt num c1"/></td>
+						<td class="M1 M2"><input id="textG03.*" type="text" class="txt num c1"/></td>
+						<td class="M1"><input id="btnG04.*" type="button" value="."/></td>
+						<!--指定後產出量-->
+						<td class="M1"><input id="textH01.*" type="text" class="txt num c1"/></td>
+						<td class="M1"><input id="textH02.*" type="text" class="txt num c1"/></td>
+						<td class="M1"><input id="textH03.*" type="text" class="txt num c1"/></td>
+						<!---->
+						<td class="M1"><input id="textI01.*" type="text" class="txt num c1"/></td>
+						<td class="M1"><input id="textI02.*" type="text" class="txt num c1"/></td>
+						<td class="M1"><input id="textI03.*" type="text" class="txt c1"/></td>
+						<td class="M1"><input id="textI04.*" type="text" class="txt c1"/></td>
+						<td class="M1"><input id="textI05.*" type="text" class="txt c1"/></td>
+						<td class="M1"><input id="textI06.*" type="text" class="txt num c1"/></td>
+						<td class="M1"><input id="textI07.*" type="text" class="txt c1"/></td>
+						<td class="M1"><input id="textI08.*" type="text" class="txt c1"/></td>
+						<td class="M1"><input id="textI09.*" type="text" class="txt num c1"/></td>
+						<td class="M1"><input id="textI10.*" type="text" class="txt c1"/></td>
+						<td class="M1"><input id="textI11.*" type="text" class="txt c1"/></td>
+						<td class="M1"><input id="textI12.*" type="text" class="txt num c1"/></td>
+						<td class="M1"><input id="textI13.*" type="text" class="txt c1"/></td>
+						<td class="M1"><input id="textI14.*" type="text" class="txt c1"/></td>
+						<td class="M1 M2"><input id="textI15.*" type="text" class="txt c1"/></td>
+						<td class="M1 M2"><input id="textI16.*" type="text" class="txt num c1"/></td>
+						<td class="M1 M2"><input id="textI17.*" type="text" class="txt c1"/></td>
+						<td class="M1"><input id="textI18.*" type="text" class="txt c1"/></td>
+						<td class="M1"><input id="textI19.*" type="text" class="txt num c1"/></td>
+						<td class="M1"><input id="textI20.*" type="text" class="txt num c1"/></td>
+						
+						<!--加工B-->
+						<td class="M2"><input id="textJ01.*" type="text" class="txt c1"/></td>
+						<td class="M2"><input id="textJ02.*" type="text" class="txt c1"/></td>
+						<td class="M2"><input id="textJ03.*" type="text" class="txt c1"/></td>
+						<td class="M2"><input id="textJ04.*" type="text" class="txt c1"/></td>
+						<td class="M2"><input id="textJ05.*" type="text" class="txt num c1"/></td>
+						<td class="M2"><input id="textJ06.*" type="text" class="txt num c1"/></td>
+						<td class="M2"><input id="textJ07.*" type="text" class="txt num c1"/></td>
+						<td class="M2"><input id="textJ08.*" type="text" class="txt num c1"/></td>
+						<td class="M2"><input id="textJ09.*" type="text" class="txt num c1"/></td>
+						<td class="M2"><input id="textJ10.*" type="text" class="txt c1"/></td>
+						<td class="M2"><input id="textJ11.*" type="text" class="txt c1"/></td>
+						<td class="M2"><input id="textJ12.*" type="text" class="txt num c1"/></td>
+						<td class="M2"><input id="textJ13.*" type="text" class="txt num c1"/></td>
+						<td class="M2"><input id="textJ14.*" type="text" class="txt num c1"/></td>
+						<td class="M2"><input id="textJ15.*" type="text" class="txt num c1"/></td>
+						<td class="M2"><input id="textJ16.*" type="text" class="txt num c1"/></td>
+						<td class="M2"><input id="textJ17.*" type="text" class="txt c1"/></td>
+						<td class="M2"><input id="textJ18.*" type="text" class="txt c1"/></td>
+						<td class="M2"><input id="textJ19.*" type="text" class="txt num c1"/></td>
+						<td class="M2"><input id="textJ20.*" type="text" class="txt num c1"/></td>
+						<td class="M2"><input id="textJ21.*" type="text" class="txt c1"/></td>
+						
+						<!--製造-->
+						<td class="M3"><input id="textK01.*" type="text" class="txt c1"/></td>
+						<td class="M3"><input id="textK02.*" type="text" class="txt c1"/></td>
+						<td class="M3"><input id="textK03.*" type="text" class="txt c1"/></td>
+						<td class="M3"><input id="textK04.*" type="text" class="txt c1"/></td>
+						<td class="M3"><input id="textK05.*" type="text" class="txt c1"/></td>
+						<td class="M3"><input id="textK06.*" type="text" class="txt num c1"/></td>
+						<td class="M3"><input id="textK07.*" type="text" class="txt num c1"/></td>
+						<td class="M3"><input id="textK08.*" type="text" class="txt num c1"/></td>
+						<td class="M3"><input id="textK09.*" type="text" class="txt c1"/></td>
+						<td class="M3"><input id="textK10.*" type="text" class="txt c1"/></td>
+						<td class="M3"><input id="textK11.*" type="text" class="txt c1"/></td>
+						<td class="M3"><input id="textK12.*" type="text" class="txt num c1"/></td>
+						<td class="M3"><input id="textK13.*" type="text" class="txt num c1"/></td>
+						<td class="M3"><input id="textK14.*" type="text" class="txt c1"/></td>
+						
+						<!--決定"上膠日"-->
+						<td class="M3"><input id="textL01.*" type="text" class="txt c1"/></td>
+						<td class="M3"><input id="textL02.*" type="text" class="txt c1"/></td>
+						<td class="M3"><input id="textL03.*" type="text" class="txt c1"/></td>
+						<td class="M3"><input id="textL04.*" type="text" class="txt c1"/></td>
+						<td class="M3"><input id="textL05.*" type="text" class="txt c1"/></td>
+						<td class="M3"><input id="textL06.*" type="text" class="txt c1"/></td>
+						<!--排程量-->
+						<td class="M3"><input id="textM01.*" type="text" class="txt num c1"/></td>
+						<td class="M3"><input id="textM02.*" type="text" class="txt num c1"/></td>
+						<td class="M3"><input id="textM03.*" type="text" class="txt num c1"/></td>
+						<td class="M3"><input id="textM04.*" type="text" class="txt num c1"/></td>
+						<!--製造產出回報-->
+						<td class="M3"><input id="textN01.*" type="text" class="txt num c1"/></td>
+						<td class="M3"><input id="textN02.*" type="text" class="txt num c1"/></td>
+						<td class="M3"><input id="textN03.*" type="text" class="txt c1"/></td>
+						<!---->
+						<td class="M3"><input id="btnO01.*" type="button" value="."/></td>
+						<td class="M3"><input id="textO02.*" type="text" class="txt c1"/></td>
+						<!--上紙段(投入)-->
+						<td class="M3"><input id="textP01.*" type="text" class="txt c1"/></td>
+						<td class="M3"><input id="textP02.*" type="text" class="txt c1"/></td>
+						<td class="M3"><input id="textP03.*" type="text" class="txt num c1"/></td>
+						<td class="M3"><input id="textP04.*" type="text" class="txt num c1"/></td>
+						<td class="M3"><input id="textP05.*" type="text" class="txt num c1"/></td>
+						<td class="M3"><input id="btnP06.*" type="button" value="+"/></td>
+						<!--上皮段(投入)-->
+						<td class="M3"><input id="textQ01.*" type="text" class="txt c1"/></td>
+						<td class="M3"><input id="textQ02.*" type="text" class="txt c1"/></td>
+						<td class="M3"><input id="textQ03.*" type="text" class="txt num c1"/></td>
+						<td class="M3"><input id="textQ04.*" type="text" class="txt num c1"/></td>
+						<td class="M3"><input id="textQ05.*" type="text" class="txt num c1"/></td>
+						<td class="M3"><input id="btnQ06.*" type="button" value="+"/></td>
+						
+						<!---->
+						<td class="M3"><input id="textR01.*" type="text" class="txt num c1"/></td>
+						<td class="M3"><input id="textR02.*" type="text" class="txt num c1"/></td>
+						<td class="M3"><input id="textR03.*" type="text" class="txt num c1"/></td>
+						<td class="M3"><input id="textR04.*" type="text" class="txt num c1"/></td>
+						<td class="M3"><input id="textR05.*" type="text" class="txt num c1"/></td>
+						<td class="M3"><input id="textR06.*" type="text" class="txt num c1"/></td>
+						<td class="M3"><input id="textR07.*" type="text" class="txt num c1"/></td>
+						<td class="M3"><input id="textR08.*" type="text" class="txt num c1"/></td>
+						<!---->
+						
+						
+						
+						
+						
+						<td><input id="txtMemo.*" type="text" class="txt c1"/></td>
 					</tr>
 				</table>
 			</div>

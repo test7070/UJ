@@ -722,15 +722,19 @@
 					</tr>
 					<tr>
 						<td><span> </span><a id="lblNoa" class="lbl"> </a></td>
-						<td><input id="txtNoa" type="text" class="txt c1"/></td>
-						<td><span> </span><a id="lblKdate" class="lbl"> </a></td>
-						<td><input id="txtKdate" type="text" class="txt c1"/></td>
-						<td><span> </span><a id="lblType" class="lbl"> </a></td>
-						<td><select id="cmbTypea" class="txt c1"> </select></td>
+						<td colspan="2"><input id="txtNoa" type="text" class="txt c1"/></td>
+						<td><span> </span><a id="lblEngpro_uj" class="lbl">舊成品編碼</a></td>
+						<td colspan="2"><input id="txtEngpro" type="text" class="txt c1"/></td>
 					</tr>
 					<tr>
 						<td><span> </span><a id="lblProduct" class="lbl"> </a></td>
 						<td colspan='3'><input id="txtProduct" type="text" class="txt c1"/></td>
+						<td><span> </span><a id="lblKdate" class="lbl"> </a></td>
+						<td><input id="txtKdate" type="text" class="txt c1"/></td>
+					</tr>
+					<tr>
+						<td><span> </span><a id="lblType" class="lbl"> </a></td>
+						<td><select id="cmbTypea" class="txt c1"> </select></td>
 						<td><span> </span><a id="lblGroupdno_uj" class="lbl">銷售政策</a></td>
 						<td><select id="cmbGroupdno" class="txt c1"> </select></td>
 					</tr>
@@ -766,18 +770,6 @@
 						<td class="type2"><span> </span><a id="lblPretime_uj" class="lbl">半-訂 交期</a></td>
 						<td class="type2"><input id="txtPretime" type="text" class="txt num c1"/></td>
 					</tr>
-					<tr class="type2 type8">
-						<td><span> </span><a id="lblGroupbno_uj" class="lbl">半成品</a></td>
-						<td><input id="txtGroupbno" type="text" class="txt c1"/></td>
-						<td><span> </span><a id="lblGroupcno_uj" class="lbl">再製品</a></td>
-						<td><input id="txtGroupcno" type="text" class="txt c1"/></td>
-					</tr>
-					<tr class="type2 type8">
-						<td><span> </span><a id="lblGroupkno_uj" class="lbl">半成品轉零碼</a></td>
-						<td><input id="txtGroupkno" type="text" class="txt c1"/></td>
-						<td><span> </span><a id="lblGrouplno_uj" class="lbl">再製品轉零碼</a></td>
-						<td><input id="txtGrouplno" type="text" class="txt c1"/></td>
-					</tr>
 					<tr>
 						<td><span> </span><a id="lblModelno_uj" class="lbl">機台</a></td>
 						<td>
@@ -796,6 +788,18 @@
 						<td><input id="txtMinutes" type="text" class="txt num c1"/></td>
 						<td><span> </span><a id="lblHours_uj" class="lbl">覆捲人工</a></td>
 						<td><input id="txtHours" type="text" class="txt num c1"/></td>
+					</tr>
+					<tr class="type2 type8">
+						<td><span> </span><a id="lblGroupbno_uj" class="lbl">半成品</a></td>
+						<td><input id="txtGroupbno" type="text" class="txt c1"/></td>
+						<td class="type2"><span> </span><a id="lblGroupcno_uj" class="lbl">再製品</a></td>
+						<td class="type2"><input id="txtGroupcno" type="text" class="txt c1"/></td>
+					</tr>
+					<tr class="type2 type8">
+						<td><span> </span><a id="lblGroupkno_uj" class="lbl">半成品轉零碼</a></td>
+						<td><input id="txtGroupkno" type="text" class="txt c1"/></td>
+						<td><span> </span><a id="lblGrouplno_uj" class="lbl">再製品轉零碼</a></td>
+						<td><input id="txtGrouplno" type="text" class="txt c1"/></td>
 					</tr>
 					<tr class="type2">
 						<td><span> </span><a id="lblGroupeno_uj" class="lbl">紙管</a></td>
@@ -845,7 +849,7 @@
 						<td><input id="txtHminutes" type="text" class="txt c1"/></td>
 					</tr>
 					<tr>
-						<td><span> </span><a id="lblBadperc_uj" class="lbl">良率</a></td>
+						<td><span> </span><a id="lblBadperc_uj" class="lbl">良率%</a></td>
 						<td><input id="txtBadperc" type="text" class="txt num c1"/></td>
 						<td><span> </span><a id="lblStdmount_uj" class="lbl">MOQ(M)</a></td>
 						<td><input id="txtStdmount" type="text" class="txt num c1"/></td>
@@ -866,7 +870,7 @@
 				</table>
 			</div>
 		</div>
-		<div class='dbbs' style="width: 760px;">
+		<div class='dbbs' style="width: 760px;display: none;">
 			<table id="tbbs" class='tbbs' border="1" cellpadding='2' cellspacing='1' >
 				<tr style='color:White; background:#003366;' >
 					<td align="center" style="width:40px;">

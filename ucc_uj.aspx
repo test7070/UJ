@@ -415,8 +415,8 @@
                         <td><input id="txtUweight" type="text" class="txt num c1"/></td>
                     </tr>
                     <tr>
-                    	<td><span> </span><a id="lblSpec" class="lbl"> </a></td>
-                        <td><input id="txtSpec" type="text" class="txt c1"/></td>
+                    	<td><span> </span><a id="lblSpec_uj" class="lbl">規格</a></td>
+                        <td><input id="txtSpec_uj" type="text" class="txt c1"/></td>
                         <td><span> </span><a id="lblColor_uj" class="lbl">顏色</a></td>
                         <td><input id="txtColor" type="text" class="txt c1"/></td>
                     </tr>
@@ -435,7 +435,7 @@
                     <tr>
                         <td><span> </span><a id="lblArea_uj" class="lbl">銷售政策</a></td>
                         <td><select id="cmbArea" class="txt c1"> </select></td>
-                        <td><span> </span><a id="lblDays_uj" class="lbl">預估採購(含假日)</a></td>
+                        <td><span> </span><a id="lblDays_uj" class="lbl">採購天數(含假日)</a></td>
                         <td><input id="txtDays" type="text" class="txt num c1"/></td>
                     </tr>
                     <tr>
@@ -457,7 +457,7 @@
 						<td><input id="btnTgg" type="button" style='width: auto; font-size: medium;'/></td>
                     </tr>
                     <tr>
-                    	<td><span> </span><a id='lblMemo' class="lbl"> </a></td>
+                    	<td><span> </span><a id='lblMemo_uj' class="lbl">注意事項</a></td>
                         <td colspan="3"><input id="txtMemo" type="text"  class="txt c1"/></td>
                     </tr>
                     <tr>
@@ -469,7 +469,6 @@
                 </table>
             </div>
         </div>
-        
         <input id="q_sys" type="hidden" />
     </body>
 </html>
