@@ -18,7 +18,7 @@
 			q_tables = 't';
 			var q_name = "workg";
 			var q_readonly = ['txtNoa', 'txtDatea', 'txtWorker', 'txtWorker2'];
-			var q_readonlys = ['txtNoq','textB02'];
+			var q_readonlys = ['txtNoq','textB02','textJ02','textJ11','textJ17','textL04'];
 			var q_readonlyt = [];
 			var bbmNum = [];
 			var bbsNum = [];
@@ -83,7 +83,7 @@
 					,['textJ05', 15, 2, 1],['textJ06', 15, 4, 1],['textJ07', 15, 4, 1],['textJ08', 15, 4, 1],['textJ09', 15, 4, 1]
 					,['textJ12', 15, 2, 1],['textJ13', 15, 4, 1],['textJ14', 15, 4, 1],['textJ15', 15, 4, 1],['textJ16', 15, 4, 1]
 					,['textJ19', 15, 4, 1],['textJ20', 15, 2, 1]
-					,['textK06', 15, 4, 1],['textK07', 15, 4, 1],['textK08', 15, 4, 1],['textK12', 15, 2, 1],['textK13', 15, 2, 1]
+					,['textK06', 15, 4, 1]/*,['textK07', 15, 4, 1]*/,['textK08', 15, 4, 1],['textK12', 15, 2, 1],['textK13', 15, 2, 1]
 					,['textM01', 15, 4, 1],['textM02', 15, 2, 1],['textM03', 15, 4, 1],['textM04', 15, 2, 1]
 					,['textN01', 15, 4, 1],['textN02', 15, 2, 1]
 					,['textP03', 15, 4, 1],['textP04', 15, 4, 1],['textP05', 15, 4, 1]
@@ -101,6 +101,10 @@
 				
 				q_mask(bbmMask);
 				q_cmbParse("cmbStype", '加工,製造');	
+				q_cmbParse("combJ02", ',分1,分2,分3,分4','s');
+				q_cmbParse("combJ11", ',覆1,覆2,覆3,其他','s');
+				q_cmbParse("combJ17", ',急,做,可','s');
+				q_cmbParse("combL04", ',A,B','s');
 				
 				document.title='製造/加工排程表';
 				
@@ -132,6 +136,21 @@
 					change_field();
 				});
 				
+				//決定分條
+				$('#txtWbdate').change(function() {
+					FJ06();
+					FJ07();
+					FJ08();
+					FJ09();
+				});
+				
+				//決定覆捲日
+				$('#txtWedate').change(function() {
+					FJ13();
+					FJ14();
+					FJ15();
+					FJ16();
+				});
 			}
 			
 			var ordedate=false;
@@ -298,9 +317,19 @@
 			function readonly(t_para, empty) {
 				_readonly(t_para, empty);
 				if (t_para) {
-					
+					for (var i = 0; i < q_bbsCount; i++) {
+						$('#combJ02_'+i).attr('disabled', 'disabled');
+						$('#combJ11_'+i).attr('disabled', 'disabled');
+						$('#combJ17_'+i).attr('disabled', 'disabled');
+						$('#combL04_'+i).attr('disabled', 'disabled');
+					}
 				} else {
-					
+					for (var i = 0; i < q_bbsCount; i++) {
+						$('#combJ02_'+i).removeAttr('disabled');
+						$('#combJ11_'+i).removeAttr('disabled');
+						$('#combJ17_'+i).removeAttr('disabled');
+						$('#combL04_'+i).removeAttr('disabled');
+					}
 				}
 				change_field();
 			}
@@ -440,7 +469,7 @@
 											}
 										}
 									}else{
-										alart('無此料號!!');
+										alert('無此料號!!');
 									}
 								}
 							}
@@ -610,6 +639,7 @@
 							b_seq = t_IdSeq;
 							FH01(b_seq);
 							FH02(b_seq);
+							FJ05(b_seq);
 						});
 						
 						//再製指定(M)
@@ -619,6 +649,7 @@
 							b_seq = t_IdSeq;
 							FH01(b_seq);
 							FH02(b_seq);
+							FJ12(b_seq);
 						});
 						
 						//物料需求(套)
@@ -707,6 +738,144 @@
 							q_bodyId($(this).attr('id'));
 							b_seq = t_IdSeq;
 							FI20(b_seq);
+						});
+						
+						//加工日
+						$('#textJ01_'+i).change(function() {
+							FJ06();
+							FJ07();
+							FJ08();
+							FJ09();
+						});
+						
+						//分條機台別
+						$('#textJ02_'+i).change(function() {
+							FJ06();
+							FJ07();
+							FJ08();
+							FJ09();
+						});
+						
+						//覆捲日
+						$('#textJ01_'+i).change(function() {
+							FJ13();
+							FJ14();
+							FJ15();
+							FJ16();
+						});
+						
+						//覆捲機台別
+						$('#textJ02_'+i).change(function() {
+							FJ13();
+							FJ14();
+							FJ15();
+							FJ16();
+						});
+						
+						$('#combJ02_'+i).change(function() {
+							t_IdSeq = -1;
+							q_bodyId($(this).attr('id'));
+							b_seq = t_IdSeq;
+							if(q_cur==1 || q_cur==2){
+								$('#textJ02_'+b_seq).val($('#combJ02_'+b_seq).val());
+								$('#textJ02_'+b_seq).change();
+							}
+						});
+						
+						$('#combJ11_'+i).change(function() {
+							t_IdSeq = -1;
+							q_bodyId($(this).attr('id'));
+							b_seq = t_IdSeq;
+							if(q_cur==1 || q_cur==2){
+								$('#textJ11_'+b_seq).val($('#combJ11_'+b_seq).val());
+								$('#textJ11_'+b_seq).change();
+							}
+						});
+						
+						$('#combJ17_'+i).change(function() {
+							t_IdSeq = -1;
+							q_bodyId($(this).attr('id'));
+							b_seq = t_IdSeq;
+							if(q_cur==1 || q_cur==2){
+								$('#textJ17_'+b_seq).val($('#combJ17_'+b_seq).val());
+							}
+						});
+						
+						//製造----------------------
+						$('#textK03_'+i).change(function() {
+							t_IdSeq = -1;
+							q_bodyId($(this).attr('id'));
+							b_seq = t_IdSeq;
+						});
+						
+						$('#textK07_'+i).change(function() {
+							t_IdSeq = -1;
+							q_bodyId($(this).attr('id'));
+							b_seq = t_IdSeq;
+							FK08(b_seq);
+						});
+						
+						$('#textL03_'+i).change(function() {
+							t_IdSeq = -1;
+							q_bodyId($(this).attr('id'));
+							b_seq = t_IdSeq;
+							FM01();
+							FM02();
+							FM03();
+							FM04();
+							FR06(b_seq);
+						});
+						
+						$('#combL04_'+i).change(function() {
+							t_IdSeq = -1;
+							q_bodyId($(this).attr('id'));
+							b_seq = t_IdSeq;
+							if(q_cur==1 || q_cur==2){
+								$('#textL04_'+b_seq).val($('#combL04_'+b_seq).val());
+								FM01();
+								FM02();
+								FM03();
+								FM04();
+							}
+						});
+						
+						$('#combL04_'+i).change(function() {
+							t_IdSeq = -1;
+							q_bodyId($(this).attr('id'));
+							b_seq = t_IdSeq;
+							FR06(b_seq);
+						});
+						
+						$('#textP05_'+i).change(function() {
+							t_IdSeq = -1;
+							q_bodyId($(this).attr('id'));
+							b_seq = t_IdSeq;
+							FK11(b_seq);
+							FK12(b_seq);
+							FN02(b_seq);
+						});
+						
+						$('#textQ05_'+i).change(function() {
+							t_IdSeq = -1;
+							q_bodyId($(this).attr('id'));
+							b_seq = t_IdSeq;
+							FK11(b_seq);
+							FK13(b_seq);
+							FN02(b_seq);
+						});
+						
+						$('#textR01_'+i).change(function() {
+							t_IdSeq = -1;
+							q_bodyId($(this).attr('id'));
+							b_seq = t_IdSeq;
+							FK06(b_seq);
+							FK08(b_seq);
+						});
+						$('#textR02_'+i).change(function() {
+							t_IdSeq = -1;
+							q_bodyId($(this).attr('id'));
+							b_seq = t_IdSeq;
+							FK06(b_seq);
 						});
 						
 						//----------------------------------------------------------------
@@ -1011,7 +1180,99 @@
 				$('#textJ05_'+i).val(q_div(q_mul(t_f03,t_sec),3600));
 			}
 			
-			function FJ05(i) { //B表 覆捲工時
+			function FJ06() { //B表 分1
+				var t_wbdate=$('#txtWbdate').val();//決定分條日
+				var t_j06=0;
+				
+				for (var i = 0; i < q_bbsCount; i++) {
+					var t_f03=dec($('#textF03_'+i).val());//中繼指定(M)
+					var t_j01=$('#textJ01_'+i).val();//加工日
+					var t_j02=$('#textJ02_'+i).val();//分條機台別
+					if(t_j02=='分1' && t_j01==t_wbdate){
+						t_j06=q_add(t_j06,t_f03);
+					}
+				}
+				
+				for (var i = 0; i < q_bbsCount; i++) {
+					var t_j02=$('#textJ02_'+i).val();//分條機台別
+					if(t_j02=='分1'){ //不管加工日 只要是機台一樣就寫入
+						$('#textJ06_'+i).val(t_j06);
+					}else{
+						$('#textJ06_'+i).val('');
+					}
+				}
+			}
+			
+			function FJ07() { //B表 分2
+				var t_wbdate=$('#txtWbdate').val();//決定分條日
+				var t_j07=0;
+				
+				for (var i = 0; i < q_bbsCount; i++) {
+					var t_f03=dec($('#textF03_'+i).val());//中繼指定(M)
+					var t_j01=$('#textJ01_'+i).val();//加工日
+					var t_j02=$('#textJ02_'+i).val();//分條機台別
+					if(t_j02=='分2' && t_j01==t_wbdate){
+						t_j07=q_add(t_j07,t_f03);
+					}
+				}
+				
+				for (var i = 0; i < q_bbsCount; i++) {
+					var t_j02=$('#textJ02_'+i).val();//分條機台別
+					if(t_j02=='分2'){ //不管加工日 只要是機台一樣就寫入
+						$('#textJ07_'+i).val(t_j07);
+					}else{
+						$('#textJ07_'+i).val('');
+					}
+				}
+			}
+			
+			function FJ08() { //B表 分3
+				var t_wbdate=$('#txtWbdate').val();//決定分條日
+				var t_j08=0;
+				
+				for (var i = 0; i < q_bbsCount; i++) {
+					var t_f03=dec($('#textF03_'+i).val());//中繼指定(M)
+					var t_j01=$('#textJ01_'+i).val();//加工日
+					var t_j02=$('#textJ02_'+i).val();//分條機台別
+					if(t_j02=='分3' && t_j01==t_wbdate){
+						t_j08=q_add(t_j08,t_f03);
+					}
+				}
+				
+				for (var i = 0; i < q_bbsCount; i++) {
+					var t_j02=$('#textJ02_'+i).val();//分條機台別
+					if(t_j02=='分3'){ //不管加工日 只要是機台一樣就寫入
+						$('#textJ08_'+i).val(t_j08);
+					}else{
+						$('#textJ08_'+i).val('');
+					}
+				}
+			}
+			
+			function FJ09() { //B表 分4
+				var t_wbdate=$('#txtWbdate').val();//決定分條日
+				var t_j09=0;
+				
+				for (var i = 0; i < q_bbsCount; i++) {
+					var t_f03=dec($('#textF03_'+i).val());//中繼指定(M)
+					var t_j01=$('#textJ01_'+i).val();//加工日
+					var t_j02=$('#textJ02_'+i).val();//分條機台別
+					if(t_j02=='分4' && t_j01==t_wbdate){
+						t_j09=q_add(t_j09,t_f03);
+					}
+				}
+				
+				for (var i = 0; i < q_bbsCount; i++) {
+					var t_j02=$('#textJ02_'+i).val();//分條機台別
+					if(t_j02=='分4'){ //不管加工日 只要是機台一樣就寫入
+						$('#textJ09_'+i).val(t_j09);
+					}else{
+						$('#textJ09_'+i).val('');
+					}
+				}
+			}
+			
+			function FJ12(i) { //B表 覆捲工時
 				var t_g03=dec($('#textG03_'+i).val());//再製品指定(M)
 				var t_minutes=0;
 				var t_noa=$('#textA04_'+b_seq).val();
@@ -1023,6 +1284,299 @@
 				
 				$('#textJ12_'+i).val(q_div(q_mul(t_g03,t_minutes),3600));
 			}
+			
+			function FJ13() { //B表 覆1
+				var t_wedate=$('#txtWedate').val();//決定覆捲日
+				var t_j13=0;
+				
+				for (var i = 0; i < q_bbsCount; i++) {
+					var t_g03=dec($('#textG03_'+i).val());//再製品指定(M)
+					var t_j10=$('#textJ10_'+i).val();//覆捲日
+					var t_j11=$('#textJ11_'+i).val();//覆捲機台別
+					if(t_j11=='覆1' && t_j10==t_wedate){
+						t_j13=q_add(t_j13,t_g03);
+					}
+				}
+				
+				for (var i = 0; i < q_bbsCount; i++) {
+					var t_j11=$('#textJ11_'+i).val();//覆捲機台別
+					if(t_j11=='覆1'){ //不管覆捲日 只要是機台一樣就寫入
+						$('#textJ13_'+i).val(t_j13);
+					}else{
+						$('#textJ13_'+i).val('');
+					}
+				}
+			}
+			
+			function FJ14() { //B表 覆2
+				var t_wedate=$('#txtWedate').val();//決定覆捲日
+				var t_j14=0;
+				
+				for (var i = 0; i < q_bbsCount; i++) {
+					var t_g03=dec($('#textG03_'+i).val());//再製品指定(M)
+					var t_j10=$('#textJ10_'+i).val();//覆捲日
+					var t_j11=$('#textJ11_'+i).val();//覆捲機台別
+					if(t_j11=='覆2' && t_j10==t_wedate){
+						t_j14=q_add(t_j14,t_g03);
+					}
+				}
+				
+				for (var i = 0; i < q_bbsCount; i++) {
+					var t_j11=$('#textJ11_'+i).val();//覆捲機台別
+					if(t_j11=='覆2'){ //不管覆捲日 只要是機台一樣就寫入
+						$('#textJ14_'+i).val(t_j14);
+					}else{
+						$('#textJ14_'+i).val('');
+					}
+				}
+			}
+			
+			function FJ15() { //B表 覆3
+				var t_wedate=$('#txtWedate').val();//決定覆捲日
+				var t_j15=0;
+				
+				for (var i = 0; i < q_bbsCount; i++) {
+					var t_g03=dec($('#textG03_'+i).val());//再製品指定(M)
+					var t_j10=$('#textJ10_'+i).val();//覆捲日
+					var t_j11=$('#textJ11_'+i).val();//覆捲機台別
+					if(t_j11=='覆3' && t_j10==t_wedate){
+						t_j15=q_add(t_j15,t_g03);
+					}
+				}
+				
+				for (var i = 0; i < q_bbsCount; i++) {
+					var t_j11=$('#textJ11_'+i).val();//覆捲機台別
+					if(t_j11=='覆3'){ //不管覆捲日 只要是機台一樣就寫入
+						$('#textJ15_'+i).val(t_j15);
+					}else{
+						$('#textJ15_'+i).val('');
+					}
+				}
+			}
+			
+			function FJ16() { //B表 其他
+				var t_wedate=$('#txtWedate').val();//決定覆捲日
+				var t_j16=0;
+				
+				for (var i = 0; i < q_bbsCount; i++) {
+					var t_g03=dec($('#textG03_'+i).val());//再製品指定(M)
+					var t_j10=$('#textJ10_'+i).val();//覆捲日
+					var t_j11=$('#textJ11_'+i).val();//覆捲機台別
+					if(t_j11=='其他' && t_j10==t_wedate){
+						t_j16=q_add(t_j16,t_g03);
+					}
+				}
+				
+				for (var i = 0; i < q_bbsCount; i++) {
+					var t_j11=$('#textJ11_'+i).val();//覆捲機台別
+					if(t_j11=='其他'){ //不管覆捲日 只要是機台一樣就寫入
+						$('#textJ16_'+i).val(t_j16);
+					}else{
+						$('#textJ16_'+i).val('');
+					}
+				}
+			}
+			
+			function FK06(i) { //製造 原生產量(M)
+				$('#textK06_'+i).val(q_add(dec($('#textR01_'+i).val()),dec($('#textR02_'+i).val())));
+			}
+			
+			function FK08(i) { //製造 生產量
+				if($('#textK07_'+i).val().toUpperCase()=='X'){
+					$('#textK08_'+i).val(0);
+				}else{
+					if(dec($('#textK07_'+i).val())>0){
+						$('#textK08_'+i).val(dec($('#textK07_'+i).val()));
+					}else{
+						$('#textK08_'+i).val(dec($('#textR01_'+i).val()));
+					}
+				}
+				FK12(i);
+				FK13(i);
+				FR08(i);
+				FM01();
+				FM03();
+			}
+			
+			function FK11(i) { //製造 指定進度
+				var tk1='',tk2='';
+				if(dec($('#textP05_'+i).val())>0){
+					tk1='指';
+				}else if (dec($('#textP03_'+i).val())>0){
+					tk1='庫';
+				}else{
+					tk1='無';
+				}
+				if(dec($('#textQ05_'+i).val())>0){
+					tk2='指';
+				}else if (dec($('#textQ03_'+i).val())>0){
+					tk2='庫';
+				}else{
+					tk2='無';
+				}
+				$('#textK11_'+i).val(tk1+'-'+tk2);
+			}
+			
+			function FK12(i) { //製造 指定(紙)%
+				if(dec($('#textK08_'+i).val())>0){
+					if(dec($('#textP05_'+i).val())>0){
+						$('#textK12_'+i).val(q_div(dec($('#textP05_'+i).val()),dec($('#textK08_'+i).val())));
+					}else{
+						$('#textK12_'+i).val(q_div(dec($('#textP03_'+i).val()),dec($('#textK08_'+i).val())));
+					}
+				}else{
+					$('#textK12_'+i).val(0);
+				}
+			}
+			
+			function FK13(i) { //製造 指定(皮)%
+				if(dec($('#textK08_'+i).val())>0){
+					if(dec($('#textQ05_'+i).val())>0){
+						$('#textK13_'+i).val(q_div(dec($('#textQ05_'+i).val()),dec($('#textK08_'+i).val())));
+					}else{
+						$('#textK13_'+i).val(q_div(dec($('#textQ03_'+i).val()),dec($('#textK08_'+i).val())));
+					}
+				}else{
+					$('#textK13_'+i).val(0);
+				}
+			}
+			
+			function FM01() { //製造 A
+				var t_wadate=$('#txtWadate').val();//指定排程日期
+				var t_m01=0;
+				
+				for (var i = 0; i < q_bbsCount; i++) {
+					var t_k08=dec($('#textK08_'+i).val());//生產量
+					var t_l03=$('#textL03_'+i).val();//上膠日
+					var t_l04=$('#textL04_'+i).val();//製造機台別
+					if(t_l04=='A' && t_l03==t_wadate){
+						t_m01=q_add(t_m01,t_k08);
+					}
+				}
+				
+				for (var i = 0; i < q_bbsCount; i++) {
+					var t_l04=$('#textL04_'+i).val();//製造機台別
+					if(t_l04=='A' && t_l03==t_wadate){
+						$('#textM01_'+i).val(t_m01);
+					}else{
+						$('#textM01_'+i).val('');
+					}
+				}
+			}
+			
+			function FM02() { //製造 A工時
+				var t_wadate=$('#txtWadate').val();//指定排程日期
+				var t_m02=0;
+				
+				for (var i = 0; i < q_bbsCount; i++) {
+					var t_r08=dec($('#textR08_'+i).val());//工時(Hr)
+					var t_l03=$('#textL03_'+i).val();//上膠日
+					var t_l04=$('#textL04_'+i).val();//製造機台別
+					if(t_l04=='A' && t_l03==t_wadate){
+						t_m02=q_add(t_m02,t_r08);
+					}
+				}
+				
+				for (var i = 0; i < q_bbsCount; i++) {
+					var t_l04=$('#textL04_'+i).val();//製造機台別
+					if(t_l04=='A' && t_l03==t_wadate){
+						$('#textM02_'+i).val(t_m02);
+					}else{
+						$('#textM02_'+i).val('');
+					}
+				}
+			}
+			
+			function FM03() { //製造 B
+				var t_wadate=$('#txtWadate').val();//指定排程日期
+				var t_m03=0;
+				
+				for (var i = 0; i < q_bbsCount; i++) {
+					var t_k08=dec($('#textK08_'+i).val());//生產量
+					var t_l03=$('#textL03_'+i).val();//上膠日
+					var t_l04=$('#textL04_'+i).val();//製造機台別
+					if(t_l04=='B' && t_l03==t_wadate){
+						t_m03=q_add(t_m03,t_k08);
+					}
+				}
+				
+				for (var i = 0; i < q_bbsCount; i++) {
+					var t_l04=$('#textL04_'+i).val();//製造機台別
+					if(t_l04=='B' && t_l03==t_wadate){
+						$('#textM03_'+i).val(t_m03);
+					}else{
+						$('#textM03_'+i).val('');
+					}
+				}
+			}
+			
+			function FM04() { //製造 B工時
+				var t_wadate=$('#txtWadate').val();//指定排程日期
+				var t_m04=0;
+				
+				for (var i = 0; i < q_bbsCount; i++) {
+					var t_r08=dec($('#textR08_'+i).val());//工時(Hr)
+					var t_l03=$('#textL03_'+i).val();//上膠日
+					var t_l04=$('#textL04_'+i).val();//製造機台別
+					if(t_l04=='B' && t_l03==t_wadate){
+						t_m04=q_add(t_m04,t_r08);
+					}
+				}
+				
+				for (var i = 0; i < q_bbsCount; i++) {
+					var t_l04=$('#textL04_'+i).val();//製造機台別
+					if(t_l04=='B' && t_l03==t_wadate){
+						$('#textM04_'+i).val(t_m04);
+					}else{
+						$('#textM04_'+i).val('');
+					}
+				}
+			}
+			
+			function FN02(i) { //製造 產出率(%)
+				var t_n1=dec($('#textN01_'+i).val());//產出(M)
+				var t_p5=dec($('#textP05_'+i).val());//上紙指定(M)
+				var t_q5=dec($('#textQ05_'+i).val());//上皮指定(M)
+				if(t_p5<=t_q5){
+					if(t_p5==0){
+						$('#textN02_'+i).val(0);
+					}else{					
+						$('#textN02_'+i).val(round(q_mul(q_div(t_n1,t_p5),100),2));
+					}
+				}else{
+					$('#textN02_'+i).val(round(q_mul(q_div(t_n1,t_q5),100),2));
+				}
+				
+			}
+			
+			function FR06(i) { //製造 已排未產(M)
+				if($('#textN03_'+i).val()=='完工' || emp($('#textL03_'+i).val())){
+					$('#textR06_'+i).val(0);
+				}else{
+					var t_datea=$('#textL03_'+i).val();
+					if(q_cdn(t_datea,-30)<q_date()){
+						$('#textR06_'+i).val($('#textK08_'+i).val());
+					}else{
+						$('#textR06_'+i).val(0);
+					}
+				}
+			}
+			
+			function FR08(i) { //製造 工時(Hr)
+				var t_k08=dec($('#textK08_'+i).val());//生產量
+				var t_sec=0;//生產速度(M/min)
+				var t_noa=$('#textK03_'+b_seq).val();
+				q_gt('uca',"where=^^noa='"+t_noa+"'^^", 0, 0, 0, "getuca", r_accy,1);
+				var tuca = _q_appendData("uca", "", true);
+				if (tuca[0] != undefined) {
+					t_sec=dec(tuca[0].sec);
+				}
+				
+				$('#textR08_'+i).val(round(q_div(q_div(t_k08,t_sec),60),1));
+				FM02();
+				FM04();
+			}
+			
 			//---------------------------------------------------------------
 			function bbtAssign() {
 				for (var i = 0; i < q_bbtCount; i++) {
@@ -1122,9 +1676,26 @@
 								}
 							}
 						}else{
-							alart('無此料號!!');
+							alert('無此料號!!');
 						}
 					
+						break;
+					case 'textK03_':
+						var t_noa=$('#textK03_'+b_seq).val();
+						q_gt('uca',"where=^^noa='"+t_noa+"' and typea='3' ^^", 0, 0, 0, "getuca", r_accy,1);
+						var tuca = _q_appendData("uca", "", true);
+						if (tuca[0] != undefined) {
+							var t_style=tuca[0].style.split('#^#');
+							
+							$('#textL01_'+b_seq).val(t_style[1]); //換線屬性
+							$('#textL02_'+b_seq).val(t_style[2]); //補水
+							$('#textL05_'+b_seq).val(tuca[0].modelno); //限定機台別
+							$('#textP01_'+b_seq).val(tuca[0].groupino); //上紙(投入)
+							$('#textQ01_'+b_seq).val(tuca[0].grouphno); //上皮(投入)
+						}else{
+							alert('無此料號!!');
+							$('#btnMinus_'+b_seq).click();
+						}
 						break;
 					default:
 						break;
@@ -1648,7 +2219,10 @@
 						
 						<!--加工B-->
 						<td class="M2"><input id="textJ01.*" type="text" class="txt c1"/></td>
-						<td class="M2"><input id="textJ02.*" type="text" class="txt c1"/></td>
+						<td class="M2">
+							<input id="textJ02.*" type="text" class="txt c1" style="width: 70%;"/>
+							<select id="combJ02.*" style="width: 20px;"> </select>
+						</td>
 						<td class="M2"><input id="textJ03.*" type="text" class="txt c1"/></td>
 						<td class="M2"><input id="textJ04.*" type="text" class="txt c1"/></td>
 						<td class="M2"><input id="textJ05.*" type="text" class="txt num c1"/></td>
@@ -1657,13 +2231,19 @@
 						<td class="M2"><input id="textJ08.*" type="text" class="txt num c1"/></td>
 						<td class="M2"><input id="textJ09.*" type="text" class="txt num c1"/></td>
 						<td class="M2"><input id="textJ10.*" type="text" class="txt c1"/></td>
-						<td class="M2"><input id="textJ11.*" type="text" class="txt c1"/></td>
+						<td class="M2">
+							<input id="textJ11.*" type="text" class="txt c1" style="width: 70%;"/>
+							<select id="combJ11.*" style="width: 20px;"> </select>
+						</td>
 						<td class="M2"><input id="textJ12.*" type="text" class="txt num c1"/></td>
 						<td class="M2"><input id="textJ13.*" type="text" class="txt num c1"/></td>
 						<td class="M2"><input id="textJ14.*" type="text" class="txt num c1"/></td>
 						<td class="M2"><input id="textJ15.*" type="text" class="txt num c1"/></td>
 						<td class="M2"><input id="textJ16.*" type="text" class="txt num c1"/></td>
-						<td class="M2"><input id="textJ17.*" type="text" class="txt c1"/></td>
+						<td class="M2">
+							<input id="textJ17.*" type="text" class="txt c1" style="width: 70%;"/>
+							<select id="combJ17.*" style="width: 20px;"> </select>
+						</td>
 						<td class="M2"><input id="textJ18.*" type="text" class="txt c1"/></td>
 						<td class="M2"><input id="textJ19.*" type="text" class="txt num c1"/></td>
 						<td class="M2"><input id="textJ20.*" type="text" class="txt num c1"/></td>
@@ -1689,7 +2269,10 @@
 						<td class="M3"><input id="textL01.*" type="text" class="txt c1"/></td>
 						<td class="M3"><input id="textL02.*" type="text" class="txt c1"/></td>
 						<td class="M3"><input id="textL03.*" type="text" class="txt c1"/></td>
-						<td class="M3"><input id="textL04.*" type="text" class="txt c1"/></td>
+						<td class="M3">
+							<input id="textL04.*" type="text" class="txt c1" style="width: 70%;"/>
+							<select id="combL04.*" style="width: 20px;"> </select>
+						</td>
 						<td class="M3"><input id="textL05.*" type="text" class="txt c1"/></td>
 						<td class="M3"><input id="textL06.*" type="text" class="txt c1"/></td>
 						<!--排程量-->

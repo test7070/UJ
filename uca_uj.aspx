@@ -773,8 +773,8 @@
 					<tr>
 						<td><span> </span><a id="lblModelno_uj" class="lbl">機台</a></td>
 						<td>
-							<input id="txtModelno" type="text" class="txt c1" style="width:30%;"/>
-							<input id="txtModel" type="text" class="txt c1" style="width:65%;"/>
+							<input id="txtModelno" type="text" class="txt c1"/>
+							<input id="txtModel" type="text" class="txt c1" style="display: none;"/>
 						</td>
 						<td><span> </span><a id="lblSec_uj" class="lbl">分條工時(Sec/M)</a></td>
 						<td><input id="txtSec" type="text" class="txt num c1"/></td>

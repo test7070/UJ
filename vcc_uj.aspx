@@ -259,21 +259,7 @@
 					$('#txtTranadd').hide()
 				}
 				
-				if (q_getPara('sys.project').toUpperCase()=='AD' || q_getPara('sys.project').toUpperCase()=='JO'){
-					$('.cust2').show();
-				}
-				if (q_getPara('sys.project').toUpperCase()=='AD'){
-					$('#btnst4rc2vcc').show();
-					
-					$('#btnst4rc2vcc').click(function() {
-						//產生轉回典盈進出貨
-						if(!emp($('#txtNoa').val())){
-							if(confirm('確定要轉回典盈?')){
-								q_func('qtxt.query.vcctost4rc2vcc_r', 'vcc.txt,vcctost4rc2vcc_r,'+ encodeURI($('#txtNoa').val())+ ';' + encodeURI(r_accy) + ';'  + encodeURI(q_date())+ ';' + encodeURI(r_name)+ ';' + encodeURI(r_len));
-							}
-						}
-					});
-				}
+				
 			}
 			
 			function refreshBbm() {
@@ -331,16 +317,7 @@
 			
 			function q_funcPost(t_func, result) {
 				switch(t_func) {
-					case 'qtxt.query.vcctost4rc2vcc_r':
-					var as = _q_appendData("tmp0", "", true, true);
-					if (as[0] != undefined) {
-						if(as[0].vnoa.length>0 && as[0].trc2no.length>0 && as[0].tvccno.length>0){
-							alert('出貨單已成功轉回典盈!!');
-						}
-					}else{
-						alert('產生錯誤請聯絡工程師!!');
-					}
-					break;	
+					
                 }
 			}
 
