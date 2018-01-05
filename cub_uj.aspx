@@ -37,7 +37,11 @@
             	['txtCustno', 'lblCustno_uj', 'cust', 'noa,comp', 'txtCustno,txtComp', 'cust_b.aspx'],
             	['txtM3', 'lblM3_uj', 'cust', 'noa,comp', 'txtM3,txtM4', 'cust_b.aspx'],
             	['txtProcessno', 'lblProcessno_uj', 'store', 'noa,store', 'txtProcessno,txtProcess', 'store_b.aspx'],
-            	['txtProductno_', 'btnProduct_', 'uca', 'noa', '0txtProductno_', 'uca_b.aspx']
+            	['txtProductno_', 'btnProduct_', 'uca', 'noa', '0txtProductno_', 'uca_b.aspx'],
+            	['txtProductno2_', '', 'uca', 'noa', 'txtProductno2_', 'uca_b.aspx'],
+            	['txtOrdcno2_', '', 'uca', 'noa', 'txtOrdcno2_', 'uca_b.aspx'],
+            	['txtMakeno_', '', 'ucc', 'noa', 'txtMakeno_', 'ucc_b.aspx'],
+            	['txtOrdcno_', '', 'ucc', 'noa', 'txtOrdcno_', 'ucc_b.aspx']
             );
 
             $(document).ready(function() {
@@ -61,111 +65,6 @@
 					
                 }
             }
-            
-            function bbsremake(t_n) {
-            	//製造成品
-                if($('#txtProductno_'+t_n).val().substr(0,1)=='5' || emp($('#txtProductno2_'+t_n).val())){
-                	$('#txtX01_'+t_n).val(0);
-                }else if(q_add(dec($('#txtW01_'+t_n).val()),dec($('#txtW02_'+t_n).val()))>=dec($('#txtMount_'+t_n).val())){
-                	$('#txtX01_'+t_n).val(0);
-                }else{
-                	$('#txtX01_'+t_n).val(q_sub(dec($('#txtMount_'+t_n).val()),q_add(dec($('#txtW01_'+t_n).val()),dec($('#txtW02_'+t_n).val()))));
-                }
-                
-                //製造換算
-                if(emp($('#txtProductno2_'+t_n).val())){
-                	$('#txtX03_'+t_n).val(0);
-                }else if($('#txtProductno_'+t_n).val().substr(0,1)=='5'){
-                	$('#txtX03_'+t_n).val($('#txtMount_'+t_n).val());
-                }else{
-                	var t_badperc=1;//取得良率
-                	q_gt('uca',"where=^^noa='"+$('#txtProductno2_'+t_n).val()+"'^^", 0, 0, 0, "getuca", r_accy,1);
-					var tuca = _q_appendData("uca", "", true);
-					if (tuca[0] != undefined) {
-						t_badperc=dec(tuca[0].badperc);
-					}
-                	
-                	$('#txtX03_'+t_n).val(q_add(q_div(q_div(q_mul(dec($('#txtX01_'+t_n).val()),dec($('#txtLengthb_'+t_n).val())),(dec($('#txtDime_'+t_n).val())==0?1:dec($('#txtDime_'+t_n).val()))),(t_badperc==0?1:t_badperc)),dec($('#txtX02_'+t_n).val())));
-                }
-                
-                //加工原生產成品
-                if($('#txtProductno_'+t_n).val().substr(0,1)=='1' || $('#txtProductno_'+t_n).val().substr(0,1)=='5'){
-                	$('#txtX06_'+t_n).val(0);
-                }else if(q_sub(dec($('#txtMount_'+t_n).val()),dec($('#txtW01_'+t_n).val()))<0){
-                	$('#txtX06_'+t_n).val(0);
-                }else{
-                	$('#txtX06_'+t_n).val(q_sub(dec($('#txtMount_'+t_n).val()),dec($('#txtW01_'+t_n).val())));
-                }
-                
-                //加工成品
-                $('#txtX08_'+t_n).val(q_add(dec($('#txtX06_'+t_n).val()),dec($('#txtX07_'+t_n).val())));
-                
-                //底材合計
-                var t_w05=0;
-                for (var j = 0; j < q_bbsCount; j++) {
-					if($('#txtOrdcno_'+t_n).val()==$('#txtOrdcno_'+j).val()){
-						t_w05=q_add(t_w05,dec($('#txtX03_'+j).val()));
-					}
-                }
-                $('#txtW05_'+t_n).val(t_w05);
-                
-                
-                //低於MOQ
-                if($('#txtProductno_'+t_n).val().substr(0,1)=='5'){
-                	$('#txtX05_'+t_n).val(0);
-                }else{
-                	if(dec($('#txtW05_'+t_n).val())<dec($('#txtX04_'+t_n).val())){
-                		$('#txtX05_'+t_n).val(q_sub(dec($('#txtX04_'+t_n).val()),dec($('#txtW05_'+t_n).val())));
-                	}else{
-                		$('#txtX05_'+t_n).val(0);
-                	}
-                }
-                
-                //同紙 同半成品(已排程/未排程)
-                if(emp($('#txtOrdcno_'+t_n).val()) || dec($('#txtX03_'+t_n))==0){
-                	$('#txtY01_'+t_n).val(0);
-                	$('#txtY02_'+t_n).val(0);
-                	$('#txtY03_'+t_n).val(0);
-                	$('#txtY04_'+t_n).val(0);
-                }else{
-                	q_func('qtxt.query.schlen_uj', 'orde_uj.txt,schlen_uj,' + encodeURI($('#txtOrdcno_'+t_n).val())+';'+encodeURI($('#txtProductno2_'+t_n).val()),r_accy,1);
-                	var tas = _q_appendData("tmp0", "", true, true);
-                	if (tas[0] != undefined) {
-                		$('#txtY03_'+t_n).val(tas[0].ymount1);//同紙(已排程)
-	                	$('#txtY04_'+t_n).val(tas[0].ymount2);//同半成品(已排程)
-	                	$('#txtY01_'+t_n).val(q_add(q_sub(tas[0].xmount1,dec($('#txtX03_'+t_n).val())),dec(tas[0].ymount1)));//同紙(未排程)
-	                	$('#txtY02_'+t_n).val(q_add(q_sub(tas[0].xmount2,dec($('#txtX03_'+t_n).val())),dec(tas[0].ymount2)));//同半成品(未排程)
-                	}
-                }
-                
-                //物料需求(支) 紙管(根)
-                if($('#txtProductno_'+t_n).val().substr(0,1)=='5'){
-                	$('#txtY08_'+t_n).val(0);
-                }else{
-                	$('#txtY08_'+t_n).val(q_div(dec($('#txtX08_'+t_n).val()),(dec($('#txtDime_'+t_n).val())==0?1:dec($('#txtDime_'+t_n).val()))));
-                }
-                
-                var t_packs=0,t_stationg='';//裝箱支數,塞頭
-                q_gt('uca',"where=^^noa='"+$('#txtProductno_'+t_n).val()+"'^^", 0, 0, 0, "getuca", r_accy,1);
-				var tuca = _q_appendData("uca", "", true);
-				if (tuca[0] != undefined) {
-					t_packs=dec(tuca[0].packs);
-					t_stationg=tuca[0].stationg;
-				}
-                //物料需求(支) 紙箱(箱)
-                if($('#txtProductno_'+t_n).val().substr(0,1)=='5'){
-                	$('#txtY09_'+t_n).val(0);
-                }else{
-                	$('#txtY09_'+t_n).val(q_div(dec($('#txtX08_'+t_n).val()),(t_packs==0?1:t_packs)));
-                }
-                
-                //物料需求(支) 塞頭(個)
-                if($('#txtProductno_'+t_n).val().substr(0,1)=='5' || t_stationg=='無'){
-                	$('#txtY10_'+t_n).val(0);
-                }else{
-                	$('#txtY10_'+t_n).val(q_mul(dec($('#txtX08_'+t_n).val()),2));
-                }
-            }
 
             function mainPost() {
             	bbsNum = [['txtMount', 10, q_getPara('vcc.mountPrecision'), 1]];
@@ -176,22 +75,6 @@
                 q_mask(bbmMask);
                 
                 document.title='生產指令';
-                
-                /*$('#btnOrde').click(function() {
-                	var t_where="1=1";
-                	var t_custno=$('#txtCustno').val();
-                	var t_ordeno=$('#txtOrdeno').val();
-                	var t_datea=$('#txtBdate').val();
-                	var t_noa=$('#txtNoa').val();
-                	if(t_custno.length==0){t_custno='#non';}
-                	if(t_ordeno.length==0){t_ordeno='#non';}
-                	if(t_datea.length==0){t_datea='#non';}
-                	if(t_noa.length==0){t_noa='#non';}
-                	if(q_cur==1 || q_cur==2){
-                		q_func('qtxt.query.orde_import_uj', 'orde_uj.txt,orde_import_uj,' + encodeURI(t_custno)+';'+encodeURI(t_ordeno)+';'+encodeURI(t_datea)+';'+encodeURI(t_noa)+';'+encodeURI(q_date()));
-                	}
-                	
-                });*/
                
 				$('#btnCug').click(function() {
 					//不經"生管"排程  直接轉cug
@@ -207,87 +90,8 @@
 				});
                 
                 $('#btnClose_div_stk').click(function() {
-                	//判斷是否是負庫存
-                	var s_emount=dec($('#s_totlstk').text());//總庫存
-					var s_prmount=dec($('#s_prstk').text());//前單預扣
-					var s_psmount=dec($('#s_psstk').text());//前單指定
-					var s_prmounts=dec($('#textPrmount').val());//預扣
-                	var s_psmounts=0;//指定
-					$('.stksnum').each(function(index) {
-						s_psmounts=s_psmounts+dec($(this).val());
-					});
-					if(q_sub(q_sub(q_sub(q_sub(s_emount,s_prmount),s_psmount),s_prmounts),s_psmounts)<0){
-						alert('預扣/指定數量大於可用庫存!!');
-						return;
-					}
-                	
-                	//刪除已寫入的bbt
-                	for (var i = 0; i < q_bbtCount; i++) {
-                		if($('#s_bbsnoq').val()==$('#txtNor__'+i).val() && $('#s_bbssource').val()==$('#txtSource__'+i).val()){
-                			$('#btnMinut__'+i).click();
-                		}
-                	}
-                	//寫入bbt
-                	var tas=[];
-                	if($('#checkPrmount').prop('checked')){
-                		//預扣
-                		if(dec($('#textPrmount').val())>0){
-	                		tas.push({
-								nor : $('#s_bbsnoq').val(), //非bbsnoq 因 存檔時 bbsnoq尚未產生
-								uno : '',
-								productno : $('#s_productno').text(),
-								source : $('#s_bbssource').val(),//2半成品8再製品
-								gmount : 0,//實際領料
-								mount:$('#textPrmount').val()//配料
-							});
-						}
-                	}else{
-                		//指定
-                		var rowslength=document.getElementById("table_stk").rows.length-10;
-						for (var j = 0; j < rowslength; j++) {
-							if(dec($('#stk_txtPrmount_'+j).val())>0){
-								tas.push({
-									nor : $('#s_bbsnoq').val(), //非bbsnoq 因 存檔時 bbsnoq尚未產生
-									uno : $('#stk_tdUno_'+j).text(),
-									productno : $('#s_productno').text(),
-									source : $('#s_bbssource').val(),//2半成品8再製品
-									gmount : 0,//實際領料
-									mount:$('#stk_txtPrmount_'+j).val()//配料
-								});
-							}
-						}
-                	}
-                	
-                	q_gridAddRow(bbtHtm, 'tbbt'
-					, 'txtNor,txtUno,txtProductno,txtSource,txtGmount,txtMount', tas.length, tas
-					, 'nor,uno,productno,source,gmount,mount', 'txtNor,txtUno,txtProductno');
-                	
-                	//寫入bbs 半成品+再製品庫存(M)
-                	var t_mount=0,t_n=$('#s_bbsnoq').val();
-	                if($('#s_bbssource').val()=='2'){
-	                	for(var i=0;i<tas.length;i++){
-	                		t_mount=q_add(t_mount,dec(tas[i].mount));
-	                	}
-	                	$('#txtW03_'+t_n).val(t_mount);
-                	}
-                	
-                	if($('#s_bbssource').val()=='8'){
-	                	for(var i=0;i<tas.length;i++){
-	                		t_mount=q_add(t_mount,dec(tas[i].mount));
-	                	}
-	                	$('#txtW04_'+t_n).val(t_mount);
-                	}
-                	//重新計算製造成品
-                	//bbsremake(t_n);
-                	
-                	pdate(t_n);
                 	$('#div_stk').hide();
 				});
-                
-                $('#btnClose_div_stk2').click(function() {
-                	$('#div_stk').hide();
-				});
-                
             }
 
             function q_gtPost(t_name) {
@@ -307,217 +111,40 @@
            
             function q_funcPost(t_func, result) {
 				switch(t_func) {
-					case 'qtxt.query.orde_import_uj':
+					case 'qtxt.query.div_stk_uj':
 						var as = _q_appendData("tmp0", "", true, true);
                 		if (as[0] != undefined) {
-                			for (var i = 0; i < q_bbsCount; i++) {
-								$('#btnMinus_' + i).click()
-							}						
-							q_gridAddRow(bbsHtm, 'tbbs'
-							, 'txtOrdeno,txtNo2,txtProductno,txtProduct,txtMount,txtUnit,txtBtime,txtWidth,txtLengthb,txtDime,txtW01,txtProductno2,txtEtime,txtX01,txtX02,txtX03,txtX06,txtX07,txtX08,txtOrdcno,txtDate2,txtW04,txtW05,txtOth,txtX04,txtX05,txtY01,txtY02,txtY03,txtY04,txtProcessno,txtY08,txtCno,txtY09,txtTggno,txtY10,txtMakeno,txtDate3,txtW06,txtOrdcno2,txtHdate,txtW07', as.length, as
-							, 'noa,no2,productno,product,mount,unit,salea,width,lengthb,dime,smount,productno2,sale2,tmount,tmount2,tmount3,amount,amount2,amount3,productno3,sale3,cmount,cmount2,moqlimited,moq,moqbelow,xmount1,xmount2,ymount1,ymount2,uproductno1,umount1,uproductno2,umount2,uproductno3,umount3,productno4,sale4,dmount,productno5,sale5,emount', '');
-							//,txtW02,txtW03
-							//,smount3,smount2
+                			var rowslength=document.getElementById("table_stk").rows.length-4;
+							for (var j = 0; j < rowslength; j++) {
+								document.getElementById("table_stk").deleteRow(3);
+							}
+							
+							for (var i = 0; i < as.length; i++) {
+								if(as[i].mount==1){
+									as[i].lengthc=as[i].weight;
+									as[i].lengthb='';
+								}else{
+									as[i].lengthc='';
+								}
+								
+								var tr = document.createElement("tr");
+								tr.id = "bbs_"+i;
+								tr.innerHTML+="<td id='stk_tdUno_"+i+"'>"+as[i].uno+"</td>"; //身分證號
+								tr.innerHTML+="<td id='stk_tdSpec_"+i+"'>"+as[i].spec+"</td>"; //列管品
+								tr.innerHTML+="<td id='stk_tdindate_"+i+"' align='center'>"+as[i].indate+"</td>"; //進貨(生產)日
+								tr.innerHTML+="<td id='stk_tdMount_"+i+"'style='text-align: right;'>"+FormatNumber(as[i].mount)+"</td>"; //數量
+								tr.innerHTML+="<td id='stk_tdUnit_"+i+"'>"+as[i].unit+"</td>"; //單位
+								tr.innerHTML+="<td id='stk_tdLengthb_"+i+"'style='text-align: right;'>"+FormatNumber(as[i].lengthb)+"</td>"; //標準長(M)同規格
+								tr.innerHTML+="<td id='stk_tdLengthc_"+i+"'style='text-align: right;'>"+FormatNumber(as[i].lengthc)+"</td>"; //原長(M)
+								tr.innerHTML+="<td id='stk_tdWeight_"+i+"'style='text-align: right;'>"+FormatNumber(as[i].weight)+"</td>"; //可用長
+								var tmp = document.getElementById("stk_close");
+								tmp.parentNode.insertBefore(tr,tmp);
+                			}
+                			$('#div_stk').show();
                 		}else{
-                			alert('無訂單資料!!');
+                			alert('無可動用庫存資料!!');
                 		}
 						break;
-				}
-								
-				if(t_func.substr(0,21)=='qtxt.query.ordestk_uj'){
-					var t_n=replaceAll(t_func,'qtxt.query.ordestk_uj_','')
-					var as = _q_appendData("tmp0", "", true, true);
-					
-					var text_prmount=0;
-					//扣除bbt已配置其他bbs領料數量
-					//加回bbt已實際領料的批號數量
-					for (var i = 0; i < q_bbtCount; i++) {
-						if($('#s_bbssource').val()==$('#txtSource__'+i).val()){
-							if($('#txtNor__'+i).val()!=t_n){ //非自身已領料
-								if(emp($('#txtUno__'+i).val())){//預扣
-									for (var j = 0; j < as.length; j++) {
-										if(as[j].productno==$('#txtProductno__'+i).val()){
-											as[j].prmount=q_add(dec(as[j].prmount),q_add(dec($('#txtGmount__'+i).val()),dec($('#txtMount__'+i).val())));
-										}
-									}
-								}else{//指定
-									for (var j = 0; j < as.length; j++) {
-										if(as[j].uno==$('#txtUno__'+i).val()){
-											as[j].psmount=q_add(dec(as[j].psmount),q_add(dec($('#txtGmount__'+i).val()),dec($('#txtMount__'+i).val())));
-										}
-									}
-								}
-							}else{//領料一定要有批號才能領
-								if(dec($('#txtGmount__'+i).val())>0 && !emp($('#txtUno__'+i).val())){//實際已扣庫存
-									var isexists=false;
-									for (var j = 0; j < as.length; j++) {
-										if(as[j].uno==$('#txtUno__'+i).val()){
-											as[j].emount=q_add(dec(as[j].emount),dec($('#txtGmount__'+i).val()));
-											isexists=true;
-											break;
-										}
-									}
-									//批號不存在
-									if(!isexists){
-										as.push({
-											uno : $('#txtUno__'+i).val(),
-											productno : $('#txtProductno__'+i).val(),
-											product : '',
-											emount : $('#txtGmount__'+i).val(),
-											memo : '',
-											psmount : 0,
-											prmount : 0
-										});
-									}
-								}
-								
-								if(dec($('#txtGmount__'+i).val())==0 && emp($('#txtUno__'+i).val())){
-									text_prmount=q_add(text_prmount,dec($('#txtMount__'+i).val()));
-								}
-							}
-						}
-					}
-					
-					$('#textPrmount').val(text_prmount);
-					
-					if (as[0] != undefined) {
-						var t_emount=0;//總庫存
-						var t_prmount=0;//前單預扣
-						var t_psmount=0;//前單指定
-						
-						var rowslength=document.getElementById("table_stk").rows.length-10;
-						for (var j = 0; j < rowslength; j++) {
-							document.getElementById("table_stk").deleteRow(9);
-						}
-						
-						for (var i = 0; i < as.length; i++) {
-							t_emount=q_add(t_emount,dec(as[i].emount));
-							t_prmount=dec(as[i].prmount);//非累加
-							t_psmount=q_add(t_psmount,dec(as[i].psmount));
-							
-							var t_unomount=0;
-							for (var j = 0; j < q_bbtCount; j++) {
-								if(as[i].uno==$('#txtUno__'+j).val() && t_n==$('#txtNor__'+j).val() && $('#s_bbssource').val()==$('#txtSource__'+j).val()){
-									t_unomount=dec($('#txtMount__'+j).val());
-									break;
-								}
-							}
-							
-							var tr = document.createElement("tr");
-							tr.id = "bbs_"+i;
-							tr.innerHTML+="<td id='stk_tdUno_"+i+"'>"+as[i].uno+"</td>";
-							tr.innerHTML+="<td id='stk_tdMount_"+i+"'style='text-align: right;'>"+dec(as[i].emount)+"</td>";
-							tr.innerHTML+="<td id='stk_tdPsmount_"+i+"' style='text-align: right;'>"+dec(as[i].psmount)+"</td>";
-							tr.innerHTML+= "<td id='stk_tdPrmount_"+i+"'><input id='stk_txtPrmount_"+i+"' type='text' class='stknum stksnum' style='width: 98%;text-align: right;' value='"+t_unomount+"' /></td>";
-							tr.innerHTML+="<td id='stk_tdMemo_"+i+"'>"+as[i].memo+"</td>";
-								
-							var tmp = document.getElementById("stk_close");
-							tmp.parentNode.insertBefore(tr,tmp);
-						}
-						
-						$('.stknum').each(function(index) {
-							$(this).unbind('keyup');
-							$(this).unbind('change');
-							
-							$(this).keyup(function() {
-								var tmp=$(this).val();
-								tmp=tmp.match(/\d{1,}\.{0,1}\d{0,}/);
-								$(this).val(tmp);
-							});
-							
-							$(this).change(function() {
-								var t_id=$(this).attr('id');
-								var s_emount=dec($('#s_totlstk').text());//總庫存
-								var s_prmount=dec($('#s_prstk').text());//前單預扣
-								var s_psmount=dec($('#s_psstk').text());//前單指定
-								var s_prmounts=dec($('#textPrmount').val());//預扣
-								
-								if(t_id=='textPrmount'){
-									if(s_prmounts>q_sub(q_sub(s_emount,s_prmount),s_psmount)){
-										alert('預扣長度大於總庫存長度!!');
-										$('#textPrmount').val(q_sub(q_sub(s_emount,s_prmount),s_psmount));
-										s_prmounts=dec($('#textPrmount').val());
-									}
-								}else{
-									var t_n=$(this).attr('id').split('_')[2];
-									var st_mount=dec($('#stk_tdMount_'+t_n).text());
-									var st_psmount=dec($('#stk_tdPsmount_'+t_n).text());
-									var st_prmount=dec($('#stk_txtPrmount_'+t_n).val());
-									var t_uno=$('#stk_tdUno_'+t_n).text();
-									if(st_mount<q_add(st_psmount,st_prmount)){
-										alert('生產編號【'+t_uno+'】鎖定與指定長度大於總長度!!');
-										$('#stk_txtPrmount_'+t_n).val(q_sub(st_mount,st_psmount));
-									}
-								}
-								
-								var s_psmounts=0;//指定
-								$('.stksnum').each(function(index) {
-									s_psmounts=s_psmounts+dec($(this).val());
-								});
-								$('#s_psmount').text(s_psmounts);
-								
-								$('#s_canusestk').text(q_sub(q_sub(q_sub(q_sub(s_emount,s_prmount),s_psmount),s_prmounts),s_psmounts));
-							});
-						});
-						
-						$('#s_totlstk').text(t_emount);//總庫存
-						$('#s_prstk').text(t_prmount);//前單預扣
-						$('#s_psstk').text(t_psmount);//前單指定
-						$('#s_canusestk').text(q_sub(q_sub(t_emount,t_prmount),t_psmount));
-						
-						$('#checkPrmount').unbind('click');
-						$('#checkPrmount').click(function() {
-							if($(this).prop('checked')){
-								$('#textPrmount').removeAttr('disabled');
-								$('.stksnum').val(0).attr('disabled','disabled');
-								$('#checkPsmountAll').prop('checked',false);
-								$('#checkPsmountAll').attr('disabled','disabled');
-							}else{
-								$('#textPrmount').val(0).attr('disabled','disabled');
-								$('.stksnum').removeAttr('disabled');
-								$('#checkPsmountAll').removeAttr('disabled');
-							}
-							$('#textPrmount').change();
-						});
-						
-						$('#checkPsmountAll').unbind('click');
-						$('#checkPsmountAll').click(function() {
-							var s_psmounts=0;//指定
-							if($(this).prop('checked')){
-								$('.stksnum').each(function(index) {
-									var t_n=$(this).attr('id').split('_')[2];
-									var st_mount=dec($('#stk_tdMount_'+t_n).text());
-									var st_psmount=dec($('#stk_tdPsmount_'+t_n).text());
-									$(this).val(q_sub(st_mount,st_psmount));
-									s_psmounts=s_psmounts+dec($(this).val());
-								});
-							}else{
-								$('.stksnum').val(0);
-							}
-							
-							$('#s_psmount').text(s_psmounts);
-							$('#textPrmount').change();
-						});
-						
-						//開啟div
-						if(text_prmount>0){
-							$('#textPrmount').removeAttr('disabled');
-							$('#checkPrmount').prop('checked',true);
-							$('#checkPsmountAll').prop('checked',false);
-							$('#checkPsmountAll').attr('disabled','disabled');
-							$('.stksnum').attr('disabled','disabled');
-						}else{
-							$('#textPrmount').val(0).attr('disabled','disabled');
-							$('#checkPrmount').prop('checked',false);
-							$('#checkPsmountAll').prop('checked',false);
-							$('#checkPsmountAll').removeAttr('disabled');
-						}
-						$('#s_psmount').text(0);
-						$('#textPrmount').change();
-						$('#div_stk').show();
-					}else{
-						alert('無庫存!!');
-					}
 				}
 			}
 
@@ -655,6 +282,30 @@
 							b_seq = t_IdSeq;
 						});
 						
+						$('#txtProductno2_'+i).change(function() {
+                    		t_IdSeq = -1;
+							q_bodyId($(this).attr('id'));
+							b_seq = t_IdSeq;
+						});
+						
+						$('#txtOrdcno2_'+i).change(function() {
+                    		t_IdSeq = -1;
+							q_bodyId($(this).attr('id'));
+							b_seq = t_IdSeq;
+						});
+						
+						$('#txtMakeno_'+i).change(function() {
+                    		t_IdSeq = -1;
+							q_bodyId($(this).attr('id'));
+							b_seq = t_IdSeq;
+						});
+						
+						$('#txtOrdcno_'+i).change(function() {
+                    		t_IdSeq = -1;
+							q_bodyId($(this).attr('id'));
+							b_seq = t_IdSeq;
+						});
+						
 						$('#txtUcolor_'+i).change(function() {
 							t_IdSeq = -1;
 							q_bodyId($(this).attr('id'));
@@ -684,6 +335,10 @@
 												$('#txtMakeno_'+b_seq).val(tpuca[0].grouphno)//上皮
 												$('#txtOrdcno_'+b_seq).val(tpuca[0].groupino)//上紙
 											}
+											getstk('1',b_seq);
+										}
+										if($('#txtOrdcno2_'+b_seq).val().length>0){
+											getstk('2',b_seq);
 										}
 									}else{
 										t_unit1=t_engpro.substr(0,1).toLocaleUpperCase();
@@ -708,6 +363,7 @@
 													$('#txtMakeno_'+b_seq).val(tpuca[0].grouphno)//上皮
 													$('#txtOrdcno_'+b_seq).val(tpuca[0].groupino)//上紙
 												}
+												getstk('1',b_seq);
 											}
 										}
 									}
@@ -735,6 +391,10 @@
 													$('#txtMakeno_'+b_seq).val(tpuca[0].grouphno)//上皮
 													$('#txtOrdcno_'+b_seq).val(tpuca[0].groupino)//上紙
 												}
+												getstk('1',b_seq);
+											}
+											if($('#txtOrdcno2_'+b_seq).val().length>0){
+												getstk('2',b_seq);
 											}
 										}else{
 											t_unit1=t_engpro.substr(0,1).toLocaleUpperCase();
@@ -759,6 +419,7 @@
 														$('#txtMakeno_'+b_seq).val(tpuca[0].grouphno)//上皮
 														$('#txtOrdcno_'+b_seq).val(tpuca[0].groupino)//上紙
 													}
+													getstk('1',b_seq);
 												}
 											}
 										}
@@ -831,10 +492,9 @@
 							t_IdSeq = -1;
 							q_bodyId($(this).attr('id'));
 							b_seq = t_IdSeq;
-                    		if($('#txtProductno_' + b_seq).val().length>0 && (q_cur==1 || q_cur==2)){
+                    		if($('#txtProductno2_' + b_seq).val().length>0 && (q_cur==1 || q_cur==2)){
 								//get庫存
 								var t_productno= $('#txtProductno2_' + b_seq).val();
-	                        	var t_noa= $('#txtNoa').val();
 	                        	
 	                        	$('#s_bbsnoq').val(b_seq);
 	                        	$('#s_bbssource').val('2');
@@ -842,7 +502,8 @@
 	                        	
 	                        	$('#div_stk').css('top', e.pageY- $('#div_stk').height());
 								$('#div_stk').css('left', e.pageX - $('#div_stk').width());
-			                	q_func('qtxt.query.ordestk_uj_'+b_seq, 'orde_uj.txt,ordestk_uj,' + encodeURI(t_productno)+';'+encodeURI(t_noa)+';'+encodeURI(q_date()));
+								
+			                	q_func('qtxt.query.div_stk_uj', 'orde_uj.txt,stk_uj,' + encodeURI(q_date())+';'+encodeURI('#non')+';'+encodeURI(t_productno)+';'+encodeURI('#non')+';'+encodeURI('1')+';'+encodeURI('#non'));
 							}
 						});
 						
@@ -853,7 +514,6 @@
                     		if($('#txtOrdcno2_' + b_seq).val().length>0 && (q_cur==1 || q_cur==2)){
 								//get庫存
 								var t_productno= $('#txtOrdcno2_' + b_seq).val();
-	                        	var t_noa= $('#txtNoa').val();
 	                        	
 	                        	$('#s_bbsnoq').val(b_seq);
 	                        	$('#s_bbssource').val('8');
@@ -861,7 +521,7 @@
 	                        	
 	                        	$('#div_stk').css('top', e.pageY- $('#div_stk').height());
 								$('#div_stk').css('left', e.pageX - $('#div_stk').width());
-			                	q_func('qtxt.query.ordestk_uj_'+b_seq, 'orde_uj.txt,ordestk_uj,' + encodeURI(t_productno)+';'+encodeURI(t_noa)+';'+encodeURI(q_date()));
+			                	q_func('qtxt.query.div_stk_uj', 'orde_uj.txt,stk_uj,' + encodeURI(q_date())+';'+encodeURI('#non')+';'+encodeURI(t_productno)+';'+encodeURI('#non')+';'+encodeURI('1')+';'+encodeURI('#non'));
 							}
 						});
 						
@@ -1063,6 +723,10 @@
 											$('#txtMakeno_'+b_seq).val(tpuca[0].grouphno)//上皮
 											$('#txtOrdcno_'+b_seq).val(tpuca[0].groupino)//上紙
 										}
+										getstk('1',b_seq);
+									}
+									if($('#txtOrdcno2_'+b_seq).val().length>0){
+										getstk('2',b_seq);
 									}
 								}else{
 									t_unit1=t_productno.substr(0,1).toLocaleUpperCase();
@@ -1087,15 +751,82 @@
 												$('#txtMakeno_'+b_seq).val(tpuca[0].grouphno)//上皮
 												$('#txtOrdcno_'+b_seq).val(tpuca[0].groupino)//上紙
 											}
+											getstk('1',b_seq);
 										}
 									}
 								}
 							}
                         }
                         break;
+                    case 'txtProductno2_':
+                    	if($('#txtProductno2_'+b_seq).val().length>0){
+							var t_productno= $('#txtProductno2_'+b_seq).val();
+	                        q_gt('uca',"where=^^noa='"+t_productno+"'^^", 0, 0, 0, "getuca2", r_accy,1);
+	                        var tpuca = _q_appendData("uca", "", true);
+	                        if (tpuca[0] != undefined) {
+								$('#txtClass_'+b_seq).val(tpuca[0].groupdno);//MOQ
+								$('#txtMakeno_'+b_seq).val(tpuca[0].grouphno)//上皮
+								$('#txtOrdcno_'+b_seq).val(tpuca[0].groupino)//上紙
+							}
+							getstk('1',b_seq);
+						}
+                    	break;
+                    case 'txtOrdcno2_':
+                    	if($('#txtOrdcno2_'+b_seq).val().length>0){
+							getstk('2',b_seq);
+						}
+						break;
                     default:
                         break;
                 }
+            }
+            
+            function getstk(p,n) {
+            	var t_productno='';
+            	if(p=='1'){
+            		t_productno= $('#txtProductno2_' + n).val();
+            	}
+            	if(p=='2'){
+            		t_productno= $('#txtOrdcno2_' + n).val();
+            	}
+            	if(p=='3'){
+            		t_productno= $('#txtMakeno_' + n).val();
+            	}
+            	if(p=='4'){
+            		t_productno= $('#txtOrdcno_' + n).val();
+            	}
+            	if(t_productno.length>0){
+					q_func('qtxt.query.div_stk_uj', 'orde_uj.txt,stk_uj,' + encodeURI(q_date())+';'+encodeURI('#non')+';'+encodeURI(t_productno)+';'+encodeURI('#non')+';'+encodeURI('1')+';'+encodeURI('#non'),r_accy,1);
+					var as = _q_appendData("tmp0", "", true, true);
+					var t_weight=0;
+					for (var i = 0; i < as.length; i++) {
+						t_weight=q_add(t_weight,dec(as[i].weight));
+					}
+					if(p=='1'){
+						$('#txtW03_' + n).val(t_weight);
+					}
+					if(p=='2'){
+						$('#txtW04_' + n).val(t_weight);
+					}
+					if(p=='3'){
+						$('#txtW05_' + n).val(t_weight);
+					}
+					if(p=='4'){
+						$('#txtW07_' + n).val(t_weight);
+					}
+				}
+            }
+            
+			function FormatNumber(n) {
+            	var xx = "";
+            	if(n<0){
+            		n = Math.abs(n);
+            		xx = "-";
+            	}     		
+                n += "";
+                var arr = n.split(".");
+                var re = /(\d{1,3})(?=(\d{3})+$)/g;
+                return xx+arr[0].replace(re, "$1,") + (arr.length == 2 ? "." + arr[1] : "");
             }
 		</script>
 		<style type="text/css">
@@ -1244,60 +975,31 @@
 	ondrop="event.dataTransfer.dropEffect='none';event.stopPropagation(); event.preventDefault();"
 	>
 	<!--#include file="../inc/toolbar.inc"-->
-		<div id="div_stk" style="position:absolute; top:180px; left:20px; display:none; width:530px; background-color: #CDFFCE; border: 5px solid gray;">
+		<div id="div_stk" style="position:absolute; top:180px; left:20px; display:none; width:800px; background-color: #CDFFCE; border: 5px solid gray;">
 			<table id="table_stk" style="width:100%;" border="1" cellpadding='2' cellspacing='0'>
 				<tr style="display: none;">
-					<td style="width:530px;" colspan="5">
+					<td style="width:800px;" colspan="8">
 						<input id='s_bbsnoq' type="hidden">
 						<input id='s_bbssource' type="hidden">
 					</td>
 				</tr>
 				<tr>
-					<td style="width:130px;" align="center">庫存料號</td>
-					<td style="width:400px;" id='s_productno' colspan="4"> </td>
+					<td style="width:150px;" align="center">料號</td>
+					<td style="width:650px;" id='s_productno' colspan="7"> </td>
 				</tr>
 				<tr>
-					<td style="width:130px;" align="center">總庫存</td>
-					<td style="width:200px;" align="center" id='s_totlstk' colspan="2"> </td>
-					<td style="width:100px;" align="center" rowspan="3">可用庫存</td>
-					<td style="width:200px;" align="center" rowspan="3" id='s_canusestk' colspan="2"> </td>
-				</tr>
-				<tr>
-					<td style="width:130px;" align="center">前單預扣</td>
-					<td style="width:200px;" align="center" id='s_prstk' colspan="2"> </td>
-				</tr>
-				<tr>
-					<td style="width:130px;" align="center">前單「指定」</td>
-					<td style="width:200px;" align="center" id='s_psstk' colspan="2"> </td>
-				</tr>
-				<tr>
-					<td style="width:530px;" align="center" colspan="5"> </td>
-				</tr>
-				<tr>
-					<td style="width:330px;" colspan="3">
-						<input id='checkPrmount' type="checkbox">本單不指定，所可用庫存
-					</td>
-					<td style="width:100px;" align="center">預扣</td>
-					<td style="width:100px;" align="center"><input id='textPrmount' type="text" class="txt num stknum c1"></td>
-				</tr>
-				<tr>
-					<td style="width:330px;" colspan="3">
-						<input id='checkPsmountAll' type="checkbox">「指定」全選/清除
-					</td>
-					<td style="width:100px;" align="center">指定</td>
-					<td style="width:100px;" align="center" id='s_psmount'> </td>
-				</tr>
-				<tr>
-					<td style="width:130px;" align="center">生產編號</td>
-					<td style="width:100px;" align="center">長</td>
-					<td style="width:100px;" align="center">鎖住</td>
-					<td style="width:100px;" align="center">指定</td>
-					<td style="width:100px;" align="center">備註</td>
+					<td style="width:150px;" align="center">身分證號</td>
+					<td style="width:100px;" align="center">列管品</td>
+					<td style="width:100px;" align="center">進貨<BR>(生產)日</td>
+					<td style="width:100px;" align="center">數量</td>
+					<td style="width:50px;" align="center">單位</td>
+					<td style="width:100px;" align="center">標準長(M)<BR>同規格</td>
+					<td style="width:100px;" align="center">原長(M)</td>
+					<td style="width:100px;" align="center">可用長</td>
 				</tr>
 				<tr id='stk_close'>
-					<td align="center" colspan='5'>
+					<td align="center" colspan='8'>
 						<input id="btnClose_div_stk" type="button" value="確定">
-						<input id="btnClose_div_stk2" type="button" value="取消">
 					</td>
 				</tr>
 			</table>

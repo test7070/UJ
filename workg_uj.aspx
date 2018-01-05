@@ -2330,12 +2330,13 @@
 						<input id="btnPlut" type="button" style="font-size: medium; font-weight: bold;" value="＋"/>
 					</td>
 					<td style="width:20px;"> </td>
-					<td style="width:160px; text-align: center;"><a id='lblOrdeno_t'> </a></td>
-					<td style="width:40px; text-align: center;"><a id='lblNo2_t'> </a></td>
-					<td style="width:120px; text-align: center;"><a id='lblProductno_t'> </a></td>
-					<td style="width:180px; text-align: center;"><a id='lblProduct_t'> </a></td>
-					<td style="width:95px; text-align: center;"><a id='lblStyle_t'> </a></td>
-					<td style="width:100px; text-align: center;"><a id='lblSalemount_t'> </a></td>
+					<td style="width:160px; text-align: center;"><a id='lblOrdeno_uj_t'>類別指定</a></td>
+					<td style="width:40px; text-align: center;"><a id='lblNo2_uj_t'>項次</a></td>
+					<td style="width:120px; text-align: center;"><a id='lblUno_uj_t'>批號</a></td>
+					<td style="width:120px; text-align: center;"><a id='lblProductno_uj_t'>品名</a></td>
+					<td style="width:95px; text-align: center;"><a id='lblSpec_uj_t'>列管品</a></td>
+					<td style="width:100px; text-align: center;"><a id='lblMount_uj_t'>指定數量</a></td>
+					<td style="width:100px; text-align: center;"><a id='lblWeight_uj_t'>指定長度</a></td>
 				</tr>
 				<tr>
 					<td>
@@ -2345,10 +2346,11 @@
 					<td><a id="lblNo..*" style="font-weight: bold;text-align: center;display: block;"> </a></td>
 					<td><input id="txtOrdeno..*" type="text" class="txt c1"/></td>
 					<td><input id="txtNo2..*" type="text" class="txt c1"/></td>
+					<td><input id="txtUno..*" type="text" class="txt c1"/></td>
 					<td><input id="txtProductno..*" type="text" class="txt c1"/></td>
-					<td><input id="txtProduct..*" type="text" class="txt c1"/></td>
-					<td><input id="txtStyle..*" type="text" class="txt c1"/></td>
-					<td><input id="txtSalemount..*" type="text" class="txt c1 num"/></td>
+					<td><input id="txtSpec..*" type="text" class="txt c1"/></td>
+					<td><input id="txtMount..*" type="text" class="txt c1 num"/></td>
+					<td><input id="txtWeight..*" type="text" class="txt c1 num"/></td>
 				</tr>
 			</table>
 		</div>

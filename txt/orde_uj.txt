@@ -1,511 +1,271 @@
-﻿orde_import_uj:--orde_import_uj--uj訂單彙總匯入
-
-declare @o_custno nvarchar(50)=case when '#non'=[1] then '' else [1] end --客戶
-declare @o_noa nvarchar(50)=case when '#non'=[2] then '' else [2] end --訂單
-declare @o_datea nvarchar(50)=case when '#non'=[3] then '' else [3] end --客戶交期
-declare @d_noa nvarchar(50)=case when '#non'=[4] then '' else [4] end --訂單彙總單號
-declare @s_datea nvarchar(50)=case when '#non'=[5] then char(255) else [5] end --庫存日
+﻿stk_uj:--stk_uj 庫存
 --------------------------------------------------------------------
-declare @tmp table(
-	--訂單
-	noa nvarchar(50),
-	no2 nvarchar(10),
-	--成品
-	productno nvarchar(50),
-	product nvarchar(MAX),
-	mount float,--數量 毛需求
+declare @t_datea nvarchar(50)=case when '#non'=[1] then '' else [1] end
+declare @t_uno nvarchar(50)=case when '#non'=[2] then '' else [2] end
+declare @t_pno nvarchar(50)=case when '#non'=[3] then '' else [3] end
+declare @t_storeno nvarchar(50)=case when '#non'=[4] then '' else [4] end
+declare @t_isworkgno nvarchar(50)=case when '#non'=[5] then '' else [5] end --使用指定
+declare @t_workgno nvarchar(50)=case when '#non'=[6] then '' else [6] end --排除指定單號
+---------------------------------------------
+IF OBJECT_ID('tempdb..#tmp')is not null
+BEGIN
+	drop table #tmp
+END
+
+create table #tmp(
+	typea nvarchar(10),
+	uno nvarchar(50),
+	productno nvarchar(100),
+	product nvarchar(255), --出貨品名/標準料號參照
+	spec nvarchar(200),
+	datea nvarchar(10),
+	indate nvarchar(10), --入庫日
+	mount float,--數量
+	weight float,--長
 	unit nvarchar(50),
-	salea nvarchar(50), --銷售屬性
-	width float,--寬
-	lengthb float,--長
-	dime float,--裁切
-	smount float,--成品庫存
-	smount2 float,--半成品+再製品庫存(M)
-	smount3 float,--半成品+再製品可變成成品(支)
+	storeno nvarchar(50),
+	store nvarchar(150),
+	lengthb float, --標準長
+	engpro nvarchar(MAX), --舊成品編碼
+	ucaucc nvarchar(MAX),--2成品,3半成,8再製,4原料 5物料
 	
-	productno2 nvarchar(50),--半成品料號
-	sale2 nvarchar(50),--屬性
+	bmount float, --指定數量
+	bweight float, --指定長度
 	
-	tmount float,--製造成品(淨需求-支)
-	tmount2 float,--增減((M)
-	tmount3 float,--製造(M)
-	
-	amount float,--原生產成品(支)
-	amount2 float,--增減成品(支)
-	amount3 float,--加工成品(支)
-	
-	productno3 nvarchar(50),--底材料號
-	sale3 nvarchar(50),--屬性
-	cmount float,--底材現有庫存
-	cmount2 float,--底材合計
-	
-	moqlimited nvarchar(50),--MOQ限定
-	moq float,--MOQ
-	moqbelow float,--低於MOQ
-	
-	xmount1 float,--同紙(未排程)
-	xmount2 float,--同半成品(未排程)
-	ymount1 float,--同紙(已排程)
-	ymount2 float,--同半成品(已排程)
-	
-	uproductno1 nvarchar(50),--紙管編號
-	umount1 float,--物料需求(支) 紙管(根)
-	uproductno2 nvarchar(50),--紙箱編號
-	umount2 float,--物料需求(支) 紙箱(箱)
-	uproductno3 nvarchar(50),--塞頭編號
-	umount3 float,--物料需求(支) 塞頭(個)
-	
-	productno4 nvarchar(50),--面材料號
-	sale4 nvarchar(50),--屬性
-	dmount float,--面材現有庫存
-	
-	productno5 nvarchar(50),--材料料號
-	sale5 nvarchar(50),--屬性
-	emount float--材料現有庫存
-)
+) 
 
-insert @tmp(noa,no2,productno,product,mount,unit,salea,width,lengthb,dime
-,productno2,productno3,productno4,productno5,uproductno1,uproductno2,uproductno3)
-select a.noa,a.no2,a.productno,a.product,a.mount,a.unit
-,b.groupdno salea,b.mechs width ,b.trans lengthb,b.molds dime
-,case when left(a.productno,1)='5' then a.productno else isnull(c.productno,'') end productno2
-,isnull(d.productno,'')productno3,isnull(e.productno,'')productno4,isnull(f.productno,'')productno5
-,isnull(g.productno,'')uproductno1,isnull(h.productno,'')uproductno2,isnull(i.productno,'')uproductno3
-from view_ordes a left join uca b on a.productno=b.noa
-outer apply (select top 1 productno from ucas xa where xa.noa=b.noa and exists (select * from uca where typea='3' and noa=xa.productno) order by noq)c --半成品
-outer apply (select top 1 productno from ucas xa where xa.noa=c.productno and exists (select * from ucc where noa=xa.productno and (groupano='7L' or groupano='8L')) order by noq)d --底材料號
-outer apply (select top 1 productno from ucas xa where xa.noa=c.productno and exists (select * from ucc where noa=xa.productno and (groupano='7S' or groupano='8S' or groupano='8P')) order by noq)e --面材料號
-outer apply (select top 1 productno from ucas xa where xa.noa=c.productno and xa.productno!=d.productno and xa.productno!=e.productno 
-and exists (select * from ucc where noa=xa.productno and (groupano='7L' or groupano='8L' or groupano='7S' or groupano='8S' or groupano='8P')) order by noq )f-- 材料編號
-outer apply (select top 1 productno from ucas xa where xa.noa=b.noa and exists (select * from ucc where groupano='9P' and noa=xa.productno) order by noq)g --紙管編號
-outer apply (select top 1 productno from ucas xa where xa.noa=b.noa and exists (select * from ucc where groupano='9C' and noa=xa.productno) order by noq)h --紙箱編號
-outer apply (select top 1 productno from ucas xa where xa.noa=b.noa and exists (select * from ucc where groupano='9B' and noa=xa.productno) order by noq)i --塞頭編號
-where (a.noa=@o_noa or len(@o_noa)=0)
-and (a.custno=@o_custno or len(@o_custno)=0)
-and (a.datea<=@o_datea or len(@o_datea)=0)
-and b.noa is not null and isnull(a.enda,0)!=1 and isnull(a.cancel,0)!=1
-and not exists (select * from view_cubs where ordeno=a.noa and no2=a.no2 and noa!=@d_noa)
+--盤點
+insert #tmp (typea,uno,productno,product,spec,datea,mount,weight,unit,storeno,store)
+select '0',b.uno,b.productno,b.product,b.spec,a.datea,b.mount,b.weight,b.unit,b.storeno,b.store
+from view_ucce a left join view_ucces b on a.noa=b.noa 
+where (b.productno=@t_pno or len(@t_pno)=0) 
+and (b.storeno=@t_storeno or len(@t_storeno)=0)
+and (b.uno=@t_uno or len(@t_uno)=0)
+and a.datea<=@t_datea
 
-update a
-set sale2=b.groupdno,sale3=c.area,sale4=d.area,sale5=e.area
-from @tmp a
-outer apply (select top 1 * from uca where noa=a.productno2) b
-outer apply (select top 1 * from ucc where noa=a.productno3) c
-outer apply (select top 1 * from ucc where noa=a.productno4) d
-outer apply (select top 1 * from ucc where noa=a.productno5) e
+-------------------------------------------------------------------------
+--進貨
+insert #tmp (typea,uno,productno,product,spec,datea,mount,weight,unit,storeno,store)
+select '1',b.uno,b.productno,b.product,b.spec,a.datea,b.mount,b.weight,b.unit,b.storeno,b.store
+from view_rc2 a left join view_rc2s b on a.noa=b.noa 
+where a.typea='1' and (b.productno=@t_pno or len(@t_pno)=0) 
+and (b.storeno=@t_storeno or len(@t_storeno)=0)
+and (b.uno=@t_uno or len(@t_uno)=0)
+and a.datea<=@t_datea
 
---更新成品現有庫存
-update a
-set smount=isnull(b.mount,0)
-from @tmp a outer apply (select SUM(mount)mount from stkucc(@s_datea,'','') where productno=a.productno)b
+--入庫
+insert #tmp (typea,uno,productno,product,spec,datea,mount,weight,unit,storeno,store)
+select '2',b.uno,b.productno,b.product,b.spec,a.datea,b.mount,b.weight,b.unit,b.storeno,b.store
+from view_ina a left join view_inas b on a.noa=b.noa
+where (b.productno=@t_pno or len(@t_pno)=0) 
+and (b.storeno=@t_storeno or len(@t_storeno)=0)
+and (b.uno=@t_uno or len(@t_uno)=0)
+and a.datea<=@t_datea
 
---更新半成品現有庫存
---update a
---set smount2=case when a.productno2!='' then isnull(b.mount,0) else 0 end
---from @tmp a outer apply (select SUM(mount)mount from stkucc(@s_datea,'','') where productno=a.productno2)b
+--生產
+insert #tmp (typea,uno,productno,product,spec,datea,mount,weight,unit,storeno,store)
+select '3',b.uno,b.productno,b.product,b.spec,a.datea,b.mount,b.weight,b.unit,b.storeno,b.store
+from view_workb a left join view_workbs b on a.noa=b.noa
+where (b.productno=@t_pno or len(@t_pno)=0) 
+and (b.storeno=@t_storeno or len(@t_storeno)=0)
+and (b.uno=@t_uno or len(@t_uno)=0)
+and a.datea<=@t_datea
 
-update @tmp set smount2=0
+--出貨退回
+insert #tmp (typea,uno,productno,product,spec,datea,mount,weight,unit,storeno,store)
+select '4',b.uno,b.productno,b.product,b.spec,a.datea,b.mount,b.weight,b.unit,b.storeno,b.store
+from view_vcc a left join view_vccs b on a.noa=b.noa 
+where a.typea='2' 
+and (b.productno=@t_pno or len(@t_pno)=0) 
+and (b.storeno=@t_storeno or len(@t_storeno)=0)
+and (b.uno=@t_uno or len(@t_uno)=0)
+and a.datea<=@t_datea
+------------------------------------------------------------------------
+--進貨退回
+insert #tmp (typea,uno,productno,product,spec,datea,mount,weight,unit,storeno,store)
+select '5',b.uno,b.productno,b.product,b.spec,a.datea,-1*b.mount,-1*b.weight,b.unit,b.storeno,b.store
+from view_rc2 a left join view_rc2s b on a.noa=b.noa 
+where a.typea='2' 
+and (b.productno=@t_pno or len(@t_pno)=0) 
+and (b.storeno=@t_storeno or len(@t_storeno)=0)
+and (b.uno=@t_uno or len(@t_uno)=0)
+and a.datea<=@t_datea
 
---更新底材現有庫存
-update a
-set cmount=case when a.productno3!='' then isnull(b.mount,0) else 0 end
-from @tmp a outer apply (select SUM(mount)mount from stkucc(@s_datea,'','') where productno=a.productno3)b
+--出貨
+insert #tmp (typea,uno,productno,product,spec,datea,mount,weight,unit,storeno,store)
+select '6',b.uno,b.productno,b.product,b.spec,a.datea,-1*b.mount,-1*b.weight,b.unit,b.storeno,b.store
+from view_vcc a left join view_vccs b on a.noa=b.noa 
+where a.typea='1' 
+and (b.productno=@t_pno or len(@t_pno)=0) 
+and (b.storeno=@t_storeno or len(@t_storeno)=0)
+and (b.uno=@t_uno or len(@t_uno)=0)
+and a.datea<=@t_datea
 
---更新面材現有庫存
-update a
-set dmount=case when a.productno4!='' then isnull(b.mount,0) else 0 end
-from @tmp a outer apply (select SUM(mount)mount from stkucc(@s_datea,'','') where productno=a.productno4)b
+--領料
+insert #tmp (typea,uno,productno,product,spec,datea,mount,weight,unit,storeno,store)
+select '7',b.uno,b.productno,b.product,b.spec,a.datea,-1*b.mount,-1*b.weight,b.unit,b.storeno,b.store
+from view_get a left join view_gets b on a.noa=b.noa
+where (b.productno=@t_pno or len(@t_pno)=0) 
+and (b.storeno=@t_storeno or len(@t_storeno)=0)
+and (b.uno=@t_uno or len(@t_uno)=0)
+and a.datea<=@t_datea
 
---更新材料現有庫存
-update a
-set emount=case when a.productno5!='' then isnull(b.mount,0) else 0 end
-from @tmp a outer apply (select SUM(mount)mount from stkucc(@s_datea,'','') where productno=a.productno5)b
+--生產領料
+insert #tmp (typea,uno,productno,product,spec,datea,mount,weight,unit,storeno,store)
+select '8',b.uno,b.productno,b.product,b.spec,a.datea,-1*b.mount,-1*b.weight,b.unit,b.storeno,b.store
+from view_worka a left join view_workas b on a.noa=b.noa
+where (b.productno=@t_pno or len(@t_pno)=0) 
+and (b.storeno=@t_storeno or len(@t_storeno)=0)
+and (b.uno=@t_uno or len(@t_uno)=0)
+and a.datea<=@t_datea
+------------------------------------------------------------------------
+--調撥出庫
+insert #tmp (typea,uno,productno,product,spec,datea,mount,weight,unit,storeno,store)
+select '9-1',b.uno,b.productno,b.product,b.spec,a.datea,-1*b.mount,-1*b.weight,b.unit,a.storeno,a.store
+from view_cng a left join view_cngs b on a.noa=b.noa
+where (b.productno=@t_pno or len(@t_pno)=0) 
+and (a.storeno=@t_storeno or len(@t_storeno)=0)
+and (b.uno=@t_uno or len(@t_uno)=0)
+and a.datea<=@t_datea
 
---換算可變成成品數量
-update a set smount3=case when smount2>0 then floor(smount2*0.92/lengthb)
--case when LEFT(a.productno,1)='2' and ISNULL(beginmount,0)>0 then floor(smount2/beginmount) else 0 end else 0 end
- from @tmp a outer apply (select top 1 beginmount from ucc where noa=a.productno4)b
-
---製造成品
-update @tmp
-set tmount=case when left(productno,1)='5' or productno2='' then 0
-when smount+smount3>=mount then 0 else mount-(smount+smount3) end
-
-update @tmp set tmount2=0
-
---製造換算
-update a
-set tmount3=case when productno2='' then 0 when left(productno,1)='5' then mount
-else tmount*lengthb/case when dime=0 then 1 else dime end/case when isnull(b.badperc,0)=0 then 1 else b.badperc end end+tmount2
-from @tmp a
-outer apply (select badperc from uca where noa=a.productno2)b
-
---加工成品
-update @tmp
-set amount=case when left(productno,1)='1' or left(productno,1)='5' then 0
-when mount-smount<0 then 0 else mount-smount end
-
-update @tmp set amount2=0
-update @tmp set amount3=amount+amount2
-update @tmp set amount3=amount
-
---底材合計
-update a
-set cmount2=case when a.tmount3=0 then 0 else isnull(b.tmount3,0) end
-from @tmp a
-outer apply (select SUM(tmount3)tmount3 from @tmp where productno3=a.productno3)b
-
---MOQ
-update a
-set moqlimited=case when left(productno,1)='5' then '' when tmount=0 then '' else isnull(b.team,'') end
-,moq=case when left(productno,1)='5' then '' when tmount=0 then '' else isnull(b.stdmount,0) end
-from @tmp a outer apply (select * from uca where noa=a.productno)b
-
---低於MOQ
-update @tmp
-set moqbelow=case when left(productno,1)='5' then 0 else
-case when cmount2<moq then moq-cmount2 else 0 end end
-
---同紙(已排程) ymount1
-update a
-set ymount1=case when len(a.productno3)=0 or a.tmount3=0 then 0 else
-ISNULL((select SUM(xa.lengthb) from view_workgs xa left join view_workg xb on xa.noa=xb.noa 
-where xa.ucc2no=a.productno3 and isnull(xa.rworkdate,'')!='' and isnull(xb.iscugu,0)=0 and xb.style='製造'),0) end
-from @tmp a
-
---同半成品(已排程) ymount2
-update a
-set ymount2=case when len(a.productno3)=0 or a.tmount3=0 then 0 else
-ISNULL((select SUM(xa.lengthb) from view_workgs xa left join view_workg xb on xa.noa=xb.noa 
-where xa.ucano=a.productno2 and isnull(xa.rworkdate,'')!='' and isnull(xb.iscugu,0)=0 and xb.style='製造'),0) end
-from @tmp a
-
---同紙(未排程) xmount1
-update a
-set xmount1=case when len(a.productno3)=0 or a.tmount3=0 then 0 else
-ISNULL((select SUM(xa.lengthb) from view_workgs xa left join view_workg xb on xa.noa=xb.noa 
-where xa.ucc2no=a.productno3 and isnull(xa.rworkdate,'')='' and isnull(xb.iscugu,0)=0 and xb.style='製造'),0)-a.tmount3 end
-+ISNULL(a.ymount1,0)
-from @tmp a
-
---同半成品(未排程) xmount2
-update a
-set xmount2=case when len(a.productno3)=0 or a.tmount3=0 then 0 else
-ISNULL((select SUM(xa.lengthb) from view_workgs xa left join view_workg xb on xa.noa=xb.noa 
-where xa.ucano=a.productno2 and isnull(xa.rworkdate,'')='' and isnull(xb.iscugu,0)=0 and xb.style='製造'),0)-a.tmount3 end
-+ISNULL(a.ymount2,0)
-from @tmp a
-
---物料需求(支) 紙管(根)
-update @tmp set umount1=case when left(productno,1)='5' then 0 else amount3/case when isnull(dime,0)=0 then 1 else dime end end
-
---物料需求(支) 紙箱(箱)
-update a
-set umount2=case when left(productno,1)='5' then 0 else amount3/case when isnull(b.packs,0)=0 then 1 else b.packs end end
-from @tmp a outer apply (select top 1 packs from uca where noa=a.productno)b
-
---物料需求(支) 塞頭(個)
-update a
-set umount3=case when left(productno,1)='5' then 0 else case when isnull(b.stationg,'')='無' then 0 else 2 end*amount3 end
-from @tmp a outer apply (select top 1 stationg from uca where noa=a.productno)b
-
-select * from @tmp order by noa,no2
-;
----------------------------------------------------------------------------
-uca_uj:--uca_uj--uj產品插入
-
-declare @p_noa nvarchar(50)=case when '#non'=[1] then '' else [1] end --產品編號
-declare @p_mount nvarchar(50)=case when '#non'=[2] then '0' else [2] end --數量
-declare @s_datea nvarchar(50)=case when '#non'=[3] then char(255) else [3] end --庫存日
---------------------------------------------------------------------
-declare @tmp table(
-	--成品
-	productno nvarchar(50),
-	product nvarchar(MAX),
-	mount float,--數量 毛需求
-	unit nvarchar(50),
-	salea nvarchar(50), --銷售屬性
-	width float,--寬
-	lengthb float,--長
-	dime float,--裁切
-	smount float,--成品庫存
-	smount2 float,--半成品+再製品庫存(M)
-	smount3 float,--半成品+再製品可變成成品(支)
-	
-	productno2 nvarchar(50),--半成品料號
-	sale2 nvarchar(50),--屬性
-	
-	tmount float,--製造成品(淨需求-支)
-	tmount2 float,--增減((M)
-	tmount3 float,--製造(M)
-	
-	amount float,--原生產成品(支)
-	amount2 float,--增減成品(支)
-	amount3 float,--加工成品(支)
-	
-	productno3 nvarchar(50),--底材料號
-	sale3 nvarchar(50),--屬性
-	cmount float,--底材現有庫存
-	cmount2 float,--底材合計
-	
-	moqlimited nvarchar(50),--MOQ限定
-	moq float,--MOQ
-	moqbelow float,--低於MOQ
-	
-	xmount1 float,--同紙(未排程)
-	xmount2 float,--同半成品(未排程)
-	ymount1 float,--同紙(已排程)
-	ymount2 float,--同半成品(已排程)
-	
-	uproductno1 nvarchar(50),--紙管編號
-	umount1 float,--物料需求(支) 紙管(根)
-	uproductno2 nvarchar(50),--紙箱編號
-	umount2 float,--物料需求(支) 紙箱(箱)
-	uproductno3 nvarchar(50),--塞頭編號
-	umount3 float,--物料需求(支) 塞頭(個)
-	
-	productno4 nvarchar(50),--面材料號
-	sale4 nvarchar(50),--屬性
-	dmount float,--面材現有庫存
-	
-	productno5 nvarchar(50),--材料料號
-	sale5 nvarchar(50),--屬性
-	emount float--材料現有庫存
-)
-
-insert @tmp(productno,product,mount,unit,salea,width,lengthb,dime
-,productno2,productno3,productno4,productno5,uproductno1,uproductno2,uproductno3)
-select b.noa,b.product,CAST(@p_mount as float),b.unit
-,b.groupdno salea,b.mechs width ,b.trans lengthb,b.molds dime
-,case when left(b.noa,1)='5' then b.noa else isnull(c.productno,'') end productno2
-,isnull(d.productno,'')productno3,isnull(e.productno,'')productno4,isnull(f.productno,'')productno5
-,isnull(g.productno,'')uproductno1,isnull(h.productno,'')uproductno2,isnull(i.productno,'')uproductno3
-from uca b 
-outer apply (select top 1 productno from ucas xa where xa.noa=b.noa and exists (select * from uca where typea='3' and noa=xa.productno) order by noq)c --半成品
-outer apply (select top 1 productno from ucas xa where xa.noa=c.productno and exists (select * from ucc where noa=xa.productno and (groupano='7L' or groupano='8L')) order by noq)d --底材料號
-outer apply (select top 1 productno from ucas xa where xa.noa=c.productno and exists (select * from ucc where noa=xa.productno and (groupano='7S' or groupano='8S' or groupano='8P')) order by noq)e --面材料號
-outer apply (select top 1 productno from ucas xa where xa.noa=c.productno and xa.productno!=d.productno and xa.productno!=e.productno 
-and exists (select * from ucc where noa=xa.productno and (groupano='7L' or groupano='8L' or groupano='7S' or groupano='8S' or groupano='8P')) order by noq )f-- 材料編號
-outer apply (select top 1 productno from ucas xa where xa.noa=b.noa and exists (select * from ucc where groupano='9P' and noa=xa.productno) order by noq)g --紙管編號
-outer apply (select top 1 productno from ucas xa where xa.noa=b.noa and exists (select * from ucc where groupano='9C' and noa=xa.productno) order by noq)h --紙箱編號
-outer apply (select top 1 productno from ucas xa where xa.noa=b.noa and exists (select * from ucc where groupano='9B' and noa=xa.productno) order by noq)i --塞頭編號
-where b.noa=@p_noa
+--調撥入庫
+insert #tmp (typea,uno,productno,product,spec,datea,mount,weight,unit,storeno,store)
+select '9-2',b.uno,b.productno,b.product,b.spec,a.datea,b.mount,b.weight,b.unit,a.storeinno,a.storein
+from view_cng a left join view_cngs b on a.noa=b.noa
+where (b.productno=@t_pno or len(@t_pno)=0) 
+and (a.storeinno=@t_storeno or len(@t_storeno)=0)
+and (b.uno=@t_uno or len(@t_uno)=0)
+and a.datea<=@t_datea
+------------------------------------------------------------------------
+update #tmp
+set uno=ISNULL(uno,''),productno=ISNULL(productno,''),spec=ISNULL(spec,''),storeno=ISNULL(storeno,'')
+,mount=ISNULL(mount,0),weight=ISNULL(weight,0)
 
 update a
-set sale2=b.groupdno,sale3=c.area,sale4=d.area,sale5=e.area
-from @tmp a
-outer apply (select top 1 * from uca where noa=a.productno2) b
-outer apply (select top 1 * from ucc where noa=a.productno3) c
-outer apply (select top 1 * from ucc where noa=a.productno4) d
-outer apply (select top 1 * from ucc where noa=a.productno5) e
+set indate=isnull(b.indate,'')
+from #tmp a outer apply (select MIN(datea) indate from #tmp where uno=a.uno and productno=a.productno and spec=a.spec and typea<'5') b
 
---更新成品現有庫存
-update a
-set smount=isnull(b.mount,0)
-from @tmp a outer apply (select SUM(mount)mount from stkucc(@s_datea,'','') where productno=a.productno)b
+delete a 
+from #tmp a outer apply (select MAX(datea)udate from #tmp where typea='0' and uno=a.uno and productno=a.productno and spec=a.spec and storeno=a.storeno)b --盤點
+where typea!='0' and datea<isnull(udate,'')
 
---更新半成品現有庫存
---update a
---set smount2=case when a.productno2!='' then isnull(b.mount,0) else 0 end
---from @tmp a outer apply (select SUM(mount)mount from stkucc(@s_datea,'','') where productno=a.productno2)b
 
-update @tmp set smount2=0
-
---更新底材現有庫存
-update a
-set cmount=case when a.productno3!='' then isnull(b.mount,0) else 0 end
-from @tmp a outer apply (select SUM(mount)mount from stkucc(@s_datea,'','') where productno=a.productno3)b
-
---更新面材現有庫存
-update a
-set dmount=case when a.productno4!='' then isnull(b.mount,0) else 0 end
-from @tmp a outer apply (select SUM(mount)mount from stkucc(@s_datea,'','') where productno=a.productno4)b
-
---更新材料現有庫存
-update a
-set emount=case when a.productno5!='' then isnull(b.mount,0) else 0 end
-from @tmp a outer apply (select SUM(mount)mount from stkucc(@s_datea,'','') where productno=a.productno5)b
-
---換算可變成成品數量
-update a set smount3=case when smount2>0 then floor(smount2*0.92/lengthb)
--case when LEFT(a.productno,1)='2' and ISNULL(beginmount,0)>0 then floor(smount2/beginmount) else 0 end else 0 end
- from @tmp a outer apply (select top 1 beginmount from ucc where noa=a.productno4)b
-
---製造成品
-update @tmp
-set tmount=case when left(productno,1)='5' or productno2='' then 0
-when smount+smount3>=mount then 0 else mount-(smount+smount3) end
-
-update @tmp set tmount2=0
-
---製造換算
-update a
-set tmount3=case when productno2='' then 0 when left(productno,1)='5' then mount
-else tmount*lengthb/case when dime=0 then 1 else dime end/case when isnull(b.badperc,0)=0 then 1 else b.badperc end end+tmount2
-from @tmp a
-outer apply (select badperc from uca where noa=a.productno2)b
-
---加工成品
-update @tmp
-set amount=case when left(productno,1)='1' or left(productno,1)='5' then 0
-when mount-smount<0 then 0 else mount-smount end
-
-update @tmp set amount2=0
-update @tmp set amount3=amount+amount2
-update @tmp set amount3=amount
-
---底材合計
-update a
-set cmount2=case when a.tmount3=0 then 0 else isnull(b.tmount3,0) end
-from @tmp a
-outer apply (select SUM(tmount3)tmount3 from @tmp where productno3=a.productno3)b
-
---MOQ
-update a
-set moqlimited=case when left(productno,1)='5' then '' when tmount=0 then '' else isnull(b.team,'') end
-,moq=case when left(productno,1)='5' then '' when tmount=0 then '' else isnull(b.stdmount,0) end
-from @tmp a outer apply (select * from uca where noa=a.productno)b
-
---低於MOQ
-update @tmp
-set moqbelow=case when left(productno,1)='5' then 0 else
-case when cmount2<moq then moq-cmount2 else 0 end end
-
---同紙(已排程) ymount1
-update a
-set ymount1=case when len(a.productno3)=0 or a.tmount3=0 then 0 else
-ISNULL((select SUM(xa.lengthb) from view_workgs xa left join view_workg xb on xa.noa=xb.noa 
-where xa.ucc2no=a.productno3 and isnull(xa.rworkdate,'')!='' and isnull(xb.iscugu,0)=0 and xb.style='製造'),0) end
-from @tmp a
-
---同半成品(已排程) ymount2
-update a
-set ymount2=case when len(a.productno3)=0 or a.tmount3=0 then 0 else
-ISNULL((select SUM(xa.lengthb) from view_workgs xa left join view_workg xb on xa.noa=xb.noa 
-where xa.ucano=a.productno2 and isnull(xa.rworkdate,'')!='' and isnull(xb.iscugu,0)=0 and xb.style='製造'),0) end
-from @tmp a
-
---同紙(未排程) xmount1
-update a
-set xmount1=case when len(a.productno3)=0 or a.tmount3=0 then 0 else
-ISNULL((select SUM(xa.lengthb) from view_workgs xa left join view_workg xb on xa.noa=xb.noa 
-where xa.ucc2no=a.productno3 and isnull(xa.rworkdate,'')='' and isnull(xb.iscugu,0)=0 and xb.style='製造'),0)-a.tmount3 end
-+ISNULL(a.ymount1,0)
-from @tmp a
-
---同半成品(未排程) xmount2
-update a
-set xmount2=case when len(a.productno3)=0 or a.tmount3=0 then 0 else
-ISNULL((select SUM(xa.lengthb) from view_workgs xa left join view_workg xb on xa.noa=xb.noa 
-where xa.ucano=a.productno2 and isnull(xa.rworkdate,'')='' and isnull(xb.iscugu,0)=0 and xb.style='製造'),0)-a.tmount3 end
-+ISNULL(a.ymount2,0)
-from @tmp a
-
---物料需求(支) 紙管(根)
-update @tmp set umount1=case when left(productno,1)='5' then 0 else amount3/case when isnull(dime,0)=0 then 1 else dime end end
-
---物料需求(支) 紙箱(箱)
-update a
-set umount2=case when left(productno,1)='5' then 0 else amount3/case when isnull(b.packs,0)=0 then 1 else b.packs end end
-from @tmp a outer apply (select top 1 packs from uca where noa=a.productno)b
-
---物料需求(支) 塞頭(個)
-update a
-set umount3=case when left(productno,1)='5' then 0 else case when isnull(b.stationg,'')='無' then 0 else 2 end*amount3 end
-from @tmp a outer apply (select top 1 stationg from uca where noa=a.productno)b
-
-select * from @tmp order by productno
-;
----------------------------------------------------------------------------
-ordestk_uj:--ordestk_uj--uj訂單指定庫存
-
-declare @t_pno nvarchar(50)=case when '#non'=[1] then '' else [1] end --產品編號
-declare @t_noa nvarchar(50)=case when '#non'=[2] then '' else [2] end --訂單彙總單號
---------------------------------------------------------------------
-select a.uno,a.productno,a.product,a.emount,a.memo,isnull(b.mount,0)psmount,isnull(c.mount,0)prmount
-from view_uccc a
-outer apply (select SUM(mount)mount from view_cubt where uno=a.uno and productno=a.productno and isnull(gmount,0)=0 and noa!=@t_noa)b --前單指定 --排除已扣料
-outer apply (select SUM(mount)mount from view_cubt where isnull(uno,'')='' and productno=a.productno and isnull(gmount,0)=0  and noa!=@t_noa )c --前單預扣 --排除已扣料
-where isnull(emount,0)>0 and isnull(a.productno,'')=@t_pno
-;
--------------------------------------------------------------------------------------
-schlen_uj:--schlen_uj--uj已排程/未排程長度
-declare @pno3 nvarchar(100)=case when '#non'=[1] then '' else [1] end --底材
-declare @pno2 nvarchar(100)=case when '#non'=[2] then '' else [2] end --半成品
-
-select 
-SUM(case when a.ucc2no=@pno3 and isnull(a.rworkdate,'')!='' then a.lengthb else 0 end) ymount1,
-SUM(case when a.ucano=@pno2 and isnull(a.rworkdate,'')!='' then a.lengthb else 0 end) ymount2,
-SUM(case when a.ucc2no=@pno3 and isnull(a.rworkdate,'')='' then a.lengthb else 0 end) xmount1,
-SUM(case when a.ucano=@pno2 and isnull(a.rworkdate,'')='' then a.lengthb else 0 end) xmount2
-from view_workgs a left join view_workg b on a.noa=b.noa 
-where isnull(b.iscugu,0)=0 --表示產生製令開工
-and b.style='製造'
-;
------------------------------------------------------------------------------------------------
-cub_import_uj:--cub_import_uj--uj訂單彙總表匯入
-declare @t_typea nvarchar(50)=case when '#non'=[1] then '' else [1] end
-declare @t_bdate nvarchar(50)=case when '#non'=[2] then '' else [2] end
-declare @t_edate nvarchar(50)=case when '#non'=[3] then char(255) else [3] end
-declare @t_custno nvarchar(50)=case when '#non'=[4] then '' else [4] end
-declare @t_ucc1no nvarchar(50)=case when '#non'=[5] then '' else [5] end
-declare @t_ucc2no nvarchar(50)=case when '#non'=[6] then '' else [6] end
-declare @t_noa nvarchar(50)=case when '#non'=[7] then '' else [7] end
-
-if(@t_typea='製造')
+if(@t_isworkgno='1')
 begin
-	--製造
-	select b.datea,case when len(a.ordeno)>0 then a.ordeno+'-'+a.no2 else '' end ordeno
-	,a.productno2 productno,0 mount,a.width,a.x03 lengthb
-	,c.modelno mechno,c.model mech
-	,dbo.split(c.style,'#^#',1) style
-	,dbo.split(c.style,'#^#',2) dime
-	,c.groupgno typea
-	,a.productno2 ucano --半
-	,a.makeno ucc1no --面
-	,a.ordcno ucc2no --底
-	,a.ordcno2 ucc3no --材
-	,a.processno ucc4no --管
-	,a.cno ucc5no --箱
-	,a.tggno ucc6no --塞
-	,c.hsec gen
-	,a.noa+'-'+a.noq memo2
-	from view_cubs a left join view_ordes b on a.ordeno=b.noa and a.no2=b.no2
-	outer apply (select top 1 * from uca where noa=a.productno2)c
-	where isnull(b.datea,'') between @t_bdate and @t_edate
-	and (len(@t_custno)=0 or isnull(b.custno,'')=@t_custno)
-	and (len(@t_ucc1no)=0 or isnull(a.makeno,'')=@t_ucc1no)
-	and (len(@t_ucc2no)=0 or isnull(a.ordcno,'')=@t_ucc2no)
-	and isnull(a.productno2,'')!=''
-	and not exists (select * from view_workgs wa left join view_workg wb on wa.noa=wb.noa
-	where wa.memo2=a.noa+'-'+a.noq and isnull(wa.rworkdate,'')!='' and wb.style='製造' and wa.noa!=@t_noa)
+	--使用指定庫存 不分倉庫
+	insert #tmp (typea,uno,productno,product,spec,datea,indate,mount,weight,unit,storeno,store,lengthb,engpro,ucaucc,bmount,bweight)
+	select '99',uno,productno,'',spec,'',indate,SUM(mount),SUM(weight),'','','',0,'','',0,0
+	from #tmp group by uno,productno,spec,indate
 end
 else
 begin
-	--加工
-	select b.datea,case when len(a.ordeno)>0 then a.ordeno+'-'+a.no2 else '' end ordeno
-	,a.productno productno,a.x08 mount,a.width,a.lengthb
-	,c.processno mechno,c.process mech
-	,dbo.split(c.style,'#^#',1) style
-	,dbo.split(c.style,'#^#',2) dime
-	,c.groupgno typea
-	,a.productno2 ucano --半
-	,a.makeno ucc1no --面
-	,a.ordcno ucc2no --底
-	,a.ordcno2 ucc3no --材
-	,a.processno ucc4no --管
-	,a.cno ucc5no --箱
-	,a.tggno ucc6no --塞
-	,round(c.sec*a.x08/3600,1) gen
-	,a.noa+'-'+a.noq memo2
-	from view_cubs a left join view_ordes b on a.ordeno=b.noa and a.no2=b.no2
-	outer apply (select top 1 * from uca where noa=a.productno)c
-	where isnull(b.datea,'') between @t_bdate and @t_edate
-	and (len(@t_custno)=0 or isnull(b.custno,'')=@t_custno)
-	and (len(@t_ucc1no)=0 or isnull(a.makeno,'')=@t_ucc1no)
-	and (len(@t_ucc2no)=0 or isnull(a.ordcno,'')=@t_ucc2no)
-	and isnull(a.productno,'')!=''
-	and not exists (select * from view_workgs wa left join view_workg wb on wa.noa=wb.noa
-	where wa.memo2=a.noa+'-'+a.noq and isnull(wa.rworkdate,'')!='' and wb.style='加工' and wa.noa!=@t_noa)
+	--正常庫存
+	insert #tmp (typea,uno,productno,product,spec,datea,indate,mount,weight,unit,storeno,store,lengthb,engpro,ucaucc,bmount,bweight)
+	select '99',uno,productno,'',spec,'',indate,SUM(mount),SUM(weight),'',storeno,'',0,'','',0,0
+	from #tmp group by uno,productno,spec,storeno,indate
 end
+
+--刪除明細
+delete #tmp where typea!='99'
+--刪除無庫存
+delete #tmp where weight<=0 and mount<=0
+
+--更新 名稱/參照,標準長,類別,倉庫
+update a 
+set productno=b.product,lengthb=b.trans,engpro=b.engpro,ucaucc=b.typea,unit=b.unit
+from #tmp a left join uca b on a.productno=b.noa
+where b.noa is not null
+
+update a 
+set product=b.product,lengthb=b.reserve,ucaucc=b.typea,unit=b.unit
+from #tmp a left join ucc b on a.productno=b.noa
+where b.noa is not null
+
+update a
+set store=b.store
+from #tmp a left join store b on a.storeno=b.noa
+where b.noa is not null
+
+if(@t_isworkgno='1') --更新指定庫存
+begin
+	update a
+	set bmount=b.bmount,bweight=b.bweight
+	from #tmp a outer apply(
+		select productno,uno,spec,SUM(mount)bmount,SUM(weight)bweight 
+		from view_workgt xa where noa!=@t_workgno
+		and not exists(select * from view_workas where ordeno=xa.noa and no2=xa.no2) --排除已領料的單號
+		group by productno,uno,spec having productno=a.productno and uno=a.uno and spec=a.spec
+	)b where b.productno is not null
+	
+	--指定(數量大於1且不符合標準長另外取出，成品在逐筆列出>不考慮 入庫存時就每一個數量一個批號即可)
+	
+	insert #tmp(typea,uno,productno,product,spec,datea,indate,mount,weight,unit,storeno,store,lengthb,engpro,ucaucc,bmount,bweight)
+	select '98' typea,uno,productno,product,spec,datea,indate,1,round(weight-(lengthb*(mount-1)),6),unit,storeno,store,lengthb,engpro,ucaucc,bmount,bweight
+	from #tmp where mount>1 and weight>0 and lengthb>0
+	and mount*lengthb!=weight
+	
+	update #tmp
+	set mount=mount-1,weight=(mount-1)*lengthb
+	where mount>1 and weight>0 and lengthb>0
+	and mount*lengthb!=weight and typea='99'
+end
+
+--輸出
+select uno,productno,product,spec,datea,indate,mount,weight,unit,storeno,store,lengthb,engpro,ucaucc,bmount,bweight
+from #tmp order by storeno,productno,uno,spec,typea
+
+IF OBJECT_ID('tempdb..#tmp')is not null
+BEGIN
+	drop table #tmp
+END
+;
+
+-----------------------------------------------------------------------------------------------
+ordc_uj:--ordc_uj 採購未交
+
+declare @t_datea nvarchar(50)=case when '#non'=[1] then '' else [1] end
+declare @t_pno nvarchar(50)=case when '#non'=[2] then '' else [2] end
+
+declare @tmp table(
+	uno nvarchar(50),
+	productno nvarchar(100),
+	product nvarchar(255), --出貨品名/標準料號參照
+	spec nvarchar(200),
+	indate nvarchar(10), --最快進貨日
+	mount float,--數量
+	weight float,--長
+	unit nvarchar(50),
+	lengthb float, --標準長
+	engpro nvarchar(MAX), --舊成品編碼
+	ucaucc nvarchar(MAX)--2成品,3半成,8再製,4原料 5物料
+)
+
+insert @tmp(uno,productno,spec,indate,mount,weight)
+select b.uno,b.productno,b.spec,MIN(b.trandate)
+,SUM(b.mount-isnull(c.rmount,0))cmount,SUM(b.weight-isnull(c.rweight,0))cweight
+from view_ordc a left join view_ordcs b on a.noa=b.noa
+outer apply (select SUM(mount)rmount,SUM(weight)rweight from view_rc2s where ordeno=b.noa and no2=b.no2)c
+where ISNULL(a.enda,0)=0 and ISNULL(a.cancel,0)=0 and ISNULL(b.enda,0)=0 and ISNULL(b.cancel,0)=0
+and a.odate<=@t_datea and (b.productno=@t_pno or len(@t_pno)=0)
+group by b.uno,b.productno,b.spec
+
+update @tmp
+set uno=ISNULL(uno,''),productno=ISNULL(productno,''),spec=ISNULL(spec,'')
+,mount=ISNULL(mount,0),weight=ISNULL(weight,0)
+,product=ISNULL(product,''),unit=ISNULL(unit,''),lengthb=ISNULL(lengthb,0)
+,engpro=ISNULL(engpro,''),ucaucc=ISNULL(ucaucc,'')
+
+--更新 名稱/參照,標準長,類別,倉庫
+update a 
+set productno=b.product,lengthb=b.trans,engpro=b.engpro,ucaucc=b.typea,unit=b.unit
+from @tmp a left join uca b on a.productno=b.noa
+where b.noa is not null
+
+update a 
+set product=b.product,lengthb=b.reserve,ucaucc=b.typea,unit=b.unit
+from @tmp a left join ucc b on a.productno=b.noa
+where b.noa is not null
+
+select * from @tmp order by productno,uno,spec,indate
+
 ;
