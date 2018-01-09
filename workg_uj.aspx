@@ -18,7 +18,7 @@
 			q_tables = 't';
 			var q_name = "workg";
 			var q_readonly = ['txtNoa', 'txtDatea', 'txtWorker', 'txtWorker2'];
-			var q_readonlys = ['txtNoq','textB02','textJ02','textJ11','textJ17','textL04'];
+			var q_readonlys = ['txtNoq','textB02','textJ02','textJ11','textJ17','textL05'];
 			var q_readonlyt = [];
 			var bbmNum = [];
 			var bbsNum = [];
@@ -89,14 +89,14 @@
 					,['textP03', 15, 4, 1],['textP04', 15, 4, 1],['textP05', 15, 4, 1]
 					,['textQ03', 15, 4, 1],['textQ04', 15, 4, 1],['textQ05', 15, 4, 1]
 					,['textR01', 15, 4, 1],['textR02', 15, 4, 1],['textR03', 15, 4, 1],['textR04', 15, 4, 1],['textR05', 15, 4, 1]
-					,['textR06', 15, 4, 1],['textR07', 15, 4, 1],['textR08', 15, 2, 1]
+					,['textR06', 15, 4, 1],['textR07', 15, 4, 1],['textL08', 15, 2, 1]
 				];
 				
 				bbmMask = [['txtDatea', r_picd], ['txtBdate', r_picd], ['txtEdate', r_picd], ['txtSfbdate', r_picd], ['txtSfedate', r_picd], ['txtWadate', r_picd], ['txtWbdate', r_picd], ['txtWedate', r_picd]];
 				bbsMask = [
 					['textA05', r_picd],['textC07', r_picd],['textI07', r_picd],['textI10', r_picd],['textI13', r_picd],['textI15', r_picd],['textI17', r_picd] //A
 					,['textJ01', r_picd],['textJ10', r_picd] //B
-					,['textK14', r_picd],['textL03', r_picd] //製造
+					,['textK01', r_picd],['textK14', r_picd],['textL03', r_picd] //製造
 				];
 				
 				q_mask(bbmMask);
@@ -104,20 +104,11 @@
 				q_cmbParse("combJ02", ',分1,分2,分3,分4','s');
 				q_cmbParse("combJ11", ',覆1,覆2,覆3,其他','s');
 				q_cmbParse("combJ17", ',急,做,可','s');
-				q_cmbParse("combL04", ',A,B','s');
+				q_cmbParse("combL05", ',A,B','s');
 				
 				document.title='製造/加工排程表';
 				
-				 $('#btnWorkgg_uj').click(function() {
-                	q_box("z_workgg.aspx", 'z_workgg', "95%", "95%", q_getMsg("btnWorkgg"));
-				});
-				
-				$('#btnOrde_uj').click(function() {
-					
-				});
-				
-				$('#btnWork_uj').click(function() {
-					//寫txt 產生work
+				$('#btnCub_uj').click(function() {
 					if(q_cur==1 || q_cur==2){
 						if($('#cmbStype').val()=='製造'){
 							
@@ -321,14 +312,14 @@
 						$('#combJ02_'+i).attr('disabled', 'disabled');
 						$('#combJ11_'+i).attr('disabled', 'disabled');
 						$('#combJ17_'+i).attr('disabled', 'disabled');
-						$('#combL04_'+i).attr('disabled', 'disabled');
+						$('#combL05_'+i).attr('disabled', 'disabled');
 					}
 				} else {
 					for (var i = 0; i < q_bbsCount; i++) {
 						$('#combJ02_'+i).removeAttr('disabled');
 						$('#combJ11_'+i).removeAttr('disabled');
 						$('#combJ17_'+i).removeAttr('disabled');
-						$('#combL04_'+i).removeAttr('disabled');
+						$('#combL05_'+i).removeAttr('disabled');
 					}
 				}
 				change_field();
@@ -826,12 +817,12 @@
 							FR06(b_seq);
 						});
 						
-						$('#combL04_'+i).change(function() {
+						$('#combL05_'+i).change(function() {
 							t_IdSeq = -1;
 							q_bodyId($(this).attr('id'));
 							b_seq = t_IdSeq;
 							if(q_cur==1 || q_cur==2){
-								$('#textL04_'+b_seq).val($('#combL04_'+b_seq).val());
+								$('#textL05_'+b_seq).val($('#combL05_'+b_seq).val());
 								FM01();
 								FM02();
 								FM03();
@@ -839,7 +830,7 @@
 							}
 						});
 						
-						$('#combL04_'+i).change(function() {
+						$('#combL05_'+i).change(function() {
 							t_IdSeq = -1;
 							q_bodyId($(this).attr('id'));
 							b_seq = t_IdSeq;
@@ -1393,7 +1384,7 @@
 				}
 				FK12(i);
 				FK13(i);
-				FR08(i);
+				FL08(i);
 				FM01();
 				FM03();
 			}
@@ -1448,15 +1439,15 @@
 				for (var i = 0; i < q_bbsCount; i++) {
 					var t_k08=dec($('#textK08_'+i).val());//生產量
 					var t_l03=$('#textL03_'+i).val();//上膠日
-					var t_l04=$('#textL04_'+i).val();//製造機台別
-					if(t_l04=='A' && t_l03==t_wadate){
+					var t_l05=$('#textL05_'+i).val();//製造機台別
+					if(t_l05=='A' && t_l03==t_wadate){
 						t_m01=q_add(t_m01,t_k08);
 					}
 				}
 				
 				for (var i = 0; i < q_bbsCount; i++) {
-					var t_l04=$('#textL04_'+i).val();//製造機台別
-					if(t_l04=='A' && t_l03==t_wadate){
+					var t_l05=$('#textL05_'+i).val();//製造機台別
+					if(t_l05=='A' && t_l03==t_wadate){
 						$('#textM01_'+i).val(t_m01);
 					}else{
 						$('#textM01_'+i).val('');
@@ -1469,17 +1460,17 @@
 				var t_m02=0;
 				
 				for (var i = 0; i < q_bbsCount; i++) {
-					var t_r08=dec($('#textR08_'+i).val());//工時(Hr)
+					var t_l08=dec($('#textL08_'+i).val());//工時(Hr)
 					var t_l03=$('#textL03_'+i).val();//上膠日
-					var t_l04=$('#textL04_'+i).val();//製造機台別
-					if(t_l04=='A' && t_l03==t_wadate){
-						t_m02=q_add(t_m02,t_r08);
+					var t_l05=$('#textL05_'+i).val();//製造機台別
+					if(t_l05=='A' && t_l03==t_wadate){
+						t_m02=q_add(t_m02,t_l08);
 					}
 				}
 				
 				for (var i = 0; i < q_bbsCount; i++) {
-					var t_l04=$('#textL04_'+i).val();//製造機台別
-					if(t_l04=='A' && t_l03==t_wadate){
+					var t_l05=$('#textL05_'+i).val();//製造機台別
+					if(t_l05=='A' && t_l03==t_wadate){
 						$('#textM02_'+i).val(t_m02);
 					}else{
 						$('#textM02_'+i).val('');
@@ -1494,15 +1485,15 @@
 				for (var i = 0; i < q_bbsCount; i++) {
 					var t_k08=dec($('#textK08_'+i).val());//生產量
 					var t_l03=$('#textL03_'+i).val();//上膠日
-					var t_l04=$('#textL04_'+i).val();//製造機台別
-					if(t_l04=='B' && t_l03==t_wadate){
+					var t_l05=$('#textL05_'+i).val();//製造機台別
+					if(t_l05=='B' && t_l03==t_wadate){
 						t_m03=q_add(t_m03,t_k08);
 					}
 				}
 				
 				for (var i = 0; i < q_bbsCount; i++) {
-					var t_l04=$('#textL04_'+i).val();//製造機台別
-					if(t_l04=='B' && t_l03==t_wadate){
+					var t_l05=$('#textL05_'+i).val();//製造機台別
+					if(t_l05=='B' && t_l03==t_wadate){
 						$('#textM03_'+i).val(t_m03);
 					}else{
 						$('#textM03_'+i).val('');
@@ -1515,17 +1506,17 @@
 				var t_m04=0;
 				
 				for (var i = 0; i < q_bbsCount; i++) {
-					var t_r08=dec($('#textR08_'+i).val());//工時(Hr)
+					var t_l08=dec($('#textL08_'+i).val());//工時(Hr)
 					var t_l03=$('#textL03_'+i).val();//上膠日
-					var t_l04=$('#textL04_'+i).val();//製造機台別
-					if(t_l04=='B' && t_l03==t_wadate){
-						t_m04=q_add(t_m04,t_r08);
+					var t_l05=$('#textL05_'+i).val();//製造機台別
+					if(t_l05=='B' && t_l03==t_wadate){
+						t_m04=q_add(t_m04,t_l08);
 					}
 				}
 				
 				for (var i = 0; i < q_bbsCount; i++) {
-					var t_l04=$('#textL04_'+i).val();//製造機台別
-					if(t_l04=='B' && t_l03==t_wadate){
+					var t_l05=$('#textL05_'+i).val();//製造機台別
+					if(t_l05=='B' && t_l03==t_wadate){
 						$('#textM04_'+i).val(t_m04);
 					}else{
 						$('#textM04_'+i).val('');
@@ -1562,7 +1553,7 @@
 				}
 			}
 			
-			function FR08(i) { //製造 工時(Hr)
+			function FL08(i) { //製造 工時(Hr)
 				var t_k08=dec($('#textK08_'+i).val());//生產量
 				var t_sec=0;//生產速度(M/min)
 				var t_noa=$('#textK03_'+b_seq).val();
@@ -1572,7 +1563,7 @@
 					t_sec=dec(tuca[0].sec);
 				}
 				
-				$('#textR08_'+i).val(round(q_div(q_div(t_k08,t_sec),60),1));
+				$('#textL08_'+i).val(round(q_div(q_div(t_k08,t_sec),60),1));
 				FM02();
 				FM04();
 			}
@@ -1689,7 +1680,7 @@
 							
 							$('#textL01_'+b_seq).val(t_style[1]); //換線屬性
 							$('#textL02_'+b_seq).val(t_style[2]); //補水
-							$('#textL05_'+b_seq).val(tuca[0].modelno); //限定機台別
+							$('#textL06_'+b_seq).val(tuca[0].modelno); //限定機台別
 							$('#textP01_'+b_seq).val(tuca[0].groupino); //上紙(投入)
 							$('#textQ01_'+b_seq).val(tuca[0].grouphno); //上皮(投入)
 						}else{
@@ -2051,8 +2042,8 @@
 						<td class="M2" style="width:100px;"><a id="lblJ21_uj_s">完工狀態</a></td>
 						
 						<!--製造-->
-						<td class="M3" style="width:100px;"><a id="lblK01_uj_s">產品別</a></td>
-						<td class="M3" style="width:150px;"><a id="lblK02_uj_s">客戶</a></td>
+						<td class="M3" style="width:100px;"><a id="lblK01_uj_s">交期</a></td>   <!--107/01/09 調整-->
+						<td class="M3" style="width:150px;"><a id="lblK02_uj_s">訂單名稱</a></td> <!--107/01/09 調整-->
 						<td class="M3" style="width:200px;"><a id="lblK03_uj_s">半成品</a></td>
 						<td class="M3" style="width:100px;"><a id="lblK04_uj_s">計畫性</a></td>
 						<td class="M3" style="width:100px;"><a id="lblK05_uj_s">需求</a></td>
@@ -2068,10 +2059,11 @@
 						<!--決定"上膠日"-->
 						<td class="M3" style="width:100px;"><a id="lblL01_uj_s">換線屬性</a></td>
 						<td class="M3" style="width:100px;"><a id="lblL02_uj_s">補水</a></td>
-						<td class="M3" style="width:100px;"><a id="lblL03_uj_s">上膠日</a></td>
-						<td class="M3" style="width:100px;"><a id="lblL04_uj_s">製造機台別</a></td>
-						<td class="M3" style="width:100px;"><a id="lblL05_uj_s">限定機台別</a></td>
-						<td class="M3" style="width:100px;"><a id="lblL06_uj_s">備料板位</a></td>
+						<td class="M3" style="width:125px;"><a id="lblL03_uj_s">上膠日</a></td>  <!--107/01/09 調整-->
+						<td class="M3" style="width:100px;"><a id="lblL05_uj_s">製造機台別</a></td>
+						<td class="M3" style="width:100px;"><a id="lblL06_uj_s">限定機台別</a></td>
+						<td class="M3" style="width:100px;"><a id="lblL07_uj_s">備料板位</a></td>
+						<td class="M3" style="width:100px;"><a id="lblL08_uj_s">工時(Hr)</a></td>  <!--107/01/09 調整-->
 						<!--排程量-->
 						<td class="M3" style="width:100px;"><a id="lblM01_uj_s">A</a></td>
 						<td class="M3" style="width:80px;"><a id="lblM02_uj_s">A工時<BR>(小時)</a></td>
@@ -2106,7 +2098,6 @@
 						<td class="M3" style="width:100px;"><a id="lblR05_uj_s">再製品<BR>庫存(M)</a></td>
 						<td class="M3" style="width:100px;"><a id="lblR06_uj_s">已排未產(M)</a></td>
 						<td class="M3" style="width:100px;"><a id="lblR07_uj_s">總庫存(M)</a></td>
-						<td class="M3" style="width:100px;"><a id="lblR08_uj_s">工時(Hr)</a></td>
 						<!---->
 					</tr>
 					<tr style='background:#cad3ff;'>
@@ -2268,13 +2259,17 @@
 						<!--決定"上膠日"-->
 						<td class="M3"><input id="textL01.*" type="text" class="txt c1"/></td>
 						<td class="M3"><input id="textL02.*" type="text" class="txt c1"/></td>
-						<td class="M3"><input id="textL03.*" type="text" class="txt c1"/></td>
 						<td class="M3">
-							<input id="textL04.*" type="text" class="txt c1" style="width: 70%;"/>
-							<select id="combL04.*" style="width: 20px;"> </select>
+							<input id="textL03.*" type="text" class="txt c1" style="width: 85px;"/>
+							<input id="textL04.*" type="text" class="txt c1" style="width: 25px;"/>
 						</td>
-						<td class="M3"><input id="textL05.*" type="text" class="txt c1"/></td>
+						<td class="M3">
+							<input id="textL05.*" type="text" class="txt c1" style="width: 70%;"/>
+							<select id="combL05.*" style="width: 20px;"> </select>
+						</td>
 						<td class="M3"><input id="textL06.*" type="text" class="txt c1"/></td>
+						<td class="M3"><input id="textL07.*" type="text" class="txt c1"/></td>
+						<td class="M3"><input id="textL08.*" type="text" class="txt num c1"/></td>
 						<!--排程量-->
 						<td class="M3"><input id="textM01.*" type="text" class="txt num c1"/></td>
 						<td class="M3"><input id="textM02.*" type="text" class="txt num c1"/></td>
@@ -2316,7 +2311,6 @@
 						<td class="M3"><input id="textR05.*" type="text" class="txt num c1"/></td>
 						<td class="M3"><input id="textR06.*" type="text" class="txt num c1"/></td>
 						<td class="M3"><input id="textR07.*" type="text" class="txt num c1"/></td>
-						<td class="M3"><input id="textR08.*" type="text" class="txt num c1"/></td>
 						<!---->
 					</tr>
 				</table>

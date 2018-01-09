@@ -128,8 +128,13 @@
 
 			function bbsAssign() {
 				for(var j = 0; j < q_bbsCount; j++) {
-					  if (!$('#btnMinus_' + j).hasClass('isAssign')) {
-					  }
+					if (!$('#btnMinus_' + j).hasClass('isAssign')) {
+						$('#txtProductno_'+j).change(function() {
+							t_IdSeq = -1;
+							q_bodyId($(this).attr('id'));
+							b_seq = t_IdSeq;
+						});
+					}
 				}
 				_bbsAssign();
 				splitbbsf();
@@ -151,7 +156,7 @@
 			}
 
 			function btnPrint() {
-				q_box('z_saleforecast.aspx','', "95%", "95%", q_getMsg("popPrint"));
+				//q_box('z_saleforecast.aspx','', "95%", "95%", q_getMsg("popPrint"));
 			}
 
 			function wrServer(key_value) {
@@ -242,6 +247,191 @@
 				_btnCancel();
 			}
 			
+			function q_popPost(id) {
+				switch (id) {
+					case 'txtProductno_':
+                   		var t_pno=$('#txtProductno_'+i).val();
+						if(t_pno.length>0){
+							q_gt('uca',"where=^^noa='"+t_pno+"'^^", 0, 0, 0, "getuca", r_accy,1);
+							var tuca = _q_appendData("uca", "", true);
+							if (tuca[0] != undefined) {
+								$('#textF18_'+i).val(tuca[0].trans);
+								$('#textF21_'+i).val(tuca[0].groupino);
+								$('#textF25_'+i).val(tuca[0].stdmount);
+							}
+						}
+						break;
+				}
+			}
+			
+			function F09(i) { //月目標(M)
+				if(dec($('#textF06_'+i).val())>0){
+					$('#textF09_'+i).val(dec($('#textF06_'+i).val()));
+				}else{
+					$('#textF09_'+i).val(dec($('#textF05_'+i).val()));
+				}
+			}
+			
+			function F12(i) { //生產點(天)
+				if(dec($('#textF03_'+i).val())>0){
+					$('#textF12_'+i).val('');
+				}else{
+					$('#textF12_'+i).val(q_add(dec($('#textF02_'+i).val()),dec($('#textF11_'+i).val())));
+				}
+				
+				F13(i);
+			}
+			
+			function F13(i) { //最大生產量(天)
+				if(dec($('#textF03_'+i).val())>0){
+					$('#textF13_'+i).val('');
+				}else{
+					$('#textF13_'+i).val(q_add(dec($('#textF10_'+i).val()),dec($('#textF12_'+i).val())));
+				}
+			}
+			
+			function F14(i) { //總庫存(天)
+				var t_f17=dec($('#textF17_'+i).val());
+				var t_f19=dec($('#textF19_'+i).val());
+				var t_f09=dec($('#textF09_'+i).val());
+				if(t_f09>0){
+					$('#textF14_'+i).val(round(q_div((t_f17-t_f19),q_div(t_f09,30)),0));
+				}else{
+					$('#textF14_'+i).val(0);
+				}
+			}
+			
+			function F15(i) { //生產點(M)
+				if(dec($('#textF03_'+i).val())>0){
+					$('#textF15_'+i).val($('#textF03_'+i).val());
+				}else{
+					var t_f12=dec($('#textF12_'+i).val());
+					var t_f09=dec($('#textF09_'+i).val());
+					
+					$('#textF15_'+i).val(q_mul(t_f12,q_div(t_f09,30)));
+				}
+			}
+			
+			function F16(i) { //最大生產量(M)
+				if(dec($('#textF03_'+i).val())>0){
+					$('#textF16_'+i).val($('#textF04_'+i).val());
+				}else{
+					var t_f13=dec($('#textF13_'+i).val());
+					var t_f09=dec($('#textF09_'+i).val());
+					
+					$('#textF16_'+i).val(q_mul(t_f13,q_div(t_f09,30)));
+				}
+			}
+			
+			function Fmount(i) { //生產量(M)
+				var t_f03=dec($('#textF03_'+i).val());
+				var t_f17=dec($('#textF17_'+i).val());
+				var t_f15=dec($('#textF15_'+i).val());
+				var t_f16=dec($('#textF16_'+i).val());
+				var t_f18=dec($('#textF18_'+i).val());
+				
+				if(t_f03>0 && t_f17<t_f15){
+					$('#txtMount_'+i).val(t_f16);
+				}else{
+					if(t_f17>=t_f16 || (t_f03>0 && t_f17>t_f15)){
+						$('#txtMount_'+i).val(0);
+					}else{
+						if(t_f18>0){
+							$('#txtMount_'+i).val(round(q_div(q_sub(t_f16,t_f17),t_f18),0)*t_f18);
+						}else{
+							$('#txtMount_'+i).val(0);
+						}
+					}
+				}
+				Funit(i);
+			}
+			
+			function Funit(i) { //需求
+				var t_mount=dec($('#txtMount_'+i).val());
+				var t_f24=dec($('#textF24_'+i).val());
+				var t_f14=dec($('#textF14_'+i).val());
+				var t_f20=dec($('#textF20_'+i).val());
+				var t_f11=dec($('#textF11_'+i).val());
+				var t_f17=dec($('#textF17_'+i).val());
+				var t_f15=dec($('#textF15_'+i).val());
+				var t_f16=dec($('#textF16_'+i).val());
+				
+				if(t_mount==0 && t_f24>0){
+					$('#txtUnit_'+i).val('@');
+				}else if(t_f14==t_f20 && t_f14<=t_f11){
+					$('#txtUnit_'+i).val('緊');
+				}else if(t_f17<t_f15){
+					$('#txtUnit_'+i).val('急');
+				}else if(t_mount>0 && t_f17<t_f16){
+					$('#txtUnit_'+i).val('可');
+				}else{
+					$('#txtUnit_'+i).val('');
+				}
+			}
+			
+			function F20(i) { //排程後庫存(天)
+				var t_f17=dec($('#textF17_'+i).val());
+				var t_f09=dec($('#textF09_'+i).val());
+				if(t_f09>0){
+					$('#textF20_'+i).val(round(q_div(t_f17,q_div(t_f09,30)),0));
+				}else{
+					$('#textF20_'+i).val(0);
+				}
+			}
+			
+			function F22(i) { //累積量(M)
+				var t_count=0,t_mount=0;
+				var t_f21=$('#textF21_'+i).val();
+				for(var j = 0; j < q_bbsCount; j++) {
+					if($('#textF21_'+j).val()==t_f21){
+						if(j<=i){
+							t_count++;
+						}
+						t_mount=q_add(t_mount,dec($('#txtMount_'+j).val()));
+					}
+				}
+				if(t_count>1){
+					$('#textF22_'+i).val(0);
+				}else{
+					$('#textF22_'+i).val(t_mount);
+				}
+			}
+			
+			function F23(i) { //大色彈性累積量(M)
+				var t_count=0,t_f24=0;
+				var t_f21=$('#textF21_'+i).val();
+				for(var j = 0; j < q_bbsCount; j++) {
+					if($('#textF21_'+j).val()==t_f21){
+						if(j<=i){
+							t_count++;
+						}
+						t_f24=q_add(t_f24,dec($('#textF24_'+j).val()));
+					}
+				}
+				if(t_count>1){
+					$('#textF23_'+i).val(0);
+				}else{
+					$('#textF23_'+i).val(t_f24);
+				}
+			}
+			
+			function F24(i) { //彈性(M)
+				var t_f08=dec($('#textF08_'+i).val());
+				var t_mount=dec($('#txtMount_'+i).val());
+				var t_f13=dec($('#textF13_'+i).val());
+				var t_f20=dec($('#textF20_'+i).val());
+				var t_f09=dec($('#textF09_'+i).val());
+				var t_f18=dec($('#textF18_'+i).val());
+				if(t_f08==0 && t_mount>0){
+					$('#textF24_'+i).val(t_mount);
+				}else{
+					if(q_add(t_f08,t_f13)>t_f20 && t_f18>0){
+						$('#textF24_'+i).val(q_mul(round(q_div(q_div(q_mul(q_sub(q_add(t_f08,t_f13),t_f20),t_f09),30),t_f18),0),t_f18));
+					}else{
+						$('#textF24_'+i).val(0);
+					}
+				}
+			}
 		</script> 
 	<style type="text/css">
 				  #dmain {
@@ -411,7 +601,7 @@
 				<td class="td2"><input id="txtNoa" type="text" class="txt c1"/></td>
 				<td class="td3"><span> </span><a id="lblDatea" class="lbl"> </a></td>
 				<td class="td4"><input id="txtDatea" type="text" class="txt c1"/></td>
-				<td class="td5"><span> </span><a id="lblMon" class="lbl"> </a></td>
+				<td class="td5"><span> </span><a id="lblMon_uj" class="lbl">計畫月份</a></td>
 				<td class="td6"><input id="txtMon" type="text" class="txt c1"/></td>
 			</tr>
 			<tr>
@@ -420,7 +610,7 @@
 			</tr>
 		</table>
 	</div>
-	<div class='dbbs' style="width:2400px;"> 
+	<div class='dbbs' style="width:3200px;"> 
 		<table id="tbbs" class='tbbs'  border="1"  cellpadding='2' cellspacing='1'  >
 			<tr style='color:White; background:#003366;' >
 				<td align="center" style="width:40px;"><input class="btn"  id="btnPlus" type="button" value='＋' style="font-weight: bold;"  /> </td>
@@ -432,8 +622,8 @@
 				<td align="center" style="width:100px;"><a id='lblF04_uj_s'>MOQ生產量(M)</a></td>
 				<td align="center" style="width:100px;"><a id='lblF05_uj_s'>月均(M)</a></td>
 				<td align="center" style="width:100px;"><a id='lblF06_uj_s'>手動月均(M)</a></td>
-				<td align="center" style="width:100px;"><a id='lblF07_uj_s'>手調安全庫存(天)</a></td>
-				<td align="center" style="width:100px;"><a id='lblF08_uj_s'>一次生產</a></td>
+				<td align="center" style="width:100px;"><a id='lblF07_uj_s'>小色</a></td>
+				<td align="center" style="width:100px;"><a id='lblF08_uj_s'>大色彈性(天)</a></td>
 				<td align="center" style="width:100px;"><a id='lblF09_uj_s'>月目標(M)</a></td>
 				<td align="center" style="width:100px;"><a id='lblF10_uj_s'>生產週期(天)</a></td>
 				<td align="center" style="width:100px;"><a id='lblF11_uj_s'>安全庫存(天)</a></td>
@@ -446,6 +636,13 @@
 				<td align="center" style="width:100px;"><a id='lblMount_uj_s'>生產量(M)</a></td>
 				<td align="center" style="width:70px;"><a id='lblUnit_uj_s'>需求</a></td>
 				<td align="center" style="width:100px;"><a id='lblF18_uj_s'>一顆料長(M)</a></td>
+				<td align="center" style="width:100px;"><a id='lblF19_uj_s'>已排未產</a></td>
+				<td align="center" style="width:100px;"><a id='lblF20_uj_s'>排程後庫存(天)</a></td>
+				<td align="center" style="width:200px;"><a id='lblF21_uj_s'>上紙投入料號</a></td>
+				<td align="center" style="width:100px;"><a id='lblF22_uj_s'>累積量(M)</a></td>
+				<td align="center" style="width:100px;"><a id='lblF23_uj_s'>大色彈性<BR>累積量(M)</a></td>
+				<td align="center" style="width:100px;"><a id='lblF24_uj_s'>彈性(M)</a></td>
+				<td align="center" style="width:100px;"><a id='lblF25_uj_s'>MOQ</a></td>
 				<td align="center" style="width:200px;"><a id='lblMemo_uj_s'>備註</a></td>
 			</tr>
 			<tr  style='background:#cad3ff;'>
@@ -475,6 +672,13 @@
 				<td ><input id="txtMount.*" type="text" class="txt c1 num"/></td>
 				<td ><input id="txtUnit.*" type="text" class="txt c1"/></td>
 				<td><input id="textF18.*" type="text" class="txt c1" /></td>
+				<td><input id="textF19.*" type="text" class="txt c1" /></td>
+				<td><input id="textF20.*" type="text" class="txt c1" /></td>
+				<td><input id="textF21.*" type="text" class="txt c1" /></td>
+				<td><input id="textF22.*" type="text" class="txt c1" /></td>
+				<td><input id="textF23.*" type="text" class="txt c1" /></td>
+				<td><input id="textF24.*" type="text" class="txt c1" /></td>
+				<td><input id="textF25.*" type="text" class="txt c1" /></td>
 				<td ><input id="txtMemo.*" type="text" class="txt c1"/></td>
 			</tr>
 		</table>

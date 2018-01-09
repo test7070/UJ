@@ -221,7 +221,7 @@ END
 ;
 
 -----------------------------------------------------------------------------------------------
-ordc_uj:--ordc_uj 採購未交
+ordcnotv_uj:--ordcnotv_uj 採購未交
 
 declare @t_datea nvarchar(50)=case when '#non'=[1] then '' else [1] end
 declare @t_pno nvarchar(50)=case when '#non'=[2] then '' else [2] end
@@ -268,4 +268,71 @@ where b.noa is not null
 
 select * from @tmp order by productno,uno,spec,indate
 
+;
+-----------------------------------------------------------------------------------------------
+cub2cug_uj:--cub2cug_uj 特殊轉派工單
+SET QUOTED_IDENTIFIER OFF
+declare @accy nvarchar(50)=case when '#non'=[1] then '107' else [1] end
+declare @t_kdate nvarchar(50)=case when '#non'=[2] then '' else [2] end
+declare @t_datea nvarchar(50)=case when '#non'=[3] then '' else [3] end
+declare @t_noa nvarchar(50)=case when '#non'=[4] then '' else [4] end
+declare @worker nvarchar(50)=case when '#non'=[5] then '' else [5] end
+
+--取得新的noa
+declare @noa nvarchar(50)='特'+replace(@t_kdate,'/','')+
+right('000'+cast(cast(right(isnull((select noa from view_cug 
+where noa like '特'+replace(@t_kdate,'/','')+'%'),'000'),3) as int)+1 as nvarchar(10)),3)
+
+--bbm
+EXEC("
+insert cug"+@accy+"(noa,kdate,datea,bdate,processno,smount,hours,memo,worker,station)
+select '"+@noa+"' noa,'"+@t_kdate+"' kdate,'"+@t_datea+"' datea,'加工' bdate,'特殊' processno
+,SUM(mount) smount,0 hours,'由生產製令【"+@t_noa+"】轉來' memo ,'"+@worker+"' worker,'"+@t_noa+"'
+from view_cubs where noa='"+@t_noa+"'")
+
+--bbs
+EXEC("
+insert cugs"+@accy+"(noa,noq,workgno,hours,nos,ordeno,productno,thours,dhours,mount,memo)
+select '"+@noa+"' noa,b.noq,a.noa+'-'+b.noq workgno,0 hours
+,'' nos
+,a.product ordeno -- 訂單名稱/指令名稱
+,b.productno productno --新成品編碼
+,b.width thours --寬
+,b.lengthb dhours --長
+,b.mount mount --數量
+,'@,#'+isnull(b.ucolor,'') --料號(原成品名)
++'@,#'+isnull(dbo.split(c.style,'#^#',8),'') --長度備註
++'@,#'+isnull(a.m1,'') --成品指令
++'@,#'+'0' --限定餘數
++'@,#'+isnull(b.oth,'') --需求級別
++'@,#'+isnull(b.makeno,'')+'@,#'+'0' --(,上皮投入,指定(M),上膠面,上紙投入,指定(M),下料指令,列管備註,注意事項)
++'@,#'+isnull(dbo.split(c.style,'#^#',3),'')
++'@,#'+isnull(b.ordcno,'')+'@,#'+'0'
++'@,#'+''+'@,#'+''
++'@,#'+isnull(d.memo,'')
++'@,#'+isnull(b.memo,'') --備註
+memo
+from view_cub a left join view_cubs b on a.noa=b.noa 
+left join uca c on b.productno=c.noa
+left join ucc d on b.productno=d.noa
+where a.noa='"+@t_noa+"'
+")
+
+declare @t_accy nvarchar(50)=(select accy from view_cub where noa=@t_noa)
+EXEC("update cub"+@t_accy+" set status='"+@noa+"' where noa='"+@t_noa+"'")
+
+select status,noa from view_cub where noa=@t_noa
+;
+-----------------------------------------------------------------------------------------------
+cubimport_uj:--cubimport_uj 生產指令匯入 加工
+declare @t_noa nvarchar(50)=case when '#non'=[1] then '' else [1] end --指令單號
+declare @t_bdate nvarchar(50)=case when '#non'=[2] then '' else [2] end --預交日
+declare @t_edate nvarchar(50)=case when '#non'=[3] then char(255) else [3] end
+
+select a.noa,a.product,b.ucolor,b.productno,a.edate,a.m1,a.m2,b.btime,b.width,b.lengthb,b.mount,b.unit
+,a.custno,a.comp,a.itype,b.oth
+from view_cub a left join view_cubs b on a.noa=b.noa
+where (a.noa=@t_noa or len(@t_noa)=0) 
+and a.edate between @t_bdate and @t_edate
+order by a.noa,b.noq
 ;

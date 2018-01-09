@@ -176,8 +176,9 @@
 				var ts6=$('#textS6').val();
 				var ts7=$('#textS7').val();
 				var ts8=$('#textS8').val();
+				var ts9=$('#textS9').val();
 				
-				$('#txtStyle').val(ts1+"#^#"+ts2+"#^#"+ts3+"#^#"+ts4+"#^#"+ts5+"#^#"+ts6+"#^#"+ts7+"#^#"+ts8);
+				$('#txtStyle').val(ts1+"#^#"+ts2+"#^#"+ts3+"#^#"+ts4+"#^#"+ts5+"#^#"+ts6+"#^#"+ts7+"#^#"+ts8+"#^#"+ts9);
 				
 				if(q_cur==1)
 					$('#txtWorker').val(r_name);
@@ -379,6 +380,7 @@
 				var ts6=t_style[5]==undefined?'':t_style[5];
 				var ts7=t_style[6]==undefined?'':t_style[6];
 				var ts8=t_style[7]==undefined?'':t_style[7];
+				var ts9=t_style[8]==undefined?'':t_style[8];
 				
 				$('#textS1').val(ts1);
 				$('#textS2').val(ts2);
@@ -388,6 +390,7 @@
 				$('#textS6').val(ts6);
 				$('#textS7').val(ts7);
 				$('#textS8').val(ts8);
+				$('#textS9').val(ts9);
 			}
 			
 			function TypeaChange() {
@@ -836,11 +839,11 @@
 					</tr>
 					<tr class="type2">
 						<td><span> </span><a id="lblS6_uj" class="lbl">外箱長(mm)</a></td>
-						<td><input id="textS6" type="text" class="txt c1"/></td>
+						<td><input id="textS6" type="text" class="txt num c1"/></td>
 						<td><span> </span><a id="lblS7_uj" class="lbl">外箱寬(mm)</a></td>
-						<td><input id="textS7" type="text" class="txt c1"/></td>
+						<td><input id="textS7" type="text" class="txt num c1"/></td>
 						<td><span> </span><a id="lblS8_uj" class="lbl">外箱高(mm)</a></td>
-						<td><input id="textS8" type="text" class="txt c1"/></td>
+						<td><input id="textS8" type="text" class="txt num c1"/></td>
 					</tr>
 					<tr class="type3">
 						<td><span> </span><a id="lblHsec_uj" class="lbl">標準長小值(M)</a></td>
@@ -853,6 +856,8 @@
 						<td><input id="txtBadperc" type="text" class="txt num c1"/></td>
 						<td><span> </span><a id="lblStdmount_uj" class="lbl">MOQ(M)</a></td>
 						<td><input id="txtStdmount" type="text" class="txt num c1"/></td>
+						<td><span> </span><a id="lblS9_uj" class="lbl type2">長度備註</a></td>
+						<td><input id="textS9" type="text" class="txt c1 type2"/></td>
 					</tr>
 					<tr>
 						<td><span> </span><a id="lblWorker" class="lbl"> </a></td>
