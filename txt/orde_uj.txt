@@ -329,10 +329,12 @@ declare @t_noa nvarchar(50)=case when '#non'=[1] then '' else [1] end --指令�
 declare @t_bdate nvarchar(50)=case when '#non'=[2] then '' else [2] end --預交日
 declare @t_edate nvarchar(50)=case when '#non'=[3] then char(255) else [3] end
 
-select a.noa,a.product,b.ucolor,b.productno,a.edate,a.m1,a.m2,b.btime,b.width,b.lengthb,b.mount,b.unit
-,a.custno,a.comp,a.itype,b.oth
+select a.noa,b.noq,a.product,b.ucolor,b.productno,a.edate,a.m1,a.m2,b.btime,b.width,b.lengthb,b.mount,b.unit
+,a.custno,a.comp,a.itype,b.oth,a.noa+'-'+b.noq cubno
 from view_cub a left join view_cubs b on a.noa=b.noa
 where (a.noa=@t_noa or len(@t_noa)=0) 
 and a.edate between @t_bdate and @t_edate
+and isnull(b.productno,'')!='' and isnull(b.mount,0)>0 and isnull(a.itype,'')!='特殊'
+and not exists (select * from view_workgs where workhno=a.noa+'-'+b.noq)
 order by a.noa,b.noq
 ;

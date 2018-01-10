@@ -21,7 +21,14 @@
 			var q_readonly = ['txtNoa','txtDatea'];
 			var q_readonlys = ['txtNoq'];
 			var bbmNum = [];
-			var bbsNum = [['txtMount', 15, 0, 1]];
+			var bbsNum = [
+				['textF02', 15, 0, 1],['textF03', 15, 2, 1],['textF04', 15, 2, 1],['textF05', 15, 2, 1],
+				['textF06', 15, 2, 1],['textF08', 15, 0, 1],['textF09', 15, 2, 1],['textF10', 15, 0, 1],
+				['textF11', 15, 0, 1],['textF12', 15, 0, 1],['textF13', 15, 0, 1],['textF14', 15, 0, 1],
+				['textF15', 15, 2, 1],['textF16', 15, 2, 1],['textF17', 15, 2, 1],['textF18', 15, 2, 1],
+				['textF19', 15, 2, 1],['textF20', 15, 0, 1],['textF22', 15, 2, 1],['textF23', 15, 2, 1],
+				['textF24', 15, 2, 1],['textF25', 15, 2, 1],['txtMount', 15, 2, 1]
+			];
 			var bbmMask = [];
 			var bbsMask = [];
 			q_sqlCount = 6;
@@ -133,6 +140,97 @@
 							t_IdSeq = -1;
 							q_bodyId($(this).attr('id'));
 							b_seq = t_IdSeq;
+						});
+						
+						$('#textF02_'+j).change(function() {
+							t_IdSeq = -1;
+							q_bodyId($(this).attr('id'));
+							b_seq = t_IdSeq;
+							F12(b_seq);
+						});
+						
+						$('#textF03_'+j).change(function() {
+							t_IdSeq = -1;
+							q_bodyId($(this).attr('id'));
+							b_seq = t_IdSeq;
+							F12(b_seq);
+							F15(b_seq);
+							F16(b_seq);
+							Fmount(b_seq);
+						});
+						
+						$('#textF04_'+j).change(function() {
+							t_IdSeq = -1;
+							q_bodyId($(this).attr('id'));
+							b_seq = t_IdSeq;
+							F16(b_seq);
+						});
+						
+						$('#textF05_'+j).change(function() {
+							t_IdSeq = -1;
+							q_bodyId($(this).attr('id'));
+							b_seq = t_IdSeq;
+							F09(b_seq);
+						});
+						
+						$('#textF06_'+j).change(function() {
+							t_IdSeq = -1;
+							q_bodyId($(this).attr('id'));
+							b_seq = t_IdSeq;
+							F09(b_seq);
+						});
+						
+						$('#textF08_'+j).change(function() {
+							t_IdSeq = -1;
+							q_bodyId($(this).attr('id'));
+							b_seq = t_IdSeq;
+							F24(b_seq);
+						});
+						
+						$('#textF10_'+j).change(function() {
+							t_IdSeq = -1;
+							q_bodyId($(this).attr('id'));
+							b_seq = t_IdSeq;
+							F13(b_seq);
+						});
+						
+						$('#textF11_'+j).change(function() {
+							t_IdSeq = -1;
+							q_bodyId($(this).attr('id'));
+							b_seq = t_IdSeq;
+							F12(b_seq);
+							Funit(b_seq);
+						});
+						
+						$('#textF17_'+j).change(function() {
+							t_IdSeq = -1;
+							q_bodyId($(this).attr('id'));
+							b_seq = t_IdSeq;
+							F14(b_seq);
+							Fmount(b_seq);
+							F20(b_seq);
+						});
+						
+						$('#textF18_'+j).change(function() {
+							t_IdSeq = -1;
+							q_bodyId($(this).attr('id'));
+							b_seq = t_IdSeq;
+							Fmount(b_seq);
+						});
+						
+						$('#textF19_'+j).change(function() {
+							t_IdSeq = -1;
+							q_bodyId($(this).attr('id'));
+							b_seq = t_IdSeq;
+							F14(b_seq);
+						});
+						
+						$('#textF21_'+j).change(function() {
+							t_IdSeq = -1;
+							q_bodyId($(this).attr('id'));
+							b_seq = t_IdSeq;
+							F22(b_seq);
+							F23(b_seq);
 						});
 					}
 				}
@@ -250,14 +348,23 @@
 			function q_popPost(id) {
 				switch (id) {
 					case 'txtProductno_':
-                   		var t_pno=$('#txtProductno_'+i).val();
+                   		var t_pno=$('#txtProductno_'+b_seq).val();
 						if(t_pno.length>0){
 							q_gt('uca',"where=^^noa='"+t_pno+"'^^", 0, 0, 0, "getuca", r_accy,1);
 							var tuca = _q_appendData("uca", "", true);
 							if (tuca[0] != undefined) {
-								$('#textF18_'+i).val(tuca[0].trans);
-								$('#textF21_'+i).val(tuca[0].groupino);
-								$('#textF25_'+i).val(tuca[0].stdmount);
+								$('#textF01_'+b_seq).val(tuca[0].rev);
+								$('#textF02_'+b_seq).val(tuca[0].preday);
+								$('#textF18_'+b_seq).val(tuca[0].trans);
+								$('#textF21_'+b_seq).val(tuca[0].groupino);
+								$('#textF25_'+b_seq).val(tuca[0].stdmount);
+								
+								Fmount(b_seq);
+								F22(b_seq);
+								F23(b_seq);
+								
+								//後面等確定 製造產出 流程和欄位 再寫txt 抓取數量
+								//$('#textF19_'+b_seq).val();
 							}
 						}
 						break;
@@ -270,6 +377,11 @@
 				}else{
 					$('#textF09_'+i).val(dec($('#textF05_'+i).val()));
 				}
+				F14(i);
+				F15(i);
+				F16(i);
+				F20(i);
+				F24(i);
 			}
 			
 			function F12(i) { //生產點(天)
@@ -280,6 +392,7 @@
 				}
 				
 				F13(i);
+				F15(i);
 			}
 			
 			function F13(i) { //最大生產量(天)
@@ -288,6 +401,9 @@
 				}else{
 					$('#textF13_'+i).val(q_add(dec($('#textF10_'+i).val()),dec($('#textF12_'+i).val())));
 				}
+				
+				F16(i);
+				F24(i);
 			}
 			
 			function F14(i) { //總庫存(天)
@@ -299,6 +415,7 @@
 				}else{
 					$('#textF14_'+i).val(0);
 				}
+				Funit(i);
 			}
 			
 			function F15(i) { //生產點(M)
@@ -310,6 +427,7 @@
 					
 					$('#textF15_'+i).val(q_mul(t_f12,q_div(t_f09,30)));
 				}
+				Fmount(b_seq);
 			}
 			
 			function F16(i) { //最大生產量(M)
@@ -321,6 +439,7 @@
 					
 					$('#textF16_'+i).val(q_mul(t_f13,q_div(t_f09,30)));
 				}
+				Fmount(b_seq);
 			}
 			
 			function Fmount(i) { //生產量(M)
@@ -344,6 +463,8 @@
 					}
 				}
 				Funit(i);
+				F22(i);
+				F24(i);
 			}
 			
 			function Funit(i) { //需求
@@ -377,6 +498,8 @@
 				}else{
 					$('#textF20_'+i).val(0);
 				}
+				Funit(i);
+				F24(i);
 			}
 			
 			function F22(i) { //累積量(M)
@@ -431,6 +554,8 @@
 						$('#textF24_'+i).val(0);
 					}
 				}
+				Funit(i);
+				F23(i);
 			}
 		</script> 
 	<style type="text/css">
@@ -653,32 +778,32 @@
 					<input id="txtSpec.*" type="hidden" class="txt c1" />
 				</td>
 				<td align="center"><input id="txtProductno.*" type="text" class="txt c1" /></td>
-				<td><input id="textF02.*" type="text" class="txt c1" /></td>
-				<td><input id="textF03.*" type="text" class="txt c1" /></td>
-				<td><input id="textF04.*" type="text" class="txt c1" /></td>
-				<td><input id="textF05.*" type="text" class="txt c1" /></td>
-				<td><input id="textF06.*" type="text" class="txt c1" /></td>
+				<td><input id="textF02.*" type="text" class="txt num c1" /></td>
+				<td><input id="textF03.*" type="text" class="txt num c1" /></td>
+				<td><input id="textF04.*" type="text" class="txt num c1" /></td>
+				<td><input id="textF05.*" type="text" class="txt num c1" /></td>
+				<td><input id="textF06.*" type="text" class="txt num c1" /></td>
 				<td><input id="textF07.*" type="text" class="txt c1" /></td>
-				<td><input id="textF08.*" type="text" class="txt c1" /></td>
-				<td><input id="textF09.*" type="text" class="txt c1" /></td>
-				<td><input id="textF10.*" type="text" class="txt c1" /></td>
-				<td><input id="textF11.*" type="text" class="txt c1" /></td>
-				<td><input id="textF12.*" type="text" class="txt c1" /></td>
-				<td><input id="textF13.*" type="text" class="txt c1" /></td>
-				<td><input id="textF14.*" type="text" class="txt c1" /></td>
-				<td><input id="textF15.*" type="text" class="txt c1" /></td>
-				<td><input id="textF16.*" type="text" class="txt c1" /></td>
-				<td><input id="textF17.*" type="text" class="txt c1" /></td>
+				<td><input id="textF08.*" type="text" class="txt num c1" /></td>
+				<td><input id="textF09.*" type="text" class="txt num c1" /></td>
+				<td><input id="textF10.*" type="text" class="txt num c1" /></td>
+				<td><input id="textF11.*" type="text" class="txt num c1" /></td>
+				<td><input id="textF12.*" type="text" class="txt num c1" /></td>
+				<td><input id="textF13.*" type="text" class="txt num c1" /></td>
+				<td><input id="textF14.*" type="text" class="txt num c1" /></td>
+				<td><input id="textF15.*" type="text" class="txt num c1" /></td>
+				<td><input id="textF16.*" type="text" class="txt num c1" /></td>
+				<td><input id="textF17.*" type="text" class="txt num c1" /></td>
 				<td ><input id="txtMount.*" type="text" class="txt c1 num"/></td>
 				<td ><input id="txtUnit.*" type="text" class="txt c1"/></td>
-				<td><input id="textF18.*" type="text" class="txt c1" /></td>
-				<td><input id="textF19.*" type="text" class="txt c1" /></td>
-				<td><input id="textF20.*" type="text" class="txt c1" /></td>
+				<td><input id="textF18.*" type="text" class="txt num c1" /></td>
+				<td><input id="textF19.*" type="text" class="txt num c1" /></td>
+				<td><input id="textF20.*" type="text" class="txt num c1" /></td>
 				<td><input id="textF21.*" type="text" class="txt c1" /></td>
-				<td><input id="textF22.*" type="text" class="txt c1" /></td>
-				<td><input id="textF23.*" type="text" class="txt c1" /></td>
-				<td><input id="textF24.*" type="text" class="txt c1" /></td>
-				<td><input id="textF25.*" type="text" class="txt c1" /></td>
+				<td><input id="textF22.*" type="text" class="txt num c1" /></td>
+				<td><input id="textF23.*" type="text" class="txt num c1" /></td>
+				<td><input id="textF24.*" type="text" class="txt num c1" /></td>
+				<td><input id="textF25.*" type="text" class="txt num c1" /></td>
 				<td ><input id="txtMemo.*" type="text" class="txt c1"/></td>
 			</tr>
 		</table>
