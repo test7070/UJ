@@ -38,7 +38,8 @@
 			brwNowPage = 0;
 			brwKey = 'Noa';
 			aPop = new Array(
-				['txtProductno_', '', 'uca', 'noa', '0txtProductno_,', 'uca_b.aspx']
+				['txtProductno_', '', 'uca', 'noa', '0txtProductno_,', 'uca_b.aspx'],
+				['textF21_', '', 'ucc', 'noa', '0textF21_,', 'ucc_b.aspx']
 			);
 
 			$(document).ready(function() {
@@ -229,8 +230,8 @@
 							t_IdSeq = -1;
 							q_bodyId($(this).attr('id'));
 							b_seq = t_IdSeq;
-							F22(b_seq);
-							F23(b_seq);
+							//F22(b_seq);
+							//F23(b_seq);
 						});
 					}
 				}
@@ -367,6 +368,10 @@
 								//$('#textF19_'+b_seq).val();
 							}
 						}
+						break;
+					case 'textF21_':
+						F22(b_seq);
+						F23(b_seq);
 						break;
 				}
 			}
