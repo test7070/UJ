@@ -24,7 +24,7 @@
 			,'textI02','textI06','textI07','textI09','textI10','textI12','textI13','textI19'
 			,'textJ06','textJ07','textJ08','textJ09','textJ13','textJ14','textJ15','textJ16'
 			,'textJ19','textJ20','textJ21','textK06','textK08'
-			,'textK11','textK12','textK13','textL08','textM01','textM02','textM03','textM04'
+			,'textK11','textK12','textK13','textL04','textL08','textM01','textM02','textM03','textM04'
 			,'textP03','textP04','textP05','textQ03','textQ04','textQ05','textR06','textR07'
 			];
 			var q_readonlyt = [];
@@ -183,6 +183,25 @@
 											}
 											$('#txtMemo2_'+j).val(tstr);
 											
+											$('#txtProductno_'+j).val($('#textA04_'+j).val());
+											$('#txtOdatea_'+j).val($('#textA05_'+j).val());
+											$('#txtWidth_'+j).val($('#textA08_'+j).val());
+											$('#txtLengthb_'+j).val($('#textA09_'+j).val());
+											$('#txtMount_'+j).val($('#textD05_'+j).val());
+											$('#txtUcano_'+j).val($('#textF01_'+j).val());
+											$('#txtUcc3no_'+j).val($('#textG01_'+j).val());
+											$('#txtUcc4no_'+j).val($('#textI05_'+j).val());
+											$('#txtUcc5no_'+j).val($('#textI08_'+j).val());
+											$('#txtUcc6no_'+j).val($('#textI11_'+j).val());
+											$('#txtUcc2no_'+j).val($('#textP01_'+j).val());
+											$('#txtUcc1no_'+j).val($('#textQ01_'+j).val());
+											
+											if($('#cmbStype').val()=='製造'){
+												$('#txtProductno_'+j).val($('#textK03_'+j).val());
+												$('#txtUcano_'+j).val($('#textK03_'+j).val());
+												$('#txtMount_'+j).val($('#textK08_'+j).val());
+											}
+											
 											t_iswrite=true;
 											t_j=j;
 											break;
@@ -190,10 +209,11 @@
 									}
 									if(!t_iswrite){
 										i--;
-										t_j--;
+										//t_j--;
 										$('#btnPlus').click();
 									}
 								}
+								nordeno();
 							}else{
 								alert('無資料!!');
 							}
@@ -257,7 +277,7 @@
 							}
 							if(!t_iswrite){
 								i--;
-								t_j--;
+								//t_j--;
 								$('#btnPlus').click();
 							}
 						}
@@ -265,6 +285,7 @@
 						FM02();
 						FM03();
 						FM04();
+						nordeno();
 					}else{
 						alert('無資料!!');
 					}
@@ -341,7 +362,7 @@
 					
 					//清除bbt
 					for (var i = 0; i < q_bbtCount; i++) {
-						if($('#txtNo2__'+i).val()==n && $('#txtOrdeno__'+i).val()==source){
+						if($('#txtNo2__'+i).val()==source && $('#txtOrdeno__'+i).val()==$('#txtOrdeno_'+n).val()){
 							$('#btnMinut__'+i).click();
 						}
 					}
@@ -351,8 +372,8 @@
 					for (var i = 0; i < stkCount; i++) {
 						if(dec($('#stk_txtMount_'+i).val())>0 || dec($('#stk_txtWeight_'+i).val())>0){
 							as.push({
-								'ordeno':source,
-								'no2':n,
+								'ordeno':$('#txtOrdeno_'+n).val(),
+								'no2':source,
 								'uno':$('#stk_tdUno_'+i).text(),
 								'productno':$('#s_productno').text(),
 								'spec':$('#stk_tdSpec_'+i).text(),
@@ -506,7 +527,7 @@
 			}
 
 			function bbtSave(as) {
-				if (!as['uno']) {
+				if (!as['uno'] && !as['productno'] && !as['ordeno']&& !as['no2']) {
 					as[bbtKey[1]] = '';
 					return;
 				}
@@ -787,7 +808,9 @@
 							t_IdSeq = -1;
 							q_bodyId($(this).attr('id'));
 							b_seq = t_IdSeq;
-							FC03(b_seq);
+							if(q_cur==1 || q_cur==2){
+								FC03(b_seq);
+							}
 						});
 						
 						//指令流水號
@@ -945,44 +968,44 @@
 							FI02(b_seq);
 						});
 						
-						//料最快備齊日期
-						$('#textI17_'+i).change(function() {
-							t_IdSeq = -1;
-							q_bodyId($(this).attr('id'));
-							b_seq = t_IdSeq;
-							FI17(b_seq);
-						});
-						
 						//紙管貨齊日
-						$('#textI07_'+i).change(function() {
+						$('#textI07_'+i).focusout(function() {
 							t_IdSeq = -1;
 							q_bodyId($(this).attr('id'));
 							b_seq = t_IdSeq;
-							FI17(b_seq);
+							if(q_cur==1 || q_cur==2){
+								FI17(b_seq);
+							}
 						});
 						
 						//紙箱貨齊日
-						$('#textI10_'+i).change(function() {
+						$('#textI10_'+i).focusout(function() {
 							t_IdSeq = -1;
 							q_bodyId($(this).attr('id'));
 							b_seq = t_IdSeq;
-							FI17(b_seq);
+							if(q_cur==1 || q_cur==2){
+								FI17(b_seq);
+							}
 						});
 						
 						//塞頭貨齊日
-						$('#textI13_'+i).change(function() {
+						$('#textI13_'+i).focusout(function() {
 							t_IdSeq = -1;
 							q_bodyId($(this).attr('id'));
 							b_seq = t_IdSeq;
-							FI17(b_seq);
+							if(q_cur==1 || q_cur==2){
+								FI17(b_seq);
+							}
 						});
 						
 						//上膠日
-						$('#textI15_'+i).change(function() {
+						$('#textI15_'+i).focusout(function() {
 							t_IdSeq = -1;
 							q_bodyId($(this).attr('id'));
 							b_seq = t_IdSeq;
-							FI17(b_seq);
+							if(q_cur==1 || q_cur==2){
+								FI17(b_seq);
+							}
 						});
 						
 						//熟成(天)
@@ -991,6 +1014,16 @@
 							q_bodyId($(this).attr('id'));
 							b_seq = t_IdSeq;
 							FI17(b_seq);
+						});
+						
+						//料最快備齊日期
+						$('#textI17_'+i).focusout(function() {
+							t_IdSeq = -1;
+							q_bodyId($(this).attr('id'));
+							b_seq = t_IdSeq;
+							if(q_cur==1 || q_cur==2){
+								FI17(b_seq);
+							}
 						});
 						
 						//訂單總量
@@ -1010,11 +1043,13 @@
 						});
 						
 						//加工日
-						$('#textJ01_'+i).change(function() {
-							FJ06();
-							FJ07();
-							FJ08();
-							FJ09();
+						$('#textJ01_'+i).focusout(function() {
+							if(q_cur==1 || q_cur==2){
+								FJ06();
+								FJ07();
+								FJ08();
+								FJ09();
+							}
 						});
 						
 						//分條機台別
@@ -1026,15 +1061,17 @@
 						});
 						
 						//覆捲日
-						$('#textJ01_'+i).change(function() {
-							FJ13();
-							FJ14();
-							FJ15();
-							FJ16();
+						$('#textJ10_'+i).focusout(function() {
+							if(q_cur==1 || q_cur==2){
+								FJ13();
+								FJ14();
+								FJ15();
+								FJ16();
+							}
 						});
 						
 						//覆捲機台別
-						$('#textJ02_'+i).change(function() {
+						$('#textJ11_'+i).change(function() {
 							FJ13();
 							FJ14();
 							FJ15();
@@ -1084,15 +1121,23 @@
 							FK08(b_seq);
 						});
 						
-						$('#textL03_'+i).change(function() {
+						$('#textL03_'+i).focusout(function() {
 							t_IdSeq = -1;
 							q_bodyId($(this).attr('id'));
 							b_seq = t_IdSeq;
-							FM01();
-							FM02();
-							FM03();
-							FM04();
-							FR06(b_seq);
+							
+							if(q_cur==1 || q_cur==2){
+								if(!emp($(this).val()))
+									$('#textL04_'+b_seq).val(getweek($(this).val()));
+								else
+									$('#textL04_'+b_seq).val('');
+								
+								FM01();
+								FM02();
+								FM03();
+								FM04();
+								FR06(b_seq);
+							}
 						});
 						
 						$('#combL05_'+i).change(function() {
@@ -1199,7 +1244,7 @@
 				$('.btndivstk').click(function(e) {
 					var t_id=$(this).attr('id').split('_')[0];
 					var t_n=$(this).attr('id').split('_')[1];
-					
+					nordeno();
 					var t_productno='';
 					var t_source='';
 					//成品
@@ -1528,7 +1573,10 @@
 							}
 						}
 					}
-					$('#textI07_'+i).val(t_maxdate);
+					if(t_maxdate.length==0)
+						$('#textI07_'+i).val(q_date());
+					else
+						$('#textI07_'+i).val(t_maxdate);
 				}
 			}
 			
@@ -1582,7 +1630,10 @@
 							}
 						}
 					}
-					$('#textI10_'+i).val(t_maxdate);
+					if(t_maxdate.length==0)
+						$('#textI10_'+i).val(q_date());
+					else
+						$('#textI10_'+i).val(t_maxdate);
 				}
 			}
 			
@@ -1625,7 +1676,10 @@
 							}
 						}
 					}
-					$('#textI13_'+i).val(t_maxdate);
+					if(t_maxdate.length==0)
+						$('#textI13_'+i).val(q_date());
+					else
+						$('#textI13_'+i).val(t_maxdate);
 				}
 			}
 			
@@ -1668,7 +1722,7 @@
 			function FJ05(i) { //B表 分條工時
 				var t_f03=dec($('#textF03_'+i).val());//中繼指定(M)
 				var t_sec=0;
-				var t_noa=$('#textA04_'+b_seq).val();
+				var t_noa=$('#textA04_'+i).val();
 				q_gt('uca',"where=^^noa='"+t_noa+"'^^", 0, 0, 0, "getuca", r_accy,1);
 				var tuca = _q_appendData("uca", "", true);
 				if (tuca[0] != undefined) {
@@ -1773,7 +1827,7 @@
 			function FJ12(i) { //B表 覆捲工時
 				var t_g03=dec($('#textG03_'+i).val());//再製品指定(M)
 				var t_minutes=0;
-				var t_noa=$('#textA04_'+b_seq).val();
+				var t_noa=$('#textA04_'+i).val();
 				q_gt('uca',"where=^^noa='"+t_noa+"'^^", 0, 0, 0, "getuca", r_accy,1);
 				var tuca = _q_appendData("uca", "", true);
 				if (tuca[0] != undefined) {
@@ -2267,7 +2321,7 @@
 							var t_n=$('#s_bbsnoq').val();
 							var source=$('#s_bbssource').val();
 							for (var i = 0; i < q_bbtCount; i++) {
-								if($('#txtNo2__'+i).val()==t_n && $('#txtOrdeno__'+i).val()==source){
+								if($('#txtNo2__'+i).val()==source && $('#txtOrdeno__'+i).val()==$('#txtOrdeno_'+t_n).val()){
 									bbtas.push({
 										'ordeno':$('#txtOrdeno__'+i).val(),
 										'no2':$('#txtNo2__'+i).val(),
@@ -2310,7 +2364,10 @@
 								if(q_sub(dec(as[i].mount),dec(as[i].bmount))<=0 && q_sub(dec(as[i].weight),dec(as[i].bweight))<=0){
 									as.splice(i, 1);
                                     i--;
-								}	
+								}else{
+									as[i].mount=q_sub(dec(as[i].mount),dec(as[i].bmount));
+									as[i].weight=q_sub(dec(as[i].weight),dec(as[i].bweight));
+								}
 							}
 							
 							var t_stk=0;
@@ -2528,6 +2585,51 @@
 				}
 				return t_product;
 			}
+			
+			function getweek(t_date) {
+            	if(r_len==3){
+            		t_date=dec(t_date.substr(0,3))+1911,dec(t_date.substr(4,2))-1,dec(t_date.substr(7,2));
+            	}
+            	switch (new Date(t_date).getDay()) {
+            		case 0:
+            			return '日'; 
+            			break;
+            		case 1:
+            			return '一';
+            			break;
+            		case 2:
+            			return '二';
+            			break;
+            		case 3:
+            			return '三';
+            			break;
+            		case 4:
+            			return '四';
+            			break;
+            		case 5:
+            			return '五';
+            			break;
+            		case 6:
+            			return '六';
+            			break;
+            		default:
+            			return '';
+  						break;
+            	}
+            }
+            
+            //建立亂數項次號
+            var guid = (function() {
+				function s4() {return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);}
+				return function() {return s4() + s4() + s4() + s4();};
+			})();
+            function nordeno() {
+            	for (var i = 0; i < q_bbsCount; i++) {
+            		if(emp($('#txtOrdeno_'+i).val())){
+            			$('#txtOrdeno_'+i).val(guid()+Date.now());
+            		}
+            	}
+            }
 			
 		</script>
 		<style type="text/css">
@@ -3055,7 +3157,10 @@
 					<tr style='background:#cad3ff;'>
 						<td align="center"><input id="btnMinus.*" type="button" style="font-size: medium; font-weight: bold;" value="－"/></td>
 						<td style="display: none;"><a id="lblNo.*" style="font-weight: bold;text-align: center;display: block;"> </a></td>
-						<td align="center"><input id="txtNoq.*" type="text" class="txt c1"/></td>
+						<td align="center">
+							<input id="txtNoq.*" type="text" class="txt c1"/>
+							<input id="txtOrdeno.*" type="hidden" class="txt c1"/>
+						</td>
 						<!--原生產指令需求-->
 						<td class="M1 M2">
 							<input id="textA01.*" type="text" class="txt c1"/>
@@ -3276,8 +3381,8 @@
 						<input id="btnPlut" type="button" style="font-size: medium; font-weight: bold;" value="＋"/>
 					</td>
 					<td style="width:20px;"> </td>
-					<td style="width:30px; text-align: center;"><a id='lblOrdeno_uj_t'>類別指定</a></td>
-					<td style="width:40px; text-align: center;"><a id='lblNo2_uj_t'>項次</a></td>
+					<td style="width:300px; text-align: center;"><a id='lblOrdeno_uj_t'>亂數項次</a></td>
+					<td style="width:40px; text-align: center;"><a id='lblNo2_uj_t'>類別指定</a></td>
 					<td style="width:120px; text-align: center;"><a id='lblUno_uj_t'>批號</a></td>
 					<td style="width:120px; text-align: center;"><a id='lblProductno_uj_t'>品名</a></td>
 					<td style="width:95px; text-align: center;"><a id='lblSpec_uj_t'>列管品</a></td>

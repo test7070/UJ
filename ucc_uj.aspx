@@ -452,9 +452,15 @@
                     </tr>
                     <tr>
 						<td><span> </span><a id='lblTggno' class="lbl btn"> </a></td>
-						<td colspan='2'><input id="txtTggno" type="text" class="txt c1" style="width: 30%;"/>
-										<input id="txtTgg"	type="text" class="txt c1" style="width: 65%;"></td>
+						<td colspan='2'>
+							<input id="txtTggno" type="text" class="txt c1" style="width: 30%;"/>
+							<input id="txtTgg"	type="text" class="txt c1" style="width: 65%;">
+						</td>
 						<td><input id="btnTgg" type="button" style='width: auto; font-size: medium;'/></td>
+                    </tr>
+                    <tr>
+                    	<td><span> </span><a id="lblEan_uj" class="lbl">外勞使用代號</a></td>
+                        <td><input id="txtEan" type="text" class="txt c1"/></td>
                     </tr>
                     <tr>
                     	<td><span> </span><a id='lblMemo_uj' class="lbl">注意事項</a></td>

@@ -132,7 +132,7 @@
 									}
 									if(!t_iswrite){
 										i--;
-										t_j--;
+										//t_j--;
 										$('#btnPlus').click();
 									}
 								}
@@ -193,6 +193,27 @@
 						sum();
 					}
 				});
+				
+				$('#btnCugt2_uj').click(function() {
+					var t_noa=$('#txtNoa').val();
+					q_box("cugt_uj.aspx?;;;noa='" + t_noa + "' and stationno='2'", 'cugt2', "98%", "95%", "加工半成品備料單");
+				});
+				$('#btnCugt3_uj').click(function() {
+					var t_noa=$('#txtNoa').val();
+					q_box("cugt_uj.aspx?;;;noa='" + t_noa + "' and stationno='3'", 'cugt3', "98%", "95%", "加工再製品備料單");
+				});
+				$('#btnCugt6_uj').click(function() {
+					var t_noa=$('#txtNoa').val();
+					q_box("cugt_uj.aspx?;;;noa='" + t_noa + "' and stationno='6'", 'cugt6', "98%", "95%", "加工物料備料單");
+				});
+				$('#btnCugt5_uj').click(function() {
+					var t_noa=$('#txtNoa').val();
+					q_box("cugt_uj.aspx?;;;noa='" + t_noa + "' and stationno='5'", 'cugt5', "98%", "95%", "製造(皮料)備料單");
+				});
+				$('#btnCugt4_uj').click(function() {
+					var t_noa=$('#txtNoa').val();
+					q_box("cugt_uj.aspx?;;;noa='" + t_noa + "' and stationno='4'", 'cugt4', "98%", "95%", "製造(離型紙)備料單");
+				});
             }
             
             function q_boxClose(s2) {
@@ -218,6 +239,27 @@
             function q_stPost() {
                 if (!(q_cur == 1 || q_cur == 2))
                     return false;
+				
+				//產生cugt
+				var t_noa=$('#txtNoa').val();
+				q_func('qtxt.query.cugt_uj', 'orde_uj.txt,cugt_uj,' + encodeURI(t_noa)+';'+encodeURI(r_accy),r_accy,1);
+				var as = _q_appendData("tmp0", "", true, true);
+				if (as[0] != undefined) {
+					var t_count=0;
+					for (var i = 0; i < as.length; i++) {
+						t_count=q_add(t_count,dec(as[i].xcount));
+					}
+					if(t_count>0){
+						if(q_cur==1){
+							alert('成功產生備料單!!');
+						}else{
+							alert('重新產生備料單!!');
+						}
+					}else{
+						alert('無備料單產生，請確認是否正常!!');
+					}
+				}
+				
             }
 			
             function btnOk() {
@@ -351,6 +393,7 @@
 					}
                 }
                 _bbsAssign();
+                change_field ();
                 splitbbsf();
             }
 
@@ -391,10 +434,10 @@
             	
 				if($('#cmbBdate').val()=='製造'){
 					$('.M1').hide();
-					$('.M2').show();
+					$('.M3').show();
 					$('.dbbs').css('width','1750px');
 				}else{
-					$('.M2').hide();
+					$('.M3').hide();
 					$('.M1').show();
 					$('.dbbs').css('width','1650px');
 				}
@@ -404,9 +447,11 @@
                 _readonly(t_para, empty);
                 
                 if(t_para){
-                	
+                	$('.btncugt').removeAttr('disabled');
+                	$('#btnWorkg_uj').attr('disabled', 'disabled');
 	            }else{
-	            	
+	            	$('.btncugt').attr('disabled', 'disabled');
+	            	$('#btnWorkg_uj').removeAttr('disabled');
 	            }
             }
 
@@ -688,6 +733,16 @@
 						<td><span> </span><a id='lblWorker2' class="lbl"> </a></td>
 						<td><input id="txtWorker2" type="text" class="txt c1"/></td>
 					</tr>
+					<tr>
+						<td> </td>
+						<td colspan="3">
+							<input id="btnCugt2_uj" type="button" class="M1 btncugt" value="加工半成品備料單"/>
+							<input id="btnCugt3_uj" type="button" class="M1 btncugt" value="加工再製品備料單"/>
+							<input id="btnCugt6_uj" type="button" class="M1 btncugt" value="加工物料備料單"/>
+							<input id="btnCugt5_uj" type="button" class="M3 btncugt" value="製造(皮料)備料單"/>
+							<input id="btnCugt4_uj" type="button" class="M3 btncugt" value="製造(離型紙)備料單"/>
+						</td>
+					</tr>
 				</table>
 			</div>
 		</div>
@@ -702,31 +757,31 @@
 					<td align="center" style="width:200px;" class="M1"><a id='lblF01_s'>料號(原成品名)</a></td>
 					<td align="center" style="width:200px;">
 						<a id='lblProductno1_uj_s' class="M1">新成品編碼</a>
-						<a id='lblProductno2_uj_s' class="M2">生產料號</a>
+						<a id='lblProductno2_uj_s' class="M3">生產料號</a>
 					</td>
 					<td align="center" style="width:100px;">
 						<a id='lblThours1_uj_s' class="M1">寬(mm)</a>
-						<a id='lblThours2_uj_s' class="M2">有效寬(mm)</a>
+						<a id='lblThours2_uj_s' class="M3">有效寬(mm)</a>
 					</td>
 					<td align="center" style="width:100px;" class="M1"><a id='lblDhours_uj_s'>長(M)</a></td>
 					<td align="center" style="width:100px;" class="M1"><a id='lblF02_s'>長度備註</a></td>
 					<td align="center" style="width:100px;">
 						<a id='lblMount1_uj_s' class="M1">數量</a>
-						<a id='lblMount2_uj_s' class="M2">產出(M)</a>
+						<a id='lblMount2_uj_s' class="M3">產出(M)</a>
 					</td>
 					
 					<td align="center" style="width:100px;" class="M1"><a id='lblF03_uj_s'>成品指令</a></td>
 					<td align="center" style="width:100px;" class="M1"><a id='lblF04_uj_s'>限定餘數</a></td>
 					<td align="center" style="width:100px;" class="M1"><a id='lblF05_uj_s'>需求級別</a></td>
 					
-					<td align="center" style="width:175px;" class="M2"><a id='lblF06_uj_s'>上皮投入</a></td>
-					<td align="center" style="width:100px;" class="M2"><a id='lblF07_uj_s'>指定(M)</a></td>
-					<td align="center" style="width:100px;" class="M2"><a id='lblF08_uj_s'>上膠面</a></td>
-					<td align="center" style="width:175px;" class="M2"><a id='lblF09_uj_s'>上紙投入</a></td>
-					<td align="center" style="width:100px;" class="M2"><a id='lblF10_uj_s'>指定(M)</a></td>
-					<td align="center" style="width:130px;" class="M2"><a id='lblF11_uj_s'>下料指令</a></td>
-					<td align="center" style="width:130px;" class="M2"><a id='lblF12_uj_s'>列管備註</a></td>
-					<td align="center" style="width:130px;" class="M2"><a id='lblF13_uj_s'>注意事項</a></td>
+					<td align="center" style="width:175px;" class="M3"><a id='lblF06_uj_s'>上皮投入</a></td>
+					<td align="center" style="width:100px;" class="M3"><a id='lblF07_uj_s'>指定(M)</a></td>
+					<td align="center" style="width:100px;" class="M3"><a id='lblF08_uj_s'>上膠面</a></td>
+					<td align="center" style="width:175px;" class="M3"><a id='lblF09_uj_s'>上紙投入</a></td>
+					<td align="center" style="width:100px;" class="M3"><a id='lblF10_uj_s'>指定(M)</a></td>
+					<td align="center" style="width:130px;" class="M3"><a id='lblF11_uj_s'>下料指令</a></td>
+					<td align="center" style="width:130px;" class="M3"><a id='lblF12_uj_s'>列管備註</a></td>
+					<td align="center" style="width:130px;" class="M3"><a id='lblF13_uj_s'>注意事項</a></td>
 					
 					<td align="center" style="width:200px;"><a id='lblF14_uj_s'>備註</a></td>
 				</tr>
@@ -750,14 +805,14 @@
 					<td class="M1"><input id="textF03.*" type="text" class="txt c1"/></td>
 					<td class="M1"><input id="textF04.*" type="text" class="txt c1"/></td>
 					<td class="M1"><input id="textF05.*" type="text" class="txt c1"/></td>
-					<td class="M2"><input id="textF06.*" type="text" class="txt c1"/></td>
-					<td class="M2"><input id="textF07.*" type="text" class="txt num c1"/></td>
-					<td class="M2"><input id="textF08.*" type="text" class="txt c1"/></td>
-					<td class="M2"><input id="textF09.*" type="text" class="txt c1"/></td>
-					<td class="M2"><input id="textF10.*" type="text" class="txt num c1"/></td>
-					<td class="M2"><input id="textF11.*" type="text" class="txt c1"/></td>
-					<td class="M2"><input id="textF12.*" type="text" class="txt c1"/></td>
-					<td class="M2"><input id="textF13.*" type="text" class="txt c1"/></td>
+					<td class="M3"><input id="textF06.*" type="text" class="txt c1"/></td>
+					<td class="M3"><input id="textF07.*" type="text" class="txt num c1"/></td>
+					<td class="M3"><input id="textF08.*" type="text" class="txt c1"/></td>
+					<td class="M3"><input id="textF09.*" type="text" class="txt c1"/></td>
+					<td class="M3"><input id="textF10.*" type="text" class="txt num c1"/></td>
+					<td class="M3"><input id="textF11.*" type="text" class="txt c1"/></td>
+					<td class="M3"><input id="textF12.*" type="text" class="txt c1"/></td>
+					<td class="M3"><input id="textF13.*" type="text" class="txt c1"/></td>
 					<td><input id="textF14.*" type="text" class="txt c1"/></td>
 				</tr>
 			</table>

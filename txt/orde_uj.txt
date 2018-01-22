@@ -1118,3 +1118,253 @@ l05 mech, --機台
 noa+'-'+noq workgno 
 from @tmp order by noa,noq
 ;
+
+-------------------------------------------------------------------------------------
+cugt_uj:--cugt_uj
+SET QUOTED_IDENTIFIER OFF
+declare @t_noa nvarchar(50)=case when '#non'=[1] then '' else [1] end
+declare @t_accy nvarchar(50)=case when '#non'=[2] then '107' else [2] end
+
+IF OBJECT_ID('tempdb..#tmpcugt')is not null
+BEGIN
+	drop table #tmpcugt
+END
+
+create table #tmpcugt(
+	noa nvarchar(50),
+	noq nvarchar(50),
+	datea nvarchar(50),
+	stationno nvarchar(50), --備料單類別
+	memo nvarchar(MAX),--合併內容
+	worker nvarchar(50),--生產順位 空白
+	f01 nvarchar(MAX),--排序
+	f02 nvarchar(MAX),--指令名稱
+	f03 nvarchar(MAX),--身分證號
+	f04 nvarchar(MAX),--中繼產品料號
+	f05 float,--數量
+	f06 float,--長(M)
+	f07 float,--總量
+	f08 float,--總長(M)
+	f09 nvarchar(MAX),--需求級別
+	f10 nvarchar(MAX),--備註
+	f11 nvarchar(MAX),--列管備註
+	f12 nvarchar(MAX),--指令名稱
+	f13 nvarchar(MAX),--料號(原成品名)
+	f14 nvarchar(MAX),--新成品編碼
+	f15 float,--數量
+	f16 nvarchar(MAX),--餘數
+	f17 nvarchar(MAX),--紙管
+	f18 float,--紙管備料量
+	f19 nvarchar(MAX),--紙箱
+	f20 float,--紙箱備料量
+	f21 nvarchar(MAX),--塞頭
+	f22 float,--塞頭備料量
+	f23 nvarchar(MAX),--備註
+	f24 nvarchar(MAX),--皮料號
+	f25 nvarchar(MAX),--上紙製程段
+	f26 nvarchar(MAX),--儲位
+	f27 float,--支數
+	f28 float,--長(M)
+	f29 float,--小計(M)
+	f30 float,--總支數
+	f31 float,--總長(M)
+	f32 nvarchar(MAX),--批號
+	f33 nvarchar(MAX),--備註
+	f34 nvarchar(MAX),--下紙段(投入)
+	f35 nvarchar(MAX),--代碼
+	f36 float,--長(M)
+	f37 float,--總顆數
+	f38 float,--總長(M)
+	f39 nvarchar(MAX),--身分證號碼
+	f40 nvarchar(MAX),--備註
+	f41 nvarchar(MAX),--排程單號
+	f42 nvarchar(MAX),--項次
+	f43 nvarchar(MAX)--指定項次
+)
+
+declare @tmp table(
+	noa  nvarchar(50),
+	noq  nvarchar(50),
+	datea nvarchar(50),
+	workgnoa nvarchar(50),
+	workgnoq nvarchar(50)
+)
+
+insert @tmp(noa,noq,datea,workgnoa,workgnoq)
+select a.noa,b.noq,a.datea,SUBSTRING(workgno,0,charindex('-',workgno)) noa
+,SUBSTRING(workgno,charindex('-',workgno)+1,len(workgno)) noq
+from view_cug a left join view_cugs b on a.noa=b.noa where a.noa=@t_noa
+
+declare @typea nvarchar(50)=(select bdate from view_cug where noa=@t_noa)
+
+if(@typea='加工')
+begin
+	--半成品
+	insert #tmpcugt(noa,stationno,datea,memo,worker,f01
+	,f02,f03,f04,f05,f06,f07,f08,f09,f10,f11,f41,f42,f43)
+	select a.noa,'2',a.datea,'','',b.noq
+	,dbo.split(b.memo2,'@,#',2) --指令名稱
+	,c.uno --身分證號
+	,c.productno --中繼產品料號
+	,c.mount --數量
+	,c.weight --長(M)
+	,0 --總量
+	,0 --總長(M)
+	,dbo.split(b.memo2,'@,#',70)--需求級別
+	,dbo.split(b.memo2,'@,#',71)--備註
+	,c.spec--列管備註
+	,a.workgnoa,a.workgnoq,c.noq
+	from @tmp a left join view_workgs b on a.workgnoa=b.noa and a.workgnoq=b.noq
+	left join view_workgt c on b.noa=c.noa and b.ordeno=c.ordeno
+	where c.no2='2'
+	
+	--再製品
+	insert #tmpcugt(noa,stationno,datea,memo,worker,f01
+	,f02,f03,f04,f05,f06,f07,f08,f09,f10,f11,f41,f42,f43)
+	select a.noa,'3',a.datea,'','',b.noq
+	,dbo.split(b.memo2,'@,#',2) --指令名稱
+	,c.uno --身分證號
+	,c.productno --再製品料號
+	,c.mount --數量
+	,c.weight --長(M)
+	,0 --總量
+	,0 --總長(M)
+	,dbo.split(b.memo2,'@,#',70)--需求級別
+	,dbo.split(b.memo2,'@,#',71)--備註
+	,c.spec--列管備註
+	,a.workgnoa,a.workgnoq,c.noq
+	from @tmp a left join view_workgs b on a.workgnoa=b.noa and a.workgnoq=b.noq
+	left join view_workgt c on b.noa=c.noa and b.ordeno=c.ordeno
+	where c.no2='3'
+	
+	update a
+	set f07=isnull(b.f07,0),f08=isnull(b.f08,0)
+	from #tmpcugt a outer apply (select SUM(f05)f07,SUM(f06)f08 from #tmpcugt where noa=a.noa and stationno=a.stationno and f04=a.f04) b
+
+	--物料
+	insert #tmpcugt(noa,stationno,datea,memo,worker,f01
+	,f12,f13,f14,f15,f16,f17,f18,f19,f20,f21,f22,f23,f41,f42,f43)
+	select a.noa,'6',a.datea,'','',b.noq
+	,dbo.split(b.memo2,'@,#',2)--指令名稱
+	,dbo.split(b.memo2,'@,#',3)--料號(原成品名)
+	,dbo.split(b.memo2,'@,#',4)--新成品編碼
+	,dbo.split(b.memo2,'@,#',10)--數量
+	,dbo.split(b.memo2,'@,#',53)--餘數
+	,dbo.split(b.memo2,'@,#',38)--紙管
+	,dbo.split(b.memo2,'@,#',39)--紙管備料量
+	,dbo.split(b.memo2,'@,#',41)--紙箱
+	,dbo.split(b.memo2,'@,#',42)--紙箱備料量
+	,dbo.split(b.memo2,'@,#',44)--塞頭
+	,dbo.split(b.memo2,'@,#',45)--塞頭備料量
+	,dbo.split(b.memo2,'@,#',71)--備註
+	,a.workgnoa,a.workgnoq,''
+	from @tmp a left join view_workgs b on a.workgnoa=b.noa and a.workgnoq=b.noq
+end
+if(@typea='製造')
+begin
+	--備皮
+	insert #tmpcugt(noa,stationno,datea,memo,worker,f01
+	,f24,f25,f26,f27,f28,f29,f30,f31,f32,f33,f41,f42,f43)
+	select a.noa,'5',a.datea,'','',b.noq
+	,c.productno --皮料號
+	,case when c.no2='4' then '上紙' else '' end --上紙製程段
+	,''--儲位
+	,c.mount --支數
+	,d.reserve --長(M) 標準長
+	,c.weight--小計
+	,0 --總支數
+	,0 --總長(M)
+	,c.uno --身分證號
+	,dbo.split(b.memo2,'@,#',104)--備註
+	,a.workgnoa,a.workgnoq,c.noq
+	from @tmp a left join view_workgs b on a.workgnoa=b.noa and a.workgnoq=b.noq
+	left join view_workgt c on b.noa=c.noa and b.ordeno=c.ordeno
+	left join ucc d on c.productno=d.noa
+	where (c.no2='4' or c.no2='5') --上紙 or 上皮
+	and (left(c.productno,2)='7S' or left(c.productno,2)='8S' or left(c.productno,2)='8P')--依料號前兩碼判斷皮料
+	
+	update a
+	set f30=isnull(b.f30,0),f31=isnull(b.f31,0)
+	from #tmpcugt a outer apply (select SUM(f27)f30,SUM(f29)f31 from #tmpcugt where noa=a.noa and stationno=a.stationno and f24=a.f24) b
+	where a.stationno='5'
+	
+	--備紙
+	insert #tmpcugt(noa,stationno,datea,memo,worker,f01
+	,f34,f35,f36,f37,f38,f39,f40,f41,f42,f43)
+	select a.noa,'4',a.datea,'','',b.noq
+	,c.productno --下紙段
+	,d.ean --代碼 外勞使用代號
+	,c.weight--長(M)
+	,0 --總顆數
+	,0 --總長(M)
+	,c.uno --身分證號碼
+	,dbo.split(b.memo2,'@,#',104)--備註
+	,a.workgnoa,a.workgnoq,c.noq
+	from @tmp a left join view_workgs b on a.workgnoa=b.noa and a.workgnoq=b.noq
+	left join view_workgt c on b.noa=c.noa and b.ordeno=c.ordeno
+	left join ucc d on c.productno=d.noa
+	where (c.no2='4' or c.no2='5') --上紙 or 上皮
+	and (left(c.productno,2)='7L' or left(c.productno,2)='8L')--依料號前兩碼判斷紙料
+	
+	update a
+	set f37=isnull(b.f37,0),f38=isnull(b.f38,0)
+	from #tmpcugt a outer apply (select count(*)f37,SUM(f36)f38 from #tmpcugt where noa=a.noa and stationno=a.stationno and f34=a.f34) b
+	where a.stationno='4'
+
+end
+
+--更新noq
+update a
+set noq=right('000'+cast(rr as nvarchar(10)),3)
+from (select noq,ROW_NUMBER()over(order by noa,stationno,f01,f41,f42,f43)rr from #tmpcugt)a
+
+--更新null
+update #tmpcugt
+set f02=isnull(f02,''),f03=isnull(f03,''),f04=isnull(f04,''),f05=isnull(f05,0),
+f06=isnull(f06,0),f07=isnull(f07,0),f08=isnull(f08,0),f09=isnull(f09,''),
+f10=isnull(f10,''),f11=isnull(f11,''),f12=isnull(f12,''),f13=isnull(f13,''),
+f14=isnull(f14,''),f15=isnull(f15,0),f16=isnull(f16,''),f17=isnull(f17,''),
+f18=isnull(f18,0),f19=isnull(f19,''),f20=isnull(f20,0),f21=isnull(f21,''),
+f22=isnull(f22,0),f23=isnull(f23,''),f24=isnull(f24,''),f25=isnull(f25,''),
+f26=isnull(f26,''),f27=isnull(f27,0),f28=isnull(f28,0),f29=isnull(f29,0),
+f30=isnull(f30,0),f31=isnull(f31,0),f32=isnull(f32,''),f33=isnull(f33,''),
+f34=isnull(f34,''),f35=isnull(f35,''),f36=isnull(f36,0),f37=isnull(f37,0),
+f38=isnull(f38,0),f39=isnull(f39,''),f40=isnull(f40,''),f41=isnull(f41,''),
+f42=isnull(f42,''),f43=isnull(f43,'')
+
+--合併到 memo
+update #tmpcugt
+set memo='@,#'+f01+'@,#'+f02+'@,#'+f03+'@,#'+f04+'@,#'
++cast(f05 as nvarchar(100))+'@,#'+cast(f06 as nvarchar(100))+'@,#'+cast(f07 as nvarchar(100))+'@,#'+cast(f08 as nvarchar(100))
++'@,#'+f09+'@,#'+f10+'@,#'+f11+'@,#'+f12+'@,#'+f13+'@,#'+f14+'@,#'
++cast(f15 as nvarchar(100))+'@,#'+f16+'@,#'+f17+'@,#'
++cast(f18 as nvarchar(100))+'@,#'+f19+'@,#'
++cast(f20 as nvarchar(100))+'@,#'+f21+'@,#'
++cast(f22 as nvarchar(100))+'@,#'+f23+'@,#'+f24+'@,#'+f25+'@,#'+f26+'@,#'
++cast(f27 as nvarchar(100))+'@,#'+cast(f28 as nvarchar(100))+'@,#'+cast(f29 as nvarchar(100))+'@,#'+cast(f30 as nvarchar(100))+'@,#'+cast(f31 as nvarchar(100))
++'@,#'+f32+'@,#'+f33+'@,#'+f34+'@,#'+f35+'@,#'
++cast(f36 as nvarchar(100))+'@,#'+cast(f37 as nvarchar(100))+'@,#'+cast(f38 as nvarchar(100))
++'@,#'+f39+'@,#'+f40+'@,#'+f41+'@,#'+f42+'@,#'+f43
+
+declare @accy nvarchar(50)=''
+--刪除已產生cugt
+if((select count(*) from view_cugt where noa=@t_noa)>0)
+begin
+	set @accy=isnull((select top 1 accy from view_cugt where noa=@t_noa),'107')
+	EXEC("delete cugt"+@accy+" where noa='"+@t_noa+"'")
+end
+
+--寫入cugt
+set @accy=isnull((select accy from view_cug where noa=@t_noa),@t_accy)
+EXEC("
+	insert cugt"+@accy+"(noa,noq,stationno,memo,worker,datea)
+	select noa,noq,stationno,memo,worker,datea from #tmpcugt
+")
+
+select count(*)xcount,noa,stationno from #tmpcugt group by noa,stationno
+
+IF OBJECT_ID('tempdb..#tmpcugt')is not null
+BEGIN
+	drop table #tmpcugt
+END
+;
