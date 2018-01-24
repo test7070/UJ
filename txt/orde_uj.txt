@@ -1415,13 +1415,23 @@ SET QUOTED_IDENTIFIER OFF
 declare @t_noa nvarchar(50)=case when '#non'=[1] then '' else [1] end
 declare @t_noq nvarchar(50)=case when '#non'=[2] then '' else [2] end
 declare @t_accy nvarchar(50)=case when '#non'=[3] then '' else [3] end
+declare @t_uno nvarchar(50)=case when '#non'=[4] then '' else [4] end
 
 declare @accy nvarchar(50)=isnull((select top 1 accy from view_cug where noa=@t_noa),@t_accy)
+declare @uno nvarchar(50)=@t_uno+'-'+right('00'+cast(cast(right(isnull((select MAX(nosold) from view_cugs where isnull(nosold,0)!='' and nosold like @t_uno+'-%' and len(nosold)=len(@t_uno)+3 ),'00'),2) as int)+1 as nvarchar(10)),2)
 
+--現產,預先產生批號
 EXEC("
 	update cugs"+@accy+"
-	set issel=1
+	set issel=1,nosold='"+@uno+"'
 	where noa='"+@t_noa+"' and noq='"+@t_noq+"'
+")
+
+--目前現產
+EXEC("
+	update cug"+@accy+"
+	set edate='"+@t_noq+"'
+	where noa='"+@t_noa+"'
 ")
 
 select *

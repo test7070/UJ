@@ -34,7 +34,7 @@
                 });
                 
                 q_cur=2;
-                document.title='投入及產出作業';
+                document.title='上皮作業';
                 
                 setInterval("shownowtime()",1000);
                 
@@ -254,18 +254,12 @@
 						alert('【派工單】禁止空白!!');
 						return;
 					}
-					if(emp($('#txtMechno').val())){
-						alert('【機台別】禁止空白!!');
-						return;
-					}
 					var t_noa=$('#txtNoa').val();
 					var t_noq=$('#txtNoq').val();
-					var t_uno=replaceAll(q_date(),'/','').slice(-6)+$('#txtMechno').val();
-					q_func('qtxt.query.cugssel', 'orde_uj.txt,cugssel,' + encodeURI(t_noa)+';'+encodeURI(t_noq)+';'+encodeURI(r_accy)+';'+encodeURI(t_uno),r_accy,1);
+					q_func('qtxt.query.cugssel', 'orde_uj.txt,cugssel,' + encodeURI(t_noa)+';'+encodeURI(t_noq)+';'+encodeURI(r_accy),r_accy,1);
 					var as = _q_appendData("tmp0", "", true, true);
 					if (as[0] != undefined) {
 						alert('派工單【'+as[0].noa+'】生產料號【'+as[0].productno+'】進行生產投入及產出!!');
-						$('#lblCugsuno').text(as[0].nosold);
 						
 						$('#btnModi_uj').attr('disabled', 'disabled');
 						$('#btnEnda_uj').attr('disabled', 'disabled');
@@ -325,34 +319,45 @@
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 		<input type='button' id='btnAuthority' name='btnAuthority' style='font-size:16px;' value='權限'/>
 		<a id='logout' class="lbl" style="color: coral;cursor: pointer;font-weight: bolder;float: right;">登出</a>
-		<p align="center" style="height: 10px;width: 1200px;">
-			<a style="font-size: 20px;font-weight: bolder;text-align: center;">投入及產出作業</a>
-		</p>
+		
 		<table id="table_cugtitle" style="width:1200px" cellpadding='2'  cellspacing='0'>
 			<tr align="center">
-				<td style="width: 105px;"><select id="combSourcetitle" class="csource"> </select></td>
-				<td style="width: 100px;"><a class="lbl btn">派工單</a></td>
+				<td style="width: 100px;"><a class="lbl">派工單</a></td>
 				<td style="width: 225px;">
 					<input id="txtNoa" type="text" class="txt c1 str" style="width: 150px;"/>
 					<input id="txtNoq" type="hidden"/>
 				</td>
 				<td style="width: 100px;"><a class="lbl">加工日</a></td>
 				<td style="width: 150px;"><input id="txtDatea" type="text" class="txt c1" style="width: 100px;" disabled="disabled"/></td>
-				<td style="width: 130px;"><a class="lbl">製造機台別</a></td>
+				<td style="width: 130px;"><a class="lbl">製程別</a></td>
+				<td style="width: 75px;">上皮</td>
+				<td style="width: 130px;"><a class="lbl">機台別</a></td>
 				<td style="width: 75px;"><input id="txtMechno" type="text" class="txt c1" disabled="disabled"/></td>
-				<td style="width: 115px;"><input id="btnDownimg" type="button" value="畫面擷取"><a id="Downimg"> </a></td>
-				<td style="width: 200px;"><a id="lblTimea" class="lbl"> </a></td>
+				<td style="width: 215px;"><input id="btnDownimg" type="button" value="畫面擷取"><a id="Downimg"> </a></td>
+			</tr>
+			<tr align="center">
+				<td><a class="lbl">現產</a></td>
+				<td> </td>
+				<td><a class="lbl">列管備註</a></td>
+				<td colspan="5"> </td>
+				<td><a id="lblTimea" class="lbl"> </a></td>
 			</tr>
 		</table>
 		<table id="table_cug" style="width:1200px;border-top:1px #000000 solid;border-bottom:1px #000000 solid;border-left:1px #000000 solid;border-right:1px #000000 solid;" cellpadding='2' cellspacing='0'>
 			<tr align="center" style="height: 30px;">
-				<td style="background-color: gainsboro;width: 105px;" align="center">來源</td>
-				<td style="background-color: gainsboro;width: 100px;">警告</td>
-				<td style="background-color: gainsboro;width: 100px;">製程別</td>
-				<td style="background-color: gainsboro;width: 100px;">條件</td>
-				<td style="background-color: gainsboro;width: 250px;">投入</td>
-				<td style="background-color: gainsboro;width: 100px;">產量</td>
-				<td style="background-color: gainsboro;width: 445px;" colspan="2">產出</td>
+				<td style="background-color: gainsboro;width: 105px;">現產</td>
+				<td style="background-color: gainsboro;width: 100px;">身分證號(半)</td>
+				<td style="background-color: gainsboro;width: 100px;">排序</td>
+				<td style="background-color: gainsboro;width: 100px;">調上</td>
+				<td style="background-color: gainsboro;width: 250px;">調下</td>
+				<td style="background-color: gainsboro;width: 100px;">刪除</td>
+				<td style="background-color: gainsboro;width: 100px;">重掃</td>
+				<td style="background-color: gainsboro;width: 100px;">料號</td>
+				<td style="background-color: gainsboro;width: 100px;">長(M)</td>
+				<td style="background-color: gainsboro;width: 100px;">列管備註</td>
+				<td style="background-color: gainsboro;width: 145px;">產出</td>
+				<td style="background-color: gainsboro;width: 145px;"> </td>
+				<td style="background-color: gainsboro;width: 145px;"> </td>
 			</tr>
 			<tr align="center" style="height: 55px;">
 				<td><select id="combSource1" class="csource"> </select></td>
@@ -384,7 +389,7 @@
 					<a style="float: left;">符合條件</a><a id="lblCugcount"> </a><a>筆</a><BR>
 					<a style="float: left;">皮長度(M)</a><a id="lblUcatrans"> </a>
 				</td>
-				<td><a id="lblCugsuno"> </a></td>
+				<td><a id="lblUcauno"> </a></td>
 			</tr>
 			<tr align="center" style="height: 55px;">
 				<td><select id="combSource3" class="csource"> </select></td>
