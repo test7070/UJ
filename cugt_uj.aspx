@@ -311,7 +311,7 @@
 					<td class="S4" style="display: none;"><input id="textF38.*" type="text" class="txt c1" style="width:95%;text-align: right;"/></td>
 					<td class="S4" style="display: none;"><input id="textF39.*" type="text" class="txt c1" style="width:95%;"/></td>
 					<td class="S4" style="display: none;"><input id="textF40.*" type="text" class="txt c1" style="width:95%;"/></td>
-					<!--對應workgt-->
+					<!--對應workgs-->
 					<td style="display: none;"><input id="textF41.*" type="text" class="txt c1" style="width:95%;"/></td>
 					<td style="display: none;"><input id="textF42.*" type="text" class="txt c1" style="width:95%;"/></td>
 					<!--對應workgt-->

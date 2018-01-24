@@ -63,6 +63,7 @@
 				bbsMask = [['txtDatea', r_picd]];
 				q_mask(bbmMask);
 				
+				document.title='計畫性半成品製令單';
 			}
 		
 			function q_boxClose(s2) {///   q_boxClose 2/4

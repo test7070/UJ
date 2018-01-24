@@ -114,7 +114,7 @@
 				q_cmbParse("combJ17", ',急,做,可','s');
 				q_cmbParse("combL05", ',A,B','s');
 				
-				document.title='製造/加工排程表';
+				document.title='加工/製造排程表';
 				
 				$('#btnCub_uj').click(function() {
 					if(q_cur==1 || q_cur==2){

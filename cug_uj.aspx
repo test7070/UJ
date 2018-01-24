@@ -66,6 +66,8 @@
                 q_getFormat();
                 q_mask(bbmMask);
                 
+                document.title='加工/製造派工單';
+                
                 q_cmbParse("cmbBdate", '加工,製造');	
                 
                 $('#cmbBdate').change(function() {
@@ -736,11 +738,11 @@
 					<tr>
 						<td> </td>
 						<td colspan="3">
-							<input id="btnCugt2_uj" type="button" class="M1 btncugt" value="加工半成品備料單"/>
-							<input id="btnCugt3_uj" type="button" class="M1 btncugt" value="加工再製品備料單"/>
-							<input id="btnCugt6_uj" type="button" class="M1 btncugt" value="加工物料備料單"/>
-							<input id="btnCugt5_uj" type="button" class="M3 btncugt" value="製造(皮料)備料單"/>
-							<input id="btnCugt4_uj" type="button" class="M3 btncugt" value="製造(離型紙)備料單"/>
+							<input id="btnCugt2_uj" type="button" class="M1 btncugt" style="display: none;" value="加工半成品備料單"/>
+							<input id="btnCugt3_uj" type="button" class="M1 btncugt" style="display: none;" value="加工再製品備料單"/>
+							<input id="btnCugt6_uj" type="button" class="M1 btncugt" style="display: none;" value="加工物料備料單"/>
+							<input id="btnCugt5_uj" type="button" class="M3 btncugt" style="display: none;" value="製造(皮料)備料單"/>
+							<input id="btnCugt4_uj" type="button" class="M3 btncugt" style="display: none;" value="製造(離型紙)備料單"/>
 						</td>
 					</tr>
 				</table>
