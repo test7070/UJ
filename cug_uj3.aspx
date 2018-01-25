@@ -337,9 +337,9 @@
 			</tr>
 			<tr align="center">
 				<td><a class="lbl">現產</a></td>
-				<td> </td>
+				<td><a id="nowProductno"> </a></td>
 				<td><a class="lbl">列管備註</a></td>
-				<td colspan="5"> </td>
+				<td colspan="5"><a id="nowF12"> </a></td>
 				<td><a id="lblTimea" class="lbl"> </a></td>
 			</tr>
 		</table>
@@ -360,20 +360,23 @@
 				<td style="background-color: gainsboro;width: 145px;"> </td>
 			</tr>
 			<tr align="center" style="height: 55px;">
-				<td><select id="combSource1" class="csource"> </select></td>
-				<td><input id="txtAlert1" type="text" class="txt c1" disabled="disabled"></td>
-				<td>上皮</td>
-				<td>條件1<BR>(批號)</td>
+				<td><a id="nowgne_1"> </a></td>
+				<td><a id="productno_1"> </a></td>
+				<td><a id="times_1"> </a></td>
+				<td><input id="btnUp_1" type="button" value="↑"></td>
+				<td><input id="btnDown_1" type="button" value="↓"></td>
+				<td><input id="btnDele_1" type="button" value="刪"></td>
+				<td><input id="btnWrite_1" type="button" value="掃"></td>
 				<td>
-					<input id="txtF06" type="text" class="txt c1" disabled="disabled"><BR>
-					<input id="txtUno1" type="text" class="txt c1 str">
+					<input id="txtProductno2_1" type="text" class="txt c1"><BR>
+					<input id="txtProduct2_1" type="text" class="txt c1"> <!--批號-->
 				</td>
-				<td><a id="lblF07">0</a></td>
-				<td style="width: 300px;">
-					<input id="txtProductno" type="text" class="txt c1" style="width:250px;" disabled="disabled">
-					<select id="combProductno" style="width: 20px;display: none;"> </select>
-				</td>
-				<td style="width: 145px;"><a id="lblUcatype"> </a></td>
+				<td><a id="lengthb_1"> </a></td>
+				<td><a id="spec_1"> </a></td>
+				<td><input id="txtWeight" type="text" class="txt c1"></td>
+				<td><input id="btnEnter" type="button" value="ENTER"></td>
+				<td><input id="btnRep" type="button" value="重KEY"></td>
+				
 			</tr>
 			<tr align="center" style="height: 55px;">
 				<td><select id="combSource2" class="csource"> </select></td>

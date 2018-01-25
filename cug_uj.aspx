@@ -75,10 +75,13 @@
                 	for (var i = 0; i < q_bbsCount; i++) {
 						$('#btnMinus_'+i).click();
 					}
+					$('#txtProcessno').val('');
 				});
 				
 				$('#combProcessno').change(function() {
-					$('#txtProcessno').val($(this).val());
+					if(q_cur==1|| q_cur==2){
+						$('#txtProcessno').val($(this).val());
+					}
 				});
 				
 				$('#btnWorkg_uj').click(function() {
@@ -455,6 +458,15 @@
 	            	$('.btncugt').attr('disabled', 'disabled');
 	            	$('#btnWorkg_uj').removeAttr('disabled');
 	            }
+	            if(q_cur==1){
+	            	$('#combProcessno').show();
+	            }else{
+	            	$('#combProcessno').hide();
+	            	$('#txtDatea').attr('disabled', 'disabled');
+	            	$('#cmbBdate').attr('disabled', 'disabled');
+	            	$('#txtProcessno').attr('disabled', 'disabled');
+	            }
+	            
             }
 
             function btnMinus(id) {

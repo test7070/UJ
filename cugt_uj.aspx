@@ -25,8 +25,8 @@
             var q_readonlys = ['textF01','textF02','textF03','textF04','textF05','textF06','textF07'
             ,'textF08','textF09','textF10','textF11','textF12','textF13','textF14','textF15','textF16'
             ,'textF17','textF18','textF19','textF20','textF21','textF22','textF23','textF24','textF25'
-            ,'textF26','textF27','textF28','textF29','textF30','textF31','textF32','textF34','textF35'
-            ,'textF36','textF37','textF38','textF39'];
+            ,'textF26','textF27','textF28','textF29','textF30','textF31','textF32','textF33','textF35'
+            ,'textF36','textF37','textF38','textF39','textF40'];
             var bbmNum = [];
             var bbsNum = [];
             var bbmMask = [];
@@ -242,20 +242,20 @@
 					<td align="center" style="width:100px;display: none;" class="S5"><a id='lblF30_uj'>總支數</a></td>
 					<td align="center" style="width:120px;display: none;" class="S5"><a id='lblF31_uj'>總長(M)</a></td>
 					<td align="center" style="width:150px;;display: none;" class="S5"><a id='lblF32_uj'>批號</a></td>
-					<td align="center" style="width:170px;;display: none;" class="S5"><a id='lblF33_uj'>備註</a></td>
+					<td align="center" style="width:170px;;display: none;" class="S5"><a id='lblF34_uj'>備註</a></td>
 					<!---上紙-------->
-					<td align="center" style="width:180px;display: none;" class="S4"><a id='lblF34_uj'>下紙段(投入)</a></td>
-					<td align="center" style="width:100px;display: none;" class="S4"><a id='lblF35_uj'>代碼</a></td>
-					<td align="center" style="width:100px;display: none;" class="S4"><a id='lblF36_uj'>長(M)</a></td>
-					<td align="center" style="width:100px;display: none;" class="S4"><a id='lblF37_uj'>總顆數</a></td>
-					<td align="center" style="width:100px;display: none;" class="S4"><a id='lblF38_uj'>總長(M)</a></td>
-					<td align="center" style="width:150px;display: none;" class="S4"><a id='lblF39_uj'>身分證號碼</a></td>
-					<td align="center" style="width:200px;display: none;" class="S4"><a id='lblF40_uj'>備註</a></td>
+					<td align="center" style="width:180px;display: none;" class="S4"><a id='lblF35_uj'>下紙段(投入)</a></td>
+					<td align="center" style="width:100px;display: none;" class="S4"><a id='lblF36_uj'>代碼</a></td>
+					<td align="center" style="width:100px;display: none;" class="S4"><a id='lblF37_uj'>長(M)</a></td>
+					<td align="center" style="width:100px;display: none;" class="S4"><a id='lblF38_uj'>總顆數</a></td>
+					<td align="center" style="width:100px;display: none;" class="S4"><a id='lblF39_uj'>總長(M)</a></td>
+					<td align="center" style="width:150px;display: none;" class="S4"><a id='lblF40_uj'>身分證號碼</a></td>
+					<td align="center" style="width:200px;display: none;" class="S4"><a id='lblF42_uj'>備註</a></td>
 					<!--對應workg-->
-					<td style="display: none;"><a id='lblF41_uj'>排程單號</a></td>
-					<td style="display: none;"><a id='lblF42_uj'>項次</a></td>
+					<td style="display: none;"><a id='lblF43_uj'>排程單號</a></td>
+					<td style="display: none;"><a id='lblF44_uj'>項次</a></td>
 					<!--對應workgt-->
-					<td style="display: none;"><a id='lblF43_uj'>指定項次</a></td>
+					<td style="display: none;"><a id='lblF45_uj'>指定項次</a></td>
 				</tr>
 				<tr  style='background:#cad3ff;'>
 					<td align="center" style="display: none;">
@@ -302,20 +302,22 @@
 					<td class="S5" style="display: none;"><input id="textF30.*" type="text" class="txt c1" style="width:95%;text-align: right;"/></td>
 					<td class="S5" style="display: none;"><input id="textF31.*" type="text" class="txt c1" style="width:95%;text-align: right;"/></td>
 					<td class="S5" style="display: none;"><input id="textF32.*" type="text" class="txt c1" style="width:95%;"/></td>
-					<td class="S5" style="display: none;"><input id="textF33.*" type="text" class="txt c1" style="width:95%;"/></td>
+					<td style="display: none;"><input id="textF33.*" type="text" class="txt c1" style="width:95%;"/></td><!--列管品-->
+					<td class="S5" style="display: none;"><input id="textF34.*" type="text" class="txt c1" style="width:95%;"/></td>
 					<!---上紙-------->
-					<td class="S4" style="display: none;"><input id="textF34.*" type="text" class="txt c1" style="width:95%;"/></td>
 					<td class="S4" style="display: none;"><input id="textF35.*" type="text" class="txt c1" style="width:95%;"/></td>
-					<td class="S4" style="display: none;"><input id="textF36.*" type="text" class="txt c1" style="width:95%;text-align: right;"/></td>
+					<td class="S4" style="display: none;"><input id="textF36.*" type="text" class="txt c1" style="width:95%;"/></td>
 					<td class="S4" style="display: none;"><input id="textF37.*" type="text" class="txt c1" style="width:95%;text-align: right;"/></td>
 					<td class="S4" style="display: none;"><input id="textF38.*" type="text" class="txt c1" style="width:95%;text-align: right;"/></td>
-					<td class="S4" style="display: none;"><input id="textF39.*" type="text" class="txt c1" style="width:95%;"/></td>
+					<td class="S4" style="display: none;"><input id="textF39.*" type="text" class="txt c1" style="width:95%;text-align: right;"/></td>
 					<td class="S4" style="display: none;"><input id="textF40.*" type="text" class="txt c1" style="width:95%;"/></td>
+					<td style="display: none;"><input id="textF41.*" type="text" class="txt c1" style="width:95%;"/></td><!--列管品-->
+					<td class="S4" style="display: none;"><input id="textF42.*" type="text" class="txt c1" style="width:95%;"/></td>
 					<!--對應workgs-->
-					<td style="display: none;"><input id="textF41.*" type="text" class="txt c1" style="width:95%;"/></td>
-					<td style="display: none;"><input id="textF42.*" type="text" class="txt c1" style="width:95%;"/></td>
-					<!--對應workgt-->
 					<td style="display: none;"><input id="textF43.*" type="text" class="txt c1" style="width:95%;"/></td>
+					<td style="display: none;"><input id="textF44.*" type="text" class="txt c1" style="width:95%;"/></td>
+					<!--對應workgt-->
+					<td style="display: none;"><input id="textF45.*" type="text" class="txt c1" style="width:95%;"/></td>
 				</tr>
 			</table>
 			
