@@ -11,7 +11,7 @@
 		<link href="../qbox.css" rel="stylesheet" type="text/css" />
 		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.js"></script>
 		<script type="text/javascript">
-			var q_name = "cug";
+			var q_name = "cug_uj2";
 			aPop = new Array();
 			
 			$(document).ready(function() {

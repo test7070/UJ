@@ -1877,3 +1877,24 @@ BEGIN
 	drop table #tmpb
 END
 ;
+--------------------------------------------------------------------
+getviewcuds:--getviewcuds
+SET QUOTED_IDENTIFIER OFF
+declare @t_noa nvarchar(50)=case when '#non'=[1] then '' else [1] end
+declare @t_top nvarchar(50)=case when '#non'=[2] then '' else [2] end
+declare @t_enda nvarchar(50)=case when '#non'=[3] then '' else [3] end
+declare @t_source nvarchar(50)=case when '#non'=[4] then '' else [4] end
+
+if(LEN(@t_top)>0)
+begin
+	EXEC("select top "+@t_top+" * from view_cuds 
+	where ordeno='"+@t_noa+"' and source='"+@t_source+"'
+	and (isnull(enda,0)!=1 or len('"+@t_enda+"')=0)")
+end
+else
+begin
+	select * from view_cuds 
+	where ordeno=@t_noa and source=@t_source
+	and (isnull(enda,0)!=1 or len(@t_enda)=0)
+end
+;

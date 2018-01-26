@@ -11,14 +11,13 @@
 		<link href="../qbox.css" rel="stylesheet" type="text/css" />
 		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.js"></script>
 		<script type="text/javascript">
-			var q_name = "cug";
+			var q_name = "cug_uj3";
 			aPop = new Array();
 			
 			$(document).ready(function() {
 				_q_boxClose();
                 q_getId();
                 q_gf('', q_name);
-                
 			});
 			
 			function q_gfPost() {
@@ -28,11 +27,7 @@
                 q_popAssign();
                 //$('#txtDatea').mask(r_picd);
                 //$('#txtDatea').val(q_date());
-                
-                $('.csource').each(function(index) {
-					q_cmbParse($(this).attr('id'),'掃條碼,系統選');
-                });
-                
+				q_cmbParse('cmbMome1',',退良品,退不良品,歸0');
                 q_cur=2;
                 document.title='上皮作業';
                 
@@ -55,6 +50,14 @@
 					});
 				});
 				
+				$('#btnInspection').click(function() {
+					$('#table_cuds2').show();
+				});
+				
+				$('#btnCancel2').click(function() {
+					$('#table_cuds2').hide();
+				});
+				
 				$('#txtNoa').change(function() {
 					var t_noa=emp($(this).val())?'#non':$(this).val();
 					q_func('qtxt.query.getviewcug', 'orde_uj.txt,getviewcug,' + encodeURI(t_noa),r_accy,1);
@@ -63,6 +66,9 @@
 						if(as[0].bdate=='製造'){
 							$('#txtDatea').val(as[0].datea);
 							$('#txtMechno').val(as[0].processno);
+							
+							//q_func('qtxt.query.getviewcuds', 'orde_uj.txt,getviewcuds,' + encodeURI(t_noa)+';'+encodeURI('8')+';'+encodeURI('1')+';'+encodeURI('5'),r_accy,1);
+							
 						}else{
 							alert('【'+t_noa+'】非製造派工單!!');
 							$('#txtNoa').val('');
@@ -73,204 +79,7 @@
 					}
 				});
 				
-				$('#txtUno1').change(function() {
-					var t_uno=emp($(this).val())?'#non':$(this).val();
-					q_func('qtxt.query.stk_uj', 'orde_uj.txt,stk_uj,' + encodeURI(q_date())+';'+encodeURI(t_uno)+';'+encodeURI('#non')+';'+encodeURI('#non')+';'+encodeURI('#non')+';'+encodeURI('#non'),r_accy,1);
-					var as = _q_appendData("tmp0", "", true, true);
-					if (as[0] != undefined) {
-						$('#txtF06').val(as[0].productno);
-						$('#lblF07').text(as[0].mount);
-						$('#txtF06').change();
-					}else{
-						alert('【'+t_uno+'】批號不存在!!');
-						$(this).val('');
-					}
-				});
 				
-				$('#txtF06').change(function() {
-					var t_noa=emp($('#txtNoa').val())?'#non':$('#txtNoa').val();
-					var t_pno=emp($(this).val())?'#non':$(this).val();
-					q_func('qtxt.query.getviewcugs', 'orde_uj.txt,getviewcugs,' + encodeURI(t_noa)+';'+encodeURI(t_pno)+';'+encodeURI('#non')+';'+encodeURI('#non')+';0',r_accy,1);
-					var as = _q_appendData("tmp0", "", true, true);
-					if (as[0] != undefined) {
-						$('#txtAlert1').val('');
-					}else{
-						$('#txtAlert1').val('派工單內無此料號');
-					}
-					$('#txtAlert4').change();
-				});
-				
-				$('#txtUno2').change(function() {
-					var t_uno=emp($(this).val())?'#non':$(this).val();
-					q_func('qtxt.query.stk_uj', 'orde_uj.txt,stk_uj,' + encodeURI(q_date())+';'+encodeURI(t_uno)+';'+encodeURI('#non')+';'+encodeURI('#non')+';'+encodeURI('#non')+';'+encodeURI('#non'),r_accy,1);
-					var as = _q_appendData("tmp0", "", true, true);
-					if (as[0] != undefined) {
-						$('#txtF09').val(as[0].productno);
-						$('#lblF10').text(as[0].mount);
-						$('#txtF09').change();
-					}else{
-						alert('【'+t_uno+'】批號不存在!!');
-						$(this).val('');
-					}
-				});
-				
-				$('#txtF09').change(function() {
-					var t_noa=emp($('#txtNoa').val())?'#non':$('#txtNoa').val();
-					var t_pno=emp($(this).val())?'#non':$(this).val();
-					q_func('qtxt.query.getviewcugs', 'orde_uj.txt,getviewcugs,' + encodeURI(t_noa)+';'+encodeURI('#non')+';'+encodeURI(t_pno)+';'+encodeURI('#non')+';0',r_accy,1);
-					var as = _q_appendData("tmp0", "", true, true);
-					if (as[0] != undefined) {
-						$('#txtAlert2').val('');
-					}else{
-						$('#txtAlert2').val('派工單內無此料號');
-					}
-					$('#txtAlert4').change();
-				});
-				
-				$('#txtUno3').change(function() {
-					var t_uno=emp($(this).val())?'#non':$(this).val();
-					q_func('qtxt.query.stk_uj', 'orde_uj.txt,stk_uj,' + encodeURI(q_date())+';'+encodeURI(t_uno)+';'+encodeURI('#non')+';'+encodeURI('#non')+';'+encodeURI('#non')+';'+encodeURI('#non'),r_accy,1);
-					var as = _q_appendData("tmp0", "", true, true);
-					if (as[0] != undefined) {
-						$('#txtF08').val(as[0].productno);
-						$('#lblS3mount').text(as[0].mount);
-						$('#txtF08').change();
-					}else{
-						alert('【'+t_uno+'】批號不存在!!');
-						$(this).val('');
-					}
-				});
-				
-				$('#txtF08').change(function() {
-					var t_noa=emp($('#txtNoa').val())?'#non':$('#txtNoa').val();
-					var t_pno=emp($(this).val())?'#non':$(this).val();
-					q_func('qtxt.query.getviewcugs', 'orde_uj.txt,getviewcugs,' + encodeURI(t_noa)+';'+encodeURI('#non')+';'+encodeURI('#non')+';'+encodeURI(t_pno)+';0',r_accy,1);
-					var as = _q_appendData("tmp0", "", true, true);
-					if (as[0] != undefined) {
-						$('#txtAlert3').val('');
-					}else{
-						$('#txtAlert3').val('派工單內無此料號');
-					}
-					$('#txtAlert4').change();
-				});
-				
-				$('#txtAlert4').change(function() {
-					$('#lblCugcount').text('');
-					$('#txtProductno').val('');
-					$('#lblF12').text('');
-					$('#combProductno').text('');
-					$('#combProductno').hide();
-					
-					var t_noa=$('#txtNoa').val();
-					var t_pno1=emp($('#txtF06').val())?'#non':$('#txtF06').val();
-					var t_pno2=emp($('#txtF09').val())?'#non':$('#txtF09').val();
-					var t_pno3=emp($('#txtF08').val())?'#non':$('#txtF08').val();
-					q_func('qtxt.query.getviewcugs', 'orde_uj.txt,getviewcugs,' + encodeURI(t_noa)+';'+encodeURI(t_pno1)+';'+encodeURI(t_pno2)+';'+encodeURI(t_pno3)+';1',r_accy,1);
-					var as = _q_appendData("tmp0", "", true, true);
-					if (as[0] != undefined) {
-						$('#lblCugcount').text(as.length);
-						if(as.length>1){
-							var t_item='##########@';
-							for(var i=0;i<as.length;i++){
-								t_item=t_item+(t_item.length>0?',':'')+as[i].noq+'#####'+as[i].productno+'#####'+as[i].f12+'@'+as[i].productno
-							}
-							q_cmbParse("combProductno",t_item);
-							
-							$('#combProductno').show();
-						}else{
-							$('#txtProductno').val(as[0].productno);
-							$('#lblF12').text(as[0].f12);
-							$('#txtNoq').val(as[0].noq);
-						}
-						$(this).val('');
-					}else{
-						$(this).val('警告');
-					}
-					$('#lblUcatype').change();
-				});
-				
-				$('#combProductno').change(function() {
-					var t_noq=$(this).val().split('#####')[0];
-					var t_pno=$(this).val().split('#####')[1];
-					var t_f12=$(this).val().split('#####')[2];
-					$('#txtNoq').val(t_noq);
-					$('#txtProductno').val(t_pno);
-					$('#lblF12').text(t_f12);
-					$('#lblUcatype').change();
-				});
-				
-				$('#lblUcatype').change(function() {
-					var t_pno=$('#txtProductno').val();
-					if(t_pno.substr(0,1)=='5'){
-						$('#lblUcatype').text('半成品');
-					}else if(t_pno.substr(0,1)=='#'){
-						$('#lblUcatype').text('再製品');
-					}else if(t_pno.substr(0,1)=='1'){
-						$('#lblUcatype').text('成品');
-					}else{
-						$('#lblUcatype').text('');
-					}
-					
-					if(t_pno.length>0){
-						q_gt('uca',"where=^^noa='"+t_pno+"'^^", 0, 0, 0, "getuca", r_accy,1);
-						var tuca = _q_appendData("uca", "", true);
-						if (tuca[0] != undefined) {
-							$('#lblUcatrans').text(tuca[0].trans);
-						}	
-					}else{
-						$('#lblUcatrans').text('');
-					}
-				});
-				
-				$('#btnModi_uj').click(function() {
-					$('.str').removeAttr('disabled');
-					
-					$('#btnModi_uj').attr('disabled', 'disabled');
-					$('#btnEnda_uj').attr('disabled', 'disabled');
-					$('#btnOk_uj').removeAttr('disabled');
-				});
-				
-				$('#btnOk_uj').click(function() {
-					if(emp($('#txtNoa').val())){
-						alert('【派工單】禁止空白!!');
-						return;
-					}
-					if(emp($('#txtProductno').val())){
-						alert('【產出內容】禁止空白!!');
-						return;
-					}
-					
-					$('.str').attr('disabled', 'disabled');
-					
-					$('#btnOk_uj').attr('disabled', 'disabled');
-					$('#btnEnda_uj').removeAttr('disabled');
-					$('#btnModi_uj').removeAttr('disabled');
-				});
-				
-				//這功能應該表示現在進行生產，非真正完工(尚未確認)
-				$('#btnEnda_uj').click(function() {
-					//寫入cugs issel 表示 現產,orguindate 表示已入庫
-					if(emp($('#txtNoa').val()) || emp($('#txtNoq').val())){
-						alert('【派工單】禁止空白!!');
-						return;
-					}
-					var t_noa=$('#txtNoa').val();
-					var t_noq=$('#txtNoq').val();
-					q_func('qtxt.query.cugssel', 'orde_uj.txt,cugssel,' + encodeURI(t_noa)+';'+encodeURI(t_noq)+';'+encodeURI(r_accy),r_accy,1);
-					var as = _q_appendData("tmp0", "", true, true);
-					if (as[0] != undefined) {
-						alert('派工單【'+as[0].noa+'】生產料號【'+as[0].productno+'】進行生產投入及產出!!');
-						
-						$('#btnModi_uj').attr('disabled', 'disabled');
-						$('#btnEnda_uj').attr('disabled', 'disabled');
-					}else{
-						alert('【派工單】遺失，畫面請重刷並請重新輸入!!');
-					}
-				});
-				
-				$('#btnCancel_uj').click(function() {
-					location.href=location.href;
-				});
             }
             
             function shownowtime() {
@@ -337,86 +146,220 @@
 			</tr>
 			<tr align="center">
 				<td><a class="lbl">現產</a></td>
-				<td><a id="nowProductno"> </a></td>
+				<td><a id="lblNowProductno"> </a></td>
 				<td><a class="lbl">列管備註</a></td>
-				<td colspan="5"><a id="nowF12"> </a></td>
+				<td colspan="5"><a id="lblNowF12"> </a></td>
 				<td><a id="lblTimea" class="lbl"> </a></td>
 			</tr>
 		</table>
-		<table id="table_cug" style="width:1200px;border-top:1px #000000 solid;border-bottom:1px #000000 solid;border-left:1px #000000 solid;border-right:1px #000000 solid;" cellpadding='2' cellspacing='0'>
-			<tr align="center" style="height: 30px;">
-				<td style="background-color: gainsboro;width: 105px;">現產</td>
-				<td style="background-color: gainsboro;width: 100px;">身分證號(半)</td>
-				<td style="background-color: gainsboro;width: 100px;">排序</td>
-				<td style="background-color: gainsboro;width: 100px;">調上</td>
-				<td style="background-color: gainsboro;width: 250px;">調下</td>
-				<td style="background-color: gainsboro;width: 100px;">刪除</td>
-				<td style="background-color: gainsboro;width: 100px;">重掃</td>
-				<td style="background-color: gainsboro;width: 100px;">料號</td>
-				<td style="background-color: gainsboro;width: 100px;">長(M)</td>
-				<td style="background-color: gainsboro;width: 100px;">列管備註</td>
-				<td style="background-color: gainsboro;width: 145px;">產出</td>
-				<td style="background-color: gainsboro;width: 145px;"> </td>
-				<td style="background-color: gainsboro;width: 145px;"> </td>
-			</tr>
-			<tr align="center" style="height: 55px;">
-				<td><a id="nowgne_1"> </a></td>
-				<td><a id="productno_1"> </a></td>
-				<td><a id="times_1"> </a></td>
-				<td><input id="btnUp_1" type="button" value="↑"></td>
-				<td><input id="btnDown_1" type="button" value="↓"></td>
-				<td><input id="btnDele_1" type="button" value="刪"></td>
-				<td><input id="btnWrite_1" type="button" value="掃"></td>
-				<td>
-					<input id="txtProductno2_1" type="text" class="txt c1"><BR>
-					<input id="txtProduct2_1" type="text" class="txt c1"> <!--批號-->
-				</td>
-				<td><a id="lengthb_1"> </a></td>
-				<td><a id="spec_1"> </a></td>
-				<td><input id="txtWeight" type="text" class="txt c1"></td>
-				<td><input id="btnEnter" type="button" value="ENTER"></td>
-				<td><input id="btnRep" type="button" value="重KEY"></td>
-				
-			</tr>
-			<tr align="center" style="height: 55px;">
-				<td><select id="combSource2" class="csource"> </select></td>
-				<td><input id="txtAlert2" type="text" class="txt c1" disabled="disabled"></td>
-				<td>上紙</td>
-				<td>條件2<BR>(批號)</td>
-				<td>
-					<input id="txtF09" type="text" class="txt c1" disabled="disabled"><BR>
-					<input id="txtUno2" type="text" class="txt c1 str">
-				</td>
-				<td><a id="lblF10">0</a></td>
-				<td>
-					<a style="float: left;">符合條件</a><a id="lblCugcount"> </a><a>筆</a><BR>
-					<a style="float: left;">皮長度(M)</a><a id="lblUcatrans"> </a>
-				</td>
-				<td><a id="lblUcauno"> </a></td>
-			</tr>
-			<tr align="center" style="height: 55px;">
-				<td><select id="combSource3" class="csource"> </select></td>
-				<td><input id="txtAlert3" type="text" class="txt c1" disabled="disabled"></td>
-				<td>上膠</td>
-				<td>條件3<BR>(批號)</td>
-				<td>
-					<input id="txtF08" type="text" class="txt c1" disabled="disabled"><BR>
-					<input id="txtUno3" type="text" class="txt c1 str">
-				</td>
-				<td><a id="lblS3mount">0</a></td>
-				<td><a style="float: left;">列管備註</a><a id="lblF12"> </a></td>
-				<td> </td>
-			</tr>
-			<tr align="center" style="height: 55px;">
-				<td><a>無此組合</a></td>
-				<td><input id="txtAlert4" type="text" class="txt c1" disabled="disabled"></td>
-				<td> </td>
-				<td><input type='button' id='btnModi_uj' style='font-size:16px;' value="修改" disabled="disabled"/></td>
-				<td><input type='button' id='btnOk_uj' style='font-size:16px;' value="ENTER"/></td>
-				<td> </td>
-				<td><input type='button' id='btnEnda_uj' style='font-size:16px;' value="完工" disabled="disabled"/></td>
-				<td><input type='button' id='btnCancel_uj' style='font-size:16px;' value="清除" /></td>
-			</tr>
-		</table>
+		<div id="div_cuds" style="width: 1280px;">
+			<table id="table_cuds" style="width:1100px;float:left;border-top:1px #000000 solid;border-bottom:1px #000000 solid;border-left:1px #000000 solid;border-right:1px #000000 solid;" cellpadding='2' cellspacing='0'>
+				<tr align="center" style="height: 30px;">
+					<td style="background-color: gainsboro;width: 50px;">現產</td>
+					<td style="background-color: gainsboro;width: 140px;">身分證號(半)</td>
+					<td style="background-color: gainsboro;width: 50px;">排序</td>
+					<td style="background-color: gainsboro;width: 40px;">調上</td>
+					<td style="background-color: gainsboro;width: 40px;">調下</td>
+					<td style="background-color: gainsboro;width: 40px;">插入</td>
+					<td style="background-color: gainsboro;width: 40px;">刪除</td>
+					<td style="background-color: gainsboro;width: 40px;">重掃</td>
+					<td style="background-color: gainsboro;width: 180px;">料號</td>
+					<td style="background-color: gainsboro;width: 80px;">長(M)</td>
+					<td style="background-color: gainsboro;width: 120px;">列管備註</td>
+					<td style="background-color: gainsboro;width: 100px;">產出</td>
+					<td style="background-color: gainsboro;width: 90px;"> </td>
+					<td style="background-color: gainsboro;width: 90px;"> </td>
+				</tr>
+				<tr id="tr_1" align="center" style="height: 55px;">
+					<td><a id="lblNowgen_1"> </a></td>
+					<td><a id="lblProductno_1"> </a></td>
+					<td><a id="lblTimes_1"> </a></td>
+					<td><input id="btnUp_1" type="button" value="↑"></td>
+					<td><input id="btnDown_1" type="button" value="↓"></td>
+					<td><input id="btnIns_1" type="button" value="插"></td>
+					<td><input id="btnDele_1" type="button" value="刪"></td>
+					<td><input id="btnWrite_1" type="button" value="掃"></td>
+					<td>
+						<input id="txtProductno2_1" type="text" class="txt c1" disabled="disabled"><BR>
+						<input id="txtProduct2_1" type="text" class="txt c1" disabled="disabled"> <!--批號-->
+					</td>
+					<td><a id="lblLengthb_1"> </a></td>
+					<td><a id="lblSpec_1"> </a></td>
+					<td><input id="txtWeight" type="text" class="txt c1" style="text-align: right;"></td>
+					<td><input id="btnEnter" type="button" value="ENTER"></td>
+					<td><input id="btnRep" type="button" value="重KEY"></td>
+				</tr>
+				<tr id="tr_2" align="center" style="height: 55px;">
+					<td><a id="lblNowgen_2"> </a></td>
+					<td><a id="lblProductno_2"> </a></td>
+					<td><a id="lblTimes_2"> </a></td>
+					<td><input id="btnUp_2" type="button" value="↑"></td>
+					<td><input id="btnDown_2" type="button" value="↓"></td>
+					<td><input id="btnIns_2" type="button" value="插"></td>
+					<td><input id="btnDele_2" type="button" value="刪"></td>
+					<td><input id="btnWrite_2" type="button" value="掃"></td>
+					<td>
+						<input id="txtProductno2_2" type="text" class="txt c1" disabled="disabled"><BR>
+						<input id="txtProduct2_2" type="text" class="txt c1" disabled="disabled"> <!--批號-->
+					</td>
+					<td><a id="lblLengthb_2"> </a></td>
+					<td><a id="lblSpec_2"> </a></td>
+					<td><a>餘料</a></td>
+					<td><a>產出(%)</a></td>
+					<td><a>歸0值</a></td>
+				</tr>
+				<tr id="tr_3" align="center" style="height: 55px;">
+					<td><a id="lblNowgen_3"> </a></td>
+					<td><a id="lblProductno_3"> </a></td>
+					<td><a id="lblTimes_3"> </a></td>
+					<td><input id="btnUp_3" type="button" value="↑"></td>
+					<td><input id="btnDown_3" type="button" value="↓"></td>
+					<td><input id="btnIns_3" type="button" value="插"></td>
+					<td><input id="btnDele_3" type="button" value="刪"></td>
+					<td><input id="btnWrite_3" type="button" value="掃"></td>
+					<td>
+						<input id="txtProductno2_3" type="text" class="txt c1" disabled="disabled"><BR>
+						<input id="txtProduct2_3" type="text" class="txt c1" disabled="disabled"> <!--批號-->
+					</td>
+					<td><a id="lblLengthb_3"> </a></td>
+					<td><a id="lblSpec_3"> </a></td>
+					<td><a id="lblWeight2"> </a></td>
+					<td><a id="lblWeight1"> </a></td>
+					<td><a id="lblUccstart"> </a></td>
+				</tr>
+				<tr id="tr_4" align="center" style="height: 55px;">
+					<td><a id="lblNowgen_4"> </a></td>
+					<td><a id="lblProductno_4"> </a></td>
+					<td><a id="lblTimes_4"> </a></td>
+					<td><input id="btnUp_4" type="button" value="↑"></td>
+					<td><input id="btnDown_4" type="button" value="↓"></td>
+					<td><input id="btnIns_4" type="button" value="插"></td>
+					<td><input id="btnDele_4" type="button" value="刪"></td>
+					<td><input id="btnWrite_4" type="button" value="掃"></td>
+					<td>
+						<input id="txtProductno2_4" type="text" class="txt c1" disabled="disabled"><BR>
+						<input id="txtProduct2_4" type="text" class="txt c1" disabled="disabled"> <!--批號-->
+					</td>
+					<td><a id="lblLengthb_4"> </a></td>
+					<td><a id="lblSpec_4"> </a></td>
+					<td><a id="lblAlert"> </a></td>
+					<td><a>判定</a></td>
+					<td><a id="lblDecide"> </a></td>
+				</tr>
+				<tr id="tr_5" align="center" style="height: 55px;">
+					<td><a id="lblNowgen_5"> </a></td>
+					<td><a id="lblProductno_5"> </a></td>
+					<td><a id="lblTimes_5"> </a></td>
+					<td><input id="btnUp_5" type="button" value="↑"></td>
+					<td><input id="btnDown_5" type="button" value="↓"></td>
+					<td><input id="btnIns_5" type="button" value="插"></td>
+					<td><input id="btnDele_5" type="button" value="刪"></td>
+					<td><input id="btnWrite_5" type="button" value="掃"></td>
+					<td>
+						<input id="txtProductno2_5" type="text" class="txt c1" disabled="disabled"><BR>
+						<input id="txtProduct2_5" type="text" class="txt c1" disabled="disabled"> <!--批號-->
+					</td>
+					<td><a id="lblLengthb_5"> </a></td>
+					<td><a id="lblSpec_5"> </a></td>
+					<td><a>餘料</a></td>
+					<td colspan="2"><select id="cmbMome1" class="txt c1"> </select></td>
+				</tr>
+				<tr id="tr_6" align="center" style="height: 55px;">
+					<td><a id="lblNowgen_6"> </a></td>
+					<td><a id="lblProductno_6"> </a></td>
+					<td><a id="lblTimes_6"> </a></td>
+					<td><input id="btnUp_6" type="button" value="↑"></td>
+					<td><input id="btnDown_6" type="button" value="↓"></td>
+					<td><input id="btnIns_6" type="button" value="插"></td>
+					<td><input id="btnDele_6" type="button" value="刪"></td>
+					<td><input id="btnWrite_6" type="button" value="掃"></td>
+					<td>
+						<input id="txtProductno2_6" type="text" class="txt c1" disabled="disabled"><BR>
+						<input id="txtProduct2_6" type="text" class="txt c1" disabled="disabled"> <!--批號-->
+					</td>
+					<td><a id="lblLengthb_6"> </a></td>
+					<td><a id="lblSpec_6"> </a></td>
+					<td><a>退料</a></td>
+					<td colspan="2"><input id="btnPrinttag" type="button" value="印標籤"></td>
+				</tr>
+				<tr id="tr_7" align="center" style="height: 55px;">
+					<td><a id="lblNowgen_7"> </a></td>
+					<td><a id="lblProductno_7"> </a></td>
+					<td><a id="lblTimes_7"> </a></td>
+					<td><input id="btnUp_7" type="button" value="↑"></td>
+					<td><input id="btnDown_7" type="button" value="↓"></td>
+					<td><input id="btnIns_7" type="button" value="插"></td>
+					<td><input id="btnDele_7" type="button" value="刪"></td>
+					<td><input id="btnWrite_7" type="button" value="掃"></td>
+					<td>
+						<input id="txtProductno2_7" type="text" class="txt c1" disabled="disabled"><BR>
+						<input id="txtProduct2_7" type="text" class="txt c1" disabled="disabled"> <!--批號-->
+					</td>
+					<td><a id="lblLengthb_7"> </a></td>
+					<td><a id="lblSpec_7"> </a></td>
+					<td colspan="3"> </td>
+				</tr>
+				<tr id="tr_8" align="center" style="height: 55px;">
+					<td><a id="lblNowgen_8"> </a></td>
+					<td><a id="lblProductno_8"> </a></td>
+					<td><a id="lblTimes_8"> </a></td>
+					<td><input id="btnUp_8" type="button" value="↑"></td>
+					<td><input id="btnDown_8" type="button" value="↓"></td>
+					<td><input id="btnIns_8" type="button" value="插"></td>
+					<td><input id="btnDele_8" type="button" value="刪"></td>
+					<td><input id="btnWrite_8" type="button" value="掃"></td>
+					<td>
+						<input id="txtProductno2_8" type="text" class="txt c1" disabled="disabled"><BR>
+						<input id="txtProduct2_8" type="text" class="txt c1" disabled="disabled"> <!--批號-->
+					</td>
+					<td><a id="lblLengthb_8"> </a></td>
+					<td><a id="lblSpec_8"> </a></td>
+					<td><input id="btnInspection" type="button" value="自主檢"></td>
+					<td colspan="2"><input id="btnEnda" type="button" value="完工"></td>
+				</tr>
+			</table>
+			<table id="table_cuds2" style="width:160px;float:right;display:none;border-top:1px #000000 solid;border-bottom:1px #000000 solid;border-left:1px #000000 solid;border-right:1px #000000 solid;" cellpadding='2' cellspacing='0'>
+				<tr align="center" style="height: 30px;">
+					<td><input id="btnEnter2" type="button" value="ENTER"></td>
+					<td><input id="btnCancel2" type="button" value="關閉"></td>
+				</tr>
+				<tr align="center" style="height: 30px;">
+					<td style="background-color: gainsboro;width: 80px;">自主檢</td>
+					<td style="background-color: gainsboro;width: 80px;">判定</td>
+				</tr>
+				<tr align="center" style="height: 45px;">
+					<td><a>外觀</a></td>
+					<td><input id="chkMount1" type="checkbox"></td>
+				</tr>
+				<tr align="center" style="height: 45px;">
+					<td><a>色差</a></td>
+					<td><input id="chkMount2" type="checkbox"></td>
+				</tr>
+				<tr align="center" style="height: 45px;">
+					<td><a>寬幅</a></td>
+					<td><input id="chkMount3" type="checkbox"></td>
+				</tr>
+				<tr align="center" style="height: 45px;">
+					<td><a>出油</a></td>
+					<td><input id="chkMount4" type="checkbox"></td>
+				</tr>
+				<tr align="center" style="height: 45px;">
+					<td><a>變形</a></td>
+					<td><input id="chkMount5" type="checkbox"></td>
+				</tr>
+				<tr align="center" style="height: 45px;">
+					<td><a>管底</a></td>
+					<td><input id="chkMount6" type="checkbox"></td>
+				</tr>
+				<tr align="center" style="height: 45px;">
+					<td><a>異常單</a></td>
+					<td><input id="chkMount7" type="checkbox"></td>
+				</tr>
+				<tr align="center" style="height: 45px;">
+					<td><a>留樣</a></td>
+					<td><input id="chkMount8" type="checkbox"></td>
+				</tr>
+			</table>
+		</div>
 	</body>
 </html>
