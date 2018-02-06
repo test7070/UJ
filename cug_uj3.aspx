@@ -67,7 +67,35 @@
 							$('#txtDatea').val(as[0].datea);
 							$('#txtMechno').val(as[0].processno);
 							
-							//q_func('qtxt.query.getviewcuds', 'orde_uj.txt,getviewcuds,' + encodeURI(t_noa)+';'+encodeURI('8')+';'+encodeURI('1')+';'+encodeURI('5'),r_accy,1);
+							var tt_noq=as[0].edate;//現產序號
+							var t_issel=false;
+							q_func('qtxt.query.getviewcuds', 'orde_uj.txt,getviewcuds,' + encodeURI(t_noa)+';'+encodeURI('8')+';'+encodeURI('1')+';'+encodeURI('5'),r_accy,1);
+							var das = _q_appendData("tmp0", "", true, true);
+							if (das[0] != undefined) {
+								for(var i=0;i<das.length;i++){
+									$('#lblProductno_'+i).text(das[i].productno);
+									$('#lblOrdeno_'+i).text(das[i].ordeno);
+									$('#lblNo2_'+i).text(das[i].no2);
+									
+									if(tt_noq==das[i].no2 && !t_issel){
+										$('#lblNowgen_'+i).text('→');
+										t_issel=true;
+									}else{
+										$('#lblNowgen_'+i).text('');
+									}
+									
+									$('#lblUno_'+i).text(das[i].uno);
+									$('#lblTimes_'+i).text(das[i].times);
+									$('#txtProductno2_'+i).val(das[i].productno2);
+									$('#txtProduct2_'+i).val(das[i].product2);
+									$('#lblLengthb_'+i).text(das[i].lengthb);
+									$('#lblSpec_'+i).text(das[i].spec);
+								}
+								
+							}else{
+								alert('投入及產出作業沒進行完工!!');
+							}
+							
 							
 						}else{
 							alert('【'+t_noa+'】非製造派工單!!');
@@ -79,6 +107,36 @@
 					}
 				});
 				
+				$('#txtWeight').change(function() {
+					var t_lenghtb=dec($('#lblLengthb_0').val());
+					var t_weight=dec($('#txtWeight').val());
+					$('#lblWeight2').text(q_sub(t_lenghtb,t_weight));
+					var t_weight1=0;
+					
+					if(dec(t_lenghtb)>0){
+						t_weight1=q_div(t_weight,t_lenghtb);
+						$('#lblWeight1').text(round(t_weight1*100,0).toString()+'%');
+					}else{
+						$('#lblWeight1').text(t_weight1.toString()+'%');
+					}
+					if(t_weight1>1 || t_weight1<0.92){
+						$('#lblAlert').text('警告');
+					}else{
+						$('#lblAlert').text('');
+					}
+					
+					var t_uccstart=dec($('#lblUccstart').text());
+					if(t_uccstart==0){
+						$('#lblDecide').text('自判');
+					}else{
+						if(q_sub(t_lenghtb,t_weight)>t_uccstart){
+							$('#lblDecide').text('退料');
+						}else{
+							$('#lblDecide').text('歸0');
+						}
+					}
+					
+				});
 				
             }
             
@@ -170,9 +228,38 @@
 					<td style="background-color: gainsboro;width: 90px;"> </td>
 					<td style="background-color: gainsboro;width: 90px;"> </td>
 				</tr>
+				<tr id="tr_0" align="center" style="height: 55px;">
+					<td><a id="lblNowgen_0" style="color: red;"> </a></td>
+					<td>
+						<a id="lblUno_0"> </a>
+						<a id="lblProductno_0" style="display: none;"> </a>
+						<a id="lblOrdeno_0" style="display: none;"> </a>
+						<a id="lblNo2_0" style="display: none;"> </a>
+					</td>
+					<td><a id="lblTimes_0"> </a></td>
+					<td><input id="btnUp_0" type="button" value="↑"></td>
+					<td><input id="btnDown_0" type="button" value="↓"></td>
+					<td><input id="btnIns_0" type="button" value="插"></td>
+					<td><input id="btnDele_0" type="button" value="刪"></td>
+					<td><input id="btnWrite_0" type="button" value="掃"></td>
+					<td>
+						<input id="txtProductno2_0" type="text" class="txt c1" disabled="disabled"><BR>
+						<input id="txtProduct2_0" type="text" class="txt c1" disabled="disabled"> <!--批號-->
+					</td>
+					<td><a id="lblLengthb_0"> </a></td>
+					<td><a id="lblSpec_0"> </a></td>
+					<td><input id="txtWeight" type="text" class="txt c1" style="text-align: right;"></td>
+					<td><input id="btnEnter" type="button" value="ENTER"></td>
+					<td><input id="btnRep" type="button" value="重KEY"></td>
+				</tr>
 				<tr id="tr_1" align="center" style="height: 55px;">
-					<td><a id="lblNowgen_1"> </a></td>
-					<td><a id="lblProductno_1"> </a></td>
+					<td><a id="lblNowgen_1" style="color: red;"> </a></td>
+					<td>
+						<a id="lblUno_1"> </a>
+						<a id="lblProductno_1" style="display: none;"> </a>
+						<a id="lblOrdeno_1" style="display: none;"> </a>
+						<a id="lblNo2_1" style="display: none;"> </a>
+					</td>
 					<td><a id="lblTimes_1"> </a></td>
 					<td><input id="btnUp_1" type="button" value="↑"></td>
 					<td><input id="btnDown_1" type="button" value="↓"></td>
@@ -185,13 +272,18 @@
 					</td>
 					<td><a id="lblLengthb_1"> </a></td>
 					<td><a id="lblSpec_1"> </a></td>
-					<td><input id="txtWeight" type="text" class="txt c1" style="text-align: right;"></td>
-					<td><input id="btnEnter" type="button" value="ENTER"></td>
-					<td><input id="btnRep" type="button" value="重KEY"></td>
+					<td><a>餘料</a></td>
+					<td><a>產出(%)</a></td>
+					<td><a>歸0值</a></td>
 				</tr>
 				<tr id="tr_2" align="center" style="height: 55px;">
-					<td><a id="lblNowgen_2"> </a></td>
-					<td><a id="lblProductno_2"> </a></td>
+					<td><a id="lblNowgen_2" style="color: red;"> </a></td>
+					<td>
+						<a id="lblUno_2"> </a>
+						<a id="lblProductno_2" style="display: none;"> </a>
+						<a id="lblOrdeno_2" style="display: none;"> </a>
+						<a id="lblNo2_2" style="display: none;"> </a>
+					</td>
 					<td><a id="lblTimes_2"> </a></td>
 					<td><input id="btnUp_2" type="button" value="↑"></td>
 					<td><input id="btnDown_2" type="button" value="↓"></td>
@@ -204,13 +296,18 @@
 					</td>
 					<td><a id="lblLengthb_2"> </a></td>
 					<td><a id="lblSpec_2"> </a></td>
-					<td><a>餘料</a></td>
-					<td><a>產出(%)</a></td>
-					<td><a>歸0值</a></td>
+					<td><a id="lblWeight2"> </a></td>
+					<td><a id="lblWeight1"> </a></td>
+					<td><a id="lblUccstart"> </a></td>
 				</tr>
 				<tr id="tr_3" align="center" style="height: 55px;">
-					<td><a id="lblNowgen_3"> </a></td>
-					<td><a id="lblProductno_3"> </a></td>
+					<td><a id="lblNowgen_3" style="color: red;"> </a></td>
+					<td>
+						<a id="lblUno_3"> </a>
+						<a id="lblProductno_3" style="display: none;"> </a>
+						<a id="lblOrdeno_3" style="display: none;"> </a>
+						<a id="lblNo2_3" style="display: none;"> </a>
+					</td>
 					<td><a id="lblTimes_3"> </a></td>
 					<td><input id="btnUp_3" type="button" value="↑"></td>
 					<td><input id="btnDown_3" type="button" value="↓"></td>
@@ -223,13 +320,18 @@
 					</td>
 					<td><a id="lblLengthb_3"> </a></td>
 					<td><a id="lblSpec_3"> </a></td>
-					<td><a id="lblWeight2"> </a></td>
-					<td><a id="lblWeight1"> </a></td>
-					<td><a id="lblUccstart"> </a></td>
+					<td><a id="lblAlert"> </a></td>
+					<td><a>判定</a></td>
+					<td><a id="lblDecide"> </a></td>
 				</tr>
 				<tr id="tr_4" align="center" style="height: 55px;">
-					<td><a id="lblNowgen_4"> </a></td>
-					<td><a id="lblProductno_4"> </a></td>
+					<td><a id="lblNowgen_4" style="color: red;"> </a></td>
+					<td>
+						<a id="lblUno_4"> </a>
+						<a id="lblProductno_4" style="display: none;"> </a>
+						<a id="lblOrdeno_4" style="display: none;"> </a>
+						<a id="lblNo2_4" style="display: none;"> </a>
+					</td>
 					<td><a id="lblTimes_4"> </a></td>
 					<td><input id="btnUp_4" type="button" value="↑"></td>
 					<td><input id="btnDown_4" type="button" value="↓"></td>
@@ -242,13 +344,17 @@
 					</td>
 					<td><a id="lblLengthb_4"> </a></td>
 					<td><a id="lblSpec_4"> </a></td>
-					<td><a id="lblAlert"> </a></td>
-					<td><a>判定</a></td>
-					<td><a id="lblDecide"> </a></td>
+					<td><a>餘料</a></td>
+					<td colspan="2"><select id="cmbMome1" class="txt c1"> </select></td>
 				</tr>
 				<tr id="tr_5" align="center" style="height: 55px;">
-					<td><a id="lblNowgen_5"> </a></td>
-					<td><a id="lblProductno_5"> </a></td>
+					<td><a id="lblNowgen_5" style="color: red;"> </a></td>
+					<td>
+						<a id="lblUno_5"> </a>
+						<a id="lblProductno_5" style="display: none;"> </a>
+						<a id="lblOrdeno_5" style="display: none;"> </a>
+						<a id="lblNo2_5" style="display: none;"> </a>
+					</td>
 					<td><a id="lblTimes_5"> </a></td>
 					<td><input id="btnUp_5" type="button" value="↑"></td>
 					<td><input id="btnDown_5" type="button" value="↓"></td>
@@ -261,12 +367,17 @@
 					</td>
 					<td><a id="lblLengthb_5"> </a></td>
 					<td><a id="lblSpec_5"> </a></td>
-					<td><a>餘料</a></td>
-					<td colspan="2"><select id="cmbMome1" class="txt c1"> </select></td>
+					<td><a>退料</a></td>
+					<td colspan="2"><input id="btnPrinttag" type="button" value="印標籤"></td>
 				</tr>
 				<tr id="tr_6" align="center" style="height: 55px;">
-					<td><a id="lblNowgen_6"> </a></td>
-					<td><a id="lblProductno_6"> </a></td>
+					<td><a id="lblNowgen_6" style="color: red;"> </a></td>
+					<td>
+						<a id="lblUno_6"> </a>
+						<a id="lblProductno_6" style="display: none;"> </a>
+						<a id="lblOrdeno_6" style="display: none;"> </a>
+						<a id="lblNo2_6" style="display: none;"> </a>
+					</td>
 					<td><a id="lblTimes_6"> </a></td>
 					<td><input id="btnUp_6" type="button" value="↑"></td>
 					<td><input id="btnDown_6" type="button" value="↓"></td>
@@ -279,12 +390,16 @@
 					</td>
 					<td><a id="lblLengthb_6"> </a></td>
 					<td><a id="lblSpec_6"> </a></td>
-					<td><a>退料</a></td>
-					<td colspan="2"><input id="btnPrinttag" type="button" value="印標籤"></td>
+					<td colspan="3"> </td>
 				</tr>
 				<tr id="tr_7" align="center" style="height: 55px;">
-					<td><a id="lblNowgen_7"> </a></td>
-					<td><a id="lblProductno_7"> </a></td>
+					<td><a id="lblNowgen_7" style="color: red;"> </a></td>
+					<td>
+						<a id="lblUno_7"> </a>
+						<a id="lblProductno_7" style="display: none;"> </a>
+						<a id="lblOrdeno_7" style="display: none;"> </a>
+						<a id="lblNo2_7" style="display: none;"> </a>
+					</td>
 					<td><a id="lblTimes_7"> </a></td>
 					<td><input id="btnUp_7" type="button" value="↑"></td>
 					<td><input id="btnDown_7" type="button" value="↓"></td>
@@ -297,23 +412,6 @@
 					</td>
 					<td><a id="lblLengthb_7"> </a></td>
 					<td><a id="lblSpec_7"> </a></td>
-					<td colspan="3"> </td>
-				</tr>
-				<tr id="tr_8" align="center" style="height: 55px;">
-					<td><a id="lblNowgen_8"> </a></td>
-					<td><a id="lblProductno_8"> </a></td>
-					<td><a id="lblTimes_8"> </a></td>
-					<td><input id="btnUp_8" type="button" value="↑"></td>
-					<td><input id="btnDown_8" type="button" value="↓"></td>
-					<td><input id="btnIns_8" type="button" value="插"></td>
-					<td><input id="btnDele_8" type="button" value="刪"></td>
-					<td><input id="btnWrite_8" type="button" value="掃"></td>
-					<td>
-						<input id="txtProductno2_8" type="text" class="txt c1" disabled="disabled"><BR>
-						<input id="txtProduct2_8" type="text" class="txt c1" disabled="disabled"> <!--批號-->
-					</td>
-					<td><a id="lblLengthb_8"> </a></td>
-					<td><a id="lblSpec_8"> </a></td>
 					<td><input id="btnInspection" type="button" value="自主檢"></td>
 					<td colspan="2"><input id="btnEnda" type="button" value="完工"></td>
 				</tr>
