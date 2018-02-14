@@ -1889,7 +1889,7 @@ if(LEN(@t_top)>0)
 begin
 	EXEC("select top "+@t_top+" * from view_cuds 
 	where ordeno='"+@t_noa+"' and source='"+@t_source+"'
-	and (isnull(enda,0)!=1 or len('"+@t_enda+"')=0)")
+	and (isnull(enda,0)!=1 or len('"+@t_enda+"')=0) order by noa,noq")
 end
 else
 begin
@@ -1897,4 +1897,23 @@ begin
 	where ordeno=@t_noa and source=@t_source
 	and (isnull(enda,0)!=1 or len(@t_enda)=0)
 end
+;
+-------------------------------------------------------------------
+cudschgnoq:--cudschgnoq
+SET QUOTED_IDENTIFIER OFF
+declare @t_noa nvarchar(50)=case when '#non'=[1] then '' else [1] end
+declare @t_noq1 nvarchar(50)=case when '#non'=[2] then '' else [2] end
+declare @t_noq2 nvarchar(50)=case when '#non'=[3] then '' else [3] end
+
+declare @accy nvarchar(50)=(select top 1 accy from view_cuds where noa=@t_noa)
+declare @t_times1 nvarchar(50)=(select top 1 times from view_cuds where noa=@t_noa and noq=@t_noq1)
+declare @t_times2 nvarchar(50)=(select top 1 times from view_cuds where noa=@t_noa and noq=@t_noq2)
+
+EXEC("update cuds"+@accy+" set noq='tp'+noq where noa='"+@t_noa+"' nad noq='"+@t_noq1+"'")
+
+EXEC("update cuds"+@accy+" set noq='"+@t_noq1+"',times="+@t_times1+" where noa='"+@t_noa+"' nad noq='"+@t_noq2+"'")
+
+EXEC("update cuds"+@accy+" set noq='"+@t_noq2+"',times="+@t_times2+" where noa='"+@t_noa+"' nad noq='tp'+'"+@t_noq1+"'")
+
+select * from view_cuds where noa=@t_noa and (noq=@t_noq1 or @t_noq2) order by noa,noq
 ;

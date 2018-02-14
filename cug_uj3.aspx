@@ -76,6 +76,8 @@
 									$('#lblProductno_'+i).text(das[i].productno);
 									$('#lblOrdeno_'+i).text(das[i].ordeno);
 									$('#lblNo2_'+i).text(das[i].no2);
+									$('#lblNoa_'+i).text(das[i].noa);
+									$('#lblNoq_'+i).text(das[i].noq);
 									
 									if(tt_noq==das[i].no2 && !t_issel){
 										$('#lblNowgen_'+i).text('→');
@@ -137,6 +139,80 @@
 					}
 					
 				});
+				
+				for(var i=0;i<8;i++){
+					$('#btnUp_'+i).click(function() {
+						var n=$(this).attr('id').split('_')[1];
+						var t_noa=$('#lblNoa_'+n).text();
+						var t_noq1=$('#lblNoq_'+n).text();
+						var t_noq2=$('#lblNoq_'+(dec(n)-1)).text();
+						
+						q_func('qtxt.query.cudschgnoqup', 'orde_uj.txt,cudschgnoq,' + encodeURI(t_noa)+';'+encodeURI(t_noq1)+';'+encodeURI(t_noq2),r_accy,1);
+						var as = _q_appendData("tmp0", "", true, true);
+						if (as[0] != undefined) {
+							for(var j=0;j<as.length;j++){
+								for(var k=0;k<8;k++){
+									if($('#lblNoa_'+k).text()==as[i].noa && $('#lblNoq_'+k).text()==as[i].noq){
+										$('#lblProductno_'+k).text(as[i].productno);
+										$('#lblOrdeno_'+k).text(as[i].ordeno);
+										$('#lblNo2_'+k).text(as[i].no2);
+										$('#lblUno_'+k).text(as[i].uno);
+										$('#lblTimes_'+k).text(as[i].times);
+										$('#txtProductno2_'+k).val(as[i].productno2);
+										$('#txtProduct2_'+k).val(as[i].product2);
+										$('#lblLengthb_'+k).text(as[i].lengthb);
+										$('#lblSpec_'+k).text(as[i].spec);
+										break;
+									}
+								}
+							}
+						}
+					});
+					
+					$('#btnDown_'+i).click(function() {
+						var n=$(this).attr('id').split('_')[1];
+						var t_noa=$('#lblNoa_'+n).text();
+						var t_noq1=$('#lblNoq_'+n).text();
+						var t_noq2=$('#lblNoq_'+(dec(n)+1)).text();
+						
+						q_func('qtxt.query.cudschgnoqdown', 'orde_uj.txt,cudschgnoq,' + encodeURI(t_noa)+';'+encodeURI(t_noq1)+';'+encodeURI(t_noq2),r_accy,1);
+						var as = _q_appendData("tmp0", "", true, true);
+						if (as[0] != undefined) {
+							for(var j=0;j<as.length;j++){
+								for(var k=0;k<8;k++){
+									if($('#lblNoa_'+k).text()==as[i].noa && $('#lblNoq_'+k).text()==as[i].noq){
+										$('#lblProductno_'+k).text(as[i].productno);
+										$('#lblOrdeno_'+k).text(as[i].ordeno);
+										$('#lblNo2_'+k).text(as[i].no2);
+										$('#lblUno_'+k).text(as[i].uno);
+										$('#lblTimes_'+k).text(as[i].times);
+										$('#txtProductno2_'+k).val(as[i].productno2);
+										$('#txtProduct2_'+k).val(as[i].product2);
+										$('#lblLengthb_'+k).text(as[i].lengthb);
+										$('#lblSpec_'+k).text(as[i].spec);
+										break;
+									}
+								}
+							}
+						}
+					});
+					
+					$('#btnIns_'+i).click(function() {
+						var n=$(this).attr('id').split('_')[1];
+						var t_noa=$('#lblNoa_'+n).text();
+					});
+					
+					$('#btnDele_'+i).click(function() {
+						var n=$(this).attr('id').split('_')[1];
+						var t_noa=$('#lblNoa_'+n).text();
+						var t_noq=$('#lblNoq_'+n).text();
+					});
+					
+					$('#btnWrite_'+i).click(function() {
+						var n=$(this).attr('id').split('_')[1];
+						var t_noa=$('#lblNoa_'+n).text();
+					});
+				}
 				
             }
             
@@ -235,9 +311,11 @@
 						<a id="lblProductno_0" style="display: none;"> </a>
 						<a id="lblOrdeno_0" style="display: none;"> </a>
 						<a id="lblNo2_0" style="display: none;"> </a>
+						<a id="lblNoa_0" style="display: none;"> </a>
+						<a id="lblNoq_0" style="display: none;"> </a>
 					</td>
 					<td><a id="lblTimes_0"> </a></td>
-					<td><input id="btnUp_0" type="button" value="↑"></td>
+					<td><input id="btnUp_0" type="button" value="↑" style="display: none;"></td>
 					<td><input id="btnDown_0" type="button" value="↓"></td>
 					<td><input id="btnIns_0" type="button" value="插"></td>
 					<td><input id="btnDele_0" type="button" value="刪"></td>
@@ -259,6 +337,8 @@
 						<a id="lblProductno_1" style="display: none;"> </a>
 						<a id="lblOrdeno_1" style="display: none;"> </a>
 						<a id="lblNo2_1" style="display: none;"> </a>
+						<a id="lblNoa_1" style="display: none;"> </a>
+						<a id="lblNoq_1" style="display: none;"> </a>
 					</td>
 					<td><a id="lblTimes_1"> </a></td>
 					<td><input id="btnUp_1" type="button" value="↑"></td>
@@ -283,6 +363,8 @@
 						<a id="lblProductno_2" style="display: none;"> </a>
 						<a id="lblOrdeno_2" style="display: none;"> </a>
 						<a id="lblNo2_2" style="display: none;"> </a>
+						<a id="lblNoa_2" style="display: none;"> </a>
+						<a id="lblNoq_2" style="display: none;"> </a>
 					</td>
 					<td><a id="lblTimes_2"> </a></td>
 					<td><input id="btnUp_2" type="button" value="↑"></td>
@@ -307,6 +389,8 @@
 						<a id="lblProductno_3" style="display: none;"> </a>
 						<a id="lblOrdeno_3" style="display: none;"> </a>
 						<a id="lblNo2_3" style="display: none;"> </a>
+						<a id="lblNoa_3" style="display: none;"> </a>
+						<a id="lblNoq_3" style="display: none;"> </a>
 					</td>
 					<td><a id="lblTimes_3"> </a></td>
 					<td><input id="btnUp_3" type="button" value="↑"></td>
@@ -331,6 +415,8 @@
 						<a id="lblProductno_4" style="display: none;"> </a>
 						<a id="lblOrdeno_4" style="display: none;"> </a>
 						<a id="lblNo2_4" style="display: none;"> </a>
+						<a id="lblNoa_4" style="display: none;"> </a>
+						<a id="lblNoq_4" style="display: none;"> </a>
 					</td>
 					<td><a id="lblTimes_4"> </a></td>
 					<td><input id="btnUp_4" type="button" value="↑"></td>
@@ -354,6 +440,8 @@
 						<a id="lblProductno_5" style="display: none;"> </a>
 						<a id="lblOrdeno_5" style="display: none;"> </a>
 						<a id="lblNo2_5" style="display: none;"> </a>
+						<a id="lblNoa_5" style="display: none;"> </a>
+						<a id="lblNoq_5" style="display: none;"> </a>
 					</td>
 					<td><a id="lblTimes_5"> </a></td>
 					<td><input id="btnUp_5" type="button" value="↑"></td>
@@ -377,6 +465,8 @@
 						<a id="lblProductno_6" style="display: none;"> </a>
 						<a id="lblOrdeno_6" style="display: none;"> </a>
 						<a id="lblNo2_6" style="display: none;"> </a>
+						<a id="lblNoa_6" style="display: none;"> </a>
+						<a id="lblNoq_6" style="display: none;"> </a>
 					</td>
 					<td><a id="lblTimes_6"> </a></td>
 					<td><input id="btnUp_6" type="button" value="↑"></td>
@@ -399,6 +489,8 @@
 						<a id="lblProductno_7" style="display: none;"> </a>
 						<a id="lblOrdeno_7" style="display: none;"> </a>
 						<a id="lblNo2_7" style="display: none;"> </a>
+						<a id="lblNoa_7" style="display: none;"> </a>
+						<a id="lblNoq_7" style="display: none;"> </a>
 					</td>
 					<td><a id="lblTimes_7"> </a></td>
 					<td><input id="btnUp_7" type="button" value="↑"></td>
