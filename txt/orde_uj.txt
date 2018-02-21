@@ -1715,152 +1715,156 @@ from #tmp a left join store b on a.storeno=b.noa
 where b.noa is not null
 	
 --//庫存end----------------------------------------------------------------------
-
---明細
-create table #tmpa(
-	gno nvarchar(1),
-	rr int,
-	noa nvarchar(50),--日期+'-'+機台+'-'+製程
-	cugnoa nvarchar(50), --派工單
-	cugnoq nvarchar(50),
-	noq nvarchar(50), --插入排序
-	nos nvarchar(50),--顯示排序
-	ucano nvarchar(100), --生產半成品
-	ucamount float, --產出(M)
-	ucauno nvarchar(100),--半成品批號
-	uccno nvarchar(100),--料號
-	uccmount nvarchar(100),--料數
-	lengthb float,--長
-	uccuno nvarchar(100),--批號
-	spec nvarchar(100),--列管備註
-	mechno nvarchar(50),--機台
-	source nvarchar(50),--類別 皮5 紙4
-	datea nvarchar(10)--日期
-)
-
---上皮
-insert #tmpa(gno,rr,noa,cugnoa,cugnoq,noq,nos,ucano,ucamount,ucauno,uccno,uccmount,lengthb,uccuno,spec,mechno,source,datea)
-select '0',ROW_NUMBER()over(order by a.noa,b.noq)
-,replace(a.datea,'/','')+'-'+a.processno+'-'+'上皮',a.noa,b.noq,'',''
-,b.productno,b.mount,b.nosold --製成品
-,c.productno --皮料號
-,c.mount --支數
-,c.lengthb --長(M)
-,@t_uno1 --批號
-,c.spec --列管備註
-,a.processno,'5',a.datea
-from view_cug a left join view_cugs b on a.noa=b.noa
-outer apply (select * from #tmp where uno=@t_uno1)c
-where a.noa=@t_noa and b.noq=@t_noq
-
---上紙
-insert #tmpa(gno,rr,noa,cugnoa,cugnoq,noq,nos,ucano,ucamount,ucauno,uccno,uccmount,lengthb,uccuno,spec,mechno,source,datea)
-select '0',ROW_NUMBER()over(order by a.noa,b.noq)
-,replace(a.datea,'/','')+'-'+a.processno+'-'+'上紙',a.noa,b.noq,'',''
-,b.productno,b.mount,b.nosold --製成品
-,c.productno --紙料號
-,c.mount --支數
-,c.lengthb --長(M)
-,@t_uno2 --批號
-,c.spec --列管備註
-,a.processno,'4',a.datea
-from view_cug a left join view_cugs b on a.noa=b.noa
-outer apply (select * from #tmp where uno=@t_uno2)c
-where a.noa=@t_noa and b.noq=@t_noq
-
-update #tmpa set gno='1',rr=0 where uccmount=1
-
-declare @rr int
-declare @count int
-declare @noa nvarchar(50)=''
-declare @noq int=0
-declare @nos float=0
-
-declare cursor_table cursor for
-select noa,rr,uccmount from #tmpa where gno='0'
-open cursor_table 
-fetch next from cursor_table 
-into @noa,@rr,@count
-while(@@FETCH_STATUS <> -1) 
-begin
-	while(@count>0)
-	begin
-		insert #tmpa(gno,rr,noa,cugnoa,cugnoq,noq,nos,ucano,ucamount,ucauno,uccno,uccmount,lengthb,uccuno,spec,mechno,source,datea)
-		select '1',0,noa,cugnoa,cugnoq,noq,nos,ucano,ucamount,ucauno,uccno,1,lengthb,uccuno,spec,mechno,source,datea
-		from #tmpa where noa=@noa and rr=@rr
-		set @count=@count-1
-	end
+BEGIN TRY
+	--明細
+	create table #tmpa(
+		gno nvarchar(1),
+		rr int,
+		noa nvarchar(50),--日期+'-'+機台+'-'+製程
+		cugnoa nvarchar(50), --派工單
+		cugnoq nvarchar(50),
+		noq nvarchar(50), --插入排序
+		nos nvarchar(50),--顯示排序
+		ucano nvarchar(100), --生產半成品
+		ucamount float, --產出(M)
+		ucauno nvarchar(100),--半成品批號
+		uccno nvarchar(100),--料號
+		uccmount nvarchar(100),--料數
+		lengthb float,--長
+		uccuno nvarchar(100),--批號
+		spec nvarchar(100),--列管備註
+		mechno nvarchar(50),--機台
+		source nvarchar(50),--類別 皮5 紙4
+		datea nvarchar(10)--日期
+	)
 	
+	--上皮
+	insert #tmpa(gno,rr,noa,cugnoa,cugnoq,noq,nos,ucano,ucamount,ucauno,uccno,uccmount,lengthb,uccuno,spec,mechno,source,datea)
+	select '0',ROW_NUMBER()over(order by a.noa,b.noq)
+	,replace(a.datea,'/','')+'-'+a.processno+'-'+'上皮',a.noa,b.noq,'',''
+	,b.productno,b.mount,b.nosold --製成品
+	,c.productno --皮料號
+	,c.mount --支數
+	,case when c.mount>1 then c.lengthb else c.weight end --長(M)
+	,@t_uno1 --批號
+	,c.spec --列管備註
+	,a.processno,'5',a.datea
+	from view_cug a left join view_cugs b on a.noa=b.noa
+	outer apply (select * from #tmp where uno=@t_uno1)c
+	where a.noa=@t_noa and b.noq=@t_noq
+	
+	--上紙
+	insert #tmpa(gno,rr,noa,cugnoa,cugnoq,noq,nos,ucano,ucamount,ucauno,uccno,uccmount,lengthb,uccuno,spec,mechno,source,datea)
+	select '0',ROW_NUMBER()over(order by a.noa,b.noq)
+	,replace(a.datea,'/','')+'-'+a.processno+'-'+'上紙',a.noa,b.noq,'',''
+	,b.productno,b.mount,b.nosold --製成品
+	,c.productno --紙料號
+	,c.mount --支數
+	,case when c.mount>1 then c.lengthb else c.weight end --長(M)
+	,@t_uno2 --批號
+	,c.spec --列管備註
+	,a.processno,'4',a.datea
+	from view_cug a left join view_cugs b on a.noa=b.noa
+	outer apply (select * from #tmp where uno=@t_uno2)c
+	where a.noa=@t_noa and b.noq=@t_noq
+	
+	update #tmpa set gno='1',rr=0 where uccmount=1
+	
+	declare @rr int
+	declare @count int
+	declare @noa nvarchar(50)=''
+	declare @noq int=0
+	declare @nos float=0
+	
+	declare cursor_table cursor for
+	select noa,rr,uccmount from #tmpa where gno='0'
+	open cursor_table 
+	fetch next from cursor_table 
+	into @noa,@rr,@count
+	while(@@FETCH_STATUS <> -1) 
+	begin
+		while(@count>0)
+		begin
+			insert #tmpa(gno,rr,noa,cugnoa,cugnoq,noq,nos,ucano,ucamount,ucauno,uccno,uccmount,lengthb,uccuno,spec,mechno,source,datea)
+			select '1',0,noa,cugnoa,cugnoq,noq,nos,ucano,ucamount,ucauno,uccno,1,lengthb,uccuno,spec,mechno,source,datea
+			from #tmpa where noa=@noa and rr=@rr
+			set @count=@count-1
+		end
+		
+		set @noq =cast(isnull((select MAX(noq) from view_cuds where noa=@noa),'000') as int)
+		set @nos =cast(isnull((select MAX(times) from view_cuds where noa=@noa),0) as float)
+		
+		update a
+		set noq=right('000'+cast(@noq+rr as nvarchar(10)),3),nos=@nos+rr
+		from (select noq,nos,ROW_NUMBER()over(order by cugnoa,cugnoq)rr from #tmpa where gno='1' and noa=@noa) a
+			
+		fetch next from cursor_table 
+		into @noa,@rr,@count
+	end 
+	close cursor_table 
+	deallocate cursor_table
+	
+	delete #tmpa where gno='0'
+	
+	EXEC("insert cuds"+@accy+"(noa,noq,mechno,source,ordeno,no2,productno,uno,mount
+	,times,productno2,product2,lengthb,spec,datea)
+	select noa,noq,mechno,source,cugnoa,cugnoq,ucano,ucauno,ucamount 
+	,nos,uccno,uccuno,lengthb,spec,datea
+	from #tmpa")
+	
+	--明細
+	create table #tmpb(
+		noa nvarchar(50),--日期+'-'+機台+'-'+製程
+		cugnoa nvarchar(50), --派工單
+		cugnoq nvarchar(50),
+		noq nvarchar(50), --插入排序
+		nos nvarchar(50),--顯示排序
+		ucano nvarchar(100), --生產半成品
+		ucamount float, --產出(M)
+		ucauno nvarchar(100),--半成品批號
+		ucaspec nvarchar(100),--列管備註
+		ucastyle nvarchar(100),--製造列管
+		
+		ucc1no nvarchar(100),--皮料號
+		ucc1uno nvarchar(100),--皮批號
+		ucc2no nvarchar(100),--紙料號
+		ucc2uno nvarchar(100),--紙批號
+		ucc3no nvarchar(100),--膠料號
+		ucc3uno nvarchar(100),--膠批號
+		
+		mechno nvarchar(50),--機台
+		source nvarchar(50),--類別 3
+		datea nvarchar(10)--日期
+	)
+	
+	insert #tmpb
+	select replace(a.datea,'/','')+'-'+a.processno+'-'+'下料',a.noa,b.noq,'',''
+	,b.productno,b.mount,b.nosold,dbo.split(b.memo,'@,#',12)f12,''
+	,dbo.split(b.memo,'@,#',6)f06,@t_uno1
+	,dbo.split(b.memo,'@,#',9)f09,@t_uno2
+	,dbo.split(b.memo,'@,#',8)f08,@t_uno3
+	,a.processno,'3',a.datea
+	from view_cug a left join view_cugs b on a.noa=b.noa
+	where a.noa=@t_noa and b.noq=@t_noq
+	
+	set @noa=(select top 1 noa from #tmpb)
 	set @noq =cast(isnull((select MAX(noq) from view_cuds where noa=@noa),'000') as int)
 	set @nos =cast(isnull((select MAX(times) from view_cuds where noa=@noa),0) as float)
 	
 	update a
 	set noq=right('000'+cast(@noq+rr as nvarchar(10)),3),nos=@nos+rr
-	from (select noq,nos,ROW_NUMBER()over(order by cugnoa,cugnoq)rr from #tmpa where gno='1' and noa=@noa) a
-		
-	fetch next from cursor_table 
-	into @noa,@rr,@count
-end 
-close cursor_table 
-deallocate cursor_table
-
-delete #tmpa where gno='0'
-
-EXEC("insert cuds"+@accy+"(noa,noq,mechno,source,ordeno,no2,productno,uno,mount
-,times,productno2,product2,lengthb,spec,datea)
-select noa,noq,mechno,source,cugnoa,cugnoq,ucano,ucauno,ucamount 
-,nos,uccno,uccuno,lengthb,spec,datea
-from #tmpa")
-
---明細
-create table #tmpb(
-	noa nvarchar(50),--日期+'-'+機台+'-'+製程
-	cugnoa nvarchar(50), --派工單
-	cugnoq nvarchar(50),
-	noq nvarchar(50), --插入排序
-	nos nvarchar(50),--顯示排序
-	ucano nvarchar(100), --生產半成品
-	ucamount float, --產出(M)
-	ucauno nvarchar(100),--半成品批號
-	ucaspec nvarchar(100),--列管備註
-	ucastyle nvarchar(100),--製造列管
+	from (select noq,nos,ROW_NUMBER()over(order by cugnoa,cugnoq)rr from #tmpb where noa=@noa) a
 	
-	ucc1no nvarchar(100),--皮料號
-	ucc1uno nvarchar(100),--皮批號
-	ucc2no nvarchar(100),--紙料號
-	ucc2uno nvarchar(100),--紙批號
-	ucc3no nvarchar(100),--膠料號
-	ucc3uno nvarchar(100),--膠批號
-	
-	mechno nvarchar(50),--機台
-	source nvarchar(50),--類別 3
-	datea nvarchar(10)--日期
-)
+	EXEC("
+		insert cuds"+@accy+"(noa,noq,mechno,source,ordeno,no2,productno,uno,mount,spec,memo,times,datea)
+		select noa,noq,mechno,source,cugnoa,cugnoq,ucano,ucauno,ucamount,ucaspec
+		,'@,#'+ucastyle+'@,#@,#@,#'+ucc1no+'@,#'+ucc1uno+'@,#'+ucc2no+'@,#'+ucc2uno+'@,#'+ucc3no+'@,#'+ucc3uno+'@,#',nos,datea
+		from #tmpb
+	")
 
-insert #tmpb
-select replace(a.datea,'/','')+'-'+a.processno+'-'+'下料',a.noa,b.noq,'',''
-,b.productno,b.mount,b.nosold,dbo.split(b.memo,'@,#',12)f12,''
-,dbo.split(b.memo,'@,#',6)f06,@t_uno1
-,dbo.split(b.memo,'@,#',9)f09,@t_uno2
-,dbo.split(b.memo,'@,#',8)f08,@t_uno3
-,a.processno,'3',a.datea
-from view_cug a left join view_cugs b on a.noa=b.noa
-where a.noa=@t_noa and b.noq=@t_noq
-
-set @noa=(select top 1 noa from #tmpb)
-set @noq =cast(isnull((select MAX(noq) from view_cuds where noa=@noa),'000') as int)
-set @nos =cast(isnull((select MAX(times) from view_cuds where noa=@noa),0) as float)
-
-update a
-set noq=right('000'+cast(@noq+rr as nvarchar(10)),3),nos=@nos+rr
-from (select noq,nos,ROW_NUMBER()over(order by cugnoa,cugnoq)rr from #tmpb where noa=@noa) a
-
-EXEC("
-	insert cuds"+@accy+"(noa,noq,mechno,source,ordeno,no2,productno,uno,mount,spec,memo,times,datea)
-	select noa,noq,mechno,source,cugnoa,cugnoq,ucano,ucauno,ucamount,ucaspec
-	,'@,#'+ucastyle+'@,#@,#@,#'+ucc1no+'@,#'+ucc1uno+'@,#'+ucc2no+'@,#'+ucc2uno+'@,#'+ucc3no+'@,#'+ucc3uno+'@,#',nos,datea
-	from #tmpb
-")
+END TRY
+BEGIN CATCH
+END CATCH
 
 IF OBJECT_ID('tempdb..#tmp')is not null
 BEGIN
@@ -1909,11 +1913,146 @@ declare @accy nvarchar(50)=(select top 1 accy from view_cuds where noa=@t_noa)
 declare @t_times1 nvarchar(50)=(select top 1 times from view_cuds where noa=@t_noa and noq=@t_noq1)
 declare @t_times2 nvarchar(50)=(select top 1 times from view_cuds where noa=@t_noa and noq=@t_noq2)
 
-EXEC("update cuds"+@accy+" set noq='tp'+noq where noa='"+@t_noa+"' nad noq='"+@t_noq1+"'")
+EXEC("update cuds"+@accy+" set noq='tp'+noq where noa='"+@t_noa+"' and noq='"+@t_noq1+"'")
 
-EXEC("update cuds"+@accy+" set noq='"+@t_noq1+"',times="+@t_times1+" where noa='"+@t_noa+"' nad noq='"+@t_noq2+"'")
+EXEC("update cuds"+@accy+" set noq='"+@t_noq1+"',times="+@t_times1+" where noa='"+@t_noa+"' and noq='"+@t_noq2+"'")
 
-EXEC("update cuds"+@accy+" set noq='"+@t_noq2+"',times="+@t_times2+" where noa='"+@t_noa+"' nad noq='tp'+'"+@t_noq1+"'")
+EXEC("update cuds"+@accy+" set noq='"+@t_noq2+"',times="+@t_times2+" where noa='"+@t_noa+"' and noq='tp'+'"+@t_noq1+"'")
 
-select * from view_cuds where noa=@t_noa and (noq=@t_noq1 or @t_noq2) order by noa,noq
+select * from view_cuds where noa=@t_noa and (noq=@t_noq1 or noq=@t_noq2) order by noa,noq
+;
+
+-------------------------------------------------------------------
+cudsdelnoq:--cudsdelnoq
+SET QUOTED_IDENTIFIER OFF
+declare @t_noa nvarchar(50)=case when '#non'=[1] then '' else [1] end
+declare @t_noq nvarchar(50)=case when '#non'=[2] then '' else [2] end
+
+declare @accy nvarchar(50)=(select top 1 accy from view_cuds where noa=@t_noa)
+
+EXEC("delete cuds"+@accy+" where noa='"+@t_noa+"' and noq='"+@t_noq+"'")
+
+EXEC("update a
+set times=rr,noq=right('000'+cast(rr as nvarchar(50)),3)
+from (select noa,noq,times,ROW_NUMBER()over(order by noa,noq)rr from cuds"+@accy+" where noa='"+@t_noa+"') a")
+
+select top 10 * from view_cuds where noa=@t_noa and noq>=@t_noq and isnull(enda,0)!=1 order by noa,noq
+;
+--------------------------------------------------------------------
+cudsinsnoq:--cudsinsnoq
+SET QUOTED_IDENTIFIER OFF
+declare @t_noa nvarchar(50)=case when '#non'=[1] then '' else [1] end
+declare @t_noq nvarchar(50)=case when '#non'=[2] then '' else [2] end
+declare @t_uno nvarchar(50)=case when '#non'=[3] then '' else [3] end --料號批號
+declare @t_pno2 nvarchar(50)=case when '#non'=[4] then '' else [4] end --料號
+declare @t_len2 nvarchar(50)=case when '#non'=[5] then '' else [5] end --料號長度
+declare @t_spec2 nvarchar(50)=case when '#non'=[6] then '' else [6] end --料號列管
+
+declare @accy nvarchar(50)=(select top 1 accy from view_cuds where noa=@t_noa)
+
+EXEC("update cuds"+@accy+" set noq=noq+'1' where noa='"+@t_noa+"' and noq='"+@t_noq+"'")
+
+EXEC("
+	insert cuds"+@accy+"(noa,noq,mechno,source,ordeno,no2,productno,uno,mount,memo,times,datea
+	,productno2,product2,lengthb,spec)
+	select top 1 noa,'"+@t_noq+"',mechno,source,ordeno,no2,productno,uno,mount,memo,times,datea
+	,'"+@t_pno2+"','"+@t_uno+"',"+@t_len2+",'"+@t_spec2+"'
+	from view_cuds where noa='"+@t_noa+"' and noq='"+@t_noq+"1'
+")
+
+EXEC("update a
+set times=rr,noq=right('000'+cast(rr as nvarchar(50)),3)
+from (select noa,noq,times,ROW_NUMBER()over(order by noa,noq)rr from cuds"+@accy+" where noa='"+@t_noa+"') a")
+
+select top 10 * from view_cuds where noa=@t_noa and noq>=@t_noq and isnull(enda,0)!=1 order by noa,noq
+;
+--------------------------------------------------------------------
+cudschguno:--cudschguno
+SET QUOTED_IDENTIFIER OFF
+declare @t_noa nvarchar(50)=case when '#non'=[1] then '' else [1] end
+declare @t_noq nvarchar(50)=case when '#non'=[2] then '' else [2] end
+declare @t_uno nvarchar(50)=case when '#non'=[3] then '' else [3] end --料號批號
+declare @t_pno2 nvarchar(50)=case when '#non'=[4] then '' else [4] end --料號
+declare @t_len2 nvarchar(50)=case when '#non'=[5] then '' else [5] end --料號長度
+declare @t_spec2 nvarchar(50)=case when '#non'=[6] then '' else [6] end --料號列管
+
+declare @accy nvarchar(50)=(select top 1 accy from view_cuds where noa=@t_noa)
+
+EXEC("update cuds"+@accy+" 
+set product2='"+@t_uno+"',productno2='"+@t_pno2+"',lengthb="+@t_len2+",spec='"+@t_spec2+"'
+where noa='"+@t_noa+"' and noq='"+@t_noq+"'")
+
+select * from view_cuds where noa=@t_noa and noq=@t_noq and isnull(enda,0)!=1 order by noa,noq
+;
+--------------------------------------------------------------------
+cudsenter:--cudsenter
+SET QUOTED_IDENTIFIER OFF
+declare @t_noa nvarchar(50)=case when '#non'=[1] then '' else [1] end
+declare @t_noq nvarchar(50)=case when '#non'=[2] then '' else [2] end
+declare @t_weight nvarchar(50)=case when '#non'=[3] then '0' else [3] end --產出
+declare @t_weight1 nvarchar(50)=case when '#non'=[4] then '0' else [4] end --產出%
+declare @t_weight2 nvarchar(50)=case when '#non'=[5] then '0' else [5] end --退料/餘料/讓長
+declare @t_memo1 nvarchar(50)=case when '#non'=[6] then '' else [6] end --退料別/餘料判定/製造列管
+declare @t_memo3 nvarchar(50)=case when '#non'=[7] then '' else [7] end --長度落差
+declare @t_width nvarchar(50)=case when '#non'=[8] then '0' else [8] end --寬
+declare @t_dime nvarchar(50)=case when '#non'=[9] then '0' else [9] end --差
+
+declare @accy nvarchar(50)=(select top 1 accy from view_cuds where noa=@t_noa)
+declare @memo nvarchar(MAX)=isnull((select top 1 memo from view_cuds where noa=@t_noa and noq=@t_noq),'')
+declare @memo1 nvarchar(MAX)=(select dbo.split(@memo,'@,#',1))
+declare @memo2 nvarchar(MAX)=(select dbo.split(@memo,'@,#',2))
+declare @memo3 nvarchar(MAX)=(select dbo.split(@memo,'@,#',3))
+declare @memo4 nvarchar(MAX)=(select dbo.split(@memo,'@,#',4))
+declare @memo5 nvarchar(MAX)=(select dbo.split(@memo,'@,#',5))
+declare @memo6 nvarchar(MAX)=(select dbo.split(@memo,'@,#',6))
+declare @memo7 nvarchar(MAX)=(select dbo.split(@memo,'@,#',7))
+declare @memo8 nvarchar(MAX)=(select dbo.split(@memo,'@,#',8))
+declare @memo9 nvarchar(MAX)=(select dbo.split(@memo,'@,#',9))
+
+set @memo='@,#'+@t_memo1+'@,#'+@memo2+'@,#'+@t_memo3+'@,#'+@memo4+'@,#'+@memo5
++'@,#'+@memo6+'@,#'+@memo7+'@,#'+@memo8+'@,#'+@memo9+'@,#'
+
+EXEC("update cuds"+@accy+" 
+set weight="+@t_weight+",weight1="+@t_weight1+",weight2="+@t_weight2+",width="+@t_width+",dime="+@t_dime+"
+,memo='"+@memo+"'
+where noa='"+@t_noa+"' and noq='"+@t_noq+"'")
+
+select top 10 * from view_cuds where noa=@t_noa and noq>=@t_noq and isnull(enda,0)!=1 order by noa,noq
+;
+--------------------------------------------------------------------
+cudsenter2:--cudsenter2
+SET QUOTED_IDENTIFIER OFF
+declare @t_noa nvarchar(50)=case when '#non'=[1] then '' else [1] end
+declare @t_noq nvarchar(50)=case when '#non'=[2] then '' else [2] end
+declare @t_m01 nvarchar(50)=case when '#non'=[3] then '0' else [3] end
+declare @t_m02 nvarchar(50)=case when '#non'=[4] then '0' else [4] end
+declare @t_m03 nvarchar(50)=case when '#non'=[5] then '0' else [5] end
+declare @t_m04 nvarchar(50)=case when '#non'=[6] then '0' else [6] end
+declare @t_m05 nvarchar(50)=case when '#non'=[7] then '0' else [7] end
+declare @t_m06 nvarchar(50)=case when '#non'=[8] then '0' else [8] end
+declare @t_m07 nvarchar(50)=case when '#non'=[9] then '0' else [9] end
+declare @t_m08 nvarchar(50)=case when '#non'=[10] then '0' else [10] end
+declare @t_m09 nvarchar(50)=case when '#non'=[11] then '0' else [11] end
+declare @t_m10 nvarchar(50)=case when '#non'=[12] then '0' else [12] end
+
+declare @accy nvarchar(50)=(select top 1 accy from view_cuds where noa=@t_noa)
+
+EXEC("update cuds"+@accy+" 
+set mount1="+@t_m01+",mount2="+@t_m02+",mount3="+@t_m03+",mount4="+@t_m04+",mount5="+@t_m05+"
+,mount6="+@t_m06+",mount7="+@t_m07+",mount8="+@t_m08+",mount9="+@t_m09+",mount10="+@t_m10+"
+where noa='"+@t_noa+"' and noq='"+@t_noq+"'")
+
+select top 10 * from view_cuds where noa=@t_noa and noq>=@t_noq and isnull(enda,0)!=1 order by noa,noq
+;
+--------------------------------------------------------------------
+cudsenda:--cudsenda
+SET QUOTED_IDENTIFIER OFF
+declare @t_noa nvarchar(50)=case when '#non'=[1] then '' else [1] end
+declare @t_noq nvarchar(50)=case when '#non'=[2] then '' else [2] end
+
+declare @accy nvarchar(50)=(select top 1 accy from view_cuds where noa=@t_noa)
+
+EXEC("update cuds"+@accy+" set enda=1 where noa='"+@t_noa+"' and noq='"+@t_noq+"'")
+
+select top 10 * from view_cuds where noa=@t_noa and noq>=@t_noq and isnull(enda,0)!=1 order by noa,noq
 ;

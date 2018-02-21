@@ -56,102 +56,139 @@
 				});
 				
 				$('#txtNoa').change(function() {
-					var t_noa=emp($(this).val())?'#non':$(this).val();
-					q_func('qtxt.query.getviewcug', 'orde_uj.txt,getviewcug,' + encodeURI(t_noa),r_accy,1);
-					var as = _q_appendData("tmp0", "", true, true);
-					if (as[0] != undefined) {
-						if(as[0].bdate=='製造'){
-							$('#txtDatea').val(as[0].datea);
-							$('#txtMechno').val(as[0].processno);
+					var t_noa=$(this).val();
+					if(t_noa.length>0){
+						q_func('qtxt.query.getviewcug', 'orde_uj.txt,getviewcug,' + encodeURI(t_noa),r_accy,1);
+						var as = _q_appendData("tmp0", "", true, true);
+						if (as[0] != undefined) {
+							if(as[0].bdate=='製造'){
+								$('#txtDatea').val(as[0].datea);
+								$('#txtMechno').val(as[0].processno);
+							}else{
+								alert('【'+t_noa+'】非製造派工單!!');
+								$('#txtNoa').val('');
+							}
 						}else{
-							alert('【'+t_noa+'】非製造派工單!!');
+							alert('【'+t_noa+'】派工單不存在!!');
 							$('#txtNoa').val('');
 						}
 					}else{
-						alert('【'+t_noa+'】派工單不存在!!');
-						$('#txtNoa').val('');
+						$('#btnCancel_uj').click();
 					}
 				});
 				
 				$('#txtUno1').change(function() {
+					var t_noa=emp($('#txtNoa').val())?'#non':$('#txtNoa').val();
 					var t_uno=emp($(this).val())?'#non':$(this).val();
-					q_func('qtxt.query.stk_uj', 'orde_uj.txt,stk_uj,' + encodeURI(q_date())+';'+encodeURI(t_uno)+';'+encodeURI('#non')+';'+encodeURI('#non')+';'+encodeURI('#non')+';'+encodeURI('#non'),r_accy,1);
-					var as = _q_appendData("tmp0", "", true, true);
-					if (as[0] != undefined) {
-						$('#txtF06').val(as[0].productno);
-						$('#lblF07').text(as[0].mount);
-						$('#txtF06').change();
-					}else{
-						alert('【'+t_uno+'】批號不存在!!');
-						$(this).val('');
+					if(t_noa.length>0 && t_uno.length>0){
+						q_func('qtxt.query.stk_uj', 'orde_uj.txt,stk_uj,' + encodeURI(q_date())+';'+encodeURI(t_uno)+';'+encodeURI('#non')+';'+encodeURI('#non')+';'+encodeURI('#non')+';'+encodeURI('#non'),r_accy,1);
+						var as = _q_appendData("tmp0", "", true, true);
+						if (as[0] != undefined) {
+							$('#txtF06').val(as[0].productno);
+							$('#lblF07').text(as[0].mount);
+							$('#txtF06').change();
+						}else{
+							alert('【'+t_uno+'】批號不存在!!');
+							$(this).val('');
+						}
+					}
+					if(t_noa.length==0){
+						alert('請輸入派工單號!!');
 					}
 				});
 				
 				$('#txtF06').change(function() {
 					var t_noa=emp($('#txtNoa').val())?'#non':$('#txtNoa').val();
 					var t_pno=emp($(this).val())?'#non':$(this).val();
-					q_func('qtxt.query.getviewcugs', 'orde_uj.txt,getviewcugs,' + encodeURI(t_noa)+';'+encodeURI(t_pno)+';'+encodeURI('#non')+';'+encodeURI('#non')+';0',r_accy,1);
-					var as = _q_appendData("tmp0", "", true, true);
-					if (as[0] != undefined) {
-						$('#txtAlert1').val('');
-					}else{
-						$('#txtAlert1').val('派工單內無此料號');
+					if(t_noa.length>0 && t_pno.length>0){
+						q_func('qtxt.query.getviewcugs', 'orde_uj.txt,getviewcugs,' + encodeURI(t_noa)+';'+encodeURI(t_pno)+';'+encodeURI('#non')+';'+encodeURI('#non')+';0',r_accy,1);
+						var as = _q_appendData("tmp0", "", true, true);
+						if (as[0] != undefined) {
+							$('#txtAlert1').val('');
+						}else{
+							$('#txtAlert1').val('派工單內無此料號');
+						}
+						$('#txtAlert4').change();
 					}
-					$('#txtAlert4').change();
+					if(t_noa.length==0){
+						alert('請輸入派工單號!!');
+					}
 				});
 				
 				$('#txtUno2').change(function() {
+					var t_noa=emp($('#txtNoa').val())?'#non':$('#txtNoa').val();
 					var t_uno=emp($(this).val())?'#non':$(this).val();
-					q_func('qtxt.query.stk_uj', 'orde_uj.txt,stk_uj,' + encodeURI(q_date())+';'+encodeURI(t_uno)+';'+encodeURI('#non')+';'+encodeURI('#non')+';'+encodeURI('#non')+';'+encodeURI('#non'),r_accy,1);
-					var as = _q_appendData("tmp0", "", true, true);
-					if (as[0] != undefined) {
-						$('#txtF09').val(as[0].productno);
-						$('#lblF10').text(as[0].mount);
-						$('#txtF09').change();
-					}else{
-						alert('【'+t_uno+'】批號不存在!!');
-						$(this).val('');
+					if(t_noa.length>0 && t_uno.length>0){
+						q_func('qtxt.query.stk_uj', 'orde_uj.txt,stk_uj,' + encodeURI(q_date())+';'+encodeURI(t_uno)+';'+encodeURI('#non')+';'+encodeURI('#non')+';'+encodeURI('#non')+';'+encodeURI('#non'),r_accy,1);
+						var as = _q_appendData("tmp0", "", true, true);
+						if (as[0] != undefined) {
+							$('#txtF09').val(as[0].productno);
+							$('#lblF10').text(as[0].mount);
+							$('#txtF09').change();
+						}else{
+							alert('【'+t_uno+'】批號不存在!!');
+							$(this).val('');
+						}
+					}
+					if(t_noa.length==0){
+						alert('請輸入派工單號!!');
 					}
 				});
 				
 				$('#txtF09').change(function() {
 					var t_noa=emp($('#txtNoa').val())?'#non':$('#txtNoa').val();
 					var t_pno=emp($(this).val())?'#non':$(this).val();
-					q_func('qtxt.query.getviewcugs', 'orde_uj.txt,getviewcugs,' + encodeURI(t_noa)+';'+encodeURI('#non')+';'+encodeURI(t_pno)+';'+encodeURI('#non')+';0',r_accy,1);
-					var as = _q_appendData("tmp0", "", true, true);
-					if (as[0] != undefined) {
-						$('#txtAlert2').val('');
-					}else{
-						$('#txtAlert2').val('派工單內無此料號');
+					if(t_noa.length>0 && t_pno.length>0){
+						q_func('qtxt.query.getviewcugs', 'orde_uj.txt,getviewcugs,' + encodeURI(t_noa)+';'+encodeURI('#non')+';'+encodeURI(t_pno)+';'+encodeURI('#non')+';0',r_accy,1);
+						var as = _q_appendData("tmp0", "", true, true);
+						if (as[0] != undefined) {
+							$('#txtAlert2').val('');
+						}else{
+							$('#txtAlert2').val('派工單內無此料號');
+						}
+						$('#txtAlert4').change();
 					}
-					$('#txtAlert4').change();
+					if(t_noa.length==0){
+						alert('請輸入派工單號!!');
+					}
 				});
 				
 				$('#txtUno3').change(function() {
+					var t_noa=emp($('#txtNoa').val())?'#non':$('#txtNoa').val();
 					var t_uno=emp($(this).val())?'#non':$(this).val();
-					q_func('qtxt.query.stk_uj', 'orde_uj.txt,stk_uj,' + encodeURI(q_date())+';'+encodeURI(t_uno)+';'+encodeURI('#non')+';'+encodeURI('#non')+';'+encodeURI('#non')+';'+encodeURI('#non'),r_accy,1);
-					var as = _q_appendData("tmp0", "", true, true);
-					if (as[0] != undefined) {
-						$('#txtF08').val(as[0].productno);
-						$('#lblS3mount').text(as[0].mount);
-						$('#txtF08').change();
-					}else{
-						alert('【'+t_uno+'】批號不存在!!');
-						$(this).val('');
+					if(t_noa.length>0 && t_uno.length>0){
+						q_func('qtxt.query.stk_uj', 'orde_uj.txt,stk_uj,' + encodeURI(q_date())+';'+encodeURI(t_uno)+';'+encodeURI('#non')+';'+encodeURI('#non')+';'+encodeURI('#non')+';'+encodeURI('#non'),r_accy,1);
+						var as = _q_appendData("tmp0", "", true, true);
+						if (as[0] != undefined) {
+							$('#txtF08').val(as[0].productno);
+							$('#lblS3mount').text(as[0].mount);
+							$('#txtF08').change();
+						}else{
+							alert('【'+t_uno+'】批號不存在!!');
+							$(this).val('');
+						}
+					}
+					if(t_noa.length==0){
+						alert('請輸入派工單號!!');
 					}
 				});
 				
 				$('#txtF08').change(function() {
 					var t_noa=emp($('#txtNoa').val())?'#non':$('#txtNoa').val();
 					var t_pno=emp($(this).val())?'#non':$(this).val();
-					q_func('qtxt.query.getviewcugs', 'orde_uj.txt,getviewcugs,' + encodeURI(t_noa)+';'+encodeURI('#non')+';'+encodeURI('#non')+';'+encodeURI(t_pno)+';0',r_accy,1);
-					var as = _q_appendData("tmp0", "", true, true);
-					if (as[0] != undefined) {
-						$('#txtAlert3').val('');
-					}else{
-						$('#txtAlert3').val('派工單內無此料號');
+					if(t_noa.length>0 && t_pno.length>0){
+						q_func('qtxt.query.getviewcugs', 'orde_uj.txt,getviewcugs,' + encodeURI(t_noa)+';'+encodeURI('#non')+';'+encodeURI('#non')+';'+encodeURI(t_pno)+';0',r_accy,1);
+						var as = _q_appendData("tmp0", "", true, true);
+						if (as[0] != undefined) {
+							$('#txtAlert3').val('');
+						}else{
+							$('#txtAlert3').val('派工單內無此料號');
+						}
+						$('#txtAlert4').change();
 					}
-					$('#txtAlert4').change();
+					if(t_noa.length==0){
+						alert('請輸入派工單號!!');
+					}
 				});
 				
 				$('#txtAlert4').change(function() {
@@ -165,28 +202,33 @@
 					var t_pno1=emp($('#txtF06').val())?'#non':$('#txtF06').val();
 					var t_pno2=emp($('#txtF09').val())?'#non':$('#txtF09').val();
 					var t_pno3=emp($('#txtF08').val())?'#non':$('#txtF08').val();
-					q_func('qtxt.query.getviewcugs', 'orde_uj.txt,getviewcugs,' + encodeURI(t_noa)+';'+encodeURI(t_pno1)+';'+encodeURI(t_pno2)+';'+encodeURI(t_pno3)+';1',r_accy,1);
-					var as = _q_appendData("tmp0", "", true, true);
-					if (as[0] != undefined) {
-						$('#lblCugcount').text(as.length);
-						if(as.length>1){
-							var t_item='##########@';
-							for(var i=0;i<as.length;i++){
-								t_item=t_item+(t_item.length>0?',':'')+as[i].noq+'#####'+as[i].productno+'#####'+as[i].f12+'@'+as[i].productno
+					if(t_noa.length>0){
+						q_func('qtxt.query.getviewcugs', 'orde_uj.txt,getviewcugs,' + encodeURI(t_noa)+';'+encodeURI(t_pno1)+';'+encodeURI(t_pno2)+';'+encodeURI(t_pno3)+';1',r_accy,1);
+						var as = _q_appendData("tmp0", "", true, true);
+						if (as[0] != undefined) {
+							$('#lblCugcount').text(as.length);
+							if(as.length>1){
+								var t_item='##########@';
+								for(var i=0;i<as.length;i++){
+									t_item=t_item+(t_item.length>0?',':'')+as[i].noq+'#####'+as[i].productno+'#####'+as[i].f12+'@'+as[i].productno
+								}
+								q_cmbParse("combProductno",t_item);
+								
+								$('#combProductno').show();
+							}else{
+								$('#txtProductno').val(as[0].productno);
+								$('#lblF12').text(as[0].f12);
+								$('#txtNoq').val(as[0].noq);
 							}
-							q_cmbParse("combProductno",t_item);
-							
-							$('#combProductno').show();
+							$(this).val('');
 						}else{
-							$('#txtProductno').val(as[0].productno);
-							$('#lblF12').text(as[0].f12);
-							$('#txtNoq').val(as[0].noq);
+							$(this).val('警告');
 						}
-						$(this).val('');
-					}else{
-						$(this).val('警告');
+						$('#lblUcatype').change();
 					}
-					$('#lblUcatype').change();
+					if(t_noa.length==0){
+						alert('請輸入派工單號!!');
+					}
 				});
 				
 				$('#combProductno').change(function() {
@@ -227,6 +269,7 @@
 					
 					$('#btnModi_uj').attr('disabled', 'disabled');
 					$('#btnEnda_uj').attr('disabled', 'disabled');
+					$('#combProductno').removeAttr('disabled');
 					$('#btnOk_uj').removeAttr('disabled');
 				});
 				
@@ -243,6 +286,7 @@
 					$('.str').attr('disabled', 'disabled');
 					
 					$('#btnOk_uj').attr('disabled', 'disabled');
+					$('#combProductno').attr('disabled', 'disabled');
 					$('#btnEnda_uj').removeAttr('disabled');
 					$('#btnModi_uj').removeAttr('disabled');
 				});
@@ -261,16 +305,25 @@
 					var t_noa=$('#txtNoa').val();
 					var t_noq=$('#txtNoq').val();
 					var t_uno=replaceAll(q_date(),'/','').slice(-6)+$('#txtMechno').val();
-					q_func('qtxt.query.cugssel', 'orde_uj.txt,cugssel,' + encodeURI(t_noa)+';'+encodeURI(t_noq)+';'+encodeURI(r_accy)+';'+encodeURI(t_uno),r_accy,1);
-					var as = _q_appendData("tmp0", "", true, true);
-					if (as[0] != undefined) {
-						alert('派工單【'+as[0].noa+'】生產料號【'+as[0].productno+'】進行生產投入及產出!!');
-						$('#lblCugsuno').text(as[0].nosold);
-						
-						$('#btnModi_uj').attr('disabled', 'disabled');
-						$('#btnEnda_uj').attr('disabled', 'disabled');
-					}else{
-						alert('【派工單】遺失，畫面請重刷並請重新輸入!!');
+					var t_uno1=$('#txtUno1').val();
+					var t_uno2=$('#txtUno2').val();
+					var t_uno3=$('#txtUno3').val();
+					if(t_noa.length>0){
+						q_func('qtxt.query.cugssel', 'orde_uj.txt,cugssel,' + encodeURI(t_noa)+';'+encodeURI(t_noq)+';'+encodeURI(r_accy)+';'+encodeURI(t_uno)+';'+encodeURI(t_uno1)+';'+encodeURI(t_uno2)+';'+encodeURI(t_uno3),r_accy,1);
+						var as = _q_appendData("tmp0", "", true, true);
+						if (as[0] != undefined) {
+							alert('派工單【'+as[0].noa+'】生產料號【'+as[0].productno+'】進行生產投入及產出!!');
+							$('#lblCugsuno').text(as[0].nosold);
+							
+							$('#combProductno').attr('disabled', 'disabled');
+							$('#btnModi_uj').attr('disabled', 'disabled');
+							$('#btnEnda_uj').attr('disabled', 'disabled');
+						}else{
+							alert('【派工單】遺失，畫面請重刷並請重新輸入!!');
+						}
+					}
+					if(t_noa.length==0){
+						alert('請輸入派工單號!!');
 					}
 				});
 				
