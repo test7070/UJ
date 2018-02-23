@@ -19,7 +19,7 @@
             var q_readonly = ['txtWorker2', 'txtWorker'];
             var q_readonlys = [];
             var bbmNum = [['txtReserve', 10, 2, 1],['txtDrcr', 10, 0, 1],['txtInprice', 10, 0, 1],['txtSaleprice', 10, 3, 1],['txtUweight', 10, 2, 1]
-            ,['txtStdmount', 10, 0, 1],['txtSafemount', 10, 0, 1],['txtDays', 10, 0, 1],['txtBeginmoney', 10, 0, 1],['txtStkmoney', 10, 0, 1],['txtStkmount', 10, 0, 1],['txtStart', 10, 0, 1]];
+            ,['txtStdmount', 10, 0, 1],['txtSafemount', 10, 0, 1],['txtDays', 10, 0, 1],['txtBeginmoney', 10, 0, 1],['txtStkmoney', 10, 0, 1],['txtStkmount', 10, 0, 1],['txtStart', 10, 0, 1],['txtDensity', 10, 0, 1]];
             var bbsNum = [];
             var bbmMask = [];
             var bbsMask = [];
@@ -451,16 +451,18 @@
                         <td><input id="txtStkmount" type="text" class="txt num c1"/></td>
                     </tr>
                     <tr>
+                    	<td><span> </span><a id="lblDensity_uj" class="lbl">長度不足</a></td>
+                        <td><input id="txtDensity" type="text" class="txt num c1"/></td>
+                    	<td><span> </span><a id="lblEan_uj" class="lbl">外勞使用代號</a></td>
+                        <td><input id="txtEan" type="text" class="txt c1"/></td>
+                    </tr>
+                    <tr>
 						<td><span> </span><a id='lblTggno' class="lbl btn"> </a></td>
 						<td colspan='2'>
 							<input id="txtTggno" type="text" class="txt c1" style="width: 30%;"/>
 							<input id="txtTgg"	type="text" class="txt c1" style="width: 65%;">
 						</td>
 						<td><input id="btnTgg" type="button" style='width: auto; font-size: medium;'/></td>
-                    </tr>
-                    <tr>
-                    	<td><span> </span><a id="lblEan_uj" class="lbl">外勞使用代號</a></td>
-                        <td><input id="txtEan" type="text" class="txt c1"/></td>
                     </tr>
                     <tr>
                     	<td><span> </span><a id='lblMemo_uj' class="lbl">注意事項</a></td>

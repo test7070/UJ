@@ -1768,7 +1768,7 @@ BEGIN TRY
 	outer apply (select * from #tmp where uno=@t_uno2)c
 	where a.noa=@t_noa and b.noq=@t_noq
 	
-	update #tmpa set gno='1',rr=0 where uccmount=1
+	--update #tmpa set gno='1',rr=0 where uccmount=1
 	
 	declare @rr int
 	declare @count int
@@ -1777,7 +1777,7 @@ BEGIN TRY
 	declare @nos float=0
 	
 	declare cursor_table cursor for
-	select noa,rr,uccmount from #tmpa where gno='0'
+	select noa,rr,uccmount from #tmpa --where gno='0'
 	open cursor_table 
 	fetch next from cursor_table 
 	into @noa,@rr,@count
@@ -2055,4 +2055,34 @@ declare @accy nvarchar(50)=(select top 1 accy from view_cuds where noa=@t_noa)
 EXEC("update cuds"+@accy+" set enda=1 where noa='"+@t_noa+"' and noq='"+@t_noq+"'")
 
 select top 10 * from view_cuds where noa=@t_noa and noq>=@t_noq and isnull(enda,0)!=1 order by noa,noq
+;
+
+--------------------------------------------------------------------
+cudswidth:--cudswidth
+SET QUOTED_IDENTIFIER OFF
+declare @t_noa nvarchar(50)=case when '#non'=[1] then '' else [1] end
+declare @t_noq nvarchar(50)=case when '#non'=[2] then '' else [2] end
+declare @t_width nvarchar(50)=case when '#non'=[3] then '0' else [3] end --寬
+declare @t_dime nvarchar(50)=case when '#non'=[4] then '0' else [4] end --差
+
+declare @accy nvarchar(50)=(select top 1 accy from view_cuds where noa=@t_noa)
+
+EXEC("update cuds"+@accy+" 
+set width="+@t_width+",dime="+@t_dime+"
+where noa='"+@t_noa+"' and noq='"+@t_noq+"'")
+
+select top 10 * from view_cuds where noa=@t_noa and noq=@t_noq and isnull(enda,0)!=1 order by noa,noq
+;
+
+--------------------------------------------------------------------
+cugstation:--cugstation
+SET QUOTED_IDENTIFIER OFF
+declare @t_noa nvarchar(50)=case when '#non'=[1] then '' else [1] end
+declare @t_station nvarchar(50)=case when '#non'=[2] then '' else [2] end
+
+declare @accy nvarchar(50)=(select top 1 accy from view_cug where noa=@t_noa)
+
+EXEC("update cug"+@accy+" set station='"+@t_station+"' where noa='"+@t_noa+"'")
+
+select * from view_cug where noa=@t_noa order by noa
 ;
