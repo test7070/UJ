@@ -87,7 +87,7 @@
 								}
 								
 								var t_issel=false,t_uno='';
-								q_func('qtxt.query.getviewcuds', 'orde_uj.txt,getviewcuds,' + encodeURI(t_noa)+';'+encodeURI('3')+';'+encodeURI('1')+';'+encodeURI('4'),r_accy,1);
+								q_func('qtxt.query.getviewcuds', 'orde_uj.txt,getviewcuds,' + encodeURI(t_noa)+';'+encodeURI('#non')+';'+encodeURI('3')+';'+encodeURI('1')+';'+encodeURI('4'),r_accy,1);
 								var das = _q_appendData("tmp0", "", true, true);
 								if (das[0] != undefined) {
 									for(var i=0;i<das.length;i++){
