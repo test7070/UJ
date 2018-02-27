@@ -1812,6 +1812,13 @@ BEGIN TRY
 	,nos,uccno,uccuno,lengthb,spec,datea
 	from #tmpa")
 	
+	EXEC("insert cud"+@accy+"(noa,datea,custno,cust,style,ordeno)
+	select noa,datea,mechno
+	,case when source='3' then '下料' when source='4' then '上紙' when source='5' then '上皮' else '' end
+	,source,cugnoa from #tmpa a 
+	where not exists(select * from view_cuds where noa=a.noa) 
+	group by noa,datea,mechno,source,cugnoa")
+	
 	--明細
 	create table #tmpb(
 		noa nvarchar(50),--日期+'-'+機台+'-'+製程
@@ -1861,6 +1868,13 @@ BEGIN TRY
 		,'@,#'+ucastyle+'@,#@,#@,#'+ucc1no+'@,#'+ucc1uno+'@,#'+ucc2no+'@,#'+ucc2uno+'@,#'+ucc3no+'@,#'+ucc3uno+'@,#',nos,datea
 		from #tmpb
 	")
+	
+	EXEC("insert cud"+@accy+"(noa,datea,custno,cust,style,ordeno)
+	select noa,datea,mechno
+	,case when source='3' then '下料' when source='4' then '上紙' when source='5' then '上皮' else '' end
+	,source,cugnoa from #tmpb a 
+	where not exists(select * from view_cuds where noa=a.noa) 
+	group by noa,datea,mechno,source,cugnoa")
 
 END TRY
 BEGIN CATCH
@@ -2086,4 +2100,52 @@ declare @accy nvarchar(50)=(select top 1 accy from view_cug where noa=@t_noa)
 EXEC("update cug"+@accy+" set station='"+@t_station+"' where noa='"+@t_noa+"'")
 
 select * from view_cug where noa=@t_noa order by noa
+;
+-------------------------------------------------------------------
+cudenda:--cudenda
+SET QUOTED_IDENTIFIER OFF
+declare @t_ordeno nvarchar(50)=case when '#non'=[1] then '' else [1] end
+declare @t_noa nvarchar(50)=case when '#non'=[2] then '' else [2] end
+declare @t_datea nvarchar(50)=case when '#non'=[3] then '' else [3] end
+
+declare @accy nvarchar(50)=(select top 1 accy from view_cud where noa=@t_noa)
+
+EXEC("update cud"+@accy+" set edime=1 where ordeno='"+@t_ordeno+"'")
+
+--產生領料和入庫單
+
+declare @workano nvarchar(50)='WA'+REPLACE(@t_datea,'/','')
+declare @workbno nvarchar(50)='WB'+REPLACE(@t_datea,'/','')
+
+set @workano=@workano+RIGHT('000'+CAST(CAST(right(isnull((select MAX(noa) from view_worka where noa like @workano+'%'),'000'),3) as int)+1 AS NVARCHAR(10)),3)
+set @workbno=@workbno+RIGHT('000'+CAST(CAST(right(isnull((select MAX(noa) from view_workb where noa like @workbno+'%'),'000'),3) as int)+1 AS NVARCHAR(10)),3)
+
+EXEC("
+insert worka"+@accy+"(noa,typea,mechno,datea,workno)
+select '"+@workano+"','1',mechno,datea,ordeno
+from view_cuds where ordeno='"+@t_ordeno+"' and source!='3' and isnull(enda,0)=1
+group by ordeno,mechno,datea")
+
+EXEC("
+insert workas"+@accy+"(noa,noq,uno,productno,product,spec,mount,weight,ordeno,no2,workno)
+select '"+@workano+"',RIGHT('000'+CAST(ROW_NUMBER() over (order by a.noa) AS NVARCHAR(10)),3)
+,a.product2,a.productno2,b.product,a.spec,count(*),SUM(a.weight),a.ordeno,a.no2,a.noa
+from view_cuds a outer apply (select top 1* from view_ucaucc where noa=a.productno2)b
+where a.ordeno='"+@t_ordeno+"' and a.source!='3' and isnull(a.enda,0)=1
+group by a.product2,a.productno2,b.product,a.spec,a.ordeno,a.no2,a.noa")
+
+EXEC("
+insert workb"+@accy+"(noa,mechno,datea,workno)
+select '"+@workbno+"',mechno,datea,ordeno
+from view_cuds where ordeno='"+@t_ordeno+"' and source='3' and isnull(enda,0)=1
+group by ordeno,mechno,datea")
+
+EXEC("
+insert workbs"+@accy+"(noa,noq,uno,productno,product,spec,mount,weight,ordeno,no2,workno)
+select '"+@workbno+"',RIGHT('000'+CAST(ROW_NUMBER() over (order by a.noa,a.noq) AS NVARCHAR(10)),3)
+,a.uno,a.productno,b.product,a.spec,1,a.weight,a.ordeno,a.no2,a.noa
+from view_cuds a outer apply (select top 1* from view_ucaucc where noa=a.productno)b
+where a.ordeno='"+@t_ordeno+"' and a.source='3' and isnull(a.enda,0)=1 ")
+
+select * from view_cud where ordeno=@t_ordeno
 ;
