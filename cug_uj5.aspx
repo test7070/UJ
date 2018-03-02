@@ -72,17 +72,12 @@
 								
 								var tt_noq=as[0].edate;//現產序號
 								
-								q_func('qtxt.query.getviewcugs', 'orde_uj.txt,getviewcugs,' + encodeURI(t_noa)+';'+encodeURI('#non')+';'+encodeURI('#non')+';'+encodeURI('#non')+';0',r_accy,1);
+								q_func('qtxt.query.getviewcugs', 'orde_uj.txt,getviewcugs,' + encodeURI(t_noa)+';'+encodeURI(tt_noq)+';'+encodeURI('#non')+';'+encodeURI('#non')+';'+encodeURI('#non')+';0',r_accy,1);
 								var sas = _q_appendData("tmp0", "", true, true);
 								if (sas[0] != undefined) {
-									for(var i=0;i<sas.length;i++){
-										if(sas[i].noq==tt_noq){
-											$('#lblNowProductno').text(sas[i].productno);
-											$('#lblNowF12').text(sas[i].f12);
-											$('#lblNowNosold').text(sas[i].nosold);
-											break;
-										}
-									}
+									$('#lblNowProductno').text(sas[0].productno);
+									$('#lblNowF12').text(sas[0].f12);
+									$('#lblNowNosold').text(sas[0].nosold);		
 								}
 								
 								var t_ordeno='',t_no2='';

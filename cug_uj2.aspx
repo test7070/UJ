@@ -101,7 +101,7 @@
 					var t_noa=emp($('#txtNoa').val())?'#non':$('#txtNoa').val();
 					var t_pno=emp($(this).val())?'#non':$(this).val();
 					if(t_noa.length>0 && t_pno.length>0){
-						q_func('qtxt.query.getviewcugs', 'orde_uj.txt,getviewcugs,' + encodeURI(t_noa)+';'+encodeURI(t_pno)+';'+encodeURI('#non')+';'+encodeURI('#non')+';0',r_accy,1);
+						q_func('qtxt.query.getviewcugs', 'orde_uj.txt,getviewcugs,' + encodeURI(t_noa)+';'+encodeURI('#non')+';'+encodeURI(t_pno)+';'+encodeURI('#non')+';'+encodeURI('#non')+';0',r_accy,1);
 						var as = _q_appendData("tmp0", "", true, true);
 						if (as[0] != undefined) {
 							$('#txtAlert1').val('');
@@ -139,7 +139,7 @@
 					var t_noa=emp($('#txtNoa').val())?'#non':$('#txtNoa').val();
 					var t_pno=emp($(this).val())?'#non':$(this).val();
 					if(t_noa.length>0 && t_pno.length>0){
-						q_func('qtxt.query.getviewcugs', 'orde_uj.txt,getviewcugs,' + encodeURI(t_noa)+';'+encodeURI('#non')+';'+encodeURI(t_pno)+';'+encodeURI('#non')+';0',r_accy,1);
+						q_func('qtxt.query.getviewcugs', 'orde_uj.txt,getviewcugs,' + encodeURI(t_noa)+';'+encodeURI('#non')+';'+encodeURI('#non')+';'+encodeURI(t_pno)+';'+encodeURI('#non')+';0',r_accy,1);
 						var as = _q_appendData("tmp0", "", true, true);
 						if (as[0] != undefined) {
 							$('#txtAlert2').val('');
@@ -177,7 +177,7 @@
 					var t_noa=emp($('#txtNoa').val())?'#non':$('#txtNoa').val();
 					var t_pno=emp($(this).val())?'#non':$(this).val();
 					if(t_noa.length>0 && t_pno.length>0){
-						q_func('qtxt.query.getviewcugs', 'orde_uj.txt,getviewcugs,' + encodeURI(t_noa)+';'+encodeURI('#non')+';'+encodeURI('#non')+';'+encodeURI(t_pno)+';0',r_accy,1);
+						q_func('qtxt.query.getviewcugs', 'orde_uj.txt,getviewcugs,' + encodeURI(t_noa)+';'+encodeURI('#non')+';'+encodeURI('#non')+';'+encodeURI('#non')+';'+encodeURI(t_pno)+';0',r_accy,1);
 						var as = _q_appendData("tmp0", "", true, true);
 						if (as[0] != undefined) {
 							$('#txtAlert3').val('');
@@ -203,7 +203,7 @@
 					var t_pno2=emp($('#txtF09').val())?'#non':$('#txtF09').val();
 					var t_pno3=emp($('#txtF08').val())?'#non':$('#txtF08').val();
 					if(t_noa.length>0){
-						q_func('qtxt.query.getviewcugs', 'orde_uj.txt,getviewcugs,' + encodeURI(t_noa)+';'+encodeURI(t_pno1)+';'+encodeURI(t_pno2)+';'+encodeURI(t_pno3)+';1',r_accy,1);
+						q_func('qtxt.query.getviewcugs', 'orde_uj.txt,getviewcugs,' + encodeURI(t_noa)+';'+encodeURI('#non')+';'+encodeURI(t_pno1)+';'+encodeURI(t_pno2)+';'+encodeURI(t_pno3)+';1',r_accy,1);
 						var as = _q_appendData("tmp0", "", true, true);
 						if (as[0] != undefined) {
 							$('#lblCugcount').text(as.length);

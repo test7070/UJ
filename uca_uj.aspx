@@ -860,18 +860,20 @@
 						<td><input id="textS9" type="text" class="txt c1 type2"/></td>
 					</tr>
 					<tr>
-						<td><span> </span><a id="lblWorker" class="lbl"> </a></td>
-						<td><input id="txtWorker" type="text" class="txt c1"/></td>
-						<td><span> </span><a id="lblWorker2" class="lbl"> </a></td>
-						<td><input id="txtWorker2" type="text" class="txt c1"/></td>
-					</tr>
-					<tr>
                         <td><span> </span><a id="lblMemo_uj" class="lbl">注意事項</a></td>
                         <td colspan='5'>
                         	<input id="txtMemo" type="text" class="txt c1"/>
                         	<input id="txtStyle" type="hidden" class="txt c1"/>
                         </td>
                     </tr>
+                    <tr>
+                    	<td><span> </span><a id="lblBdate_uj" class="lbl">現場列印標籤</a></td>
+						<td><input id="txtBdate" type="text" class="txt c1"/></td>
+						<td><span> </span><a id="lblWorker" class="lbl"> </a></td>
+						<td><input id="txtWorker" type="text" class="txt c1"/></td>
+						<td><span> </span><a id="lblWorker2" class="lbl"> </a></td>
+						<td><input id="txtWorker2" type="text" class="txt c1"/></td>
+					</tr>
 				</table>
 			</div>
 		</div>

@@ -1511,10 +1511,11 @@ select * from view_cug where noa=@t_noa
 --------------------------------------------------------------------
 getviewcugs:--getviewcugs
 declare @t_noa nvarchar(50)=case when '#non'=[1] then '' else [1] end
-declare @t_f06 nvarchar(50)=case when '#non'=[2] then '' else [2] end
-declare @t_f09 nvarchar(50)=case when '#non'=[3] then '' else [3] end
-declare @t_f08 nvarchar(50)=case when '#non'=[4] then '' else [4] end
-declare @t_sp nvarchar(50)=case when '#non'=[5] then '0' else [5] end
+declare @t_noq nvarchar(50)=case when '#non'=[2] then '' else [2] end
+declare @t_f06 nvarchar(50)=case when '#non'=[3] then '' else [3] end
+declare @t_f09 nvarchar(50)=case when '#non'=[4] then '' else [4] end
+declare @t_f08 nvarchar(50)=case when '#non'=[5] then '' else [5] end
+declare @t_sp nvarchar(50)=case when '#non'=[6] then '0' else [6] end
 
 if(@t_sp='0')
 begin
@@ -1524,7 +1525,7 @@ begin
 	,dbo.split(memo,'@,#',7)f07,dbo.split(memo,'@,#',8)f08,dbo.split(memo,'@,#',9)f09
 	,dbo.split(memo,'@,#',10)f10,dbo.split(memo,'@,#',11)f11,dbo.split(memo,'@,#',12)f12
 	,dbo.split(memo,'@,#',13)f13,dbo.split(memo,'@,#',14)f14
-	from view_cugs where noa=@t_noa
+	from view_cugs where noa=@t_noa and (len(@t_noq)=0 or noq=@t_noq)
 	and (len(@t_f06)=0 or dbo.split(memo,'@,#',6)=@t_f06)
 	and (len(@t_f09)=0 or dbo.split(memo,'@,#',9)=@t_f09)
 	and (len(@t_f08)=0 or dbo.split(memo,'@,#',8)=@t_f08)
@@ -1537,7 +1538,7 @@ begin
 	,dbo.split(memo,'@,#',7)f07,dbo.split(memo,'@,#',8)f08,dbo.split(memo,'@,#',9)f09
 	,dbo.split(memo,'@,#',10)f10,dbo.split(memo,'@,#',11)f11,dbo.split(memo,'@,#',12)f12
 	,dbo.split(memo,'@,#',13)f13,dbo.split(memo,'@,#',14)f14
-	from view_cugs where noa=@t_noa and isnull(issel,0)=0
+	from view_cugs where noa=@t_noa and (len(@t_noq)=0 or noq=@t_noq) and isnull(issel,0)=0
 	and dbo.split(memo,'@,#',6)=@t_f06
 	and dbo.split(memo,'@,#',9)=@t_f09 
 	and dbo.split(memo,'@,#',8)=@t_f08
@@ -2148,4 +2149,60 @@ from view_cuds a outer apply (select top 1* from view_ucaucc where noa=a.product
 where a.ordeno='"+@t_ordeno+"' and a.source='3' and isnull(a.enda,0)=1 ")
 
 select * from view_cud where ordeno=@t_ordeno
+;
+--------------------------------------------------------------------
+getviewworkgs:--getviewworkgs
+declare @t_noa nvarchar(50)=case when '#non'=[1] then '' else [1] end
+declare @t_noq nvarchar(50)=case when '#non'=[2] then '' else [2] end
+
+select * from view_workgs where noa=@t_noa and (noq=@t_noq or len(@t_noq)=0) 
+;
+--------------------------------------------------------------------
+cugssel2:--cugssel2
+SET QUOTED_IDENTIFIER OFF
+declare @t_noa nvarchar(50)=case when '#non'=[1] then '' else [1] end
+declare @t_noq nvarchar(50)=case when '#non'=[2] then '' else [2] end
+declare @t_accy nvarchar(50)=case when '#non'=[3] then '' else [3] end
+
+declare @accy nvarchar(50)=isnull((select top 1 accy from view_cug where noa=@t_noa),@t_accy)
+
+--加工完工
+EXEC("
+	update cugs"+@accy+" set issel=1
+	where noa='"+@t_noa+"' and noq='"+@t_noq+"'
+")
+;
+--------------------------------------------------------------------
+cudsenter6:--cudsenter6
+SET QUOTED_IDENTIFIER OFF
+declare @t_ordeno nvarchar(50)=case when '#non'=[1] then '' else [1] end --派工單
+declare @t_no2 nvarchar(50)=case when '#non'=[2] then '' else [2] end
+declare @t_source nvarchar(50)=case when '#non'=[3] then '' else [3] end --產出別
+declare @t_mechno nvarchar(50)=case when '#non'=[4] then '' else [4] end --機台
+declare @t_pno nvarchar(50)=case when '#non'=[5] then '' else [5] end --品名
+declare @t_uno nvarchar(50)=case when '#non'=[6] then '' else [6] end --產生身分證號
+declare @t_mount nvarchar(50)=case when '#non'=[7] then '0' else [7] end --產出
+declare @t_weight nvarchar(50)=case when '#non'=[8] then '0' else [8] end --長
+declare @t_weight1 nvarchar(50)=case when '#non'=[9] then '0' else [9] end --出(%)
+declare @t_spec nvarchar(50)=case when '#non'=[10] then '' else [10] end --列管備註
+declare @t_lengthb nvarchar(50)=case when '#non'=[11] then '0' else [11] end --投入(M)
+declare @t_pno2 nvarchar(50)=case when '#non'=[12] then '' else [12] end --投入料號
+declare @t_product2 nvarchar(50)=case when '#non'=[13] then '' else [13] end --投入身分證號
+declare @t_memo nvarchar(MAX)=case when '#non'=[14] then '' else [14] end --其他
+declare @t_accy nvarchar(50)=case when '#non'=[15] then '' else [15] end --年度
+declare @noa nvarchar(50)=case when '#non'=[16] then '' else [16] end --日報表單號
+declare @datea nvarchar(50)=case when '#non'=[17] then '' else [17] end --加工日期
+
+declare @accy nvarchar(50)=isnull((select top 1 accy from view_cug where noa=@t_noa),@t_accy)
+declare @noq nvarchar(50)=isnull((select MAX(noq) from view_cuds where noa=@t_noa),'000')
+
+set @noq=right('0000'+cast(cast(@noq as int)+1 as nvarchar(10)),3)
+
+EXEC("
+	insert cuds"+@accy+"(noa,noq,datea,ordeno,no2,source,mechno,productno,uno,mount,weight
+	,weight1,spec,lengthb,productno2,product2,memo)
+	select '"+@noa+"','"+@noq+"','"+@datea+"','"+@t_ordeno+"','"+@t_no2+"','"+@t_source+"','"
+	+@t_mechno+"','"+@t_pno+"','"+@t_uno+"',"+@t_mount+","+@t_weight+","
+	+@t_weight1+",'"+@t_spec+"',"+@t_lengthb+",'"+@t_pno2+"','"+@t_product2+"','"+@t_memo+"'
+")
 ;
