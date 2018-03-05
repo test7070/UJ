@@ -80,6 +80,16 @@ and (b.productno=@t_pno or len(@t_pno)=0)
 and (b.storeno=@t_storeno or len(@t_storeno)=0)
 and (b.uno=@t_uno or len(@t_uno)=0)
 and a.datea<=@t_datea
+
+--生產領料退回
+insert #tmp (typea,uno,productno,product,spec,datea,mount,weight,unit,storeno,store)
+select '4',b.uno,b.productno,b.product,b.spec,a.datea,b.mount,b.weight,b.unit,b.storeno,b.store
+from view_worka a left join view_workas b on a.noa=b.noa
+where a.typea='2'
+and (b.productno=@t_pno or len(@t_pno)=0) 
+and (b.storeno=@t_storeno or len(@t_storeno)=0)
+and (b.uno=@t_uno or len(@t_uno)=0)
+and a.datea<=@t_datea
 ------------------------------------------------------------------------
 --進貨退回
 insert #tmp (typea,uno,productno,product,spec,datea,mount,weight,unit,storeno,store)
@@ -114,7 +124,8 @@ and a.datea<=@t_datea
 insert #tmp (typea,uno,productno,product,spec,datea,mount,weight,unit,storeno,store)
 select '8',b.uno,b.productno,b.product,b.spec,a.datea,-1*b.mount,-1*b.weight,b.unit,b.storeno,b.store
 from view_worka a left join view_workas b on a.noa=b.noa
-where (b.productno=@t_pno or len(@t_pno)=0) 
+where a.typea='1'
+and (b.productno=@t_pno or len(@t_pno)=0) 
 and (b.storeno=@t_storeno or len(@t_storeno)=0)
 and (b.uno=@t_uno or len(@t_uno)=0)
 and a.datea<=@t_datea
@@ -388,6 +399,12 @@ insert #tmp (typea,uno,productno,product,spec,datea,mount,weight,unit,storeno,st
 select '4',b.uno,b.productno,b.product,b.spec,a.datea,b.mount,b.weight,b.unit,b.storeno,b.store
 from view_vcc a left join view_vccs b on a.noa=b.noa 
 where a.typea='2' and a.datea<=@t_todate
+
+--生產領料退回
+insert #tmp (typea,uno,productno,product,spec,datea,mount,weight,unit,storeno,store)
+select '4',b.uno,b.productno,b.product,b.spec,a.datea,b.mount,b.weight,b.unit,b.storeno,b.store
+from view_worka a left join view_workas b on a.noa=b.noa
+where a.typea='2' and a.datea<=@t_todate
 ------------------------------------------------------------------------
 --進貨退回
 insert #tmp (typea,uno,productno,product,spec,datea,mount,weight,unit,storeno,store)
@@ -411,7 +428,7 @@ where a.datea<=@t_todate
 insert #tmp (typea,uno,productno,product,spec,datea,mount,weight,unit,storeno,store)
 select '8',b.uno,b.productno,b.product,b.spec,a.datea,-1*b.mount,-1*b.weight,b.unit,b.storeno,b.store
 from view_worka a left join view_workas b on a.noa=b.noa
-where a.datea<=@t_todate
+where a.typea='1' and a.datea<=@t_todate
 ------------------------------------------------------------------------
 --調撥出庫
 insert #tmp (typea,uno,productno,product,spec,datea,mount,weight,unit,storeno,store)
@@ -863,6 +880,12 @@ insert #tmp (typea,uno,productno,product,spec,datea,mount,weight,unit,storeno,st
 select '4',b.uno,b.productno,b.product,b.spec,a.datea,b.mount,b.weight,b.unit,b.storeno,b.store
 from view_vcc a left join view_vccs b on a.noa=b.noa 
 where a.typea='2' and a.datea<=@t_todate
+
+--生產領料退回
+insert #tmp (typea,uno,productno,product,spec,datea,mount,weight,unit,storeno,store)
+select '4',b.uno,b.productno,b.product,b.spec,a.datea,b.mount,b.weight,b.unit,b.storeno,b.store
+from view_worka a left join view_workas b on a.noa=b.noa
+where a.typea='2' and a.datea<=@t_todate
 ------------------------------------------------------------------------
 --進貨退回
 insert #tmp (typea,uno,productno,product,spec,datea,mount,weight,unit,storeno,store)
@@ -886,7 +909,7 @@ where a.datea<=@t_todate
 insert #tmp (typea,uno,productno,product,spec,datea,mount,weight,unit,storeno,store)
 select '8',b.uno,b.productno,b.product,b.spec,a.datea,-1*b.mount,-1*b.weight,b.unit,b.storeno,b.store
 from view_worka a left join view_workas b on a.noa=b.noa
-where a.datea<=@t_todate
+where a.typea='1' and a.datea<=@t_todate
 ------------------------------------------------------------------------
 --調撥出庫
 insert #tmp (typea,uno,productno,product,spec,datea,mount,weight,unit,storeno,store)
@@ -1316,6 +1339,12 @@ begin
 	select '4',b.uno,b.productno,b.product,b.spec,a.datea,b.mount,b.weight,b.unit,b.storeno,b.store
 	from view_vcc a left join view_vccs b on a.noa=b.noa 
 	where a.typea='2' 
+	
+	--生產領料退回
+	insert #tmp (typea,uno,productno,product,spec,datea,mount,weight,unit,storeno,store)
+	select '4',b.uno,b.productno,b.product,b.spec,a.datea,b.mount,b.weight,b.unit,b.storeno,b.store
+	from view_worka a left join view_workas b on a.noa=b.noa
+	where a.typea='2'
 	------------------------------------------------------------------------
 	--進貨退回
 	insert #tmp (typea,uno,productno,product,spec,datea,mount,weight,unit,storeno,store)
@@ -1338,6 +1367,7 @@ begin
 	insert #tmp (typea,uno,productno,product,spec,datea,mount,weight,unit,storeno,store)
 	select '8',b.uno,b.productno,b.product,b.spec,a.datea,-1*b.mount,-1*b.weight,b.unit,b.storeno,b.store
 	from view_worka a left join view_workas b on a.noa=b.noa
+	where a.typea='1' 
 	------------------------------------------------------------------------
 	--調撥出庫
 	insert #tmp (typea,uno,productno,product,spec,datea,mount,weight,unit,storeno,store)
@@ -1644,6 +1674,12 @@ insert #tmp (typea,uno,productno,product,spec,datea,mount,weight,unit,storeno,st
 select '4',b.uno,b.productno,b.product,b.spec,a.datea,b.mount,b.weight,b.unit,b.storeno,b.store
 from view_vcc a left join view_vccs b on a.noa=b.noa 
 where a.typea='2' 
+
+--生產領料退回
+insert #tmp (typea,uno,productno,product,spec,datea,mount,weight,unit,storeno,store)
+select '4',b.uno,b.productno,b.product,b.spec,a.datea,b.mount,b.weight,b.unit,b.storeno,b.store
+from view_worka a left join view_workas b on a.noa=b.noa
+where a.typea='2'
 ------------------------------------------------------------------------
 --進貨退回
 insert #tmp (typea,uno,productno,product,spec,datea,mount,weight,unit,storeno,store)
@@ -1666,6 +1702,7 @@ from view_get a left join view_gets b on a.noa=b.noa
 insert #tmp (typea,uno,productno,product,spec,datea,mount,weight,unit,storeno,store)
 select '8',b.uno,b.productno,b.product,b.spec,a.datea,-1*b.mount,-1*b.weight,b.unit,b.storeno,b.store
 from view_worka a left join view_workas b on a.noa=b.noa
+where a.typea='1' 
 ------------------------------------------------------------------------
 --調撥出庫
 insert #tmp (typea,uno,productno,product,spec,datea,mount,weight,unit,storeno,store)
@@ -1914,8 +1951,8 @@ end
 else
 begin
 	select * from view_cuds 
-	where ordeno=@t_noa and (no2='"+@t_noq+"' or len('"+@t_noq+"')=0) 
-	and source=@t_source and (isnull(enda,0)!=1 or len(@t_enda)=0)
+	where ordeno=@t_noa and (no2=@t_noq or len(@t_noq)=0) 
+	and (isnull(source,0)=@t_source or len(@t_source)=0) and (isnull(enda,0)!=1 or len(@t_enda)=0)
 end
 ;
 -------------------------------------------------------------------
@@ -2162,7 +2199,13 @@ cugssel2:--cugssel2
 SET QUOTED_IDENTIFIER OFF
 declare @t_noa nvarchar(50)=case when '#non'=[1] then '' else [1] end
 declare @t_noq nvarchar(50)=case when '#non'=[2] then '' else [2] end
-declare @t_accy nvarchar(50)=case when '#non'=[3] then '' else [3] end
+declare @t_datea nvarchar(50)=case when '#non'=[3] then '' else [3] end
+declare @t_accy nvarchar(50)=case when '#non'=[4] then '' else [4] end
+
+IF OBJECT_ID('tempdb..#tmp')is not null
+BEGIN
+	drop table #tmp
+END
 
 declare @accy nvarchar(50)=isnull((select top 1 accy from view_cug where noa=@t_noa),@t_accy)
 
@@ -2171,6 +2214,198 @@ EXEC("
 	update cugs"+@accy+" set issel=1
 	where noa='"+@t_noa+"' and noq='"+@t_noq+"'
 ")
+
+select * from view_cugs where noa=@t_noa and noq=@t_noq order by noa,noq
+
+--//庫存begin----------------------------------------------------------------------
+create table #tmp(
+	typea nvarchar(10),
+	uno nvarchar(50),
+	productno nvarchar(100),
+	product nvarchar(255), --出貨品名/標準料號參照
+	spec nvarchar(200),
+	datea nvarchar(10),
+	indate nvarchar(10), --入庫日
+	mount float,--數量
+	weight float,--長
+	unit nvarchar(50),
+	storeno nvarchar(50),
+	store nvarchar(150),
+	lengthb float, --標準長
+	engpro nvarchar(MAX), --舊成品編碼
+	ucaucc nvarchar(MAX),--2成品,3半成,8再製,4原料 5物料
+	
+	bmount float, --指定數量
+	bweight float, --指定長度
+	
+) 
+
+--盤點
+insert #tmp (typea,uno,productno,product,spec,datea,mount,weight,unit,storeno,store)
+select '0',b.uno,b.productno,b.product,b.spec,a.datea,b.mount,b.weight,b.unit,b.storeno,b.store
+from view_ucce a left join view_ucces b on a.noa=b.noa 
+	-------------------------------------------------------------------------
+--進貨
+insert #tmp (typea,uno,productno,product,spec,datea,mount,weight,unit,storeno,store)
+select '1',b.uno,b.productno,b.product,b.spec,a.datea,b.mount,b.weight,b.unit,b.storeno,b.store
+from view_rc2 a left join view_rc2s b on a.noa=b.noa 
+where a.typea='1'
+
+--入庫
+insert #tmp (typea,uno,productno,product,spec,datea,mount,weight,unit,storeno,store)
+select '2',b.uno,b.productno,b.product,b.spec,a.datea,b.mount,b.weight,b.unit,b.storeno,b.store
+from view_ina a left join view_inas b on a.noa=b.noa
+
+--生產
+insert #tmp (typea,uno,productno,product,spec,datea,mount,weight,unit,storeno,store)
+select '3',b.uno,b.productno,b.product,b.spec,a.datea,b.mount,b.weight,b.unit,b.storeno,b.store
+from view_workb a left join view_workbs b on a.noa=b.noa
+
+--出貨退回
+insert #tmp (typea,uno,productno,product,spec,datea,mount,weight,unit,storeno,store)
+select '4',b.uno,b.productno,b.product,b.spec,a.datea,b.mount,b.weight,b.unit,b.storeno,b.store
+from view_vcc a left join view_vccs b on a.noa=b.noa 
+where a.typea='2' 
+
+--生產領料退回
+insert #tmp (typea,uno,productno,product,spec,datea,mount,weight,unit,storeno,store)
+select '4',b.uno,b.productno,b.product,b.spec,a.datea,b.mount,b.weight,b.unit,b.storeno,b.store
+from view_worka a left join view_workas b on a.noa=b.noa
+where a.typea='2'
+------------------------------------------------------------------------
+--進貨退回
+insert #tmp (typea,uno,productno,product,spec,datea,mount,weight,unit,storeno,store)
+select '5',b.uno,b.productno,b.product,b.spec,a.datea,-1*b.mount,-1*b.weight,b.unit,b.storeno,b.store
+from view_rc2 a left join view_rc2s b on a.noa=b.noa 
+where a.typea='2' 
+
+--出貨
+insert #tmp (typea,uno,productno,product,spec,datea,mount,weight,unit,storeno,store)
+select '6',b.uno,b.productno,b.product,b.spec,a.datea,-1*b.mount,-1*b.weight,b.unit,b.storeno,b.store
+from view_vcc a left join view_vccs b on a.noa=b.noa 
+where a.typea='1' 
+
+--領料
+insert #tmp (typea,uno,productno,product,spec,datea,mount,weight,unit,storeno,store)
+select '7',b.uno,b.productno,b.product,b.spec,a.datea,-1*b.mount,-1*b.weight,b.unit,b.storeno,b.store
+from view_get a left join view_gets b on a.noa=b.noa
+
+--生產領料
+insert #tmp (typea,uno,productno,product,spec,datea,mount,weight,unit,storeno,store)
+select '8',b.uno,b.productno,b.product,b.spec,a.datea,-1*b.mount,-1*b.weight,b.unit,b.storeno,b.store
+from view_worka a left join view_workas b on a.noa=b.noa
+where a.typea='1' 
+------------------------------------------------------------------------
+--調撥出庫
+insert #tmp (typea,uno,productno,product,spec,datea,mount,weight,unit,storeno,store)
+select '9-1',b.uno,b.productno,b.product,b.spec,a.datea,-1*b.mount,-1*b.weight,b.unit,a.storeno,a.store
+from view_cng a left join view_cngs b on a.noa=b.noa
+
+--調撥入庫
+insert #tmp (typea,uno,productno,product,spec,datea,mount,weight,unit,storeno,store)
+select '9-2',b.uno,b.productno,b.product,b.spec,a.datea,b.mount,b.weight,b.unit,a.storeinno,a.storein
+from view_cng a left join view_cngs b on a.noa=b.noa
+------------------------------------------------------------------------
+update #tmp
+set uno=ISNULL(uno,''),productno=ISNULL(productno,''),spec=ISNULL(spec,''),storeno=ISNULL(storeno,'')
+,mount=ISNULL(mount,0),weight=ISNULL(weight,0)
+
+update a
+set indate=isnull(b.indate,'')
+from #tmp a outer apply (select MIN(datea) indate from #tmp where uno=a.uno and productno=a.productno and spec=a.spec and typea<'5') b
+
+delete a 
+from #tmp a outer apply (select MAX(datea)udate from #tmp where typea='0' and uno=a.uno and productno=a.productno and spec=a.spec and storeno=a.storeno)b --盤點
+where typea!='0' and datea<isnull(udate,'')
+
+--正常庫存
+insert #tmp (typea,uno,productno,product,spec,datea,indate,mount,weight,unit,storeno,store,lengthb,engpro,ucaucc,bmount,bweight)
+select '99',uno,productno,'',spec,'',indate,SUM(mount),SUM(weight),'',storeno,'',0,'','',0,0
+from #tmp group by uno,productno,spec,storeno,indate
+	
+--刪除明細
+delete #tmp where typea!='99'
+--刪除無庫存
+delete #tmp where weight<=0 and mount<=0
+	
+--更新 名稱/參照,標準長,類別,倉庫
+update a 
+set productno=b.product,lengthb=b.trans,engpro=b.engpro,ucaucc=b.typea,unit=b.unit
+from #tmp a left join uca b on a.productno=b.noa
+where b.noa is not null
+
+update a 
+set product=b.product,lengthb=b.reserve,ucaucc=b.typea,unit=b.unit
+from #tmp a left join ucc b on a.productno=b.noa
+where b.noa is not null
+
+update a
+set store=b.store
+from #tmp a left join store b on a.storeno=b.noa
+where b.noa is not null
+	
+--//庫存end----------------------------------------------------------------------
+
+------------------------------
+--產生領料和入庫單
+
+declare @workano nvarchar(50)='WA'+REPLACE(@t_datea,'/','')
+declare @worka2no nvarchar(50)='WA'+REPLACE(@t_datea,'/','')
+declare @workbno nvarchar(50)='WB'+REPLACE(@t_datea,'/','')
+
+set @workano=@workano+RIGHT('000'+CAST(CAST(right(isnull((select MAX(noa) from view_worka where noa like @workano+'%'),'000'),3) as int)+1 AS NVARCHAR(10)),3)
+set @worka2no=@worka2no+RIGHT('000'+CAST(CAST(right(isnull((select MAX(noa) from view_worka where noa like @worka2no+'%'),'000'),3) as int)+2 AS NVARCHAR(10)),3)
+set @workbno=@workbno+RIGHT('000'+CAST(CAST(right(isnull((select MAX(noa) from view_workb where noa like @workbno+'%'),'000'),3) as int)+1 AS NVARCHAR(10)),3)
+
+--產生領料
+EXEC("
+insert worka"+@accy+"(noa,typea,mechno,datea,workno)
+select '"+@workano+"','1',mechno,datea,ordeno
+from view_cuds where ordeno='"+@t_noa+"' and no2='"+@t_noq+"'
+group by ordeno,mechno,datea")
+
+EXEC("
+insert workas"+@accy+"(noa,noq,uno,productno,product,spec,mount,weight,ordeno,no2,workno,storeno)
+select '"+@workano+"',RIGHT('000'+CAST(ROW_NUMBER() over (order by a.ordeno) AS NVARCHAR(10)),3)
+,a.product2,a.productno2,isnull(c.product,''),isnull(c.spec,''),isnull(c.mount,1),isnull(c.weight,MAX(a.lengthb))
+,a.ordeno,a.no2,left(MAX(a.noa),11),isnull(c.storeno,'')
+from view_cuds a outer apply (select top 1* from view_ucaucc where noa=a.productno2)b
+outer apply(select top 1 * from #tmp where uno=a.product2) c
+where a.ordeno='"+@t_noa+"' and no2='"+@t_noq+"' 
+group by a.product2,a.productno2,isnull(c.product,''),isnull(c.spec,''),isnull(c.mount,1),c.weight,a.ordeno,a.no2,isnull(c.storeno,'')")
+
+--產生入庫
+EXEC("
+insert workb"+@accy+"(noa,mechno,datea,workno)
+select '"+@workbno+"',mechno,datea,ordeno
+from view_cuds where ordeno='"+@t_noa+"' and no2='"+@t_noq+"' and source!='9' group by ordeno,mechno,datea")
+
+EXEC("
+insert workbs"+@accy+"(noa,noq,uno,productno,product,spec,mount,weight,ordeno,no2,workno,storeno)
+select '"+@workbno+"',RIGHT('000'+CAST(ROW_NUMBER() over (order by dbo.split(memo,'@,#',4)) AS NVARCHAR(10)),3)
+,a.uno,a.productno,b.product,a.spec,a.mount,a.weight,a.ordeno,a.no2,a.noa,dbo.split(a.memo,'@,#',9)
+from view_cuds a outer apply (select top 1* from view_ucaucc where noa=a.productno)b
+where a.ordeno='"+@t_noa+"' and no2='"+@t_noq+"' and a.source!='9' ")
+
+--餘料退回
+EXEC("
+insert worka"+@accy+"(noa,typea,mechno,datea,workno)
+select '"+@worka2no+"','2',mechno,datea,ordeno
+from view_cuds where ordeno='"+@t_noa+"' and no2='"+@t_noq+"' and source='9' group by ordeno,mechno,datea")
+
+EXEC("
+insert workas"+@accy+"(noa,noq,uno,productno,product,spec,mount,weight,ordeno,no2,workno,storeno)
+select '"+@worka2no+"',RIGHT('000'+CAST(ROW_NUMBER() over (order by dbo.split(memo,'@,#',4)) AS NVARCHAR(10)),3)
+,a.uno,a.productno,c.product,c.spec,a.mount,a.weight,a.ordeno,a.no2,a.noa,isnull(c.storeno,'')
+from view_cuds a outer apply (select top 1* from view_ucaucc where noa=a.productno)b
+outer apply(select top 1 * from #tmp where uno=a.product2) c
+where a.ordeno='"+@t_noa+"' and no2='"+@t_noq+"' and a.source='9' ")
+
+IF OBJECT_ID('tempdb..#tmp')is not null
+BEGIN
+	drop table #tmp
+END
+
 ;
 --------------------------------------------------------------------
 cudsenter6:--cudsenter6
@@ -2193,16 +2428,194 @@ declare @t_accy nvarchar(50)=case when '#non'=[15] then '' else [15] end --年�
 declare @noa nvarchar(50)=case when '#non'=[16] then '' else [16] end --日報表單號
 declare @datea nvarchar(50)=case when '#non'=[17] then '' else [17] end --加工日期
 
-declare @accy nvarchar(50)=isnull((select top 1 accy from view_cug where noa=@t_noa),@t_accy)
-declare @noq nvarchar(50)=isnull((select MAX(noq) from view_cuds where noa=@t_noa),'000')
+declare @accy nvarchar(50)=isnull((select top 1 accy from view_cug where noa=@t_ordeno),@t_accy)
+declare @noq nvarchar(50)=isnull((select MAX(noq) from view_cuds where noa=@t_ordeno),'000')
 
 set @noq=right('0000'+cast(cast(@noq as int)+1 as nvarchar(10)),3)
 
+declare @molds float=isnull((select molds from uca where noa=@t_pno),1)
+set @molds=case when @molds=0 then 1 else @molds end
+declare @t_weight2 nvarchar(50)=cast(ceiling(cast(@t_mount as float)*cast(@t_weight as float)/@molds) as nvarchar(50))
+
+set @t_memo=REPLACE(@t_memo,'@X#','@,#')
+
 EXEC("
 	insert cuds"+@accy+"(noa,noq,datea,ordeno,no2,source,mechno,productno,uno,mount,weight
-	,weight1,spec,lengthb,productno2,product2,memo)
+	,weight1,weight2,spec,lengthb,productno2,product2,memo)
 	select '"+@noa+"','"+@noq+"','"+@datea+"','"+@t_ordeno+"','"+@t_no2+"','"+@t_source+"','"
 	+@t_mechno+"','"+@t_pno+"','"+@t_uno+"',"+@t_mount+","+@t_weight+","
-	+@t_weight1+",'"+@t_spec+"',"+@t_lengthb+",'"+@t_pno2+"','"+@t_product2+"','"+@t_memo+"'
+	+@t_weight1+","+@t_weight2+",'"+@t_spec+"',"+@t_lengthb+",'"+@t_pno2+"','"+@t_product2+"','"+@t_memo+"'
 ")
+
+select * from view_cuds where noa=@noa
+;
+-------------------------------------------------------------------
+getnewunos:--getnewunos
+
+IF OBJECT_ID('tempdb..#tmp')is not null
+BEGIN
+	drop table #tmp
+END
+
+--//庫存begin----------------------------------------------------------------------
+create table #tmp(
+	typea nvarchar(10),
+	uno nvarchar(50),
+	productno nvarchar(100),
+	product nvarchar(255), --出貨品名/標準料號參照
+	spec nvarchar(200),
+	datea nvarchar(10),
+	indate nvarchar(10), --入庫日
+	mount float,--數量
+	weight float,--長
+	unit nvarchar(50),
+	storeno nvarchar(50),
+	store nvarchar(150),
+	lengthb float, --標準長
+	engpro nvarchar(MAX), --舊成品編碼
+	ucaucc nvarchar(MAX),--2成品,3半成,8再製,4原料 5物料
+	
+	bmount float, --指定數量
+	bweight float, --指定長度
+	
+) 
+
+--盤點
+insert #tmp (typea,uno,productno,product,spec,datea,mount,weight,unit,storeno,store)
+select '0',b.uno,b.productno,b.product,b.spec,a.datea,b.mount,b.weight,b.unit,b.storeno,b.store
+from view_ucce a left join view_ucces b on a.noa=b.noa 
+	-------------------------------------------------------------------------
+--進貨
+insert #tmp (typea,uno,productno,product,spec,datea,mount,weight,unit,storeno,store)
+select '1',b.uno,b.productno,b.product,b.spec,a.datea,b.mount,b.weight,b.unit,b.storeno,b.store
+from view_rc2 a left join view_rc2s b on a.noa=b.noa 
+where a.typea='1'
+
+--入庫
+insert #tmp (typea,uno,productno,product,spec,datea,mount,weight,unit,storeno,store)
+select '2',b.uno,b.productno,b.product,b.spec,a.datea,b.mount,b.weight,b.unit,b.storeno,b.store
+from view_ina a left join view_inas b on a.noa=b.noa
+
+--生產
+insert #tmp (typea,uno,productno,product,spec,datea,mount,weight,unit,storeno,store)
+select '3',b.uno,b.productno,b.product,b.spec,a.datea,b.mount,b.weight,b.unit,b.storeno,b.store
+from view_workb a left join view_workbs b on a.noa=b.noa
+
+--出貨退回
+insert #tmp (typea,uno,productno,product,spec,datea,mount,weight,unit,storeno,store)
+select '4',b.uno,b.productno,b.product,b.spec,a.datea,b.mount,b.weight,b.unit,b.storeno,b.store
+from view_vcc a left join view_vccs b on a.noa=b.noa 
+where a.typea='2' 
+
+--生產領料退回
+insert #tmp (typea,uno,productno,product,spec,datea,mount,weight,unit,storeno,store)
+select '4',b.uno,b.productno,b.product,b.spec,a.datea,b.mount,b.weight,b.unit,b.storeno,b.store
+from view_worka a left join view_workas b on a.noa=b.noa
+where a.typea='2'
+------------------------------------------------------------------------
+--進貨退回
+insert #tmp (typea,uno,productno,product,spec,datea,mount,weight,unit,storeno,store)
+select '5',b.uno,b.productno,b.product,b.spec,a.datea,-1*b.mount,-1*b.weight,b.unit,b.storeno,b.store
+from view_rc2 a left join view_rc2s b on a.noa=b.noa 
+where a.typea='2' 
+
+--出貨
+insert #tmp (typea,uno,productno,product,spec,datea,mount,weight,unit,storeno,store)
+select '6',b.uno,b.productno,b.product,b.spec,a.datea,-1*b.mount,-1*b.weight,b.unit,b.storeno,b.store
+from view_vcc a left join view_vccs b on a.noa=b.noa 
+where a.typea='1' 
+
+--領料
+insert #tmp (typea,uno,productno,product,spec,datea,mount,weight,unit,storeno,store)
+select '7',b.uno,b.productno,b.product,b.spec,a.datea,-1*b.mount,-1*b.weight,b.unit,b.storeno,b.store
+from view_get a left join view_gets b on a.noa=b.noa
+
+--生產領料
+insert #tmp (typea,uno,productno,product,spec,datea,mount,weight,unit,storeno,store)
+select '8',b.uno,b.productno,b.product,b.spec,a.datea,-1*b.mount,-1*b.weight,b.unit,b.storeno,b.store
+from view_worka a left join view_workas b on a.noa=b.noa
+where a.typea='1' 
+------------------------------------------------------------------------
+--調撥出庫
+insert #tmp (typea,uno,productno,product,spec,datea,mount,weight,unit,storeno,store)
+select '9-1',b.uno,b.productno,b.product,b.spec,a.datea,-1*b.mount,-1*b.weight,b.unit,a.storeno,a.store
+from view_cng a left join view_cngs b on a.noa=b.noa
+
+--調撥入庫
+insert #tmp (typea,uno,productno,product,spec,datea,mount,weight,unit,storeno,store)
+select '9-2',b.uno,b.productno,b.product,b.spec,a.datea,b.mount,b.weight,b.unit,a.storeinno,a.storein
+from view_cng a left join view_cngs b on a.noa=b.noa
+------------------------------------------------------------------------
+update #tmp
+set uno=ISNULL(uno,''),productno=ISNULL(productno,''),spec=ISNULL(spec,''),storeno=ISNULL(storeno,'')
+,mount=ISNULL(mount,0),weight=ISNULL(weight,0)
+
+update a
+set indate=isnull(b.indate,'')
+from #tmp a outer apply (select MIN(datea) indate from #tmp where uno=a.uno and productno=a.productno and spec=a.spec and typea<'5') b
+
+delete a 
+from #tmp a outer apply (select MAX(datea)udate from #tmp where typea='0' and uno=a.uno and productno=a.productno and spec=a.spec and storeno=a.storeno)b --盤點
+where typea!='0' and datea<isnull(udate,'')
+
+--正常庫存
+insert #tmp (typea,uno,productno,product,spec,datea,indate,mount,weight,unit,storeno,store,lengthb,engpro,ucaucc,bmount,bweight)
+select '99',uno,productno,'',spec,'',indate,SUM(mount),SUM(weight),'',storeno,'',0,'','',0,0
+from #tmp group by uno,productno,spec,storeno,indate
+	
+--刪除明細
+delete #tmp where typea!='99'
+--刪除無庫存
+--delete #tmp where weight<=0 and mount<=0
+	
+--更新 名稱/參照,標準長,類別,倉庫
+update a 
+set productno=b.product,lengthb=b.trans,engpro=b.engpro,ucaucc=b.typea,unit=b.unit
+from #tmp a left join uca b on a.productno=b.noa
+where b.noa is not null
+
+update a 
+set product=b.product,lengthb=b.reserve,ucaucc=b.typea,unit=b.unit
+from #tmp a left join ucc b on a.productno=b.noa
+where b.noa is not null
+
+update a
+set store=b.store
+from #tmp a left join store b on a.storeno=b.noa
+where b.noa is not null
+	
+--//庫存end----------------------------------------------------------------------
+delete #tmp where isnull(uno,'')=''
+
+--加上尚未寫入暫存未入庫的日報表
+
+insert #tmp (typea,uno)
+select '0',uno from view_cuds a where uno!='' group by uno
+having not exists (select * from #tmp where uno=a.uno)
+
+insert #tmp (typea,uno)
+select '0',product2 from view_cuds a where product2!='' group by product2
+having not exists (select * from #tmp where uno=a.product2)
+---------------------------------------------------------------------------------
+
+declare @t_uno nvarchar(50)=case when '#non'=[1] then '' else [1] end --批號日期
+
+declare @t_uno1 nvarchar(50)=@t_uno+'A' --半成品
+declare @t_uno2 nvarchar(50)=@t_uno+'B' --再製品/成品 --製造
+declare @t_uno3 nvarchar(50)=@t_uno+'再' --再製品 --加工
+declare @t_uno4 nvarchar(50)=@t_uno+'異' --不良
+declare @t_uno5 nvarchar(50)=@t_uno+'零' --零碼
+
+set @t_uno1=@t_uno1+'-'+right('00'+CAST(CAST(right(isnull((select MAX(uno) from #tmp where uno like @t_uno1+'-%'),'00'),2) as int)+1 as NVARCHAR(10)),2)
+set @t_uno2=@t_uno2+'-'+right('00'+CAST(CAST(right(isnull((select MAX(uno) from #tmp where uno like @t_uno2+'-%'),'00'),2) as int)+1 as NVARCHAR(10)),2)
+set @t_uno3=@t_uno3+'-'+right('00'+CAST(CAST(right(isnull((select MAX(uno) from #tmp where uno like @t_uno3+'-%'),'00'),2) as int)+1 as NVARCHAR(10)),2)
+set @t_uno4=@t_uno4+'-'+right('00'+CAST(CAST(right(isnull((select MAX(uno) from #tmp where uno like @t_uno4+'-%'),'00'),2) as int)+1 as NVARCHAR(10)),2)
+set @t_uno5=@t_uno5+'-'+right('00'+CAST(CAST(right(isnull((select MAX(uno) from #tmp where uno like @t_uno5+'-%'),'00'),2) as int)+1 as NVARCHAR(10)),2)
+
+select @t_uno1 uno1,@t_uno2 uno2,@t_uno3 uno3,@t_uno4 uno4,@t_uno5 uno5
+
+IF OBJECT_ID('tempdb..#tmp')is not null
+BEGIN
+	drop table #tmp
+END
 ;
