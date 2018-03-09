@@ -2391,7 +2391,7 @@ where a.ordeno='"+@t_noa+"' and no2='"+@t_noq+"' and a.source!='9' ")
 EXEC("
 insert worka"+@accy+"(noa,typea,mechno,datea,workno)
 select '"+@worka2no+"','2',mechno,datea,ordeno
-from view_cuds where ordeno='"+@t_noa+"' and no2='"+@t_noq+"' and source='9' group by ordeno,mechno,datea")
+from view_cuds where ordeno='"+@t_noa+"' and no2='"+@t_noq+"' and source='9' and memo not like '%歸0%' group by ordeno,mechno,datea")
 
 EXEC("
 insert workas"+@accy+"(noa,noq,uno,productno,product,spec,mount,weight,ordeno,no2,workno,storeno)
@@ -2399,7 +2399,7 @@ select '"+@worka2no+"',RIGHT('000'+CAST(ROW_NUMBER() over (order by dbo.split(me
 ,a.uno,a.productno,c.product,c.spec,a.mount,a.weight,a.ordeno,a.no2,a.noa,isnull(c.storeno,'')
 from view_cuds a outer apply (select top 1* from view_ucaucc where noa=a.productno)b
 outer apply(select top 1 * from #tmp where uno=a.product2) c
-where a.ordeno='"+@t_noa+"' and no2='"+@t_noq+"' and a.source='9' ")
+where a.ordeno='"+@t_noa+"' and no2='"+@t_noq+"' and a.source='9' and memo not like '%歸0%' ")
 
 IF OBJECT_ID('tempdb..#tmp')is not null
 BEGIN
@@ -2429,7 +2429,7 @@ declare @noa nvarchar(50)=case when '#non'=[16] then '' else [16] end --日報�
 declare @datea nvarchar(50)=case when '#non'=[17] then '' else [17] end --加工日期
 
 declare @accy nvarchar(50)=isnull((select top 1 accy from view_cug where noa=@t_ordeno),@t_accy)
-declare @noq nvarchar(50)=isnull((select MAX(noq) from view_cuds where noa=@t_ordeno),'000')
+declare @noq nvarchar(50)=isnull((select MAX(noq) from view_cuds where noa=@noa),'000')
 
 set @noq=right('0000'+cast(cast(@noq as int)+1 as nvarchar(10)),3)
 

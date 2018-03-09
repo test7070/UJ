@@ -624,7 +624,7 @@
 					var t_source='9';//產出別 (2成品8再製7不良6零碼9餘料)
 					var t_mechno=emp($('#txtMechno').val())?'#non':$.trim($('#txtMechno').val());//機台
 					var t_pno=$.trim($('#txtUcano').val());//品名
-					var t_uno='#non';//產生身分證號
+					var t_uno=emp($('#txtUno').val())?'#non':$.trim($('#txtUno').val());//產生身分證號
 					var t_mount='1';//產出
 					var t_weight=dec($('#lblWeight2').text()); //長
 					var t_weight1=dec($('#lblWeight1').text());//出(%)
