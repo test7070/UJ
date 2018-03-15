@@ -19,7 +19,8 @@
             var q_readonly = ['txtWorker2', 'txtWorker'];
             var q_readonlys = [];
             var bbmNum = [['txtReserve', 10, 2, 1],['txtDrcr', 10, 0, 1],['txtInprice', 10, 0, 1],['txtSaleprice', 10, 3, 1],['txtUweight', 10, 2, 1]
-            ,['txtStdmount', 10, 0, 1],['txtSafemount', 10, 0, 1],['txtDays', 10, 0, 1],['txtBeginmoney', 10, 0, 1],['txtStkmoney', 10, 0, 1],['txtStkmount', 10, 0, 1],['txtStart', 10, 0, 1],['txtDensity', 10, 0, 1]];
+            ,['txtStdmount', 10, 0, 1],['txtSafemount', 10, 0, 1],['txtDays', 10, 0, 1],['txtBeginmoney', 10, 0, 1],['txtStkmoney', 10, 0, 1],['txtStkmount', 10, 0, 1],['txtStart', 10, 0, 1],['txtDensity', 10, 0, 1]
+            ,['txtPrice2', 10, 2, 1],['txtBeginmount', 10, 0, 1]];
             var bbsNum = [];
             var bbmMask = [];
             var bbsMask = [];
@@ -65,6 +66,11 @@
                 $('#btnTgg').click(function() {
 					t_where = "productno='" + $('#txtNoa').val() + "'";
 					q_box("ucctgg.aspx?" + r_userno + ";" + r_name + ";" + q_time + ";" + t_where, 'ucctgg', "95%", "95%", q_getMsg('btnTgg'));
+				});
+				
+				$('#btnCust').click(function() {
+					t_where = "noa='" + $('#txtNoa').val() + "'";
+					q_box("ucccust.aspx?" + r_userno + ";" + r_name + ";" + q_time + ";" + t_where, 'ucccust', "95%", "95%", q_getMsg('btnCust'));
 				});
             }
             function q_boxClose(s2) {
@@ -409,10 +415,16 @@
                         <td><input id="txtSaleprice" type="text" class="txt num c1"/></td>
                     </tr>
                     <tr>
-                        <td><span> </span><a id="lblUnit" class="lbl"> </a></td>
+                        <td><span> </span><a id="lblUnit_uj" class="lbl">採購單位</a></td> <!--同庫存單位-->
                         <td><input id="txtUnit" type="text" class="txt c1"/></td>
-                        <td><span> </span><a id="lblUweight" class="lbl"> </a></td>
+                        <td><span> </span><a id="lblUweight_uj" class="lbl">比重(Kg/M)</a></td>
                         <td><input id="txtUweight" type="text" class="txt num c1"/></td>
+                    </tr>
+                    <tr>
+                        <td><span> </span><a id="lblUnit2_uj" class="lbl">計價單位</a></td>
+                        <td><input id="txtUnit2" type="text" class="txt c1"/></td>
+                        <td><span> </span><a id="lblPrice2" class="lbl">基重(Kg/m2)</a></td>
+                        <td><input id="txtPrice2" type="text" class="txt num c1"/></td>
                     </tr>
                     <tr>
                     	<td><span> </span><a id="lblSpec_uj" class="lbl">規格</a></td>
@@ -429,8 +441,14 @@
                     <tr>
                     	<td><span> </span><a id="lblStdmount_uj" class="lbl">MOQ(M)</a></td>
                         <td><input id="txtStdmount" type="text" class="txt num c1"/></td>
+                    	<td><span> </span><a id="lblBeginmount_uj" class="lbl">MOQ(kg)</a></td>
+                        <td><input id="txtBeginmount" type="text" class="txt num c1"/></td>
+                    </tr>
+                    <tr>
                     	<td><span> </span><a id="lblSafemount_uj" class="lbl">採購點</a></td>
                         <td><input id="txtSafemount" type="text" class="txt num c1"/></td>
+                        <td><span> </span><a id="lblOrdctype_uj" class="lbl">採購優惠</a></td>
+                        <td><input id="txtOrdctype" type="text" class="txt c1"/></td>
                     </tr>
                     <tr>
                         <td><span> </span><a id="lblArea_uj" class="lbl">銷售政策</a></td>
@@ -455,6 +473,12 @@
                         <td><input id="txtDensity" type="text" class="txt num c1"/></td>
                     	<td><span> </span><a id="lblEan_uj" class="lbl">外勞使用代號</a></td>
                         <td><input id="txtEan" type="text" class="txt c1"/></td>
+                    </tr>
+                    <tr>
+                    	<td><span> </span><a id="lblTeam_uj" class="lbl">製作長/支</a></td>
+                        <td><input id="txtTeam" type="text" class="txt c1"/></td>
+                        <td> </td>
+                        <td><input id="btnCust" type="button" style='width: auto; font-size: medium;'/></td>
                     </tr>
                     <tr>
 						<td><span> </span><a id='lblTggno' class="lbl btn"> </a></td>

@@ -752,7 +752,7 @@
 					<tr>
 						<td><span> </span><a id="lblRev_uj" class="lbl">系列</a></td>
 						<td><input id="txtRev" type="text" class="txt c1"/></td>
-						<td><span> </span><a id="lblStationgno_uj" class="lbl">客戶編號</a></td>
+						<td><span> </span><a id="lblStationgno_uj" class="lbl">客戶</a></td>
                         <td><input id="txtStationgno" type="text" class="txt c1"/></td>
                         <td><span> </span><a id="lblStationg_uj" class="lbl">客戶名稱</a></td>
                         <td><input id="txtStationg" type="text" class="txt c1"/></td>
