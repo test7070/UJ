@@ -10,6 +10,10 @@
 		<script src="../script/qbox.js" type="text/javascript"></script>
 		<script src='../script/mask.js' type="text/javascript"></script>
 		<link href="../qbox.css" rel="stylesheet" type="text/css" />
+		<link href="css/jquery/themes/redmond/jquery.ui.all.css" rel="stylesheet" type="text/css" />
+        <script src="css/jquery/ui/jquery.ui.core.js"></script>
+        <script src="css/jquery/ui/jquery.ui.widget.js"></script>
+		<script src="css/jquery/ui/jquery.ui.datepicker_tw.js"></script>
 		<script type="text/javascript">
 			this.errorHandler = null;
 			function onPageError(error) {
@@ -33,6 +37,7 @@
 			q_desc = 1;
 					
 			aPop = new Array(
+			    ['txtProductno_', 'btnProduct_', 'ucc', 'noa,days,product', 'txtProductno_,txtFixmount_,txtProduct_', 'ucc_b.aspx']
 			);
 			
 			$(document).ready(function() {
@@ -48,13 +53,22 @@
 					return;
 				}
 				mainForm(0);
-				document.title='計畫性採購參數作業'
+				document.title='採購參數作業'
 			}
 			
 			var t_focusout='',t_focusout2='',t_fc=0,t_fbeq='';
 			function mainPost() {
 				q_getFormat();
-				q_mask(bbmMask);				
+				bbmMask = [['txtDatea', r_picd]];
+				$('#txtDatea').datepicker();
+				if(r_len==4){           
+                    $.datepicker.r_len=4;
+                }
+				q_mask(bbmMask);
+				
+				$('#txtMech2').change(function() {
+                    sum();
+                });				
 			} 
 			        	 
 			function q_boxClose(s2) {
@@ -102,24 +116,148 @@
 			}
 
 			function sum() {		
-				var innsum = 0;
-				var fixsum = 0;
 				for (var i=0; i<q_bbsCount; i++){
-					innsum = innsum + dec($('#txtMount_'+i).val());
-					fixsum = fixsum + dec($('#txtFixmount_'+i).val());
-				}
-				$('#textInnsum').val(innsum+' ');
-				$('#textFixsum').val(fixsum+' ');			
+				    //別
+				    $('#txtFrame_'+i).val($('#txtProductno_'+i).val().substr(2,1));
+				    //本月月均
+				    if($('#txtBtime3_'+i).val().length>0){
+				        $('#txtMount_'+i).val(dec($('#txtBtime3_'+i).val()));
+				    }else{
+				        tmount();
+				    }
+				    //未來月均
+				    if($('#txtEtime2_'+i).val().length>0){
+                        $('#txtWeight_'+i).val(dec($('#txtEtime2_'+i).val()));
+                    }else{
+                        fmount();
+                    }
+                    //採購點(天)=採購交期天數*安全存量+採購交期天數
+                    $('#txtBottom_' + i).val(q_add(q_mul(dec($('#txtFixmount_' + i).val()),q_div(dec($('#txtEtime_' + 0).val().replace('%','')),100)),dec($('#txtFixmount_' + i).val())));
+                    //滿足點=若採購週期>0，採購週期(天)+可採，不然採購交期天數+可採
+                    if($('#txtLoss_'+i).val().length>0){
+                         $('#txtBrepair_'+i).val(q_add($('#txtLoss_'+i).val(),$('#txtFixmount_'+i).val()));
+                    }else{
+                         $('#txtBrepair_'+i).val(q_add($('#txtErepair_'+i).val(),$('#txtFixmount_'+i).val()));
+                    }
+				}		
 			}
 			
-			function test() {
+			//本月月均
+			function tmount() {
+			    var t_mon=($('#txtMech2').val());
+                for (var i=0; i<q_bbsCount; i++){
+                    if($('#txtBtime3_'+i).val().length==0){
+                        if($('#txtBtime2_'+i).val()=='B'){
+                            if(t_mon=='2'){
+                                $('#txtMount_'+i).val(q_mul(dec($('#txtBebottom_'+i).val()),0.8));
+                            }else if(t_mon=='9'){
+                                $('#txtMount_'+i).val(q_mul(dec($('#txtBebottom_'+i).val()),1.2));
+                            }else{
+                                $('#txtMount_'+i).val(q_mul(dec($('#txtBebottom_'+i).val()),1));
+                            }  
+                        }else if($('#txtBtime2_'+i).val()=='C'){
+                            if(t_mon=='2'){
+                                $('#txtMount_'+i).val(q_mul(dec($('#txtBebottom_'+i).val()),0.8));
+                            }else if(t_mon=='10' || t_mon=='11' || t_mon=='12'){
+                                $('#txtMount_'+i).val(q_mul(dec($('#txtBebottom_'+i).val()),1.2));
+                            }else{
+                                $('#txtMount_'+i).val(q_mul(dec($('#txtBebottom_'+i).val()),1));
+                            } 
+                        }else{
+                            if(t_mon=='2'){
+                                $('#txtMount_'+i).val(q_mul(dec($('#txtBebottom_'+i).val()),0.8));
+                            }else{
+                                $('#txtMount_'+i).val(q_mul(dec($('#txtBebottom_'+i).val()),1));
+                            }
+                        }
+                    }else{
+                        $('#txtMount_'+i).val($('#txtMount_'+i).val());
+                    }
+                }
 			}
+			
+			//未來月均
+            function fmount() {
+                for (var i=0; i<q_bbsCount; i++){
+                    var t_mon=($('#txtBtime_'+i).val());
+                    if($('#txtEtime2_'+i).val().length==0){
+                        if($('#txtBtime2_'+i).val()=='B'){
+                            if(t_mon=='2'){
+                                $('#txtWeight_'+i).val(q_mul(dec($('#txtBebottom_'+i).val()),0.8));
+                            }else if(t_mon=='9'){
+                                $('#txtWeight_'+i).val(q_mul(dec($('#txtBebottom_'+i).val()),1.2));
+                            }else{
+                                $('#txtWeight_'+i).val(q_mul(dec($('#txtBebottom_'+i).val()),1));
+                            }  
+                        }else if($('#txtBtime2_'+i).val()=='C'){
+                            if(t_mon=='2'){
+                                $('#txtWeight_'+i).val(q_mul(dec($('#txtBebottom_'+i).val()),0.8));
+                            }else if(t_mon=='10' || t_mon=='11' || t_mon=='12'){
+                                $('#txtWeight_'+i).val(q_mul(dec($('#txtBebottom_'+i).val()),1.2));
+                            }else{
+                                $('#txtWeight_'+i).val(q_mul(dec($('#txtBebottom_'+i).val()),1));
+                            } 
+                        }else if($('#txtBtime2_'+i).val()=='-' || $('#txtBtime2_'+i).val()=='X'){
+                            $('#txtWeight_'+i).val($('#txtBebottom_'+i).val());
+                        }else{
+                            if(t_mon=='2'){
+                                $('#txtWeight_'+i).val(q_mul(dec($('#txtBebottom_'+i).val()),0.8));
+                            }else{
+                                $('#txtWeight_'+i).val(q_mul(dec($('#txtBebottom_'+i).val()),1));
+                            }
+                        }
+                    }else{
+                        $('#txtWeight_'+i).val($('#txtWeight_'+i).val());
+                    }
+                }
+            }
     		
 			function bbsAssign() {
 				for (var j = 0; j < q_bbsCount; j++) {
 					if ($('#btnMinus_' + j).hasClass('isAssign'))
-		                continue;
+		                continue;  
+		            $('#txtProductno_' + j).change(function() {
+                            t_IdSeq = -1;
+                            q_bodyId($(this).attr('id'));
+                            b_seq = t_IdSeq;
+                            sum();
+                    });
+                    
+                    $('#txtBebottom_' + j).change(function() {
+                            sum();
+                    });
+                    
+                    $('#txtBtime3_' + j).change(function() {
+                            sum();
+                    });
+                    
+                    $('#txtBtime2_' + j).change(function() {
+                            sum();
+                    });
+                    
+                    $('#txtBtime_' + j).change(function() {
+                            sum();
+                    });
+                    
+                    $('#txtEtime2_' + j).change(function() {
+                            sum();
+                    });
 					
+					$('#txtEtime_' + j).change(function() {
+                            sum();
+                    });
+                    
+                    $('#txtFixmount_' + j).change(function() {
+                            sum();
+                    });
+                    
+                    $('#txtErepair_' + j).change(function() {
+                            sum();
+                    });
+                    
+                    $('#txtLoss_' + j).change(function() {
+                            sum();
+                    });
 				}				
 				_bbsAssign();
 
@@ -154,8 +292,7 @@
 			}
 			function refresh(recno) {
 				_refresh(recno);
-				refreshBbs();	
-				sum();
+				refreshBbs();
 				$('#btndiv_detail_close').click();
 			}
 			
@@ -237,7 +374,7 @@
 			}
 			.dbbm {
 				float: left;
-				width: 600px;
+				width: 700px;
 				/*margin: -1px;
 				/*border: 1px black solid;*/
 				border-radius: 5px;
@@ -332,30 +469,7 @@
 	ondragover="event.dataTransfer.dropEffect='none';event.stopPropagation(); event.preventDefault();"
 	ondrop="event.dataTransfer.dropEffect='none';event.stopPropagation(); event.preventDefault();"
 	>
-		<div id="toolbar">
-  <div id="q_menu"></div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  <input id="btnXchg" type="button" style="display:none;background:url(../image/xchg_24.png) no-repeat;width:28px;height:26px"/>
-  <a id='lblQcopy' style="display:none;"></a>
-  <input id="chekQcopy" type="checkbox" style="display:none;"/>
-  <input id="btnIns" type="button"/>
-  <input id="btnModi" type="button"/>
-  <input id="btnDele" type="button"/>
-  <input id="btnSeek" type="button"/>
-  <input id="btnPrint" type="button"/>
-  <input id="btnPrevPage" type="button"/>
-  <input id="btnPrev" type="button"/>
-  <input id="btnNext" type="button"/>
-  <input id="btnNextPage" type="button"/>
-  <input id="btnOk" type="button" disabled="disabled" />
-  <input id="btnCancel" type="button" disabled="disabled"/>&nbsp;&nbsp;
-  <input id="btnAuthority" type="button" />&nbsp;&nbsp;
-  <span id="btnSign" style="text-decoration: underline;"></span>&nbsp;&nbsp;
-  <span id="btnAsign" style="text-decoration: underline;"></span>&nbsp;&nbsp;
-  <span id="btnLogout" style="text-decoration: underline;color:orange;"></span>&nbsp;&nbsp;
-  <input id="pageNow" type="text"  style="position: relative;text-align:center;"  size="2"/> /
-  <input id="pageAll" type="text"  style="position: relative;text-align:center;"  size="2"/>
-  <div id="q_acDiv"></div>
-</div>
+	<!--#include file="../inc/toolbar.inc"-->
 		<div id='dmain' >
 			<div class="dview" id="dview">
 				<table class="tview" id="tview">
@@ -379,13 +493,17 @@
 						<td> </td>
 						<td> </td>
 						<td> </td>
+						<td> </td>
+						<td> </td>
 						<td class="tdZ"> </td>
 					</tr>
 					<tr>	
 						<td><span> </span><a id='lblNoa_uj' class="lbl " >電腦編號</a></td>
 						<td><input id="txtNoa" type="text" class="txt c1" /></td>						
-						<td><span> </span><a id='lblDatea_uj' class="lbl">月份</a></td>
+						<td><span> </span><a id='lblDatea_uj' class="lbl">日期</a></td>
 						<td><input id="txtDatea"  type="text"  class="txt c1" /></td>
+						<td><span> </span><a id='lblMech2_uj' class="lbl">月份</a></td>
+                        <td><input id="txtMech2"  type="text"  class="txt c1" /></td>
 					</tr>
 					<tr>
                         <td><span> </span><a id='lblWorker' class="lbl"> </a></td>
@@ -401,7 +519,7 @@
 				<tr style='color:white; background:#003366;' >
 					<td  align="center" style="width:35px;"><input class="btn"  id="btnPlus" type="button" value='+' style="font-weight: bold;"  /></td>
 					<td align="center" style="width:30px;"><a id='lblFrame_uj' >別</a></td>
-					<td align="center" style="width:150px;"><a id='lblProductno' >新料號</a></td>
+					<td align="center" style="width:170px;"><a id='lblProductno' >新料號</a></td>
 					<td align="center" style="width:80px;"><a id='lblBebottom' >原月均(M)</a></td>
 					<td align="center" style="width:80px;"><a id='lblEnbottom' >手調月均(M)</a></td>
 					<td align="center" style="width:80px;"><a id='lblMount_uj' >本月月均(M)</a></td>
@@ -411,7 +529,7 @@
 					<td align="center" style="width:80px;"><a id='lblEtime' >安全庫存</a></td>
 					<td align="center" style="width:80px;"><a id='lblEnbottom' >採購交期天數</a></td>
 					<td align="center" style="width:80px;"><a id='lblEnbottom' >採購點(天)</a></td>
-					<td align="center" style="width:80px;"><a id='lblEnbottom' >管理類別</a></td>
+					<td align="center" style="width:40px;"><a id='lblEnbottom' >管理類別</a></td>
 					<td align="center" style="width:80px;"><a id='lblEnbottom' >可採</a></td>
 					<td align="center" style="width:80px;"><a id='lblEnbottom' >採購週期(天)</a></td>
 					<td align="center" style="width:80px;"><a id='lblEnbottom' >滿足點</a></td>
@@ -423,14 +541,23 @@
 						<input id="txtNoq.*" type="text" style="display: none;" />
 					</td>
 					<td><input id="txtFrame.*" type="text" class="txt c1" style="width:97%;"/></td>
-					<td><input id="txtProductno.*" type="text" class="txt c1" style="width:97%;"/></td>
+					<td><input id="txtProductno.*" type="text" class="txt c1" style="width:80%;"/>
+					    <input id="txtProduct.*" type="text" class="txt c1" style="display: none"/>
+					    <input class="btn" id="btnProduct.*" type="button" value='...' style=" font-weight: bold;" />
+					</td>
 					<td><input id="txtBebottom.*" type="text" class="num c1" style="width:97%;"/></td>
-					<td><input id="txtEnbottom.*" type="text" class="num c1" style="width:97%;"/></td>
+					<td><input id="txtBtime3.*" type="text" class="num c1" style="width:97%;"/></td>
 					<td><input id="txtMount.*" type="text" class="num c1" style="width:97%;"/></td>
 					<td><input id="txtBtime.*" type="text" class="txt c1" style="width:97%;"/></td>
-					<td><input id="txtBrepair.*" type="text" class="num c1" style="width:97%;"/></td>
+					<td><input id="txtEtime2.*" type="text" class="txt c1" style="width:97%;"/></td>
 					<td><input id="txtWeight.*" type="text" class="num c1" style="width:97%;"/></td>
 					<td><input id="txtEtime.*" type="text" class="txt c1" style="width:97%;"/></td>
+					<td><input id="txtFixmount.*" type="text" class="num c1" style="width:97%;"/></td>
+					<td><input id="txtBottom.*" type="text" class="num c1" style="width:97%;"/></td>
+					<td><input id="txtBtime2.*" type="text" class="txt c1" style="width:97%;"/></td>
+					<td><input id="txtErepair.*" type="text" class="num c1" style="width:97%;"/></td>
+					<td><input id="txtLoss.*" type="text" class="num c1" style="width:97%;"/></td>
+					<td><input id="txtBrepair.*" type="text" class="num c1" style="width:97%;"/></td>
 					<td><input id="txtMemo.*" type="text" class="txt c1" style="width:97%;"/></td>	
 				</tr>
 			</table>
