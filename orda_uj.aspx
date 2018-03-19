@@ -30,7 +30,7 @@
 			var pNoq =1;
 			q_sqlCount = 6;
 			brwCount = 6;
-			brwCount2 = 5;
+			brwCount2 = 3;
 			brwList = [];
 			brwNowPage = 0;
 			brwKey = 'Noa';
@@ -53,7 +53,7 @@
 					return;
 				}
 				mainForm(0);
-				document.title='採購需求總表作業'
+				document.title='採購參數作業'
 			}
 			
 			var t_focusout='',t_focusout2='',t_fc=0,t_fbeq='';
@@ -65,6 +65,7 @@
                     $.datepicker.r_len=4;
                 }
 				q_mask(bbmMask);
+				
 							
 			} 
 			        	 
@@ -80,16 +81,17 @@
 			
 			function q_gtPost(t_name) {
 				switch (t_name) {
-				    case 'orda': 
-                        var as = _q_appendData("ordas", "", true);
-                        q_gridAddRow(bbsHtm, 'tbbs', 'txtProductno,txtProduct'
-                        , as.length, as, 'productno,product', 'txtProductno,txtProduct','');
+				    case 'modfixc':
+                        as = _q_appendData("modfixcs", "", true);
+                        q_gridAddRow(bbsHtm, 'tbbs', 'txtProductno,txtProduct,textM6,textM14,textM8,textM10,textM11,textM15'
+                        , as.length, as, 'productno,product,bottom,mount,brepair,erepair,weight,etime', 'txtProductno,txtProduct','');
                         for ( i = 0; i < q_bbsCount; i++) {
                             if (i < as.length) {
                             }else{
                                 _btnMinus("btnMinus_" + i);
                             }
                         }
+                        sum();
                         $('#txtNoa').focus();
                         break;				
 					case q_name:
@@ -121,21 +123,77 @@
 			function _btnSeek() {
 				if (q_cur > 0 && q_cur < 4)
 					return;
-				q_box('orda_s.aspx', q_name + '_s', "500px", "420px", q_getMsg("popSeek"));
+				q_box('orda_uj_s.aspx', q_name + '_s', "500px", "420px", q_getMsg("popSeek"));
 			}
 
 			function sum() {		
 				for (var i=0; i<q_bbsCount; i++){
-
+				    //總庫存賣(天)
+				    $('#textM1_' + i).val(q_sub(q_add(q_add(q_add(q_add(dec($('#textU1_' + i).val()),dec($('#textU2_' + i).val())),dec($('#textU3_' + i).val())),dec($('#textU4_' + i).val())),dec($('#textU5_' + i).val())),dec($('#textU6_' + i).val())));
+				    //總庫小計(M)
+				    $('#textM2_' + i).val(q_div(q_mul(dec($('#textM1_' + i).val()),dec($('#textM14_' + i).val())),30));
+				    //已採未交(天)
+                    $('#textM3_' + i).val(q_div(dec($('#textM4_' + i).val()),q_div(dec($('#textM14_' + i).val()),30)));
+                    //總庫存(天)
+                    $('#textM7_' + i).val(q_add(dec($('#textM1_' + i).val()),dec($('#textM3_' + i).val())));
+                    //總庫存(M)
+                    $('#textM5_' + i).val(q_div(q_mul(dec($('#textM7_' + i).val()),dec($('#textM14_' + i).val())),30));
+                    //距離必採倒數(天)
+                    if(dec($('#textM7_' + i).val())>dec($('#textM8_' + i).val()) || (q_sub(dec($('#textM7_' + i).val()),dec($('#textM6_' + i).val()))<0)){
+                        $('#txtSchmount_' + i).val('0');
+                    }else{
+                        $('#txtSchmount_' + i).val(q_sub(dec($('#textM7_' + i).val()),dec($('#textM6_' + i).val())));
+                    }
+                    //應採購量(天)
+                    if(dec($('#textM7_' + i).val())<dec($('#textM6_' + i).val()) || (dec($('#textM10_' + i).val())==1 && dec($('#textM7_' + i).val())<dec($('#textM8_' + i).val()))){
+                        $('#textM9_' + i).val(q_sub(dec($('#textM8_' + i).val()),dec($('#textM6_' + i).val())));
+                    }else{
+                        $('#textM9_' + i).val('0');
+                    }
+                    //採購
+                    tmount();
+                    //採購量(M)
+                    fmount();
 				}		
 			}
 			
-			//本月月均
+			//採購
 			function tmount() {
+			    for (var i=0; i<q_bbsCount; i++){
+			        var t_t1,t_t2;
+			        if(dec($('#textM7_' + i).val())<dec($('#textM6_' + i).val())){
+                        t_t1='急';
+                    }else if(dec($('#textM4_' + i).val())>0 && dec($('#textM9_' + i).val())>0){
+                        t_t1='再';
+                    }else if(dec($('#textM10_' + i).val())==1 && dec($('#textM7_' + i).val())<dec($('#textM8_' + i).val())){
+                        t_t1='可';
+                    }else if(dec($('#txtSchmount_' + i).val())>0){
+                        t_t1='@';
+                    }else{
+                        t_t1='';
+                    }
+                    if(dec($('#textM13_' + i).val())>0 && dec($('#textM12_' + i).val())<dec($('#textM13_' + i).val())){
+                        t_t2='少';
+                    }else if($('#textM13_' + i).val()=='' && (q_div(dec($('#textM12_' + i).val()),dec($('#textM11_' + i).val()))<q_div(dec($('#textM15_' + 0).val().replace('%','')),100))){
+                        t_t2='少';
+                    }else{
+                        t_t2='';
+                    }
+                    $('#txtFdate_' + i).val(t_t1+t_t2);
+			    }
 			}
-			
-			//未來月均
+
             function fmount() {
+                for (var i=0; i<q_bbsCount; i++){
+                    var t_mount1=q_div(q_mul(dec($('#textM9_' + i).val()),dec($('#textM11__' + i).val())),30);
+                    var t_mount2=0;
+                    if($('#textM13_' + i).val()!='' && dec($('#textM12_' + i).val())<dec($('#textM13_' + i).val())){
+                        t_mount2=q_sub(dec($('#textM13_' + i).val()),dec($('#textM12_' + i).val()));
+                    }else{
+                        t_t1='';
+                    }
+                    $('#txtMount_' + i).val(q_add(t_mount1,t_mount2));
+                }
                 
             }
     		
@@ -148,6 +206,66 @@
                             q_bodyId($(this).attr('id'));
                             b_seq = t_IdSeq;
                             sum();
+                    });  
+                    $('#textM1_' + j).change(function() {
+                            sum();
+                    });
+                    $('#textM14_' + j).change(function() {
+                            sum();
+                    });
+                    $('#textM3_' + j).change(function() {
+                            sum();
+                    });
+                    $('#textM4_' + j).change(function() {
+                            sum();
+                    });
+                    $('#textM6_' + j).change(function() {
+                            sum();
+                    });
+                    $('#textM7_' + j).change(function() {
+                            sum();
+                    });
+                    $('#textM8_' + j).change(function() {
+                            sum();
+                    });
+                    $('#textM9_' + j).change(function() {
+                            sum();
+                    });
+                    $('#txtSchmount_' + j).change(function() {
+                            sum();
+                    });
+                    $('#textM10_' + j).change(function() {
+                            sum();
+                    });
+                    $('#textM11_' + j).change(function() {
+                            sum();
+                    });
+                    $('#textM12_' + j).change(function() {
+                            sum();
+                    });
+                    $('#textM13_' + j).change(function() {
+                            sum();
+                    });
+                    $('#textM15_' + j).change(function() {
+                            sum();
+                    });
+                    $('#textU1_' + j).change(function() {
+                            sum();
+                    });
+                    $('#textU2_' + j).change(function() {
+                            sum();
+                    });
+                    $('#textU3_' + j).change(function() {
+                            sum();
+                    });
+                    $('#textU4_' + j).change(function() {
+                            sum();
+                    });
+                    $('#textU5_' + j).change(function() {
+                            sum();
+                    });
+                    $('#textU6_' + j).change(function() {
+                            sum();
                     });
 				}				
 				_bbsAssign();
@@ -156,17 +274,17 @@
 			
 			function btnIns() {
 				_btnIns();
-				$('#txtNoa').val('AUTO');
-				$('#txtDatea').val(q_date());
-				
 				$('#txtSignno').change(function() {
                     if($('#txtSignno').val().length!=0){
                         t_where = "where=^^ noa='"+$('#txtSignno').val()+"' ^^";
-                        q_gt('orda', t_where, 0, 0, 0, "", r_accy);
+                        q_gt('modfixc', t_where, 0, 0, 0, "", r_accy);
                     }
                 });
-				
+				$('#txtNoa').val('AUTO');
+				$('#txtDatea').val(q_date());
 				refreshBbs();
+				
+				
 			}
 			function btnModi() {			
 				_btnModi();
@@ -181,12 +299,7 @@
 				_btnOk(key_value, bbmKey[0], bbsKey[1], '', 2);
 			}
 			function bbsSave(as) {
-				if (!as['nob']) {
-					as[bbsKey[1]] = '';
-					return;
-				}
 				q_nowf();
-				as['datea'] = abbm2['datea'];
 				return true;
 			}
 			function refresh(recno) {
@@ -392,19 +505,21 @@
 						<td> </td>
 						<td> </td>
 						<td> </td>
+						<td> </td>
+						<td> </td>
 						<td class="tdZ"> </td>
 					</tr>
-					<tr>	
-						<td><span> </span><a id='lblNoa_uj' class="lbl " >電腦編號</a></td>
-						<td><input id="txtNoa" type="text" class="txt c1" /></td>						
-						<td><span> </span><a id='lblDatea_uj' class="lbl">日期</a></td>
-						<td><input id="txtDatea"  type="text"  class="txt c1" /></td>
-					</tr>
-					<tr>
-						<td><span> </span><a id='lblSignno_uj' class="lbl">採購參數單號</a></td>
+					 <tr>    
+                        <td><span> </span><a id='lblNoa_uj' class="lbl " >電腦編號</a></td>
+                        <td><input id="txtNoa" type="text" class="txt c1" /></td>                       
+                        <td><span> </span><a id='lblDatea_uj' class="lbl">日期</a></td>
+                        <td><input id="txtDatea"  type="text"  class="txt c1" /></td>
+                    </tr>
+                    <tr>
+                        <td><span> </span><a id='lblSignno_uj' class="lbl">採購參數單號</a></td>
                         <td><input id="txtSignno"  type="text"  class="txt c1" /></td>
-					</tr>
-					<tr>
+                    </tr>
+                    <tr>
                         <td><span> </span><a id='lblWorker' class="lbl"> </a></td>
                         <td><input id="txtWorker"  type="text"  class="txt c1"/></td>
                         <td><span> </span><a id='lblWorker2' class="lbl"> </a></td>
@@ -418,11 +533,12 @@
 			</div>
 		</div>
 		<div class='dbbs'>
-			<table id="tbbs" class='tbbs' style="width:2200px;">
+			<table id="tbbs" class='tbbs' style="width:2250px;">
 				<tr style='color:white; background:#003366;' >
 					    <td  align="center" style="width:35px;"><input class="btn"  id="btnPlus" type="button" value='+' style="font-weight: bold;"  /></td>
 					    <td align="center" style="width:180px;"><a id='lblProductno' >品名</a></td>
-					    <td align="center" style="width:80px;"><a id='lblM1_uj'>總庫存賣(天)</a></td>
+                        <td align="center" style="width:80px;"><a id='lblM1_uj'>總庫存賣(天)</a></td>
+                        <td align="center" style="width:80px;"><a id='lblM14_uj'>本月月均(M)</a></td>
                         <td align="center" style="width:80px;"><a id='lblM2_uj'>總庫小計(M)</a></td>
                         <td align="center" style="width:80px;"><a id='lblM3_uj'>已採未交(天)</a></td>
                         <td align="center" style="width:80px;"><a id='lblM4_uj'>已採未交(M)</a></td>
@@ -439,6 +555,7 @@
                         <td align="center" style="width:80px;"><a id='lblM11_uj'>未來月均(M)</a></td>
                         <td align="center" style="width:80px;"><a id='lblM12_uj'>可動用皮料庫存(M)</a></td>
                         <td align="center" style="width:80px;"><a id='lblM13_uj'>可動用皮料提醒量(M)</a></td>
+                        <td align="center" style="width:80px;"><a id='lblM15_uj'>安全庫存</a></td>
                         <td align="center" style="width:150px;"><a id='lblMemo_s'> </a></td>
                         <td align="center" style="width:80px;"><a id='lblU1_uj'>成品(天)</a></td>
                         <td align="center" style="width:80px;"><a id='lblU2_uj'>再製品(天)</a></td>
@@ -448,38 +565,40 @@
                         <td align="center" style="width:80px;"><a id='lblU6_uj'>訂單式耗用(天)</a></td>
 				</tr>
 				<tr style='background:#cad3ff;' class="ishide.*">
-					<td align="center">
-						<input id="btnMinus.*" type="button" style="font-size:medium; font-weight:bold; width:90%;" value="-"/>
-						<input id="txtNoq.*" type="text" style="display: none;" />
-					</td>
-					<td><input id="txtProductno.*" type="text" class="txt c1" style="width:97%;"/>
-					    <input id="txtProduct.*" type="text" class="txt c1" style="width:80%;"/>
-					    <input class="btn" id="btnProduct.*" type="button" value='...' style=" font-weight: bold;" />
-					</td>
-					<td><input id="textM1.*" type="text" class="num c1" style="width:97%;"/></td>
-					<td><input id="textM2.*" type="text" class="num c1" style="width:97%;"/></td>
-					<td><input id="textM3.*" type="text" class="num c1" style="width:97%;"/></td>
-					<td><input id="textM4.*" type="text" class="num c1" style="width:97%;"/></td>
-					<td><input id="textM5.*" type="text" class="num c1" style="width:97%;"/></td>
-					<td><input id="textM6.*" type="text" class="num c1" style="width:97%;"/></td>
-					<td><input id="textM7.*" type="text" class="num c1" style="width:97%;"/></td>
-					<td><input id="textM8.*" type="text" class="num c1" style="width:97%;"/></td>
-					<td><input id="txtSchmount.*" type="text" class="num c1" style="width:97%;"/></td>
-					<td><input id="textM9.*" type="text" class="num c1" style="width:97%;"/></td>
-					<td><input id="txtFdate.*" type="text" class="txt c1" style="width:97%;"/></td>
-					<td><input id="txtMount.*" type="text" class="num c1" style="width:97%;"/></td>
-					<td><input id="txtGmount.*" type="text" class="num c1" style="width:97%;"/></td>
-					<td><input id="textM10.*" type="text" class="num c1" style="width:97%;"/></td>
-					<td><input id="textM11.*" type="text" class="num c1" style="width:97%;"/></td>
-					<td><input id="textM12.*" type="text" class="num c1" style="width:97%;"/></td>
-					<td><input id="textM13.*" type="text" class="num c1" style="width:97%;"/></td>
-					<td><input id="txtMemo.*" type="text" class="txt c1" style="width:97%;"/></td>
-					<td><input id="textU1.*" type="text" class="num c1" style="width:97%;"/></td>
-                    <td><input id="textU2.*" type="text" class="num c1" style="width:97%;"/></td>
-                    <td><input id="textU3.*" type="text" class="num c1" style="width:97%;"/></td>
-                    <td><input id="textU4.*" type="text" class="num c1" style="width:97%;"/></td>
-                    <td><input id="textU5.*" type="text" class="num c1" style="width:97%;"/></td>
-                    <td><input id="textU6.*" type="text" class="num c1" style="width:97%;"/></td>	
+    					<td align="center">
+    						<input id="btnMinus.*" type="button" style="font-size:medium; font-weight:bold; width:90%;" value="-"/>
+    						<input id="txtNoq.*" type="text" style="display: none;" />
+    					</td>
+					    <td><input id="txtProductno.*" type="text" class="txt c1" style="width:97%;"/>
+                        <input id="txtProduct.*" type="text" class="txt c1" style="width:80%;"/>
+                        <input class="btn" id="btnProduct.*" type="button" value='...' style=" font-weight: bold;" />
+                        </td>
+                        <td><input id="textM1.*" type="text" class="num c1" style="width:97%;"/></td>
+                        <td><input id="textM14.*" type="text" class="num c1" style="width:97%;"/></td>
+                        <td><input id="textM2.*" type="text" class="num c1" style="width:97%;"/></td>
+                        <td><input id="textM3.*" type="text" class="num c1" style="width:97%;"/></td>
+                        <td><input id="textM4.*" type="text" class="num c1" style="width:97%;"/></td>
+                        <td><input id="textM5.*" type="text" class="num c1" style="width:97%;"/></td>
+                        <td><input id="textM6.*" type="text" class="num c1" style="width:97%;"/></td>
+                        <td><input id="textM7.*" type="text" class="num c1" style="width:97%;"/></td>
+                        <td><input id="textM8.*" type="text" class="num c1" style="width:97%;"/></td>
+                        <td><input id="txtSchmount.*" type="text" class="num c1" style="width:97%;"/></td>
+                        <td><input id="textM9.*" type="text" class="num c1" style="width:97%;"/></td>
+                        <td><input id="txtFdate.*" type="text" class="txt c1" style="width:97%;"/></td>
+                        <td><input id="txtMount.*" type="text" class="num c1" style="width:97%;"/></td>
+                        <td><input id="txtGmount.*" type="text" class="num c1" style="width:97%;"/></td>
+                        <td><input id="textM10.*" type="text" class="num c1" style="width:97%;"/></td>
+                        <td><input id="textM11.*" type="text" class="num c1" style="width:97%;"/></td>
+                        <td><input id="textM12.*" type="text" class="num c1" style="width:97%;"/></td>
+                        <td><input id="textM13.*" type="text" class="num c1" style="width:97%;"/></td>
+                        <td><input id="textM15.*" type="text" class="num c1" style="width:97%;"/></td>
+                        <td><input id="txtMemo.*" type="text" class="txt c1" style="width:97%;"/></td>
+                        <td><input id="textU1.*" type="text" class="num c1" style="width:97%;"/></td>
+                        <td><input id="textU2.*" type="text" class="num c1" style="width:97%;"/></td>
+                        <td><input id="textU3.*" type="text" class="num c1" style="width:97%;"/></td>
+                        <td><input id="textU4.*" type="text" class="num c1" style="width:97%;"/></td>
+                        <td><input id="textU5.*" type="text" class="num c1" style="width:97%;"/></td>
+                        <td><input id="textU6.*" type="text" class="num c1" style="width:97%;"/></td>	
 				</tr>
 			</table>
 		</div>
