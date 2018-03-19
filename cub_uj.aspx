@@ -17,7 +17,7 @@
             this.errorHandler = null;
             q_tables = 't';
             var q_name = "cub";
-            var q_readonly = ['txtNoa','txtWorker','txtWorker2'];
+            var q_readonly = ['txtNoa','txtWorker','txtWorker2','txtMo'];
             var q_readonlys = [];
             var q_readonlyt = [];
             var bbmNum = [];
@@ -82,6 +82,19 @@
                 q_mask(bbmMask);
                 
                 document.title='生產指令';
+                
+                
+                $('#txtProduct').change(function() {
+                	var t_noa=$.trim($('#txtNoa').val());
+					var t_product=$.trim($('#txtProduct').val());
+					if(t_product.length>0){
+						q_gt('view_cub',"where=^^product='"+t_product+"' and noa!='"+t_noa+"' ^^", 0, 0, 0, "checkproductuj", r_accy,1);
+						var as = _q_appendData("view_cub", "", true);
+						if (as[0] != undefined) {
+							alert('指令名稱重覆!!【'+as[0].noa+'】');
+						}
+					}
+				});
                
 				$('#btnCug_uj').click(function() {
 					//不經"生管"排程  直接轉cug
@@ -211,7 +224,7 @@
             }
 			
             function btnOk() {
-            	t_err = q_chkEmpField([['txtDatea', '日期']]);
+            	t_err = q_chkEmpField([['txtDatea', '日期'],['txtProduct', '指令名稱']]);
                 if (t_err.length > 0) {
                     alert(t_err);
                     return;
@@ -222,18 +235,35 @@
                     return;
                 }
                 
+                var t_noa=$.trim($('#txtNoa').val());
+				var t_product=$.trim($('#txtProduct').val());
+				if(t_product.length>0){
+					q_gt('view_cub',"where=^^product='"+t_product+"' and noa!='"+t_noa+"' ^^", 0, 0, 0, "btnokproductuj", r_accy,1);
+					var as = _q_appendData("view_cub", "", true);
+					if (as[0] != undefined) {
+						alert('指令名稱重覆!!【'+as[0].noa+'】');
+						return;
+					}
+				}
+                
                 sum();
                 
                 if(q_cur==1){
                 	$('#txtWorker').val(r_name);
                 }else{
                 	$('#txtWorker2').val(r_name);
+                	
+                	var t_mo=dec($('#txtMo').val());
+                	$('#txtMo').val(q_add(t_mo,1));
                 }
                                     
                 var t_noa = trim($('#txtNoa').val());
                 var t_date = trim($('#txtDatea').val());
+                t_date=replaceAll((t_date.length == 0 ? q_date() : t_date),'/','');
+                t_date=t_date.slice(-6);
+                
                 if (t_noa.length == 0 || t_noa == "AUTO")
-                    q_gtnoa(q_name, replaceAll($('#cmbItype').val() + (t_date.length == 0 ? q_date() : t_date), '/', ''));
+                    q_gtnoa(q_name, replaceAll($('#cmbItype').val() + t_date + '-', '/', ''));
                 else
                     wrServer(t_noa);
             }
@@ -361,7 +391,7 @@
 	                        				q_gt('uca',"where=^^noa='"+t_productno+"'^^", 0, 0, 0, "getuca2", r_accy,1);
 	                        				var tpuca = _q_appendData("uca", "", true);
 	                        				if (tpuca[0] != undefined) {
-												$('#txtClass_'+b_seq).val(tpuca[0].groupdno);//MOQ
+												$('#txtClass_'+b_seq).val(tpuca[0].stdmount);//MOQ //groupdno
 												$('#txtMakeno_'+b_seq).val(tpuca[0].grouphno)//上皮
 												$('#txtOrdcno_'+b_seq).val(tpuca[0].groupino)//上紙
 											}
@@ -397,7 +427,7 @@
 		                        				q_gt('uca',"where=^^noa='"+t_productno+"'^^", 0, 0, 0, "getuca2", r_accy,1);
 		                        				var tpuca = _q_appendData("uca", "", true);
 		                        				if (tpuca[0] != undefined) {
-													$('#txtClass_'+b_seq).val(tpuca[0].groupdno);//MOQ
+													$('#txtClass_'+b_seq).val(tpuca[0].stdmount);//MOQ //groupdno
 													$('#txtMakeno_'+b_seq).val(tpuca[0].grouphno)//上皮
 													$('#txtOrdcno_'+b_seq).val(tpuca[0].groupino)//上紙
 												}
@@ -437,7 +467,7 @@
 		                        				q_gt('uca',"where=^^noa='"+t_productno+"'^^", 0, 0, 0, "getuca2", r_accy,1);
 		                        				var tpuca = _q_appendData("uca", "", true);
 		                        				if (tpuca[0] != undefined) {
-													$('#txtClass_'+b_seq).val(tpuca[0].groupdno);//MOQ
+													$('#txtClass_'+b_seq).val(tpuca[0].stdmount);//MOQ //groupdno
 													$('#txtMakeno_'+b_seq).val(tpuca[0].grouphno)//上皮
 													$('#txtOrdcno_'+b_seq).val(tpuca[0].groupino)//上紙
 												}
@@ -473,7 +503,7 @@
 			                        				q_gt('uca',"where=^^noa='"+t_productno+"'^^", 0, 0, 0, "getuca2", r_accy,1);
 			                        				var tpuca = _q_appendData("uca", "", true);
 			                        				if (tpuca[0] != undefined) {
-														$('#txtClass_'+b_seq).val(tpuca[0].groupdno);//MOQ
+														$('#txtClass_'+b_seq).val(tpuca[0].stdmount);//MOQ //groupdno
 														$('#txtMakeno_'+b_seq).val(tpuca[0].grouphno)//上皮
 														$('#txtOrdcno_'+b_seq).val(tpuca[0].groupino)//上紙
 													}
@@ -791,7 +821,7 @@
                         				q_gt('uca',"where=^^noa='"+t_productno+"'^^", 0, 0, 0, "getuca2", r_accy,1);
                         				var tpuca = _q_appendData("uca", "", true);
                         				if (tpuca[0] != undefined) {
-											$('#txtClass_'+b_seq).val(tpuca[0].groupdno);//MOQ
+											$('#txtClass_'+b_seq).val(tpuca[0].stdmount);//MOQ //groupdno
 											$('#txtMakeno_'+b_seq).val(tpuca[0].grouphno)//上皮
 											$('#txtOrdcno_'+b_seq).val(tpuca[0].groupino)//上紙
 										}
@@ -827,7 +857,7 @@
 	                        				q_gt('uca',"where=^^noa='"+t_productno+"'^^", 0, 0, 0, "getuca2", r_accy,1);
 	                        				var tpuca = _q_appendData("uca", "", true);
 	                        				if (tpuca[0] != undefined) {
-												$('#txtClass_'+b_seq).val(tpuca[0].groupdno);//MOQ
+												$('#txtClass_'+b_seq).val(tpuca[0].stdmount);//MOQ //groupdno
 												$('#txtMakeno_'+b_seq).val(tpuca[0].grouphno)//上皮
 												$('#txtOrdcno_'+b_seq).val(tpuca[0].groupino)//上紙
 											}
@@ -852,7 +882,7 @@
 	                        q_gt('uca',"where=^^noa='"+t_productno+"'^^", 0, 0, 0, "getuca2", r_accy,1);
 	                        var tpuca = _q_appendData("uca", "", true);
 	                        if (tpuca[0] != undefined) {
-								$('#txtClass_'+b_seq).val(tpuca[0].groupdno);//MOQ
+								$('#txtClass_'+b_seq).val(tpuca[0].stdmount);//MOQ //groupdno
 								$('#txtMakeno_'+b_seq).val(tpuca[0].grouphno)//上皮
 								$('#txtOrdcno_'+b_seq).val(tpuca[0].groupino)//上紙
 							}
@@ -975,10 +1005,12 @@
                 /*overflow: hidden;*/
             }
             .dview {
+            	width: 25%;
                 float: left;
                 border-width: 0px;
             }
             .tview {
+            	width:100%;
                 border: 5px solid gray;
                 font-size: medium;
                 background-color: black;
@@ -1150,8 +1182,8 @@
 				<table class="tview" id="tview" >
 					<tr>
 						<td style="width:20px; color:black;"><a id='vewChk'> </a></td>
-						<td style="width:80px; color:black;"><a id='vewNoa_uj'>指令流水號</a></td>
-						<td style="width:100px; color:black;"><a id='vewDatea_uj'>立單日</a></td>
+						<td style="width:100px; color:black;"><a id='vewNoa_uj'>指令流水號</a></td>
+						<td style="width:80px; color:black;"><a id='vewDatea_uj'>立單日</a></td>
 					</tr>
 					<tr>
 						<td><input id="chkBrow.*" type="checkbox" style=''/></td>
@@ -1188,6 +1220,9 @@
 						<td><span> </span><a id="lblCustno_uj" class="lbl" >客戶</a></td>
 						<td><input id="txtCustno" type="text" class="txt c1" style="width: 99%;"/></td>
 						<td><input id="txtComp" type="text" class="txt c1" style="width: 99%;"/></td>
+						<td> </td>
+						<td><span> </span><a id="lblMo_uj" class="lbl" >改單</a></td>
+						<td><input id="txtMo" type="text" class="txt num c1" style="width: 20%;"/></td>
 					</tr>
 					<tr>
 						<td><span> </span><a id="lblProcessno_uj" class="lbl" >成品入庫倉別</a></td>
@@ -1197,8 +1232,11 @@
 							<input id="btnCug_uj" type="button" value="派工單"/>
 							<input id="txtStatus" type="hidden"/> <!--寫入已轉派工單號-->
 						</td>
-						<td><input id="btnEnda_uj" type="button" value="完工" /></td>
-						<td><input id="chkMenda" type="checkbox" /><a id="lblMenda_uj" class="lbl" style="float: left;" >鎖單</a></td>
+						<td>
+							<input id="btnEnda_uj" type="button" value="完工" />
+							<span> </span><a id="lblMenda_uj" class="lbl">鎖單</a>
+						</td>
+						<td><input id="chkMenda" type="checkbox" /></td>
 						<!--<td><span> </span><a id="lblOrdeno_uj" class="lbl" >訂單編號</a></td>
 						<td><input id="txtOrdeno" type="text" class="txt c1" style="width: 99%;"/></td>-->
 					</tr>

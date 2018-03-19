@@ -59,7 +59,7 @@
                 q_mask(bbmMask);
                 
                 q_cmbParse("cmbTypea", '希德,噴繪');	
-                document.title='計畫性需求製令單';
+                document.title='計畫性成品製令單';
                 
                 $('#cmbTypea').change(function() {
                 	change_field();
