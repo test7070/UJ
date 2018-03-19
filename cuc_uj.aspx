@@ -270,7 +270,7 @@
 							t_m03total=q_add(t_m03total,dec($('#txtM03_'+j).val()));
 					}
 					if(t_m03total!=0)
-						$('#txtSize_'+i).val(q_div(t_weight3,t_m03total));
+						$('#txtSize_'+i).val(round(q_div(t_weight3,t_m03total)*100,0));
 					else
 						$('#txtSize_'+i).val(0);
 				}
@@ -793,7 +793,7 @@
 						<td align="center" style="width: 80px;"><a id='lblMount2_s_uj'>成品庫存<BR>(支)</a></td><!--H-->
 						<td align="center" style="width: 80px;"><a id='lblMount3_s_uj'>總庫存<BR>(支)</a></td><!--I-->
 						<td align="center" style="width: 80px;"><a id='lblMount4_s_uj'>原生產<BR>(支)</a></td><!--J-->
-						<td align="center" style="width: 80px;" class="F01"><a id='lblSize_s_uj'>可供貨%</a></td><!--K-->
+						<td align="center" style="width: 80px;" class="F01"><a id='lblSize_s_uj'>可供貨<BR>(%)</a></td><!--K-->
 						<td align="center" style="width: 80px;" class="F02"><a id='lblParab_s_uj'>半成品轉<BR>成品(支)</a></td>
 						<td align="center" style="width: 90px;"><a id='lblUcolor_s_uj'>篩選<BR>生產量(支)</a></td><!--L-->
 						<td align="center" style="width: 90px;"><a id='lblParaa_s_uj'>手調<BR>生產量(支)</a></td><!--M-->
