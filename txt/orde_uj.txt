@@ -1584,6 +1584,9 @@ declare @t_uno nvarchar(50)=case when '#non'=[4] then '' else [4] end
 declare @t_uno1 nvarchar(50)=case when '#non'=[5] then '' else [5] end
 declare @t_uno2 nvarchar(50)=case when '#non'=[6] then '' else [6] end
 declare @t_uno3 nvarchar(50)=case when '#non'=[7] then '' else [7] end
+declare @t_mount1 nvarchar(50)=case when '#non'=[8] then '0' else [8] end
+declare @t_mount2 nvarchar(50)=case when '#non'=[9] then '0' else [9] end
+declare @t_mount3 nvarchar(50)=case when '#non'=[10] then '0' else [10] end
 
 declare @accy nvarchar(50)=isnull((select top 1 accy from view_cug where noa=@t_noa),@t_accy)
 declare @uno nvarchar(50)=@t_uno+'-'+right('00'+cast(cast(right(isnull((select MAX(nosold) from view_cugs where isnull(nosold,0)!='' and nosold like @t_uno+'-%' and len(nosold)=len(@t_uno)+3 ),'00'),2) as int)+1 as nvarchar(10)),2)
@@ -1782,7 +1785,7 @@ BEGIN TRY
 	,replace(a.datea,'/','')+'-'+a.processno+'-'+'上皮',a.noa,b.noq,'',''
 	,b.productno,b.mount,b.nosold --製成品
 	,c.productno --皮料號
-	,c.mount --支數
+	,cast(@t_mount1 as float) --支數
 	,case when c.mount>1 then c.lengthb else c.weight end --長(M)
 	,@t_uno1 --批號
 	,c.spec --列管備註
@@ -1797,7 +1800,7 @@ BEGIN TRY
 	,replace(a.datea,'/','')+'-'+a.processno+'-'+'上紙',a.noa,b.noq,'',''
 	,b.productno,b.mount,b.nosold --製成品
 	,c.productno --紙料號
-	,c.mount --支數
+	,cast(@t_mount2 as float) --支數
 	,case when c.mount>1 then c.lengthb else c.weight end --長(M)
 	,@t_uno2 --批號
 	,c.spec --列管備註
@@ -1815,7 +1818,7 @@ BEGIN TRY
 	declare @nos float=0
 	
 	declare cursor_table cursor for
-	select noa,rr,uccmount from #tmpa --where gno='0'
+	select noa,rr,uccmount from #tmpa where gno='0'
 	open cursor_table 
 	fetch next from cursor_table 
 	into @noa,@rr,@count

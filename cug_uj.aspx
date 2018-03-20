@@ -98,10 +98,24 @@
 							return;
 						}
 						if($('#cmbBdate').val()=='加工'){
-							q_func('qtxt.query.stk_uj', 'orde_uj.txt,workgimport1,' + encodeURI(t_datea)+';'+encodeURI(t_processno),r_accy,1);
+							q_func('qtxt.query.workgimport1', 'orde_uj.txt,workgimport1,' + encodeURI(t_datea)+';'+encodeURI(t_processno),r_accy,1);
 							var as = _q_appendData("tmp0", "", true, true);
 							
 							if (as[0] != undefined) {
+								//刪除已存在的表身的資料
+								for (var i = 0; i < as.length; i++) {
+									for (var j = 0; j < q_bbsCount; j++) {
+										if(as[i].workgno==$('#txtWorkgno_'+j).val()){
+											as.splice(i, 1);
+											i--;
+											break;
+										}
+									}
+								}
+								if(as.length==0){
+									alert('資料已存在表身!!');
+								}
+								
 								var t_j=0;
 								for (var i = 0; i < as.length; i++) {
 									var t_iswrite=false;
@@ -146,10 +160,24 @@
 							}
 						}
 						if($('#cmbBdate').val()=='製造'){
-							q_func('qtxt.query.stk_uj', 'orde_uj.txt,workgimport2,' + encodeURI(t_datea)+';'+encodeURI(t_processno),r_accy,1);
+							q_func('qtxt.query.workgimport2', 'orde_uj.txt,workgimport2,' + encodeURI(t_datea)+';'+encodeURI(t_processno),r_accy,1);
 							var as = _q_appendData("tmp0", "", true, true);
 							
 							if (as[0] != undefined) {
+								//刪除已存在的表身的資料
+								for (var i = 0; i < as.length; i++) {
+									for (var j = 0; j < q_bbsCount; j++) {
+										if(as[i].workgno==$('#txtWorkgno_'+j).val()){
+											as.splice(i, 1);
+											i--;
+											break;
+										}
+									}
+								}
+								if(as.length==0){
+									alert('資料已存在表身!!');
+								}
+								
 								var t_j=0;
 								for (var i = 0; i < as.length; i++) {
 									var t_iswrite=false;
@@ -324,12 +352,15 @@
                     $('#txtWorker').val(r_name);
                 else
                     $('#txtWorker2').val(r_name);
-								
+				
 				var t_noa = trim($('#txtNoa').val());
-                var t_date = trim($('#txtKdate').val());
+                var t_date = trim($('#txtDatea').val());
+                t_date=replaceAll((t_date.length == 0 ? q_date() : t_date),'/','');
+                t_date=t_date.slice(-6);
+                var t_mech=trim($('#txtProcessno').val());
 
-                if (t_noa.length == 0 || t_noa == "AUTO")
-                    q_gtnoa(q_name, replaceAll(q_getPara('sys.key_cug') + (t_date.length == 0 ? q_date() : t_date), '/', ''));
+                if (q_cur==1)
+                    wrServer(t_date+'-'+t_mech);
                 else
                     wrServer(t_noa);
             }
@@ -693,9 +724,10 @@
 				<table class="tview" id="tview">
 					<tr>
 						<td align="center" style="width:5%"><a id='vewChk'> </a></td>
-						<td align="center" style="width:30%"><a id='vewDatea_uj'>日期</a></td>
-						<td align="center" style="width:30%"><a id='vewBdate_uj'>類別</a></td>
-						<td align="center" style="width:30%"><a id='vewProcessno_uj'>機台</a></td>
+						<td align="center" style="width:20%"><a id='vewDatea_uj'>日期</a></td>
+						<td align="center" style="width:20%"><a id='vewBdate_uj'>類別</a></td>
+						<td align="center" style="width:15%"><a id='vewProcessno_uj'>機台</a></td>
+						<td align="center" style="width:30%"><a id='vewNoa_uj'>派工單號</a></td>
 					</tr>
 					<tr>
 						<td >
@@ -704,13 +736,14 @@
 						<td align="center" id='datea'>~datea</td>
 						<td align="center" id='bdate'>~bdate</td>
 						<td align="center" id='processno'>~processno</td>
+						<td align="center" id='noa'>~noa</td>
 					</tr>
 				</table>
 			</div>
 			<div class='dbbm'>
 				<table class="tbbm" id="tbbm">
 					<tr>
-						<td style="width: 105px;"><span> </span><a id='lblNoa' class="lbl"> </a></td>
+						<td style="width: 105px;"><span> </span><a id='lblNoa_uj' class="lbl">派工單號</a></td>
 						<td style="width: 175px;"><input id="txtNoa" type="text" class="txt c1"/></td>
 						<td style="width: 105px;"><span> </span><a id='lblKdate' class="lbl"> </a></td>
 						<td style="width: 175px;"><input id="txtKdate" type="text" class="txt c1"/></td>
@@ -751,7 +784,7 @@
 						<td> </td>
 						<td colspan="3">
 							<input id="btnCugt2_uj" type="button" class="M1 btncugt" style="display: none;" value="加工半成品備料單"/>
-							<input id="btnCugt3_uj" type="button" class="M1 btncugt" style="display: none;" value="加工再製品備料單"/>
+							<input id="btnCugt3_uj" type="button" class="btncugt" style="display: none;" value="加工再製品備料單"/>
 							<input id="btnCugt6_uj" type="button" class="M1 btncugt" style="display: none;" value="加工物料備料單"/>
 							<input id="btnCugt5_uj" type="button" class="M3 btncugt" style="display: none;" value="製造(皮料)備料單"/>
 							<input id="btnCugt4_uj" type="button" class="M3 btncugt" style="display: none;" value="製造(離型紙)備料單"/>
