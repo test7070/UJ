@@ -24,7 +24,7 @@
 			var q_readonly = ['txtNoa','txtWorker', 'txtWorker2'];
 			var q_readonlys = [];
 			var bbmNum = [];
-			var bbsNum = [];
+			var bbsNum = [['txtBebottom', 10, 0, 1],['txtMount', 10, 0, 1],['txtWeight', 10, 0, 1],['txtFixmount', 10, 0, 1],['txtBottom', 10, 0, 1],['txtLoss', 10, 0, 1],['txtBebottom', 10, 0, 1],['txtBrepair', 10, 0, 1]];
 			var bbmMask = [];
 			var bbsMask = [];
 			var pNoq =1;
@@ -133,11 +133,11 @@
                     }
                     //採購點(天)=採購交期天數*安全存量+採購交期天數
                     $('#txtBottom_' + i).val(q_add(q_mul(dec($('#txtFixmount_' + i).val()),q_div(dec($('#txtEtime_' + 0).val().replace('%','')),100)),dec($('#txtFixmount_' + i).val())));
-                    //滿足點=若採購週期>0，採購週期(天)+可採，不然採購交期天數+可採
-                    if($('#txtLoss_'+i).val().length>0){
-                         $('#txtBrepair_'+i).val(q_add($('#txtLoss_'+i).val(),$('#txtFixmount_'+i).val()));
+                    //滿足點=若採購週期>0，採購週期(天)+可採，不然採購交期天數+採購點(天)
+                    if(dec($('#txtLoss_'+i).val())>0){
+                         $('#txtBrepair_'+i).val(q_add($('#txtLoss_'+i).val(),$('#txtBottom_'+i).val()));
                     }else{
-                         $('#txtBrepair_'+i).val(q_add($('#txtErepair_'+i).val(),$('#txtFixmount_'+i).val()));
+                         $('#txtBrepair_'+i).val(q_add($('#txtFixmount_'+i).val(),$('#txtBottom_'+i).val()));
                     }
 				}		
 			}
@@ -282,10 +282,10 @@
 				_btnOk(key_value, bbmKey[0], bbsKey[1], '', 2);
 			}
 			function bbsSave(as) {
-				if (!as['nob']) {
-					as[bbsKey[1]] = '';
-					return;
-				}
+				if (!as['productno']) {
+                    as[bbsKey[1]] = '';
+                    return;
+                }
 				q_nowf();
 				as['datea'] = abbm2['datea'];
 				return true;
@@ -515,25 +515,25 @@
 			</div>
 		</div>
 		<div class='dbbs'>
-			<table id="tbbs" class='tbbs' style="width:1500px;">
+			<table id="tbbs" class='tbbs' style="width:1300px;">
 				<tr style='color:white; background:#003366;' >
 					<td  align="center" style="width:35px;"><input class="btn"  id="btnPlus" type="button" value='+' style="font-weight: bold;"  /></td>
 					<td align="center" style="width:30px;"><a id='lblFrame_uj' >別</a></td>
 					<td align="center" style="width:170px;"><a id='lblProductno' >新料號</a></td>
-					<td align="center" style="width:80px;"><a id='lblBebottom' >原月均(M)</a></td>
-					<td align="center" style="width:80px;"><a id='lblEnbottom' >手調月均(M)</a></td>
-					<td align="center" style="width:80px;"><a id='lblMount_uj' >本月月均(M)</a></td>
+					<td align="center" style="width:90px;"><a id='lblBebottom' >原月均(M)</a></td>
+					<td align="center" style="width:90px;"><a id='lblEnbottom' >手調月均(M)</a></td>
+					<td align="center" style="width:90px;"><a id='lblMount_uj' >本月月均(M)</a></td>
 					<td align="center" style="width:40px;"><a id='lblBtime' >購買月份</a></td>
-					<td align="center" style="width:80px;"><a id='lblBrepair' >手調未來月均(M)</a></td>
-					<td align="center" style="width:80px;"><a id='lblWeight_uj' >未來月均(M)</a></td>
-					<td align="center" style="width:80px;"><a id='lblEtime' >安全庫存</a></td>
-					<td align="center" style="width:80px;"><a id='lblEnbottom' >採購交期天數</a></td>
-					<td align="center" style="width:80px;"><a id='lblEnbottom' >採購點(天)</a></td>
+					<td align="center" style="width:90px;"><a id='lblBrepair' >手調未來月均(M)</a></td>
+					<td align="center" style="width:90px;"><a id='lblWeight_uj' >未來月均(M)</a></td>
+					<td align="center" style="width:65px;"><a id='lblEtime' >安全庫存</a></td>
+					<td align="center" style="width:60px;"><a id='lblEnbottom' >採購交期天數</a></td>
+					<td align="center" style="width:60px;"><a id='lblEnbottom' >採購點(天)</a></td>
 					<td align="center" style="width:40px;"><a id='lblEnbottom' >管理類別</a></td>
-					<td align="center" style="width:80px;"><a id='lblEnbottom' >可採</a></td>
-					<td align="center" style="width:80px;"><a id='lblEnbottom' >採購週期(天)</a></td>
-					<td align="center" style="width:80px;"><a id='lblEnbottom' >滿足點</a></td>
-					<td align="center" style="width:120px;"><a id='lblMemo_s'> </a></td>
+					<td align="center" style="width:40px;"><a id='lblEnbottom' >可採</a></td>
+					<td align="center" style="width:60px;"><a id='lblEnbottom' >採購週期(天)</a></td>
+					<td align="center" style="width:60px;"><a id='lblEnbottom' >滿足點</a></td>
+					<td align="center" style="width:100px;"><a id='lblMemo_s'> </a></td>
 				</tr>
 				<tr style='background:#cad3ff;' class="ishide.*">
 					<td align="center">
@@ -551,7 +551,7 @@
 					<td><input id="txtBtime.*" type="text" class="txt c1" style="width:97%;"/></td>
 					<td><input id="txtEtime2.*" type="text" class="txt c1" style="width:97%;"/></td>
 					<td><input id="txtWeight.*" type="text" class="num c1" style="width:97%;"/></td>
-					<td><input id="txtEtime.*" type="text" class="txt c1" style="width:97%;"/></td>
+					<td><input id="txtEtime.*" type="text" class="num txt c1" style="width:97%;"/></td>
 					<td><input id="txtFixmount.*" type="text" class="num c1" style="width:97%;"/></td>
 					<td><input id="txtBottom.*" type="text" class="num c1" style="width:97%;"/></td>
 					<td><input id="txtBtime2.*" type="text" class="txt c1" style="width:97%;"/></td>
