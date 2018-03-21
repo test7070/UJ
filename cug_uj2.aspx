@@ -62,14 +62,19 @@
 						var as = _q_appendData("tmp0", "", true, true);
 						if (as[0] != undefined) {
 							if(as[0].bdate=='製造'){
-								$('#txtDatea').val(as[0].datea);
-								$('#txtMechno').val(as[0].processno);
+								if(as[0].isset=='true'){
+									alert('派工單【'+t_noa+'】已完工!!');
+									$('#txtNoa').val('');
+								}else{
+									$('#txtDatea').val(as[0].datea);
+									$('#txtMechno').val(as[0].processno);
+								}
 							}else{
 								alert('【'+t_noa+'】非製造派工單!!');
 								$('#txtNoa').val('');
 							}
 						}else{
-							alert('【'+t_noa+'】派工單不存在!!');
+							alert('派工單【'+t_noa+'】不存在!!');
 							$('#txtNoa').val('');
 						}
 					}else{

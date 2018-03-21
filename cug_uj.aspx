@@ -753,6 +753,7 @@
 					<tr>
 						<td><span> </span><a id='lblDatea_uj' class="lbl">日期</a></td>
 						<td><input id="txtDatea" type="text" class="txt c1"/></td>
+						<td><input id="chkIsset" type="checkbox" style="display: none;"/></td><!--表示完工-->
 					</tr>
 					<tr>
 						<td><span> </span><a id='lblBdate_uj' class="lbl">類別</a></td>

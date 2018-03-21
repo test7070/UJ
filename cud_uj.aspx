@@ -70,9 +70,12 @@
                 document.title='上皮/上紙/製造生產日報表'; 
                 
                 $('#btnIns').hide();
+                $('#btnDele').hide();
                 
                 $('#btnEnda').click(function() {
                 	//完工後"鎖住"：不能"修改""不能"印標籤"
+                	//產出入庫單和領料單
+                	//回寫製造排程單的產出,產出率%,完成狀態
                 	if($('#txtEdime').val()!='1'){
 	                	var t_noa=$('#txtNoa').val();
 	                	var t_ordeno=$('#txtOrdeno').val();

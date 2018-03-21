@@ -672,14 +672,15 @@ insert @cubtmp
 select a.noa,b.noq
 ,dbo.split(b.memo2,'@,#',1),dbo.split(b.memo2,'@,#',2),dbo.split(b.memo2,'@,#',3)
 ,b.productno,b.odatea,dbo.split(b.memo2,'@,#',6),dbo.split(b.memo2,'@,#',7)
-,b.width,b.lengthb,dbo.split(b.memo2,'@,#',10),dbo.split(b.memo2,'@,#',11)
-,dbo.split(b.memo2,'@,#',12),dbo.split(b.memo2,'@,#',13),b.mount,dbo.split(b.memo2,'@,#',24)
-,b.ucano,dbo.split(b.memo2,'@,#',27)
-,b.ucc3no,dbo.split(b.memo2,'@,#',30)
-,dbo.split(b.memo2,'@,#',31),dbo.split(b.memo2,'@,#',32),dbo.split(b.memo2,'@,#',33)
-,dbo.split(b.memo2,'@,#',35),dbo.split(b.memo2,'@,#',36),dbo.split(b.memo2,'@,#',37)
-,b.ucc4no,b.ucc5no,b.ucc6no,dbo.split(b.memo2,'@,#',48),dbo.split(b.memo2,'@,#',49)
-,dbo.split(b.memo2,'@,#',52)
+,b.width,b.lengthb,replace(dbo.split(b.memo2,'@,#',10),',',''),dbo.split(b.memo2,'@,#',11)
+,replace(dbo.split(b.memo2,'@,#',12),',',''),replace(dbo.split(b.memo2,'@,#',13),',',''),b.mount,dbo.split(b.memo2,'@,#',24)
+,b.ucano,replace(dbo.split(b.memo2,'@,#',27),',','')
+,b.ucc3no,replace(dbo.split(b.memo2,'@,#',30),',','')
+,replace(dbo.split(b.memo2,'@,#',31),',',''),replace(dbo.split(b.memo2,'@,#',32),',',''),dbo.split(b.memo2,'@,#',33)
+,replace(dbo.split(b.memo2,'@,#',35),',',''),dbo.split(b.memo2,'@,#',36),dbo.split(b.memo2,'@,#',37)
+,b.ucc4no,b.ucc5no,b.ucc6no,dbo.split(b.memo2,'@,#',48)
+,replace(dbo.split(b.memo2,'@,#',49),',','')
+,replace(dbo.split(b.memo2,'@,#',52),',','')
 from view_workg a left join view_workgs b on a.noa=b.noa
 where b.odatea between @t_bdate and @t_edate
 and a.stype='加工' and isnull(b.productno,'')!=''
@@ -712,7 +713,7 @@ select a.noa,b.noq
 ,b.productno
 ,dbo.split(b.spec,'@,#',2)
 ,b.mount,b.unit
-,dbo.split(b.spec,'@,#',18)
+,replace(dbo.split(b.spec,'@,#',18),',','')
 ,dbo.split(b.spec,'@,#',21)
 from saleforecast a left join saleforecasts b on a.noa=b.noa
 where a.mon=@t_mon
@@ -1857,7 +1858,7 @@ BEGIN TRY
 	select noa,datea,mechno
 	,case when source='3' then '下料' when source='4' then '上紙' when source='5' then '上皮' else '' end
 	,source,cugnoa from #tmpa a 
-	where not exists(select * from view_cuds where noa=a.noa) 
+	where not exists(select * from view_cud where noa=a.noa) 
 	group by noa,datea,mechno,source,cugnoa")
 	
 	--明細
@@ -1914,7 +1915,7 @@ BEGIN TRY
 	select noa,datea,mechno
 	,case when source='3' then '下料' when source='4' then '上紙' when source='5' then '上皮' else '' end
 	,source,cugnoa from #tmpb a 
-	where not exists(select * from view_cuds where noa=a.noa) 
+	where not exists(select * from view_cud where noa=a.noa) 
 	group by noa,datea,mechno,source,cugnoa")
 
 END TRY
@@ -2111,6 +2112,70 @@ declare @accy nvarchar(50)=(select top 1 accy from view_cuds where noa=@t_noa)
 EXEC("update cuds"+@accy+" set enda=1 where noa='"+@t_noa+"' and noq='"+@t_noq+"'")
 
 select top 10 * from view_cuds where noa=@t_noa and noq>=@t_noq and isnull(enda,0)!=1 order by noa,noq
+
+declare @t_ordeno nvarchar(50)=(select top 1 ordeno from view_cuds where noa=@t_noa)
+declare @t_no2 nvarchar(50)=(select top 1 no2 from view_cuds where noa=@t_noa)
+declare @t_source nvarchar(50)=(select top 1 source from view_cuds where noa=@t_noa)
+
+if(@t_source='3') --下料
+begin
+	declare @workgno nvarchar(50)
+	declare @workgnoq nvarchar(50)
+	declare @memo2 nvarchar(MAX)
+	declare @weight float
+	declare @p05 float
+	declare @q03 float
+	declare @str nvarchar(MAX)
+	declare @strc int=0
+	declare @tmemo2 nvarchar(MAX)
+	declare @n02 float
+	declare @cmd nvarchar(max)
+
+	declare cursor_table cursor for
+	select a.accy,a.noa,a.noq,a.memo2,isnull(c.weight,0)weight
+	,cast(dbo.split(a.memo2,'@,#',109) as float) p05,cast(dbo.split(a.memo2,'@,#',112) as float) q03
+	from view_workgs a left join view_cugs b on a.noa+'-'+a.noq=b.workgno
+	outer apply (select SUM(weight)weight from view_cuds where ordeno=b.noa and source='3')c
+	where b.noa=@t_ordeno and b.noq=@t_no2
+	open cursor_table 
+	fetch next from cursor_table 
+	into @accy,@workgno,@workgnoq,@memo2,@weight,@p05,@q03
+	while(@@FETCH_STATUS <> -1) 
+	begin
+		select @tmemo2=@memo2+'@,#'--含最後一筆
+		set @strc=0
+		set @str=''
+		set @n02=case when @p05>@q03 then @q03 else @p05 end
+		set @n02=case when @n02=0 then 0 else round(@weight/@n02*100,2) end
+		
+		while (charindex('@,#',@tmemo2)>0)
+		begin
+			if(@strc=101) --產出(M)
+				set @str=@str+'@,#'+cast(@weight as nvarchar(50))
+			else if(@strc=102) --產出率
+				set @str=@str+'@,#'+CAST(@n02 as nvarchar(50))
+			else
+				set @str=@str+'@,#'+SUBSTRING(@tmemo2,0,CHARINDEX('@,#',@tmemo2))
+				
+			set @tmemo2=SUBSTRING(@tmemo2,CHARINDEX('@,#',@tmemo2)+3,len(@tmemo2))
+
+			set @strc=@strc+1
+		end
+		
+		set @str=stuff(@str,1,3,'')
+		
+		--select @memo2,@str
+		
+		set @cmd="update workgs"+@accy+" set memo2=@str where noa='"+@workgno+"' and noq='"+@workgnoq+"'"
+		execute sp_executesql @cmd,N'@str nvarchar(MAX)',@str=@str
+			
+		fetch next from cursor_table 
+		into @accy,@workgno,@workgnoq,@memo2,@weight,@p05,@q03
+	end 
+	close cursor_table 
+	deallocate cursor_table
+
+end
 ;
 
 --------------------------------------------------------------------
@@ -2151,9 +2216,74 @@ declare @t_datea nvarchar(50)=case when '#non'=[3] then '' else [3] end
 
 declare @accy nvarchar(50)=(select top 1 accy from view_cud where noa=@t_noa)
 
+--鎖住
 EXEC("update cud"+@accy+" set edime=1 where ordeno='"+@t_ordeno+"'")
 
+declare @accy nvarchar(50)=(select top 1 accy from view_cug where noa=@t_ordeno)
+EXEC("update cug"+@accy+" set isset=1 where noa='"+@t_ordeno+"'")
+
+--回寫workgs
+	declare @workgno nvarchar(50)
+	declare @workgnoq nvarchar(50)
+	declare @memo2 nvarchar(MAX)
+	declare @weight float
+	declare @p05 float
+	declare @q03 float
+	declare @str nvarchar(MAX)
+	declare @strc int=0
+	declare @tmemo2 nvarchar(MAX)
+	declare @n02 float
+	declare @cmd nvarchar(max)
+
+	declare cursor_table cursor for
+	select a.accy,a.noa,a.noq,a.memo2,isnull(c.weight,0)weight
+	,cast(dbo.split(a.memo2,'@,#',109) as float) p05,cast(dbo.split(a.memo2,'@,#',112) as float) q03
+	from view_workgs a left join view_cugs b on a.noa+'-'+a.noq=b.workgno
+	outer apply (select SUM(weight)weight from view_cuds where ordeno=b.noa and source='3')c
+	where b.noa=@t_ordeno
+	open cursor_table 
+	fetch next from cursor_table 
+	into @accy,@workgno,@workgnoq,@memo2,@weight,@p05,@q03
+	while(@@FETCH_STATUS <> -1) 
+	begin
+		select @tmemo2=@memo2+'@,#'--含最後一筆
+		set @strc=0
+		set @str=''
+		set @n02=case when @p05>@q03 then @q03 else @p05 end
+		set @n02=case when @n02=0 then 0 else round(@weight/@n02*100,2) end
+		
+		while (charindex('@,#',@tmemo2)>0)
+		begin
+			if(@strc=101) --產出(M)
+				set @str=@str+'@,#'+cast(@weight as nvarchar(50))
+			else if(@strc=102) --產出率
+				set @str=@str+'@,#'+CAST(@n02 as nvarchar(50))
+			else if(@strc=103) --完工狀態
+				set @str=@str+'@,#'+'完工'
+			else
+				set @str=@str+'@,#'+SUBSTRING(@tmemo2,0,CHARINDEX('@,#',@tmemo2))
+				
+			set @tmemo2=SUBSTRING(@tmemo2,CHARINDEX('@,#',@tmemo2)+3,len(@tmemo2))
+
+			set @strc=@strc+1
+		end
+		
+		set @str=stuff(@str,1,3,'')
+		
+		--select @memo2,@str
+		
+		set @cmd="update workgs"+@accy+" set memo2=@str where noa='"+@workgno+"' and noq='"+@workgnoq+"'"
+		execute sp_executesql @cmd,N'@str nvarchar(MAX)',@str=@str
+			
+		fetch next from cursor_table 
+		into @accy,@workgno,@workgnoq,@memo2,@weight,@p05,@q03
+	end 
+	close cursor_table 
+	deallocate cursor_table
+
 --產生領料和入庫單
+
+set @accy = (select top 1 accy from view_cud where noa=@t_noa)
 
 declare @workano nvarchar(50)='WA'+REPLACE(@t_datea,'/','')
 declare @workbno nvarchar(50)='WB'+REPLACE(@t_datea,'/','')
