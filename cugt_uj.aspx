@@ -124,6 +124,7 @@
                 	$('.S5').hide();
                 	$('.S6').show();
                 	$('#btnModi').hide();
+                	$('#dbbs').css('width','1650px');
                 }
                 splitbbsf();
             }

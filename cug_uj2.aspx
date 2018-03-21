@@ -308,8 +308,21 @@
 					var t_uno1=$('#txtUno1').val();
 					var t_uno2=$('#txtUno2').val();
 					var t_uno3=$('#txtUno3').val();
+					var t_mount1=dec($('#txtF07').val());
+					var t_mount2=dec($('#txtF10').val());
+					var t_mount3=dec($('#txtS3mount').val());
+					
+					if(t_mount1>dec($('#lblF07').text())){
+						alert('上皮批號【'+t_uno1+'】用料數量超過庫存數量!!');
+						return;
+					}
+					if(t_mount2>dec($('#lblF10').text())){
+						alert('上紙批號【'+t_uno2+'】用料數量超過庫存數量!!');
+						return;
+					}
+					
 					if(t_noa.length>0){
-						q_func('qtxt.query.cugssel', 'orde_uj.txt,cugssel,' + encodeURI(t_noa)+';'+encodeURI(t_noq)+';'+encodeURI(r_accy)+';'+encodeURI(t_uno)+';'+encodeURI(t_uno1)+';'+encodeURI(t_uno2)+';'+encodeURI(t_uno3),r_accy,1);
+						q_func('qtxt.query.cugssel', 'orde_uj.txt,cugssel,' + encodeURI(t_noa)+';'+encodeURI(t_noq)+';'+encodeURI(r_accy)+';'+encodeURI(t_uno)+';'+encodeURI(t_uno1)+';'+encodeURI(t_uno2)+';'+encodeURI(t_uno3)+';'+encodeURI(t_mount1)+';'+encodeURI(t_mount2)+';'+encodeURI(t_mount3),r_accy,1);
 						var as = _q_appendData("tmp0", "", true, true);
 						if (as[0] != undefined) {
 							alert('派工單【'+as[0].noa+'】生產料號【'+as[0].productno+'】進行生產投入及產出!!');
@@ -416,7 +429,10 @@
 					<input id="txtF06" type="text" class="txt c1" disabled="disabled"><BR>
 					<input id="txtUno1" type="text" class="txt c1 str">
 				</td>
-				<td><a id="lblF07">0</a></td>
+				<td>
+					<input id="txtF07" type="text" class="txt num c1 str" style="width: 50%;text-align:right;float:none;">
+					<a id="lblF07" style="display: none;">0</a>
+				</td>
 				<td style="width: 300px;">
 					<input id="txtProductno" type="text" class="txt c1" style="width:250px;" disabled="disabled">
 					<select id="combProductno" style="width: 20px;display: none;"> </select>
@@ -432,7 +448,10 @@
 					<input id="txtF09" type="text" class="txt c1" disabled="disabled"><BR>
 					<input id="txtUno2" type="text" class="txt c1 str">
 				</td>
-				<td><a id="lblF10">0</a></td>
+				<td>
+					<input id="txtF10" type="text" class="txt num c1 str" style="width: 50%;text-align:right;float:none;">
+					<a id="lblF10" style="display: none;">0</a>
+				</td>
 				<td>
 					<a style="float: left;">符合條件</a><a id="lblCugcount"> </a><a>筆</a><BR>
 					<a style="float: left;">皮長度(M)</a><a id="lblUcatrans"> </a>
@@ -448,7 +467,10 @@
 					<input id="txtF08" type="text" class="txt c1" disabled="disabled"><BR>
 					<input id="txtUno3" type="text" class="txt c1 str">
 				</td>
-				<td><a id="lblS3mount">0</a></td>
+				<td>
+					<input id="txtS3mount" type="text" class="txt num c1 str" style="width: 50%;text-align:right;float:none;">
+					<a id="lblS3mount" style="display: none;">0</a>
+				</td>
 				<td><a style="float: left;">列管備註</a><a id="lblF12"> </a></td>
 				<td> </td>
 			</tr>

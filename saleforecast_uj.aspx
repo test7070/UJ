@@ -19,7 +19,9 @@
 			q_tables = 's';
 			var q_name = "saleforecast";
 			var q_readonly = ['txtNoa','txtDatea'];
-			var q_readonlys = ['txtNoq'];
+			var q_readonlys = ['txtNoq','textF09','textF12','textF13','textF14','textF15','textF16'
+			,'txtMount','txtUnit','textF18','textF19','textF20','textF21','textF22','textF23','textF24','textF25'
+			];
 			var bbmNum = [];
 			var bbsNum = [
 				['textF02', 15, 0, 1],['textF03', 15, 2, 1],['textF04', 15, 2, 1],['textF05', 15, 2, 1],
@@ -426,24 +428,24 @@
 			
 			function F15(i) { //生產點(M)
 				if(dec($('#textF03_'+i).val())>0){
-					$('#textF15_'+i).val($('#textF03_'+i).val());
+					$('#textF15_'+i).val(round($('#textF03_'+i).val(),0));
 				}else{
 					var t_f12=dec($('#textF12_'+i).val());
 					var t_f09=dec($('#textF09_'+i).val());
 					
-					$('#textF15_'+i).val(q_mul(t_f12,q_div(t_f09,30)));
+					$('#textF15_'+i).val(round(q_mul(t_f12,q_div(t_f09,30)),0));
 				}
 				Fmount(b_seq);
 			}
 			
 			function F16(i) { //最大生產量(M)
 				if(dec($('#textF03_'+i).val())>0){
-					$('#textF16_'+i).val($('#textF04_'+i).val());
+					$('#textF16_'+i).val(round($('#textF04_'+i).val(),0));
 				}else{
 					var t_f13=dec($('#textF13_'+i).val());
 					var t_f09=dec($('#textF09_'+i).val());
 					
-					$('#textF16_'+i).val(q_mul(t_f13,q_div(t_f09,30)));
+					$('#textF16_'+i).val(round(q_mul(t_f13,q_div(t_f09,30)),0));
 				}
 				Fmount(b_seq);
 			}

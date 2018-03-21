@@ -18,7 +18,8 @@
             q_tables = 't';
             var q_name = "cub";
             var q_readonly = ['txtNoa','txtWorker','txtWorker2','txtMo'];
-            var q_readonlys = [];
+            var q_readonlys = ['txtBtime','txtWidth','txtLengthb','txtUnit','txtClass','txtSource'
+            ,'txtX01','txtDate2','txtW01','txtW02','txtW03','txtW04','txtW05','txtW06','txtW07','txtW08'];
             var q_readonlyt = [];
             var bbmNum = [];
             var bbsNum = [];
@@ -314,6 +315,10 @@
                 		$('#btnP2_'+i).removeAttr('disabled');
                 	}
                 }
+                
+                if(q_cur!=1){
+	            	$('#txtDatea').attr('disabled', 'disabled');
+	            }
             }
 
             function btnMinus(id) {
@@ -960,6 +965,7 @@
 					if(p=='4'){
 						$('#txtW07_' + n).val(t_weight);
 					}
+					pdate(n);
 				}
             }
             
@@ -1324,7 +1330,7 @@
 						<td><input id="txtMount.*" type="text" class="txt num c1"/></td>
 						<td><input id="txtUnit.*" type="text" class="txt c1"/></td>
 						<td><input id="txtWeight.*" type="text" class="txt num c1"/></td>
-						<td><input id="txtClass.*" type="text" class="txt c1"/></td>
+						<td><input id="txtClass.*" type="text" class="txt num c1"/></td>
 						<td><input id="txtOth.*" type="text" class="txt c1"/></td>
 						<td><input id="txtMemo.*" type="text" class="txt c1"/></td>
 						<td><input id="txtSource.*" type="text" class="txt c1"/></td>

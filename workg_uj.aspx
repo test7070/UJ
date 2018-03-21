@@ -18,13 +18,14 @@
 			q_tables = 't';
 			var q_name = "workg";
 			var q_readonly = ['txtNoa', 'txtDatea', 'txtWorker', 'txtWorker2'];
-			var q_readonlys = ['txtNoq','textB02','textJ02','textJ11','textJ17','textL05'
-			,'textC01','textC04','textD05','textE01','textF02','textF03','textG02','textG03'
+			var q_readonlys = ['txtNoq','textA06','textB02','textC03','textJ02','textJ11','textJ17','textL05'
+			,'textC01','textC04','textD01','textD02','textD05','textE01','textF02','textF03','textG02','textG03'
 			,'textH01','textH02','textH03'
-			,'textI02','textI06','textI07','textI09','textI10','textI12','textI13','textI19'
+			,'textI02','textI06','textI07','textI09','textI10','textI12','textI13','textI18','textI19'
 			,'textJ06','textJ07','textJ08','textJ09','textJ13','textJ14','textJ15','textJ16'
-			,'textJ19','textJ20','textJ21','textK06','textK08'
-			,'textK11','textK12','textK13','textL04','textL08','textM01','textM02','textM03','textM04'
+			,'textJ19','textJ20','textJ21'
+			,'textK01','textK02','textK04','textK05','textK06','textK08','textK11','textK12','textK13'
+			,'textL04','textL06','textL08','textM01','textM02','textM03','textM04','textN01','textN02','textN03'
 			,'textP03','textP04','textP05','textQ03','textQ04','textQ05','textR06','textR07'
 			];
 			var q_readonlyt = [];
@@ -131,6 +132,17 @@
 								//q_gridAddRow(bbsHtm, 'tbbs', 'textA01,txtWorkhno,textA02,textA03,textA04,textA05,textA06,textA07,textA08,textA09,textA10,textA11'
 								//, as.length, as, 'noa,cubno,product,ucolor,productno,edate,m1,btime,width,lengthb,mount,unit', 'textA01,txtWorkhno,textA02,textA03,textA04');
 								
+								//刪除已存在的表身的資料
+								for (var i = 0; i < as.length; i++) {
+									for (var j = 0; j < q_bbsCount; j++) {
+										if(as[i].cubno==$('#txtWorkhno_'+j).val()){
+											as.splice(i, 1);
+		                                    i--;
+		                                    break;
+	                                   }
+                                   	}
+								}
+								
 								var t_j=0;
 								for (var i = 0; i < as.length; i++) {
 									var t_iswrite=false;
@@ -170,6 +182,7 @@
 											$('#textI16_'+j).val(as[i].i16);
 											
 											FD05(j);
+											FI17(j);
 											
 											//$('#textA03_'+i).change();
 											//$('#textA10_'+i).change();
@@ -213,6 +226,11 @@
 										$('#btnPlus').click();
 									}
 								}
+								
+								for (var j = 0; j < q_bbsCount; j++) {
+									if($('#textA04_'+j).val().length>0)
+										FB02(j);
+								}
 								nordeno();
 							}else{
 								alert('無資料!!');
@@ -231,6 +249,18 @@
 					var as = _q_appendData("tmp0", "", true, true);
 							
 					if (as[0] != undefined) {
+						
+						//刪除已存在的表身的資料
+						for (var i = 0; i < as.length; i++) {
+							for (var j = 0; j < q_bbsCount; j++) {
+								if(as[i].workhno==$('#txtWorkhno_'+j).val()){
+									as.splice(i, 1);
+									i--;
+									break;
+								}
+							}
+						}
+						
 						for (var i = 0; i < as.length; i++) {
 							var t_iswrite=false;
 							var t_j=0;
@@ -286,6 +316,7 @@
 						FM03();
 						FM04();
 						nordeno();
+						
 					}else{
 						alert('無資料!!');
 					}
@@ -300,6 +331,14 @@
 						$('#btnMinut__'+i).click();
 					}
 					change_field();
+				});
+				
+				//建議加工日
+				$('#txtWadate').change(function() {
+					FM01();
+					FM02();
+					FM03();
+					FM04();
 				});
 				
 				//決定分條
@@ -392,6 +431,21 @@
 				$('#btnClose_div_stk2').click(function() {
                 	$('#div_stk').hide();
 				});
+				
+				//上方插入空白行
+		        $('#lblTop_row').mousedown(function (e) {
+		            if (e.button == 0) {
+		                mouse_div = false;
+		                q_bbs_addrow(row_bbsbbt, row_b_seq, 0);
+		            }
+		        });
+		        //下方插入空白行
+		        $('#lblDown_row').mousedown(function (e) {
+		            if (e.button == 0) {
+		                mouse_div = false;
+		                q_bbs_addrow(row_bbsbbt, row_b_seq, 1);
+		            }
+		        });
 			}
 			
 			var ordedate=false;
@@ -558,10 +612,12 @@
 					$('.dbbstop').css('width','8000px');
 				}
 			}
-
+			
+			var mouse_div = true; //控制滑鼠消失div
 			function readonly(t_para, empty) {
 				_readonly(t_para, empty);
 				if (t_para) {
+					$('#div_row').hide();
 					for (var i = 0; i < q_bbsCount; i++) {
 						$('#combJ02_'+i).attr('disabled', 'disabled');
 						$('#combJ11_'+i).attr('disabled', 'disabled');
@@ -646,6 +702,22 @@
 				for (var i = 0; i < q_bbsCount; i++) {
 					$('#lblNo_' + i).text(i + 1);
 					if (!$('#btnMinus_' + i).hasClass('isAssign')) {
+						$('#btnMinus_' + i).bind('contextmenu', function (e) {
+		                    e.preventDefault();
+
+		                    mouse_div = false;
+		                    ////////////控制顯示位置
+		                    $('#div_row').css('top', e.pageY);
+		                    $('#div_row').css('left', e.pageX);
+		                    ////////////
+		                    t_IdSeq = -1;
+		                    q_bodyId($(this).attr('id'));
+		                    b_seq = t_IdSeq;
+		                    $('#div_row').show();
+		                    row_b_seq = b_seq;
+		                    row_bbsbbt = 'bbs';
+		                });
+						
 						$('#textA03_'+i).change(function() {
 							t_IdSeq = -1;
 							q_bodyId($(this).attr('id'));
@@ -1160,6 +1232,13 @@
 							FR06(b_seq);
 						});
 						
+						$('#textN01_'+i).change(function() {
+							t_IdSeq = -1;
+							q_bodyId($(this).attr('id'));
+							b_seq = t_IdSeq;
+							FN02(b_seq)
+						});
+						
 						$('#textP05_'+i).change(function() {
 							t_IdSeq = -1;
 							q_bodyId($(this).attr('id'));
@@ -1395,7 +1474,7 @@
 					t_ist2=true;
 				}
 							
-				if($('#textA01_'+i).val().slice(-2)=='預留' || !t_ist2){
+				if($('#textA01_'+i).val().substr(0,2)=='預留' || !t_ist2){
 					$('#textD01_'+i).val(0);
 				}else{
 					if(dec($('#textC03_'+i).val())>=dec($('#textB02_'+i).val())){
@@ -1408,11 +1487,11 @@
 			}
 			
 			function FD02(i) { //A表 應生產(M)
-				if($('#textF01_'+i).val().length==0 || $('#textA01_'+i).val().substr(7,2)=='預留'){
+				if($('#textF01_'+i).val().length==0 || $('#textA01_'+i).val().substr(0,2)=='預留'){
 					$('#textD02_'+i).val(0);
 				}else{
 					if($('#textA04_'+i).val().substr(0,1)=='1' || $('#textF01_'+i).val().substr(0,1)=='8'){
-						$('#textD02_'+i).val(q_mul(dec($('#textA09_'+i).val()),dec($('#textD01_'+i).val())));
+						$('#textD02_'+i).val(round(q_mul(dec($('#textA09_'+i).val()),dec($('#textD01_'+i).val())),0));
 					}else{
 						if($('#textA11_'+i).val()=='M'){
 							$('#textD02_'+i).val(dec($('#textB02_'+i).val()));
@@ -1425,14 +1504,14 @@
 							var tuca = _q_appendData("uca", "", true);
 							if (tuca[0] != undefined) {
 								t_uca3=tuca[0].groupbno;
-								t_badperc=dec(tuca[0].badperc);
+								t_badperc=q_div(dec(tuca[0].badperc),100);
 								t_molds=dec(tuca[0].molds);
 							}
 							
 							var t_m=0;
 							if(t_uca3.substr(0,1)=='5'){
 								var t_len3=0;//半成品長度
-								q_gt('uca',"where=^^noa='"+t_uca3+" and typea='3' ^^", 0, 0, 0, "getuca", r_accy,1);
+								q_gt('uca',"where=^^noa='"+t_uca3+"' and typea='3' ^^", 0, 0, 0, "getuca", r_accy,1);
 								var tuca2 = _q_appendData("uca", "", true);
 								if (tuca2[0] != undefined) {
 									t_len3=dec(tuca2[0].trans);
@@ -1440,7 +1519,7 @@
 								
 								t_m=q_div(q_mul(q_div(dec($('#textD01_'+i).val()),Math.floor(q_div(q_mul(t_len3,t_badperc),dec($('#textA09_'+i).val())))),t_len3),t_molds);
 							}
-							$('#textD02_'+i).val(t_m);
+							$('#textD02_'+i).val(round(t_m,0));
 						}
 					}
 				}
@@ -1484,6 +1563,7 @@
 				}else{
 					$('#textH01_'+i).val(round(q_div(q_add(dec($('#textF03_'+i).val()),dec($('#textG03_'+i).val())),dec($('#textD05_'+i).val()))*100,2));
 				}
+				FE01(i);
 			}
 			
 			function FH02(i) { //A表 指定可產出量
@@ -1578,6 +1658,7 @@
 					else
 						$('#textI07_'+i).val(t_maxdate);
 				}
+				FI17(i);
 			}
 			
 			function FI09(i) { //A表 紙箱採購量--*數量為負數公式有問題
@@ -1635,6 +1716,7 @@
 					else
 						$('#textI10_'+i).val(t_maxdate);
 				}
+				FI17(i);
 			}
 			
 			function FI12(i) { //A表 塞頭採購量--*數量為負數公式有問題
@@ -1681,6 +1763,7 @@
 					else
 						$('#textI13_'+i).val(t_maxdate);
 				}
+				FI17(i);
 			}
 			
 			function FI17(i) { //A表 料最快備齊日期
@@ -1973,9 +2056,9 @@
 			function FK12(i) { //製造 指定(紙)%
 				if(dec($('#textK08_'+i).val())>0){
 					if(dec($('#textP05_'+i).val())>0){
-						$('#textK12_'+i).val(q_div(dec($('#textP05_'+i).val()),dec($('#textK08_'+i).val())));
+						$('#textK12_'+i).val(round(q_mul(q_div(dec($('#textP05_'+i).val()),dec($('#textK08_'+i).val())),100),2));
 					}else{
-						$('#textK12_'+i).val(q_div(dec($('#textP03_'+i).val()),dec($('#textK08_'+i).val())));
+						$('#textK12_'+i).val(round(q_mul(q_div(dec($('#textP03_'+i).val()),dec($('#textK08_'+i).val())),100),2));
 					}
 				}else{
 					$('#textK12_'+i).val(0);
@@ -1985,9 +2068,9 @@
 			function FK13(i) { //製造 指定(皮)%
 				if(dec($('#textK08_'+i).val())>0){
 					if(dec($('#textQ05_'+i).val())>0){
-						$('#textK13_'+i).val(q_div(dec($('#textQ05_'+i).val()),dec($('#textK08_'+i).val())));
+						$('#textK13_'+i).val(round(q_mul(q_div(dec($('#textQ05_'+i).val()),dec($('#textK08_'+i).val())),100),2));
 					}else{
-						$('#textK13_'+i).val(q_div(dec($('#textQ03_'+i).val()),dec($('#textK08_'+i).val())));
+						$('#textK13_'+i).val(round(q_mul(q_div(dec($('#textQ03_'+i).val()),dec($('#textK08_'+i).val())),100),2));
 					}
 				}else{
 					$('#textK13_'+i).val(0);
@@ -2008,6 +2091,7 @@
 				}
 				
 				for (var i = 0; i < q_bbsCount; i++) {
+					var t_l03=$('#textL03_'+i).val();//上膠日
 					var t_l05=$('#textL05_'+i).val();//製造機台別
 					if(t_l05=='A' && t_l03==t_wadate){
 						$('#textM01_'+i).val(t_m01);
@@ -2031,6 +2115,7 @@
 				}
 				
 				for (var i = 0; i < q_bbsCount; i++) {
+					var t_l03=$('#textL03_'+i).val();//上膠日
 					var t_l05=$('#textL05_'+i).val();//製造機台別
 					if(t_l05=='A' && t_l03==t_wadate){
 						$('#textM02_'+i).val(t_m02);
@@ -2054,6 +2139,7 @@
 				}
 				
 				for (var i = 0; i < q_bbsCount; i++) {
+					var t_l03=$('#textL03_'+i).val();//上膠日
 					var t_l05=$('#textL05_'+i).val();//製造機台別
 					if(t_l05=='B' && t_l03==t_wadate){
 						$('#textM03_'+i).val(t_m03);
@@ -2077,6 +2163,7 @@
 				}
 				
 				for (var i = 0; i < q_bbsCount; i++) {
+					var t_l03=$('#textL03_'+i).val();//上膠日
 					var t_l05=$('#textL05_'+i).val();//製造機台別
 					if(t_l05=='B' && t_l03==t_wadate){
 						$('#textM04_'+i).val(t_m04);
@@ -2534,11 +2621,11 @@
 					}
 					if(source=='2'){
 						$('#textF02_' + n).val(t_weight);
-						FE01(n);
+						FH01(n);
 					}
 					if(source=='3'){
 						$('#textG02_' + n).val(t_weight);
-						FE01(n);
+						FH01(n);
 					}
 				}
 			}
@@ -2801,6 +2888,24 @@
 				text-align: center;
 				border: 2px lightgrey double;
 			}
+			
+			#div_row{
+				display:none;
+				width:750px;
+				background-color: #ffffff;
+				position: absolute;
+				left: 20px;
+				z-index: 50;
+			}
+			.table_row tr td .lbl.btn {
+                color: #000000;
+                font-weight: bolder;
+                font-size: medium;
+                cursor: pointer;
+            }
+            .table_row tr td .lbl.btn:hover {
+                color: #FF8F19;
+            }
 		</style>
 	</head>
 	<body ondragstart="return false" draggable="false"
@@ -2809,6 +2914,16 @@
 	ondrop="event.dataTransfer.dropEffect='none';event.stopPropagation(); event.preventDefault();"
 	>
 		<!--#include file="../inc/toolbar.inc"-->
+		<div id="div_row" style="position:absolute; top:300px; left:500px; display:none; width:150px; background-color: #ffffff; ">
+			<table id="table_row"  class="table_row" style="width:100%;" border="1" cellpadding='1'  cellspacing='0'>
+				<tr>
+					<td align="center" ><a id="lblTop_row" class="lbl btn">上方插入空白行</a></td>
+				</tr>
+				<tr>
+					<td align="center" ><a id="lblDown_row" class="lbl btn">下方插入空白行</a></td>
+				</tr>
+			</table>
+		</div>
 		<div id="div_stk" style="position:absolute; top:180px; left:20px; display:none; width:1120px; background-color: #CDFFCE; border: 5px solid gray;">
 			<table id="table_stk" style="width:100%;" border="1" cellpadding='2' cellspacing='0'>
 				<tr>
