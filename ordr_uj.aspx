@@ -65,9 +65,31 @@
                     $.datepicker.r_len=4;
                 }
 				q_mask(bbmMask);
-				q_cmbParse("cmbUccgano", '@,一般@一般，希得@希得');
+				q_cmbParse("cmbUccgano", '一般@一般,希得@希得');
+				
+				$('#btnImport').click(function(e){
+                    var t_noa = $('#txtWorkgno').val();
+                    q_func('qtxt.query.ordr_orda', 'ordr_uj.txt,orda2ordrCD,'+ encodeURI(t_noa)); 
+                });
 							
 			} 
+			
+			function q_funcPost(t_func, result) {
+                switch(t_func) {
+                    case 'qtxt.query.ordr_orda':
+                        var as = _q_appendData("tmp0", "", true, true); 
+                            q_gridAddRow(bbtHtm, 'tbbs', 'txtOrdano,txtOrdanoq,txtApvmemo,txtApvmount,txtProductno,txtProduct,txtSpec,txtUnit,txtWorkdate,txtStkmount,txtSchmount,txtSafemount,txtNetmount,txtFdate,txtFmount,txtMemo,txtWmount,chkApv,txtSmount,txtGweight,txtWeight,txtMount,txtTggno,txtComp,txtTypea'
+                            , as.length, as, 'noa,noq,apvmemo,apvmount,productno,product,spec,unit,workdate,stkmount,schmount,safemount,netmount,fdate,fmount,memo,wmount,apv,smount,gweight,weight,mount,tggno,tgg,stype', 'txtOrdano,txtOrdanoq');
+                        for (var i = 0; i < as.length; i++) {
+                                if(as[i].apv=='1' && as[i].apv!='undefined')
+                                    $('#chkApv_' + i).prop('checked', true);
+                        }
+                        break;  
+                    default:
+                        break;
+                }
+            }
+            
 			        	 
 			function q_boxClose(s2) {
 				var ret;
@@ -80,28 +102,7 @@
 			}
 			
 			function q_gtPost(t_name) {
-				switch (t_name) {
-				    case 'modfixc':
-                        as = _q_appendData("modfixcs", "", true);
-                        q_gridAddRow(bbsHtm, 'tbbs', 'txtProductno,txtProduct,textM6,textM14,txtNetmount,textM10,textM11,textM15'
-                        , as.length, as, 'productno,product,bottom,mount,brepair,erepair,weight,etime', 'txtProductno,txtProduct','');
-                        for ( i = 0; i < q_bbsCount; i++) {
-                            if (i < as.length) {
-                            }else{
-                                _btnMinus("btnMinus_" + i);
-                            }
-                        }
-                        sum();
-                        $('#txtNoa').focus();
-                        break;
-                    case 'ucc':
-                        as = _q_appendData("ucc", "", true);
-                        for ( i = 0; i < q_bbsCount; i++) {
-                            if($('#txtProductno_'+i).val()==as[0].noa){
-                                $('#txtGmount_'+i).val(q_mul($('#txtMount_'+i).val(),as[0].uweight));
-                            }
-                        }
-                        break;				
+				switch (t_name) {			
 					case q_name:
                         if (q_cur == 4)
                             q_Seek_gtPost();
@@ -172,7 +173,6 @@
 			
 			function btnIns() {
 				_btnIns();
-				
 				$('#txtNoa').val('AUTO');
 				$('#txtDatea').val(q_date());
 				refreshBbs();
@@ -417,8 +417,8 @@
                         <td style="text-align: center;"><input id="btnImport" type="button" value="匯入" class="txt c1"/></td>
                     </tr>
                     <tr>
-                        <td><span> </span><a id='lblSignno_uj' class="lbl">採購參數單號</a></td>
-                        <td><input id="txtSignno"  type="text"  class="txt c1" /></td>
+                        <td><span> </span><a id='lblWorkgnouj' class="lbl">採購需求單號</a></td>
+                        <td><input id="txtWorkgno"  type="text"  class="txt c1" /></td>
                         <td> </td>
                         <td><input id="btnOrdb" type="button" value="轉請購單" class="txt c1"/></td>
                     </tr>
@@ -448,20 +448,16 @@
                         <td align="center" style="width:80px;"><a id='lblFdate' >採購條件</a></td>
                         <td align="center" style="width:80px;"><a id='lblFmount' >原採購量(Kg)</a></td>
                         <td align="center" style="width:44px;"><a id='lblUnit' >採購單位</a></td>
-                        <td align="center" style="width:80px;"><a id='lblWmount' >手調採購量(Kg)</a></td>
+                        <td align="center" style="width:80px;"><a id='lblTtype' >手調採購量(Kg)</a></td>
                         <td align="center" style="width:80px;"><a id='lblGWeight' >採購量(Kg)</a></td>
                         <td align="center" style="width:80px;"><a id='lblWeight' >採購量(M)</a></td>
                         <td align="center" style="width:80px;"><a id='lblMount' >採購量(支)</a></td>
-                        <td align="center" style="width:70px;"><a id='lblTggno' >手調購買廠商</a></td>
                         <td align="center" style="width:70px;"><a id='lblTggno1' >購買廠商</a></td>
-                        <td align="center" style="width:80px;"><a id='lblTmount' >各廠商採購量</a></td>
                         <td align="center" style="width:80px;"><a id='lblNetmount' >採購限定MOQ(Kg)</a></td>
                         <td align="center" style="width:60px;"><a id='lblTypea' >庫存水位(%)</a></td>
-                        <td align="center" style="width:80px;"><a id='lblSafemount' >整合月均(M)</a></td>
-                        <td align="center" style="width:80px;"><a id='lblSchmount' >月均(Kg)</a></td>
-                        <td align="center" style="width:80px;"><a id='lblStyle_uj' >寬幅(mm)</a></td>
-                        <td align="center" style="width:70px;"><a id='lblApvmemo' >希德簡碼</a></td>
                         <td align="center" style="width:80px;"><a id='lblStkmount' >原月均(M)</a></td>
+                        <td align="center" style="width:80px;"><a id='lblSchmount' >月均(Kg)</a></td>
+                        <td align="center" style="width:70px;"><a id='lblApvmemo' >希德簡碼</a></td>
                         <td align="center" style="width:70px;"><a id='lblLdate' >同色短尺寸採購</a></td>
                         <td align="center" style="width:100px;"><a id='lblMemo' >注意事項</a></td>
 				</tr>
@@ -469,6 +465,8 @@
     					<td align="center">
     						<input id="btnMinus.*" type="button" style="font-size:medium; font-weight:bold; width:90%;" value="-"/>
     						<input id="txtNoq.*" type="text" style="display: none;" />
+    						<input id="txtOrdano.*" type="text" style="display: none;" />
+    						<input id="txtOrdanoq.*" type="text" style="display: none;" />
     					</td>
 					    <td><input id="txtProductno.*" type="text" class="txt c1" style="width:97%;"/>
                             <input id="txtProduct.*" type="text" class="txt c1" style="width:80%;"/>
@@ -482,22 +480,18 @@
                         <td><input id="txtFdate.*" type="text" class="num c1" style="width:97%;"/></td>
                         <td><input id="txtFmount.*" type="text" class="num c1" style="width:97%;"/></td>
                         <td><input id="txtUnit.*" type="text" class="txt c1" style="width:97%;"/></td>
-                        <td><input id="txtWmount.*" type="text" class="num c1" style="width:97%;"/></td>
-                        <td><input id="txtGWeight.*" type="text" class="num c1" style="width:97%;"/></td>
+                        <td><input id="txtTtype.*" type="text" class="num c1" style="width:97%;"/></td>
+                        <td><input id="txtGweight.*" type="text" class="num c1" style="width:97%;"/></td>
                         <td><input id="txtWeight.*" type="text" class="num c1" style="width:97%;"/></td>
                         <td><input id="txtMount.*" type="text" class="num c1" style="width:97%;"/></td>
-                        <td><input id="textTggno.*" type="text" class="txt c1" style="width:97%;"/></td>
                         <td><input id="txtTggno.*" type="text" class="txt c1" style="width:97%;"/>
                             <input id="txtComp.*" type="text" class="txt c1" style="width:97%;"/>
                         </td>
-                        <td><input id="txtTmount.*" type="text" class="num c1" style="width:97%;"/></td>
                         <td><input id="txtNetmount.*" type="text" class="num c1" style="width:97%;"/></td>
                         <td><input id="txtTypea.*" type="text" class="txt c1" style="width:97%;"/></td>
-                        <td><input id="txtSafemount.*" type="text" class="num c1" style="width:97%;"/></td>
-                        <td><input id="txtSchmount.*" type="text" class="num c1" style="width:97%;"/></td>
-                        <td><input id="txtStyle.*" type="text" class="txt c1" style="width:97%;"/></td>
-                        <td><input id="txtApvmemo.*" type="text" class="txt c1" style="width:97%;"/></td>
                         <td><input id="txtStkmount.*" type="text" class="num c1" style="width:97%;"/></td>
+                        <td><input id="txtSchmount.*" type="text" class="num c1" style="width:97%;"/></td>
+                        <td><input id="txtApvmemo.*" type="text" class="txt c1" style="width:97%;"/></td>
                         <td><input id="txtLdate.*" type="text" class="txt c1" style="width:97%;"/></td>
                         <td><input id="txtMemo.*" type="text" class="txt c1" style="width:97%;"/></td>
 				</tr>

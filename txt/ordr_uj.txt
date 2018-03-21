@@ -1,0 +1,53 @@
+﻿orda2ordrCD:--orda2ordr希得
+set quoted_identifier off
+declare @t_noa nvarchar(max) = [1]
+declare @tmp table(
+    rr int,
+    gno nvarchar(1),
+	ordeno nvarchar(50),
+	ordenoq nvarchar(50),
+	productno nvarchar(50),
+	product nvarchar(100),
+	apvmemo nvarchar(100),--希德簡碼
+	style nvarchar(100), --寬幅(mm)
+	apv nvarchar(10),--1色
+	stkmount float,--原月均(M)
+	schmount float,--月均(Kg)比重
+	stype nvarchar(50),--庫存水位
+	netmount float,--採購限定MOQ(Kg)
+	tggno nvarchar(50),--購買廠商
+	tgg nvarchar(50),--購買廠商
+	weight float,--採購量(M)比重
+	mount float,--採購量(支)標準長(M)
+	fmount float,--原採購量(Kg)
+	apvmount float,--原採購量(M)
+	workdate nvarchar(50),--採購
+	smount float,--距離必採倒數(天)
+	spec nvarchar(50),--採購優惠
+	fdate nvarchar(50),--採購條件
+	unit nvarchar(50)--採購單位
+)
+insert @tmp
+select '','',a.noa,b.noq,b.productno,b.product,substring(b.productno,3,5),d.drcr,'',c.bebottom,d.uweight
+,cast(round((b.safemount/b.netmount)*100,0) as nvarchar(50))+'%',d.beginmount,d.tggno,d.tgg,d.uweight
+,d.reserve,b.gmount,b.mount,b.fdate,b.schmount,d.ordctype,case when b.fdate!='@' then 1 else 0 end
+,d.unit
+from ordas b
+left join orda a on a.noa=b.noa
+left join modfixcs c on a.signno=c.noa and b.productno=c.productno
+left join ucc d on b.productno=d.noa
+where
+a.noa=@t_noa and
+(b.productno in (select noa from ucc where (tgg='大敬' or tgg='銓威' or tgg='弘威')))
+
+update @tmp
+set rr=rx
+from (select ROW_NUMBER()over(partition by gno order by workdate,productno)rx,rr from @tmp)a
+
+update @tmp
+set apv=case when b.counta=1 then 1 else '' end,fdate=cast(b.fdate as nvarchar(50))+'寬'
+from @tmp a
+outer apply(select apvmemo,count(apvmemo)counta,SUM(cast(fdate as float))fdate from @tmp where a.apvmemo=apvmemo group by apvmemo)b
+
+select * from @tmp
+;
