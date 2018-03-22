@@ -24,7 +24,7 @@
             q_tables = 's';
             var q_name = "cud";
             var q_readonly = ['txtNoa','txtDatea','txtCust','txtCustno','txtWorker','txtWorker2'];
-            var q_readonlys = [];
+            var q_readonlys = ['txtOrdeno','txtProductno','txtSpec'];
             var bbmNum = [];
             var bbsNum = [['txtMount1', 1, 0, 1],['txtMount2', 1, 0, 1]
             ,['txtMount3', 1, 0, 1],['txtMount4', 1, 0, 1],['txtMount5', 1, 0, 1],['txtMount6', 1, 0, 1]
@@ -70,9 +70,12 @@
                 document.title='上皮/上紙/製造生產日報表'; 
                 
                 $('#btnIns').hide();
+                $('#btnDele').hide();
                 
                 $('#btnEnda').click(function() {
                 	//完工後"鎖住"：不能"修改""不能"印標籤"
+                	//產出入庫單和領料單
+                	//回寫製造排程單的產出,產出率%,完成狀態
                 	if($('#txtEdime').val()!='1'){
 	                	var t_noa=$('#txtNoa').val();
 	                	var t_ordeno=$('#txtOrdeno').val();
@@ -84,6 +87,7 @@
 									if(as[i].noa==t_noa){
 										$('#txtEdime').val(as[i].edime);
 										abbm[q_recno]["edime"]=as[i].edime;
+										alert('完工成功!!');
 										break;
 									}
 								}

@@ -1591,7 +1591,7 @@
 			}
 			
 			function FI02(i) { //A表 物料需求(套)
-				if($('#textI01_'+i).val().toUpperCase()=='X' || $('#textI18_'+i).val()=='完工'){
+				if($('#textI01_'+i).val().toUpperCase()=='X' || $('#textI18_'+i).val()=='完工' || $('#textJ21_'+i).val()=='完工'){
 					$('#textI02_'+i).val(0);
 				}else{
 					if(dec($('#textI01_'+i).val())>0){
@@ -3183,7 +3183,7 @@
 						<td class="M1 M2" style="width:100px;"><a id="lblI15_uj_s">上膠日</a></td>
 						<td class="M1 M2" style="width:100px;"><a id="lblI16_uj_s">熟成(天)</a></td>
 						<td class="M1 M2" style="width:100px;"><a id="lblI17_uj_s">料最快<BR>備齊日期</a></td>
-						<td class="M1" style="width:100px;"><a id="lblI18_uj_s">完工狀態<BR>(加工)</a></td>
+						<td style="width:100px;display: none"><a id="lblI18_uj_s">完工狀態<BR>(加工)</a></td><!-- class="M1"-->
 						<td class="M1" style="width:100px;"><a id="lblI19_uj_s">訂單總量</a></td>
 						<td class="M1" style="width:100px;"><a id="lblI20_uj_s">限定餘數</a></td>
 						
@@ -3376,7 +3376,7 @@
 						<td class="M1 M2"><input id="textI15.*" type="text" class="txt c1"/></td>
 						<td class="M1 M2"><input id="textI16.*" type="text" class="txt num c1"/></td>
 						<td class="M1 M2"><input id="textI17.*" type="text" class="txt c1"/></td>
-						<td class="M1"><input id="textI18.*" type="text" class="txt c1"/></td>
+						<td style="display: none;" ><input id="textI18.*" type="text" class="txt c1"/></td><!-- class="M1"-->
 						<td class="M1"><input id="textI19.*" type="text" class="txt num c1"/></td>
 						<td class="M1"><input id="textI20.*" type="text" class="txt num c1"/></td>
 						

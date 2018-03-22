@@ -167,6 +167,7 @@
 						q_cmbParse('cmbF01',t_cf01);
 						$('#lblCount').text(t_count);
 						$('#cmbF01').change();
+						$('#cmbWay').change();
 						
 						$('#lblUcano2').text($('#txtUcano').val());
 					}
@@ -174,16 +175,25 @@
 				
 				$('#txtUno').change(function() {
 					var t_uno=$.trim($('#txtUno').val());
-					q_func('qtxt.query.stk_uj', 'orde_uj.txt,stk_uj,' + encodeURI(q_date())+';'+encodeURI(t_uno)+';'+encodeURI('#non')+';'+encodeURI('#non')+';'+encodeURI('#non')+';'+encodeURI('#non'),r_accy,1);
-					var as = _q_appendData("tmp0", "", true, true);
-					if (as[0] != undefined) {
-						$('#txtUcano').val(as[0].productno);
-						$('#lblSpec').text(as[0].spec);
-						$('#lblLengthb').text(round(dec(as[0].weight),0));
-						getucatypea();
+					if(t_uno.length>0){
+						q_func('qtxt.query.stk_uj', 'orde_uj.txt,stk_uj,' + encodeURI(q_date())+';'+encodeURI(t_uno)+';'+encodeURI('#non')+';'+encodeURI('#non')+';'+encodeURI('#non')+';'+encodeURI('#non'),r_accy,1);
+						var as = _q_appendData("tmp0", "", true, true);
+						if (as[0] != undefined) {
+							$('#txtUcano').val(as[0].productno);
+							$('#lblSpec').text(as[0].spec);
+							$('#lblLengthb').text(round(dec(as[0].lengthb),0));
+							getucatypea();
+						}else{
+							alert('【'+t_uno+'】批號不存在!!');
+							$('#txtUno').val('');
+							$('#txtUcano').val('');
+							$('#lblSpec').text('');
+							$('#lblLengthb').text('');
+						}
 					}else{
-						alert('【'+t_uno+'】批號不存在!!');
-						$('#txtUno').val('');
+						$('#txtUcano').val('');
+						$('#lblSpec').text('');
+						$('#lblLengthb').text('');
 					}
 				});
 				
@@ -222,8 +232,9 @@
 									if (ass[0] != undefined) {
 										var t_memo2=ass[0].memo2.split('@,#');
 										$('#lblOrdeno').text(t_memo2[1]); //訂單號/指令流水號
-										var tcubnoa=ass[0].workhno.split('-')[0];
-										var tcubnoq=ass[0].workhno.split('-')[1];
+										var t_workhno=ass[0].workhno;
+										var tcubnoa=t_workhno.substring(0,t_workhno.lastIndexOf('-'));
+										var tcubnoq=t_workhno.substring(t_workhno.lastIndexOf('-')+1);
 										if(tcubnoa.length>0){
 											q_gt('view_cub',"where=^^noa='"+tcubnoa+"' ^^", 0, 0, 0, "getcub", r_accy,1);
 											var asc = _q_appendData("view_cub", "", true);
@@ -266,7 +277,7 @@
 							//重新取得累積量
 							var t_mount=0,t_weight2=0;
 							q_func('qtxt.query.getviewcuds', 'orde_uj.txt,getviewcuds,' 
-							+ encodeURI(t_noa)+';'+encodeURI(t_noq)+';'+encodeURI('#non')+';'+encodeURI('#non')+';'+encodeURI('#non'),r_accy,1);
+							+ encodeURI(t_noa)+';'+encodeURI(t_noq)+';'+encodeURI('#non')+';'+encodeURI('1')+';'+encodeURI('#non'),r_accy,1);
 							var as = _q_appendData("tmp0", "", true, true);
 							for(var i=0;i<as.length;i++){
 								if(as[i].source=='2' || as[i].source=='8'){
@@ -414,7 +425,7 @@
 					//重新取得累積量
 					var t_mount=0,t_weight2=0;
 					q_func('qtxt.query.getviewcuds', 'orde_uj.txt,getviewcuds,' 
-					+ encodeURI(t_ordeno)+';'+encodeURI('#non')+';'+encodeURI('#non')+';'+encodeURI('#non')+';'+encodeURI('2'),r_accy,1);
+					+ encodeURI(t_ordeno)+';'+encodeURI('#non')+';'+encodeURI('#non')+';'+encodeURI('1')+';'+encodeURI('2'),r_accy,1);
 					var as = _q_appendData("tmp0", "", true, true);
 					for(var i=0;i<as.length;i++){
 						t_mount=q_add(t_mount,dec(as[i].mount));
@@ -422,7 +433,7 @@
 					}
 					
 					q_func('qtxt.query.getviewcuds', 'orde_uj.txt,getviewcuds,' 
-					+ encodeURI(t_ordeno)+';'+encodeURI(t_no2)+';'+encodeURI('#non')+';'+encodeURI('#non')+';'+encodeURI('8'),r_accy,1);
+					+ encodeURI(t_ordeno)+';'+encodeURI(t_no2)+';'+encodeURI('#non')+';'+encodeURI('1')+';'+encodeURI('8'),r_accy,1);
 					var as = _q_appendData("tmp0", "", true, true);
 					for(var i=0;i<as.length;i++){
 						t_mount=q_add(t_mount,dec(as[i].mount));
@@ -434,6 +445,16 @@
 					
 					//重新取的新批號
 					getnewunos();
+				});
+				
+				$('#txtWeight').change(function() {
+					var t_weight=dec($('#txtWeight').val());
+					if(t_weight>0){
+						$('#txtMount').val('1');
+						$('#txtMount').attr('disabled', 'disabled');
+					}else{
+						$('#txtMount').removeAttr('disabled');;
+					}
 				});
 				
 				$('#cmbWay').change(function() {
@@ -504,7 +525,7 @@
 					//重新取得累積量
 					var t_mount=0,t_weight2=0;
 					q_func('qtxt.query.getviewcuds', 'orde_uj.txt,getviewcuds,' 
-					+ encodeURI(t_ordeno)+';'+encodeURI(t_no2)+';'+encodeURI('#non')+';'+encodeURI('#non')+';'+encodeURI('7'),r_accy,1);
+					+ encodeURI(t_ordeno)+';'+encodeURI(t_no2)+';'+encodeURI('#non')+';'+encodeURI('1')+';'+encodeURI('7'),r_accy,1);
 					var as = _q_appendData("tmp0", "", true, true);
 					for(var i=0;i<as.length;i++){
 						t_mount=q_add(t_mount,dec(as[i].mount));
@@ -602,7 +623,7 @@
 					//重新取得累積量
 					var t_mount=0,t_weight2=0;
 					q_func('qtxt.query.getviewcuds', 'orde_uj.txt,getviewcuds,' 
-					+ encodeURI(t_ordeno)+';'+encodeURI(t_no2)+';'+encodeURI('#non')+';'+encodeURI('#non')+';'+encodeURI('6'),r_accy,1);
+					+ encodeURI(t_ordeno)+';'+encodeURI(t_no2)+';'+encodeURI('#non')+';'+encodeURI('1')+';'+encodeURI('6'),r_accy,1);
 					var as = _q_appendData("tmp0", "", true, true);
 					for(var i=0;i<as.length;i++){
 						t_mount=q_add(t_mount,dec(as[i].mount));
@@ -665,6 +686,46 @@
 					as=_q_appendData("tmp0", "", true, true);
 					if (as[0] != undefined) {
 						alert('產出成功');
+						
+						//重新取得累積量
+						var t_mount=0,t_weight2=0;
+						q_func('qtxt.query.getviewcuds', 'orde_uj.txt,getviewcuds,' 
+						+ encodeURI(t_ordeno)+';'+encodeURI(t_no2)+';'+encodeURI('#non')+';'+encodeURI('1')+';'+encodeURI('#non'),r_accy,1);
+						var as = _q_appendData("tmp0", "", true, true);
+						for(var i=0;i<as.length;i++){
+							if(as[i].source=='2' || as[i].source=='8'){
+								t_mount=q_add(t_mount,dec(as[i].mount));
+								t_weight2=q_add(t_weight2,dec(as[i].weight2));
+							}
+						}
+						
+						$('#lblTmount').text(t_mount);
+						$('#lblTweight').text(t_weight2);
+						
+						var t_mount=0,t_weight2=0;
+						for(var i=0;i<as.length;i++){
+							if(as[i].source=='7'){
+								t_mount=q_add(t_mount,dec(as[i].mount));
+								t_weight2=q_add(t_weight2,dec(as[i].weight2));
+							}
+						}
+						
+						$('#lblTmount2').text(t_mount);
+						$('#lblTweight2').text(t_weight2);
+						
+						var t_mount=0,t_weight2=0;
+						for(var i=0;i<as.length;i++){
+							if(as[i].source=='6'){
+								t_mount=q_add(t_mount,dec(as[i].mount));
+								t_weight2=q_add(t_weight2,dec(as[i].weight2));
+							}
+						}
+						
+						$('#lblTmount3').text(t_mount);
+						$('#lblTweight3').text(t_weight2);
+						
+						totalmw();
+						
 					}else{
 						alert('產出失敗，請重新ENTER');
 					}
@@ -874,7 +935,7 @@
 					<td colspan="2"><select id="cmbF01"> </select></td>
 					<td><a>長</a><a id="lblDhours" style="margin-left: 20px;"> </a></td>
 					<td><a id="lblF02"> </a></td>
-					<td><input id="txtMount" type="text" class="txt c1"/></td>
+					<td><input id="txtMount" type="text" class="txt c1" value="1" style="text-align: right;"/></td>
 					<td><a id="lblUnit"> </a></td>
 					<td><input id="btnEnter1" type="button" value="ENTER"></td>
 					<td><a id="lblTmount"> </a></td>
@@ -886,7 +947,7 @@
 					<td colspan="2"><a id="lblProductno"> </a></td>
 					<td><a>符合條件</a></td>
 					<td><a id="lblCount"> </a>筆</td>
-					<td><input id="txtWeight" type="text" class="txt c1"/></td>
+					<td><input id="txtWeight" type="text" class="txt c1" style="text-align: right;"/></td>
 					<td><a>M</a></td>
 					<td> </td>
 					<td> </td>
@@ -935,7 +996,7 @@
 					<td><a id="lblUcano2"> </a></td>
 					<td><a>身分證號</a></td>
 					<td colspan="2"><a id="lblUno2"> </a></td>
-					<td><input id="txtWeight2" type="text" class="txt c1" style="width: 70%;margin-right: 10px;"/>M</td>
+					<td><input id="txtWeight2" type="text" class="txt c1" style="width: 70%;margin-right: 10px;text-align: right;"/>M</td>
 					<td><a>1支</a></td>
 					<td><input id="btnEnter2" type="button" value="ENTER"></td>
 					<td><a id="lblTmount2"> </a></td>
@@ -961,7 +1022,7 @@
 					<td><a>身分證號</a></td>
 					<td><a id="lblUno3"> </a></td>
 					<td><a id="lblStoreno3">Z</a>倉</td>
-					<td><input id="txtWeight3" type="text" class="txt c1" style="width: 70%;margin-right: 10px;"/>M</td>
+					<td><input id="txtWeight3" type="text" class="txt c1" style="width: 70%;margin-right: 10px;text-align: right;"/>M</td>
 					<td><a>1支</a></td>
 					<td><input id="btnEnter3" type="button" value="ENTER"></td>
 					<td><a id="lblTmount3"> </a></td>
