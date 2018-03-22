@@ -120,24 +120,24 @@
 				    //別
 				    $('#txtFrame_'+i).val($('#txtProductno_'+i).val().substr(2,1));
 				    //本月月均
-				    if($('#txtBtime3_'+i).val().length>0){
-				        $('#txtMount_'+i).val(dec($('#txtBtime3_'+i).val()));
+				    if($('#textBtime3_'+i).val().length>0){
+				        $('#txtMount_'+i).val(dec($('#textBtime3_'+i).val()));
 				    }else{
 				        tmount();
 				    }
 				    //未來月均
-				    if($('#txtEtime2_'+i).val().length>0){
-                        $('#txtWeight_'+i).val(dec($('#txtEtime2_'+i).val()));
+				    if($('#textEtime2_'+i).val().length>0){
+                        $('#txtWeight_'+i).val(dec($('#textEtime2_'+i).val()));
                     }else{
                         fmount();
                     }
                     //採購點(天)=採購交期天數*安全存量+採購交期天數
-                    $('#txtBottom_' + i).val(q_add(q_mul(dec($('#txtFixmount_' + i).val()),q_div(dec($('#txtEtime_' + 0).val().replace('%','')),100)),dec($('#txtFixmount_' + i).val())));
+                    $('#txtBottom_' + i).val(round(q_add(q_mul(dec($('#txtFixmount_' + i).val()),q_div(dec($('#txtEtime_' +i).val().replace('%','')),100)),dec($('#txtFixmount_' + i).val())),0));
                     //滿足點=若採購週期>0，採購週期(天)+可採，不然採購交期天數+採購點(天)
                     if(dec($('#txtLoss_'+i).val())>0){
-                         $('#txtBrepair_'+i).val(q_add($('#txtLoss_'+i).val(),$('#txtBottom_'+i).val()));
+                         $('#txtBrepair_'+i).val(round(q_add($('#txtLoss_'+i).val(),$('#txtBottom_'+i).val())));
                     }else{
-                         $('#txtBrepair_'+i).val(q_add($('#txtFixmount_'+i).val(),$('#txtBottom_'+i).val()));
+                         $('#txtBrepair_'+i).val(round(q_add($('#txtFixmount_'+i).val(),$('#txtBottom_'+i).val()),0));
                     }
 				}		
 			}
@@ -146,7 +146,7 @@
 			function tmount() {
 			    var t_mon=($('#txtMech2').val());
                 for (var i=0; i<q_bbsCount; i++){
-                    if($('#txtBtime3_'+i).val().length==0){
+                    if($('#textBtime3_'+i).val().length==0){
                         if($('#txtBtime2_'+i).val()=='B'){
                             if(t_mon=='2'){
                                 $('#txtMount_'+i).val(q_mul(dec($('#txtBebottom_'+i).val()),0.8));
@@ -180,7 +180,7 @@
             function fmount() {
                 for (var i=0; i<q_bbsCount; i++){
                     var t_mon=($('#txtBtime_'+i).val());
-                    if($('#txtEtime2_'+i).val().length==0){
+                    if($('#textEtime2_'+i).val().length==0){
                         if($('#txtBtime2_'+i).val()=='B'){
                             if(t_mon=='2'){
                                 $('#txtWeight_'+i).val(q_mul(dec($('#txtBebottom_'+i).val()),0.8));
@@ -227,7 +227,7 @@
                             sum();
                     });
                     
-                    $('#txtBtime3_' + j).change(function() {
+                    $('#textBtime3_' + j).change(function() {
                             sum();
                     });
                     
@@ -239,7 +239,7 @@
                             sum();
                     });
                     
-                    $('#txtEtime2_' + j).change(function() {
+                    $('#textEtime2_' + j).change(function() {
                             sum();
                     });
 					
@@ -546,10 +546,10 @@
 					    <input class="btn" id="btnProduct.*" type="button" value='...' style=" font-weight: bold;" />
 					</td>
 					<td><input id="txtBebottom.*" type="text" class="num c1" style="width:97%;"/></td>
-					<td><input id="txtBtime3.*" type="text" class="num c1" style="width:97%;"/></td>
+					<td><input id="textBtime3.*" type="text" class="num c1" style="width:97%;"/></td>
 					<td><input id="txtMount.*" type="text" class="num c1" style="width:97%;"/></td>
 					<td><input id="txtBtime.*" type="text" class="txt c1" style="width:97%;"/></td>
-					<td><input id="txtEtime2.*" type="text" class="txt c1" style="width:97%;"/></td>
+					<td><input id="textEtime2.*" type="text" class="txt c1" style="width:97%;"/></td>
 					<td><input id="txtWeight.*" type="text" class="num c1" style="width:97%;"/></td>
 					<td><input id="txtEtime.*" type="text" class="num txt c1" style="width:97%;"/></td>
 					<td><input id="txtFixmount.*" type="text" class="num c1" style="width:97%;"/></td>
