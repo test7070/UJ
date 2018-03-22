@@ -183,7 +183,7 @@ delete #tmp where weight<=0 and mount<=0
 
 --更新 名稱/參照,標準長,類別,倉庫
 update a 
-set productno=b.product,lengthb=b.trans,engpro=b.engpro,ucaucc=b.typea,unit=b.unit
+set product=b.product,lengthb=b.trans,engpro=b.engpro,ucaucc=b.typea,unit=b.unit
 from #tmp a left join uca b on a.productno=b.noa
 where b.noa is not null
 
@@ -268,7 +268,7 @@ set uno=ISNULL(uno,''),productno=ISNULL(productno,''),spec=ISNULL(spec,'')
 
 --更新 名稱/參照,標準長,類別,單位
 update a 
-set productno=b.product,lengthb=b.trans,engpro=b.engpro,ucaucc=b.typea,unit=b.unit
+set product=b.product,lengthb=b.trans,engpro=b.engpro,ucaucc=b.typea,unit=b.unit
 from @tmp a left join uca b on a.productno=b.noa
 where b.noa is not null
 
@@ -465,7 +465,7 @@ delete #tmp where weight<=0 and mount<=0
 
 --更新 名稱/參照,標準長,類別,倉庫
 update a 
-set productno=b.product,lengthb=b.trans,engpro=b.engpro,ucaucc=b.typea,unit=b.unit
+set product=b.product,lengthb=b.trans,engpro=b.engpro,ucaucc=b.typea,unit=b.unit
 from #tmp a left join uca b on a.productno=b.noa
 where b.noa is not null
 
@@ -511,7 +511,7 @@ set uno=ISNULL(uno,''),productno=ISNULL(productno,''),spec=ISNULL(spec,'')
 
 --更新 名稱/參照,標準長,類別,單位
 update a 
-set productno=b.product,lengthb=b.trans,engpro=b.engpro,ucaucc=b.typea,unit=b.unit
+set product=b.product,lengthb=b.trans,engpro=b.engpro,ucaucc=b.typea,unit=b.unit
 from @ordctmp a left join uca b on a.productno=b.noa
 where b.noa is not null
 
@@ -806,7 +806,7 @@ set uno=ISNULL(uno,''),productno=ISNULL(productno,''),spec=ISNULL(spec,'')
 
 --更新 名稱/參照,標準長,類別,單位
 update a 
-set productno=b.product,lengthb=b.trans,engpro=b.engpro,ucaucc=b.typea,unit=b.unit
+set product=b.product,lengthb=b.trans,engpro=b.engpro,ucaucc=b.typea,unit=b.unit
 from @ordctmp a left join uca b on a.productno=b.noa
 where b.noa is not null
 
@@ -947,7 +947,7 @@ delete #tmp where weight<=0 and mount<=0
 
 --更新 名稱/參照,標準長,類別,倉庫
 update a 
-set productno=b.product,lengthb=b.trans,engpro=b.engpro,ucaucc=b.typea,unit=b.unit
+set product=b.product,lengthb=b.trans,engpro=b.engpro,ucaucc=b.typea,unit=b.unit
 from #tmp a left join uca b on a.productno=b.noa
 where b.noa is not null
 
@@ -1404,7 +1404,7 @@ begin
 	
 	--更新 名稱/參照,標準長,類別,倉庫
 	update a 
-	set productno=b.product,lengthb=b.trans,engpro=b.engpro,ucaucc=b.typea,unit=b.unit
+	set product=b.product,lengthb=b.trans,engpro=b.engpro,ucaucc=b.typea,unit=b.unit
 	from #tmp a left join uca b on a.productno=b.noa
 	where b.noa is not null
 
@@ -1744,7 +1744,7 @@ delete #tmp where weight<=0 and mount<=0
 	
 --更新 名稱/參照,標準長,類別,倉庫
 update a 
-set productno=b.product,lengthb=b.trans,engpro=b.engpro,ucaucc=b.typea,unit=b.unit
+set product=b.product,lengthb=b.trans,engpro=b.engpro,ucaucc=b.typea,unit=b.unit
 from #tmp a left join uca b on a.productno=b.noa
 where b.noa is not null
 
@@ -2352,6 +2352,71 @@ EXEC("
 
 select * from view_cugs where noa=@t_noa and noq=@t_noq order by noa,noq
 
+--回寫workgs---------------------------------------------------------------------
+	declare @workgno nvarchar(50)
+	declare @workgnoq nvarchar(50)
+	declare @memo2 nvarchar(MAX)
+	declare @weight float
+	declare @productno nvarchar(50)
+	declare @f03 float
+	declare @g03 float
+	declare @str nvarchar(MAX)
+	declare @strc int=0
+	declare @tmemo2 nvarchar(MAX)
+	declare @j20 float
+	declare @cmd nvarchar(max)
+	
+	declare cursor_table cursor for
+	select a.accy,a.noa,a.noq,a.memo2,isnull(c.weight,0)weight,dbo.split(a.memo2,'@,#',3) productno
+	,cast(dbo.split(a.memo2,'@,#',27) as float) p05,cast(dbo.split(a.memo2,'@,#',30) as float) q03
+	from view_workgs a left join view_cugs b on a.noa+'-'+a.noq=b.workgno
+	outer apply (select SUM(mount*weight)weight from view_cuds where ordeno=b.noa and (source='2' or source='8') )c
+	where b.noa=@t_noa and b.noq=@t_noq
+	open cursor_table 
+	fetch next from cursor_table 
+	into @accy,@workgno,@workgnoq,@memo2,@weight,@productno,@f03,@g03
+	while(@@FETCH_STATUS <> -1) 
+	begin
+		select @tmemo2=@memo2+'@,#'--含最後一筆
+		set @strc=0
+		set @str=''
+		set @j20=case when LEFT(@productno,1)='6' then @g03 else @f03 end
+		set @j20=case when @j20=0 then 0 else round(@weight/@j20*100,2) end
+		
+		while (charindex('@,#',@tmemo2)>0)
+		begin
+			if(@strc=35) --物料需求(套)
+				set @str=@str+'@,#'+'0'
+			else if(@strc=51) --完工狀態
+				set @str=@str+'@,#'+'完工'
+			else if(@strc=72) --產出
+				set @str=@str+'@,#'+cast(@weight as nvarchar(50))
+			else if(@strc=73) --產出率
+				set @str=@str+'@,#'+CAST(@j20 as nvarchar(50))
+			else if(@strc=74) --完工狀態
+				set @str=@str+'@,#'+'完工'
+			else
+				set @str=@str+'@,#'+SUBSTRING(@tmemo2,0,CHARINDEX('@,#',@tmemo2))
+				
+			set @tmemo2=SUBSTRING(@tmemo2,CHARINDEX('@,#',@tmemo2)+3,len(@tmemo2))
+
+			set @strc=@strc+1
+		end
+		
+		set @str=stuff(@str,1,3,'')
+		
+		--select @memo2,@str
+		
+		set @cmd="update workgs"+@accy+" set memo2=@str where noa='"+@workgno+"' and noq='"+@workgnoq+"'"
+		execute sp_executesql @cmd,N'@str nvarchar(MAX)',@str=@str
+	
+		fetch next from cursor_table 
+		into @accy,@workgno,@workgnoq,@memo2,@weight,@productno,@f03,@g03
+	end 
+	close cursor_table 
+	deallocate cursor_table
+-----------------------------------------------------------------------------------
+
 --//庫存begin----------------------------------------------------------------------
 create table #tmp(
 	typea nvarchar(10),
@@ -2465,7 +2530,7 @@ delete #tmp where weight<=0 and mount<=0
 	
 --更新 名稱/參照,標準長,類別,倉庫
 update a 
-set productno=b.product,lengthb=b.trans,engpro=b.engpro,ucaucc=b.typea,unit=b.unit
+set product=b.product,lengthb=b.trans,engpro=b.engpro,ucaucc=b.typea,unit=b.unit
 from #tmp a left join uca b on a.productno=b.noa
 where b.noa is not null
 
@@ -2581,6 +2646,15 @@ EXEC("
 	+@t_mechno+"','"+@t_pno+"','"+@t_uno+"',"+@t_mount+","+@t_weight+","
 	+@t_weight1+","+@t_weight2+",'"+@t_spec+"',"+@t_lengthb+",'"+@t_pno2+"','"+@t_product2+"','"+@t_memo+"'
 ")
+
+if(@t_source='9') --表示1支半成品已領用完換下一支 之前的累積量要結案
+begin
+	EXEC("
+		update cuds"+@accy+"
+		set enda=1
+		where ordeno='"+@t_ordeno+"' and no2='"+@t_no2+"'
+	")
+end
 
 select * from view_cuds where noa=@noa
 ;
@@ -2705,7 +2779,7 @@ delete #tmp where typea!='99'
 	
 --更新 名稱/參照,標準長,類別,倉庫
 update a 
-set productno=b.product,lengthb=b.trans,engpro=b.engpro,ucaucc=b.typea,unit=b.unit
+set product=b.product,lengthb=b.trans,engpro=b.engpro,ucaucc=b.typea,unit=b.unit
 from #tmp a left join uca b on a.productno=b.noa
 where b.noa is not null
 
