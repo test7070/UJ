@@ -1588,6 +1588,8 @@ declare @t_uno3 nvarchar(50)=case when '#non'=[7] then '' else [7] end
 declare @t_mount1 nvarchar(50)=case when '#non'=[8] then '0' else [8] end
 declare @t_mount2 nvarchar(50)=case when '#non'=[9] then '0' else [9] end
 declare @t_mount3 nvarchar(50)=case when '#non'=[10] then '0' else [10] end
+declare @t_userno nvarchar(50)=case when '#non'=[11] then '' else [11] end
+declare @t_namea nvarchar(50)=case when '#non'=[12] then '' else [12] end
 
 declare @accy nvarchar(50)=isnull((select top 1 accy from view_cug where noa=@t_noa),@t_accy)
 declare @uno nvarchar(50)=@t_uno+'-'+right('00'+cast(cast(right(isnull((select MAX(nosold) from view_cugs where isnull(nosold,0)!='' and nosold like @t_uno+'-%' and len(nosold)=len(@t_uno)+3 ),'00'),2) as int)+1 as nvarchar(10)),2)
@@ -1802,7 +1804,7 @@ BEGIN TRY
 	,b.productno,b.mount,b.nosold --製成品
 	,c.productno --紙料號
 	,cast(@t_mount2 as float) --支數
-	,case when c.mount>1 then c.lengthb else c.weight end --長(M)
+	,c.weight --,case when c.mount>1 then c.lengthb else c.weight end --長(M) 紙只會1批號對應1顆
 	,@t_uno2 --批號
 	,c.spec --列管備註
 	,a.processno,'4',a.datea
@@ -1854,10 +1856,10 @@ BEGIN TRY
 	,nos,uccno,uccuno,lengthb,spec,datea
 	from #tmpa")
 	
-	EXEC("insert cud"+@accy+"(noa,datea,custno,cust,style,ordeno)
+	EXEC("insert cud"+@accy+"(noa,datea,custno,cust,style,ordeno,worker)
 	select noa,datea,mechno
 	,case when source='3' then '下料' when source='4' then '上紙' when source='5' then '上皮' else '' end
-	,source,cugnoa from #tmpa a 
+	,source,cugnoa,'"+@t_namea+"' from #tmpa a 
 	where not exists(select * from view_cud where noa=a.noa) 
 	group by noa,datea,mechno,source,cugnoa")
 	
@@ -1911,10 +1913,10 @@ BEGIN TRY
 		from #tmpb
 	")
 	
-	EXEC("insert cud"+@accy+"(noa,datea,custno,cust,style,ordeno)
+	EXEC("insert cud"+@accy+"(noa,datea,custno,cust,style,ordeno,worker)
 	select noa,datea,mechno
 	,case when source='3' then '下料' when source='4' then '上紙' when source='5' then '上皮' else '' end
-	,source,cugnoa from #tmpb a 
+	,source,cugnoa,'"+@t_namea+"' from #tmpb a 
 	where not exists(select * from view_cud where noa=a.noa) 
 	group by noa,datea,mechno,source,cugnoa")
 
@@ -2219,7 +2221,7 @@ declare @accy nvarchar(50)=(select top 1 accy from view_cud where noa=@t_noa)
 --鎖住
 EXEC("update cud"+@accy+" set edime=1 where ordeno='"+@t_ordeno+"'")
 
-declare @accy nvarchar(50)=(select top 1 accy from view_cug where noa=@t_ordeno)
+set @accy=(select top 1 accy from view_cug where noa=@t_ordeno)
 EXEC("update cug"+@accy+" set isset=1 where noa='"+@t_ordeno+"'")
 
 --回寫workgs

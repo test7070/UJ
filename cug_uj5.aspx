@@ -140,7 +140,7 @@
 											$('#lblAverage2').text(q_add(q_div(q_sub(dec(tcs[4]),dec(tcs[5])),2),dec(tcs[5])));
 										}
 									}else{
-										alert('派工單尚未進行【投入及產出作業】或無使用【下料】內容!!');
+										alert('派工單尚未進行【投入及產出作業】或已無可用的【下料】製程!!');
 									}
 								}
 							}else{
@@ -315,6 +315,15 @@
 						$('#cmbMome1').val('');
 						if (ass[0] != undefined) {
 							$('#txtNoa').change();
+						}else{
+							//目前是最後一筆 全部清除
+							$('#lblMemo4').text('');
+							$('#lblUcatypea').text('');
+							$('#lblProductno').text('');
+							$('#lblUno').text('');
+							$('#lblLengthb').text('');
+							$('#lblWeight').text('');
+							alert('派工單【'+$('#txtNoa').val()+'】已無可用的【下料】製程!!');
 						}
 					}
 				});

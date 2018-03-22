@@ -114,7 +114,7 @@
 										}
 										
 									}else{
-										alert('派工單尚未進行【投入及產出作業】或無使用【上皮】內容!!');
+										alert('派工單尚未進行【投入及產出作業】或已無可用的【上皮】製程!!');
 									}
 								}
 								
@@ -485,6 +485,22 @@
 									$('#lblSpec_'+k).text('');
 								}
 							}
+						}else{
+							//目前是最後一筆 全部清除
+							for(var k=0;k<8;k++){
+								$('#lblProductno_'+k).text('');
+								$('#lblOrdeno_'+k).text('');
+								$('#lblNo2_'+k).text('');
+								$('#lblNoa_'+k).text('');
+								$('#lblNoq_'+k).text('');
+								$('#lblUno_'+k).text('');
+								$('#lblTimes_'+k).text('');
+								$('#txtProductno2_'+k).val('');
+								$('#txtProduct2_'+k).val('');
+								$('#lblLengthb_'+k).text('');
+								$('#lblSpec_'+k).text('');
+							}
+							alert('派工單【'+$('#txtNoa').val()+'】已無可用的【上皮】製程!!');
 						}
 						refreshgen(t_ordeno);
 						$('#btnRepkey').click();
