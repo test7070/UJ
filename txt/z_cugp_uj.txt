@@ -1,0 +1,68 @@
+﻿z_cugp_uj01:--z_cugp_uj01
+declare @t_bnoa nvarchar(50)=case when '#non'=[2] then '' else [2] end
+declare @t_enoa nvarchar(50)=case when '#non'=[3] then char(255) else [3] end
+declare @pageline int= 35
+
+declare @tmp table(
+	gno nvarchar(50),
+	noa nvarchar(100),
+	typea nvarchar(50),
+	m1 float,
+	m2 float,
+	nos nvarchar(50),
+	ordeno nvarchar(50),
+	f01 nvarchar(MAX),
+	productno nvarchar(250),
+	thours float,
+	dhours float,
+	f02 nvarchar(MAX),
+	mount float,
+	f03 nvarchar(MAX),
+	f04 nvarchar(MAX),
+	f05 nvarchar(MAX),
+	f06 nvarchar(MAX),
+	f07 nvarchar(MAX),
+	f08 nvarchar(MAX),
+	f09 nvarchar(MAX),
+	f10 nvarchar(MAX),
+	f11 nvarchar(MAX),
+	f12 nvarchar(MAX),
+	f13 nvarchar(MAX),
+	f14 nvarchar(MAX),
+	title nvarchar(MAX),
+	rr int,
+	page int
+)
+
+insert @tmp(gno,noa,typea,m1,m2,nos,ordeno,f01,productno,thours,dhours,f02,mount
+,f03,f04,f05,f06,f07,f08,f09,f10,f11,f12,f13,f14,title)
+select case when a.bdate='加工' then '2' else '4' end
+,a.noa,a.bdate,a.smount,a.hours
+,b.nos,b.ordeno,dbo.split(b.memo,'@,#',1)
+,b.productno,b.thours,b.dhours,dbo.split(b.memo,'@,#',2)
+,b.mount,dbo.split(b.memo,'@,#',3),dbo.split(b.memo,'@,#',4)
+,dbo.split(b.memo,'@,#',5),dbo.split(b.memo,'@,#',6)
+,dbo.split(b.memo,'@,#',7),dbo.split(b.memo,'@,#',8)
+,dbo.split(b.memo,'@,#',9),dbo.split(b.memo,'@,#',10)
+,dbo.split(b.memo,'@,#',11),dbo.split(b.memo,'@,#',12)
+,dbo.split(b.memo,'@,#',13),dbo.split(b.memo,'@,#',14)
+,a.bdate+'派工單'
+from view_cug a left join view_cugs b on a.noa=b.noa 
+where a.noa between @t_bnoa  and @t_enoa
+
+update a
+set rr=xx,page=ceiling(cast(xx as float)/@pageline)
+from (select page,rr,ROW_NUMBER()over (partition by noa order by noa,nos)xx from @tmp)a
+
+--插入表頭
+insert @tmp (gno,noa,typea,title,m1,m2,page)
+select case when gno='2' then '1' else '3' end ,noa,MAX(typea),MAX(title),MAX(m1),MAX(m2),page
+from @tmp group by gno,noa,page
+
+--插入分頁
+insert @tmp (gno,noa,typea,title,m1,m2,page)
+select '5',noa,MAX(typea),MAX(title),MAX(m1),MAX(m2),page
+from @tmp group by noa,page
+
+select *,'' barcode from @tmp order by typea,noa,page,gno,rr
+;
