@@ -21,12 +21,12 @@
             }
             $(document).ready(function() {
                 q_getId();
-                q_gf('', 'z_cugp_uj');
+                q_gf('', 'z_cudp_uj');
             });
 
             function q_gfPost() {
                 $('#q_report').q_report({
-                    fileName : 'z_cugp_uj',
+                    fileName : 'z_cudp_uj',
                     options : [{
                         type : '0', //[1]
                         name : 'accy',
@@ -50,19 +50,6 @@
             function q_gtPost(s2) {
             }
             
-            /*function codeshow() {
-            	$('.barcode').each(function(index) {
-            		var t_id=$(this).attr('id');
-					var t_code=replaceAll($(this).attr('id'),'code_','');
-					JsBarcode("#"+t_id, encodeURI(t_code) //中文只能暫時先編碼處理
-					,{
-						width:1,
-						height: 20,
-						displayValue: false
-					});
-					$(this).show();
-				});
-            }*/
 		</script>
 	</head>
 	<body ondragstart="return false" draggable="false"
