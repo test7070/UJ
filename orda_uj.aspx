@@ -213,7 +213,7 @@
 				    //已採未交(天)
                     $('#textM3_' + i).val(q_div(dec($('#textM4_' + i).val()),q_div(dec($('#textM14_' + i).val()),30)));
                     //總庫存(天)
-                    $('#txtSafemount_' + i).val(q_add(dec($('#textM1_' + i).val()),dec($('#textM3_' + i).val())));
+                    $('#txtSafemount_' + i).val(round(q_add(dec($('#textM1_' + i).val()),dec($('#textM3_' + i).val())),0));
                     //總庫存(M)
                     $('#textM5_' + i).val(q_div(q_mul(dec($('#txtSafemount_' + i).val()),dec($('#textM14_' + i).val())),30));
                     //距離必採倒數(天)
@@ -357,9 +357,9 @@
 			
 			function btnIns() {
 				_btnIns();
-				$('#txtSignno').change(function() {
-                    if($('#txtSignno').val().length!=0){
-                        t_where = "where=^^ noa='"+$('#txtSignno').val()+"' ^^";
+				$('#txtWorkgno').change(function() {
+                    if($('#txtWorkgno').val().length!=0){
+                        t_where = "where=^^ noa='"+$('#txtWorkgno').val()+"' ^^";
                         q_gt('modfixc', t_where, 0, 0, 0, "", r_accy);
                     }
                 });
@@ -384,7 +384,7 @@
 				_btnOk(key_value, bbmKey[0], bbsKey[1], '', 2);
 			}
 			function bbsSave(as) {
-			    if (!as['productno']) {
+			    if (!as['productno'] && !as['product']) {
                     as[bbsKey[1]] = '';
                     return;
                 }
@@ -604,7 +604,7 @@
                     </tr>
                     <tr>
                         <td><span> </span><a id='lblSignno_uj' class="lbl">採購參數單號</a></td>
-                        <td><input id="txtSignno"  type="text"  class="txt c1" /></td>
+                        <td><input id="txtWorkgno"  type="text"  class="txt c1" /></td>
                     </tr>
                     <tr>
                         <td><span> </span><a id='lblWorker' class="lbl"> </a></td>
