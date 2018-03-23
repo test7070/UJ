@@ -118,10 +118,42 @@
 				    case 'ucc':
                         as = _q_appendData("ucc", "", true);
                         for ( i = 0; i < q_bbsCount; i++) {
-                            if($('#txtProductno_'+i).val()==as[0].noa){
-                                $('#txtWeight_'+i).val(round(q_div($('#txtGweight_'+i).val(),as[0].uweight),0));
-                                $('#txtMount_'+i).val(round(q_div($('#txtWeight_'+i).val(),as[0].reserve),0));
-                                $('#txtSchmount_'+i).val(round(q_mul($('#txtWeight_'+i).val(),as[0].uweight),0));
+                            if($('#cmbUccgano').val()=='希得'){
+                                if($('#txtProductno_'+i).val()==as[0].noa){
+                                    $('#txtWeight_'+i).val(round(q_div($('#txtGweight_'+i).val(),as[0].uweight),0));
+                                    $('#txtMount_'+i).val(round(q_div($('#txtWeight_'+i).val(),as[0].reserve),0));
+                                    $('#txtSchmount_'+i).val(round(q_mul($('#txtWeight_'+i).val(),as[0].uweight),0));
+                                }
+                            }else{
+                                //採購量(M)
+                                if($('#textTtype_'+i).val()=='X'){
+                                    $('#txtWeight_'+i).val('');
+                                }else{
+                                    var t_t1=0,t_t2=0;
+                                    if($('#txtUnit_'+i).val()=='M' && dec($('#txtApvmount_'+i).val())>0){
+                                       if(dec($('#txtNetmount_'+i).val())>dec($('#txtApvmount_'+i).val())){
+                                           t_t1=dec($('#txtNetmount_'+i).val());
+                                       }else{
+                                           t_t1=dec($('#txtApvmount_'+i).val());
+                                       }
+                                    }else{
+                                       t_t1=0; 
+                                    }
+                                    if($('#txtUnit_'+i).val()=='KG' && dec($('#txtFmount_'+i).val())>0){
+                                       if(dec($('#txtNetmount_'+i).val())>dec($('#txtFmount_'+i).val())){
+                                           t_t2=round(q_div(dec($('#txtNetmount_'+i).val()),as[0].uweight),0);
+                                       }else{
+                                           t_t2=round(q_div(dec($('#txtFmount_'+i).val()),as[0].uweight),0);
+                                       }
+                                    }else{
+                                       t_t2=0; 
+                                    }
+                                    $('#txtWeight_'+i).val(q_add(t_t1,t_t2));
+                                }
+                                //採購量(支)
+                                $('#txtMount_'+i).val(round(q_div(dec($('#txtWeight_'+i).val()),as[0].reserve),0));
+                                //月均(Kg)
+                                $('#txtSchmount_'+i).val(round(q_mul(dec($('#txtStkmount_'+i).val()),as[0].uweight),0));
                             }
                         }
                         break;			
@@ -138,7 +170,45 @@
 					alert(t_err);
 					return;
 				}
-				sum();
+				if($('#cmbUccgano').val()=='希得'){
+                    //各廠商採購量,整合月均(M)
+                        for (var k = 0; k< q_bbsCount; k++) {
+                            var t_total=0,t_ttotal=0;
+                            var t_tgg=trim($('#txtComp_'+k).val());
+                            var t_apvmemo=trim($('#txtApvmemo_'+k).val());
+                            for (var j = 0; j< q_bbsCount; j++) {
+                                if(dec($('#txtWeight_'+j).val())>0 && t_tgg==$('#txtComp_'+j).val()){
+                                    t_total= q_add(t_total,dec($('#txtGweight_'+j).val()));
+                                }
+                                if($('#txtLdate_'+j).val()!='不' && t_apvmemo==$('#txtApvmemo_'+j).val()){
+                                    t_ttotal= q_add(t_ttotal,dec($('#txtStkmount_'+j).val()));
+                                }
+                            }
+                            $('#txtTmount_'+k).val(t_total);
+                            $('#txtSafemount_'+k).val(t_ttotal);
+                        }
+                }else{
+                    //各廠商採購量
+                        for (var k = 0; k< q_bbsCount; k++) {
+                            var t_total=0,t_ttotal=0;
+                            var t_tgg=trim($('#txtComp_'+k).val());
+                            for (var j = 0; j< q_bbsCount; j++) {
+                                if(dec($('#txtWeight_'+j).val())>0 && t_tgg==$('#txtComp_'+j).val()){
+                                    if($('#txtUnit_'+j).val()=='KG'){
+                                        t_total= q_add(t_total,dec($('#txtGweight_'+j).val()));
+                                    }else if($('#txtUnit_'+j).val()=='M'){
+                                        t_ttotal= q_add(t_ttotal,dec($('#txtGweight_'+j).val()));
+                                    }
+                                    
+                                }
+                            }
+                            if(dec($('#txtWeight_'+k).val())>0 && $('#txtUnit_'+k).val()=='KG'){
+                                $('#txtTmount_'+k).val(t_total);
+                            }else if(dec($('#txtWeight_'+k).val())>0 && $('#txtUnit_'+k).val()=='M'){
+                                $('#txtTmount_'+k).val(t_ttotal);
+                            };
+                        }
+                }
 				if (q_cur == 1)
 					$('#txtWorker').val(r_name);
 				else
@@ -172,29 +242,13 @@
                         }
                         //採購量(Kg)
     				    tmount();
-    				    //各廠商採購量,整合月均(M)
-                        for (var k = 0; k< q_bbsCount; k++) {
-                            var t_total=0,t_ttotal=0;
-                            var t_tgg=trim($('#txtComp_'+k).val());
-                            var t_apvmemo=trim($('#txtApvmemo_'+k).val());
-                            for (var j = 0; j< q_bbsCount; j++) {
-                                if(dec($('#txtWeight_'+j).val())>0 && t_tgg==$('#txtComp_'+j).val()){
-                                    t_total= q_add(t_total,dec($('#txtGweight_'+j).val()));
-                                }
-                                if($('#txtLdate_'+j).val()!='不' && t_apvmemo==$('#txtApvmemo_'+j).val()){
-                                    t_ttotal= q_add(t_ttotal,dec($('#txtStkmount_'+j).val()));
-                                }
-                            }
-                            $('#txtTmount_'+k).val(t_total);
-                            $('#txtSafemount_'+k).val(t_ttotal);
-                        }
-
     				    //採購量(M),採購量(支)
     				    if($('#txtProductno_'+i).val().length!=0){
                             t_where = "where=^^ noa='"+$('#txtProductno_'+i).val()+"' ^^";
                             q_gt('ucc', t_where, 0, 0, 0, "", r_accy);
                         }
                     }else{
+                        //原採購量(Kg)
                         if($('#txtUnit_'+i).val()=='M'){
                             $('#txtFmount_'+i).val('');
                         }
@@ -205,13 +259,32 @@
                             $('#txtGweight_'+i).val(dec($('#textTtype_'+i).val()));
                         }else{
                             var t_t1=0,t_t2=0;
-                            if(dec($('#txtNetmount_'+i).val())>dec($('#textTtype_'+i).val())){
-                               t_t1=0;
+                            if($('#txtUnit_'+i).val()=='M' && dec($('#txtApvmount_'+i).val())>0){
+                               if(dec($('#txtNetmount_'+i).val())>dec($('#txtApvmount_'+i).val())){
+                                   t_t1=dec($('#txtNetmount_'+i).val());
+                               }else{
+                                   t_t1=dec($('#txtApvmount_'+i).val());
+                               }
                             }else{
                                t_t1=0; 
                             }
-                            
+                            if($('#txtUnit_'+i).val()=='KG' && dec($('#txtFmount_'+i).val())>0){
+                               if(dec($('#txtNetmount_'+i).val())>dec($('#txtFmount_'+i).val())){
+                                   t_t2=dec($('#txtNetmount_'+i).val());
+                               }else{
+                                   t_t2=dec($('#txtFmount_'+i).val());
+                               }
+                            }else{
+                               t_t2=0; 
+                            }
+                            $('#txtGweight_'+i).val(q_add(t_t1,t_t2));
                         }
+                        //採購量(M)
+                        if($('#txtProductno_'+i).val().length!=0){
+                            t_where = "where=^^ noa='"+$('#txtProductno_'+i).val()+"' ^^";
+                            q_gt('ucc', t_where, 0, 0, 0, "", r_accy);
+                        }
+                        
                     }
 
 				}	
@@ -253,6 +326,9 @@
                     $('#txtApvmount_' + j).change(function() {
                             sum();
                     });
+                    $('#txtFmount_' + j).change(function() {
+                            sum();
+                    });
                     $('#txtWorkdate_' + j).change(function() {
                             sum();
                     });
@@ -268,17 +344,21 @@
                     $('#txtNetmount_' + j).change(function() {
                             sum();
                     });
-                    $('#txtApvmount_' + j).change(function() {
-                            sum();
-                    });
                     $('#txtGweight_' + j).change(function() {
                             sum();
                     });
                     $('#txtWeight_' + j).change(function() {
                             sum();
                     });
-                    
-                    
+                    $('#txtStkmount_' + j).change(function() {
+                            sum();
+                    });
+                    $('#txtTgg_' + j).change(function() {
+                            sum();
+                    });
+                    $('#txtApvmemo_' + j).change(function() {
+                            sum();
+                    });
 				}				
 				_bbsAssign();
 
