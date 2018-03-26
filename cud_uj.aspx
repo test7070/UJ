@@ -206,7 +206,7 @@
             }
 
             function btnPrint() {
-                q_box('z_cudp_uj.aspx', '', "95%", "95%", q_getMsg("popPrint"));
+                q_box('z_cudp_uj.aspx' + "?;;;noa=" + trim($('#txtOrdeno').val()) + ";" + r_accy, '', "95%", "95%", q_getMsg("popPrint"));
             }
 			
             function wrServer(key_value) {

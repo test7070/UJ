@@ -1,0 +1,295 @@
+﻿z_cudp_uj01:--z_cudp_uj01
+SET QUOTED_IDENTIFIER OFF
+declare @t_bdate nvarchar(50)=case when '#non'=[2] then '' else [2] end
+declare @t_edate nvarchar(50)=case when '#non'=[3] then char(255) else [3] end
+declare @t_bnoa nvarchar(50)=case when '#non'=[4] then '' else [4] end
+declare @t_enoa nvarchar(50)=case when '#non'=[5] then char(255) else [5] end
+declare @t_mechno nvarchar(50)=case when '#non'=[6] then '' else [6] end
+
+declare @tmp table(
+	gno nvarchar(50),
+	noa nvarchar(100),
+	noq nvarchar(100),
+	mechno nvarchar(100),
+	datea nvarchar(50),
+	source nvarchar(50),
+	ordeno nvarchar(MAX),m05 nvarchar(MAX),typea nvarchar(MAX),m06 nvarchar(MAX),
+	productno nvarchar(MAX),m07 nvarchar(MAX),mount nvarchar(MAX),m08 nvarchar(MAX),
+	weight01 nvarchar(MAX),m011 nvarchar(MAX),weight2 nvarchar(MAX),uno nvarchar(MAX),
+	m031 nvarchar(MAX),spec nvarchar(MAX),m09 nvarchar(MAX),pno2 nvarchar(MAX),
+	product2 nvarchar(MAX),m032 nvarchar(MAX),m012 nvarchar(MAX),m10 nvarchar(MAX),
+	lengthb nvarchar(MAX),weight04 nvarchar(MAX),weight1 nvarchar(MAX),m014 nvarchar(MAX),
+	m4 nvarchar(MAX),
+	rr int
+)
+
+insert @tmp(gno,noa,noq,mechno,datea,source,ordeno,m05,typea,m06,productno,m07
+,mount,m08,weight01,m011,weight2,uno,m031,spec,m09,pno2,product2,m032,m012,m10
+,lengthb,weight04,weight1,m014,m4)
+select '0',noa,noq,mechno,datea,source
+,ordeno,dbo.split(memo,'@,#',5)m05
+,case when source='2' then '成品' when source='6' then '零碼' 
+when source='7' then '不良' when source='8' then '再製品' 
+when source='9' then '餘料' else '' end
+,dbo.split(memo,'@,#',6)m06,productno,dbo.split(memo,'@,#',7)m07
+,mount,dbo.split(memo,'@,#',8)m08,weight,dbo.split(memo,'@,#',1)m01
+,weight2,uno,dbo.split(memo,'@,#',3)m03,spec,dbo.split(memo,'@,#',9)m09
+,productno2,product2,dbo.split(memo,'@,#',3)m03,dbo.split(memo,'@,#',1)m01
+,dbo.split(memo,'@,#',10)m10,lengthb,weight,weight1,dbo.split(memo,'@,#',1)m01
+,dbo.split(memo,'@,#',4)m04
+from view_cuds
+where (source='2' --成品
+or source='6' --零碼
+or source='7' --不良
+or source='8' --再製 
+or source='9') --餘料
+and datea between @t_bdate and @t_edate
+and ordeno between @t_bnoa and @t_enoa
+and (mechno=@t_mechno or len(@t_mechno)=0)
+
+--排序 依實際加工日期
+update a
+set rr=idno
+from (select rr,ROW_NUMBER()over (partition by ordeno order by m4,noa,noq)idno from @tmp)a
+
+--處理不同類別使用相同欄位的內容和不顯示內容的欄位
+update @tmp
+set m10='',m012='',m032='',lengthb='',weight04='',weight1='',m014=''
+where source='2' or source='8'
+
+update @tmp
+set m06='',m011='',m031='',spec='',lengthb='',weight04='',weight1='',m014=''
+where source='7'
+
+update @tmp
+set m06='',m011='',m031='',spec='',m032='',m012='',m10='',lengthb='',weight04='',weight1='',m014=''
+where source='6'
+
+update @tmp
+set mount='',weight01='',m011='',weight2='',uno='',spec='',pno2='',product2='',m012=''
+where source='9'
+
+insert @tmp(gno,ordeno)
+select '1',ordeno from @tmp group by ordeno
+
+select * from @tmp order by ordeno,gno,rr
+;
+----------------------------------------------------------------------------------------------
+z_cudp_uj02:--z_cudp_uj02
+SET QUOTED_IDENTIFIER OFF
+declare @t_bdate nvarchar(50)=case when '#non'=[2] then '' else [2] end
+declare @t_edate nvarchar(50)=case when '#non'=[3] then char(255) else [3] end
+declare @t_bnoa nvarchar(50)=case when '#non'=[4] then '' else [4] end
+declare @t_enoa nvarchar(50)=case when '#non'=[5] then char(255) else [5] end
+declare @t_mechno nvarchar(50)=case when '#non'=[6] then '' else [6] end
+declare @t_source nvarchar(50)=case when '#non'=[7] then '' else [7] end 
+
+declare @pageline int= 35
+
+declare @tmp table(
+	gno nvarchar(50),
+	noa nvarchar(100),
+	noq nvarchar(100),
+	mechno nvarchar(100),
+	datea nvarchar(50),
+	source nvarchar(50),
+	ordeno nvarchar(MAX),m05 nvarchar(MAX),typea nvarchar(MAX),m06 nvarchar(MAX),
+	productno nvarchar(MAX),m07 nvarchar(MAX),mount nvarchar(MAX),m08 nvarchar(MAX),
+	weight01 nvarchar(MAX),m011 nvarchar(MAX),weight2 nvarchar(MAX),uno nvarchar(MAX),
+	m031 nvarchar(MAX),spec nvarchar(MAX),m09 nvarchar(MAX),pno2 nvarchar(MAX),
+	product2 nvarchar(MAX),m032 nvarchar(MAX),m012 nvarchar(MAX),m10 nvarchar(MAX),
+	lengthb nvarchar(MAX),weight04 nvarchar(MAX),weight1 nvarchar(MAX),m014 nvarchar(MAX),
+	m4 nvarchar(MAX),
+	title nvarchar(MAX),
+	rr int,
+	idno int,
+	page int
+)
+
+insert @tmp(gno,noa,noq,mechno,datea,source,ordeno,m05,typea,m06,productno,m07
+,mount,m08,weight01,m011,weight2,uno,m031,spec,m09,pno2,product2,m032,m012,m10
+,lengthb,weight04,weight1,m014,m4)
+select '0',noa,noq,mechno,datea,source
+,ordeno,dbo.split(memo,'@,#',5)m05
+,case when source='2' or source='8' then '成品' --when source='8' then '再製品' (這張表成品與再製放在一起)
+when source='6' then '零碼' when source='7' then '不良'
+when source='9' then '餘料' else '' end
+,dbo.split(memo,'@,#',6)m06,productno,dbo.split(memo,'@,#',7)m07
+,mount,dbo.split(memo,'@,#',8)m08,weight,dbo.split(memo,'@,#',1)m01
+,weight2,uno,dbo.split(memo,'@,#',3)m03,spec,dbo.split(memo,'@,#',9)m09
+,productno2,product2,dbo.split(memo,'@,#',3)m03,dbo.split(memo,'@,#',1)m01
+,dbo.split(memo,'@,#',10)m10,lengthb,weight,weight1,dbo.split(memo,'@,#',1)m01
+,dbo.split(memo,'@,#',4)m04
+from view_cuds 
+where (source='2' --成品 
+or source='6' --零碼 
+or source='7' --不良 
+or source='8' --再製 
+or source='9') --餘料 
+and datea between @t_bdate and @t_edate 
+and ordeno between @t_bnoa and @t_enoa 
+and (mechno=@t_mechno or len(@t_mechno)=0) 
+and (case when source='2' or source='8' then '成品' when source='6' then '零碼' 
+when source='7' then '不良品' when source='9' then '餘料' else '' end=@t_source 
+or len(@t_source)=0) 
+
+--排序 依實際加工日期
+update a
+set rr=xidno
+from (select rr,ROW_NUMBER()over (partition by ordeno order by m4,noa,noq)xidno from @tmp)a
+
+--處理不同類別使用相同欄位的內容和不顯示內容的欄位
+update @tmp
+set gno='2',title='加工成品日報表'
+,m10='',m012='',m032='',lengthb='',weight04='',weight1='',m014=''
+where source='2' or source='8'
+
+update @tmp
+set gno='4',title='加工不良品日報表'
+,m06='',m011='',m031='',spec='',lengthb='',weight04='',weight1='',m014=''
+where source='7'
+
+update @tmp
+set gno='6',title='加工零碼日報表'
+,m06='',m011='',m031='',spec='',m032='',m012='',m10='',lengthb='',weight04='',weight1='',m014=''
+where source='6'
+
+update @tmp
+set gno='8',title='加工餘料日報表'
+,mount='',weight01='',m011='',weight2='',uno='',spec='',pno2='',m012=''
+where source='9'
+
+update a
+set idno=xidno,page=ceiling(cast(xidno as float)/@pageline)
+from (select idno,page,ROW_NUMBER()over (partition by ordeno,gno order by m4,noa,noq)xidno from @tmp)a
+
+--插入表頭(不能使用NOA 會使成品與再製品分開放)
+insert @tmp (gno,ordeno,typea,datea,mechno,title,page)
+select case when gno='2' then '1' when gno='4' then '3' when gno='6' then '5' when gno='8' then '7' else '1' end 
+,ordeno,typea,MAX(datea),MAX(mechno),MAX(title),page
+from @tmp group by gno,ordeno,typea,page
+
+--插入分頁
+insert @tmp (gno,ordeno,typea,title,page)
+select '9',ordeno,typea,MAX(title),page
+from @tmp group by ordeno,typea,page
+
+select *,case when gno='1' or gno='3' or gno='5' or gno='7' then '<svg id="code_'+ordeno+'" class="barcode" style="display:none"></svg>' 
+when gno='9' then "
+	<script type='text/javascript'>
+		!window.JsBarcode && document.write('<script src="+CHAR(34)+"https://cdnjs.cloudflare.com/ajax/libs/jsbarcode/3.6.0/JsBarcode.all.js"+CHAR(34)+"><\/script>')"+CHAR(59)+"
+	</script>
+	<script type='text/javascript'>
+		function codeshow() {
+			var barcodeas=document.getElementsByClassName('barcode')"+CHAR(59)+"
+           	for(var i=0"+CHAR(59)+"i<barcodeas.length"+CHAR(59)+"i++){
+           		var t_id=barcodeas[i].id"+CHAR(59)+"
+				var t_code=t_id.replace('code_','')"+CHAR(59)+"
+				JsBarcode('#'+t_id, encodeURI(t_code) //中文只能暫時先編碼處理
+				,{
+					width:1,
+					height: 20,
+					displayValue: false
+				})"+CHAR(59)+"
+				document.getElementById(t_id).style.display=''"+CHAR(59)+"
+			}
+           }
+		codeshow()"+CHAR(59)+"
+	</script>
+"
+else '' end barcode 
+from @tmp order by ordeno
+,case when typea='成品' then 1  when typea='不良' then 2  when typea='零碼' then 3  else 4 end
+,page,gno,idno,rr
+;
+---------------------------------------------------------------------------------------------------
+z_cudp_uj03:--z_cudp_uj03
+SET QUOTED_IDENTIFIER OFF
+declare @t_bdate nvarchar(50)=case when '#non'=[2] then '' else [2] end
+declare @t_edate nvarchar(50)=case when '#non'=[3] then char(255) else [3] end
+declare @t_bnoa nvarchar(50)=case when '#non'=[4] then '' else [4] end
+declare @t_enoa nvarchar(50)=case when '#non'=[5] then char(255) else [5] end
+declare @t_mechno nvarchar(50)=case when '#non'=[8] then '' else [8] end
+declare @t_source nvarchar(50)=case when '#non'=[9] then '' else [9] end 
+
+declare @pageline int= 35
+
+declare @tmp table(
+	gno nvarchar(50),
+	noa nvarchar(100),
+	noq nvarchar(100),
+	mechno nvarchar(100),
+	datea nvarchar(50),
+	source nvarchar(50),
+	ordeno nvarchar(MAX),
+	uno nvarchar(MAX),
+	pno1 nvarchar(MAX),
+	spec nvarchar(MAX),
+	product2 nvarchar(MAX),
+	pno2 nvarchar(MAX),
+	lengthb nvarchar(MAX),
+	w0 nvarchar(MAX),
+	w1 nvarchar(MAX),
+	w2 nvarchar(MAX),
+	me1 nvarchar(MAX),me2 nvarchar(MAX),me3 nvarchar(MAX),
+	me4 nvarchar(MAX),me5 nvarchar(MAX),me6 nvarchar(MAX),
+	me7 nvarchar(MAX),me8 nvarchar(MAX),me9 nvarchar(MAX),
+	m01 nvarchar(50),m02 nvarchar(50),m03 nvarchar(50),m04 nvarchar(50),
+	m05 nvarchar(50),m06 nvarchar(50),m07 nvarchar(50),m08 nvarchar(50),
+	m09 nvarchar(50),m10 nvarchar(50),
+	
+	title nvarchar(MAX),
+	rr int,
+	page int
+)
+
+insert @tmp(gno,noa,noq,mechno,datea,source,ordeno,uno,pno1,spec,product2,pno2,lengthb,w0,w1,w2
+,me1,me2,me3,me4,me5,me6,me7,me8,me9,m01,m02,m03,m04,m05,m06,m07,m08,m09,m10)
+select case when source='5' then '2' when source='4' then '4' else '6' end
+,noa,noq,mechno,datea,source
+,ordeno,uno,productno,spec,product2,productno2,lengthb,weight,weight1,weight2
+,dbo.split(memo,'@,#',1)m01,dbo.split(memo,'@,#',2)m02,dbo.split(memo,'@,#',3)m03
+,dbo.split(memo,'@,#',4)m04,dbo.split(memo,'@,#',5)m05,dbo.split(memo,'@,#',6)m06
+,dbo.split(memo,'@,#',7)m07,dbo.split(memo,'@,#',8)m08,dbo.split(memo,'@,#',9)m09
+,mount1,mount2,mount3,mount4,mount5,mount6,mount7,mount8,mount9,mount10
+from view_cuds where (source='3' or source='4' or source='5') 
+and datea between @t_bdate and @t_edate 
+and ordeno between @t_bnoa and @t_enoa 
+and (mechno=@t_mechno or len(@t_mechno)=0) 
+and (source=@t_source or len(@t_source)=0)
+and isnull(enda,0)=1
+
+update @tmp set m01=case when m01!='0' then '1' else '' end
+update @tmp set m02=case when m02!='0' then '1' else '' end
+update @tmp set m03=case when m03!='0' then '1' else '' end
+update @tmp set m04=case when m04!='0' then '1' else '' end
+update @tmp set m05=case when m05!='0' then '1' else '' end
+update @tmp set m06=case when m06!='0' then '1' else '' end
+update @tmp set m07=case when m07!='0' then '1' else '' end
+update @tmp set m08=case when m08!='0' then '1' else '' end
+update @tmp set m09=case when m09!='0' then '1' else '' end
+update @tmp set m10=case when m10!='0' then '1' else '' end
+
+update @tmp
+set title=case when source='5' then '「上皮」日報表' when source='4' then '「上紙」日報表' else '製造生產日報表' end
+
+update a
+set rr=xx,page=ceiling(cast(xx as float)/@pageline)
+from (select page,rr,ROW_NUMBER()over (partition by noa order by noa,noq)xx from @tmp)a
+
+--插入表頭
+insert @tmp (gno,noa,source,datea,mechno,title,page)
+select case when gno='2' then '1' when gno='4' then '3' when gno='6' then '5' when gno='8' then '7' else '1' end 
+,noa,source,MAX(datea),MAX(mechno),MAX(title),page
+from @tmp group by gno,noa,source,page
+
+--插入分頁
+insert @tmp (gno,noa,source,title,page)
+select '7',noa,source,MAX(title),page
+from @tmp group by noa,source,page
+
+select * from @tmp 
+order by  
+case when source='5' then 1 when source='4' then 2 else 3 end
+,noa,page,gno,rr,noq
+;

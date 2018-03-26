@@ -197,6 +197,6 @@ when gno='9' then "
 	</script>
 "
 else '' end barcode 
-from @tmp order by noa,typea,gno,rr,noq
+from @tmp order by noa,typea,page,gno,rr,noq
 
 ;

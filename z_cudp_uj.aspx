@@ -33,15 +33,40 @@
                         value : r_accy
                     }, {
                         type : '1', //[2][3]
+                        name : 'xdate',
+                    }, {
+                        type : '1', //[4][5]
                         name : 'xnoa',
-                    }]
+                    }, {
+						type : '5', //[6]
+						name : 'xmechno1',
+						value : [q_getPara('report.all')].concat('分1,分2,分3,分4,覆1,覆2,覆3,其他'.split(','))
+					}, {
+						type : '5', //[7]
+						name : 'xsource1',
+						value : [q_getPara('report.all')].concat('成品,不良品,零碼,餘料'.split(','))
+					}, {
+						type : '5', //[8]
+						name : 'xmechno2',
+						value : [q_getPara('report.all')].concat('A,B'.split(','))
+					}, {
+						type : '5', //[9]
+						name : 'xsource2',
+						value : [q_getPara('report.all')].concat('5@上皮,4@上紙,3@下料'.split(','))
+					}]
                 });
                 q_popAssign();
                 q_getFormat();
                 q_langShow();
-
-                $('#txtXnoa1').val(q_getHref()[1]);
-                $('#txtXnoa2').val(q_getHref()[1]);
+				
+				$('#txtXdate1').mask(r_picd);
+				$('#txtXdate2').mask(r_picd);
+				
+				$('#txtXdate1').val(q_date().substr(0,r_lenm)+'/01');
+				$('#txtXdate2').val(q_cdn(q_cdn(q_date().substr(0,r_lenm)+'/01',35).substr(0,r_lenm)+'/01',-1));
+				
+                //$('#txtXnoa1').val(q_getHref()[1]);
+                //$('#txtXnoa2').val(q_getHref()[1]);
             }
 
             function q_boxClose(s2) {
