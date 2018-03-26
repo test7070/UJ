@@ -77,6 +77,10 @@
                        q_func('qtxt.query.ordr_orda', 'ordr_uj.txt,orda2ordr,'+ encodeURI(t_noa)); 
                     }
                 });
+                
+                $("#cmbUccgano").change(function(e) {
+                    refreshBbs();
+                });
 							
 			} 
 			
@@ -402,6 +406,8 @@
 			function refreshBbs(){
 			    if($('#cmbUccgano').val()=='希得'){
                     $('.isUJCD').show();
+                }else{
+                    $('.isUJCD').hide();
                 }
 			}
 
