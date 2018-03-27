@@ -147,7 +147,7 @@
 				bbsMask = [['txtLdate', r_picd]];
 				q_mask(bbmMask);
 				q_cmbParse("cmbKind", q_getPara('ordb.kind'));
-				//q_cmbParse("cmbCoin", q_getPara('sys.coin'));
+				q_cmbParse("cmbKind2",'一般@一般,希得@希得');
 				q_cmbParse("combPaytype", q_getPara('rc2.paytype'));
 				q_cmbParse("cmbTrantype", q_getPara('sys.tran'));
 				q_cmbParse("cmbTaxtype", q_getPara('sys.taxtype'));
@@ -179,30 +179,7 @@
 				});
 				
 				$('#btnOrde').hide();
-				if (q_getPara('sys.project').toUpperCase()=='XY'){
-					$('#btnOrde').show();
-				}
-				$('#btnOrde').click(function() {
-					//var t_where =" isnull(enda,'0')='0' and ISNULL(cancel,'0')='0' and noa+'_'+no2 not in (select isnull(ordeno,'')+'_'+isnull(no2,'') from view_ordbs" + r_accy + " where noa!='" + $('#txtNoa').val() + "') and productno in ( select noa from ucc)";
-					//q_box("ordes_b.aspx?" + r_userno + ";" + r_name + ";" + q_time + ";"+t_where+";"+r_accy, 'ordes', "95%", "95%", q_getMsg('popOrde'));
-					
-					if (q_getPara('sys.project').toUpperCase()=='XY'){
-						var t_where =" isnull(enda,'0')='0' and ISNULL(cancel,'0')='0' and mount!=0 ";//105/03/02 便品也可以匯入 and charindex('-',productno)>0
-						//105/03/02 請購過的不能再出現 一次請完
-						t_where +=" and not exists(select * from view_ordbs where ordeno=a.noa and no2=a.no2 and noa!='"+$('#txtNoa').val()+"')";
-						//排除已出過貨
-						t_where +=" and not exists(select * from view_vcc where ordeno=a.noa and no2=a.no2)";
-						q_box("ordes_b3_xy.aspx?" + r_userno + ";" + r_name + ";" + q_time + ";"+t_where+";"+r_accy, 'ordes', "95%", "95%", q_getMsg('popOrde'));
-					}
-				});
-
 				//變動按鈕
-				$('#cmbKind').change(function() {
-					for (var j = 0; j < q_bbsCount; j++) {
-						btnMinus('btnMinus_' + j);
-					}
-					product_change();
-				});
 				$('#txtAddr').change(function() {
 					var t_where = "where=^^ noa='" + trim($(this).val()) + "' ^^";
 					q_gt('cust', t_where, 0, 0, 0, "", r_accy);
@@ -219,10 +196,6 @@
 				});
 				$('#txtTggno').change(function() {
 					loadCustAddr($.trim($(this).val()));
-					if(q_getPara('sys.project').toUpperCase()=='XY'){
-						var t_where =" noa='"+$('#txtTggno').val()+"'";
-						q_gt('tgg', "where=^^ "+t_where+" ^^", 0, 0, 0, "xytggdata");
-					}
 				});
 				$('#btnOrdc').click(function(e) {
 					$('#exportordc').toggle();
@@ -261,12 +234,7 @@
 					$('#exportordc').toggle();
 				});
 				//--------------------------------------------------------
-				/*var t_para = ( typeof (q_getId()[5]) == 'undefined' ? '' : q_getId()[5]).split('&');
-				for (var i = 0; i < t_para.length; i++) {
-					if (t_para[i] == 'report=z_ordbp06') {
-						q_box("z_ordbp.aspx?" + r_userno + ";" + r_name + ";" + q_id + ";action=z_ordbp06;" + r_accy, 'z_vccstp', "95%", "95%", q_getMsg('popPrint'));
-					}
-				}*/
+				
 				$('#lblOrdcno').click(function(e){
                     var t_where = "1!=1";
                     var t_ordcno = $('#txtOrdcno').val().split(',');
@@ -287,6 +255,10 @@
 				
 				//判斷核准(手動)是否顯示
 				$('.apv').hide();
+				
+				$("#cmbKind2").change(function(e) {
+                    refreshBbs();
+                });
 			}
 
 			function q_funcPost(t_func, result) {
@@ -314,12 +286,6 @@
 
 			function q_gtPost(t_name) {
 				switch (t_name) {
-					case 'xytggdata':
-						var as = _q_appendData("tgg", "", true);
-						if (as[0] != undefined) {
-							$('#cmbTaxtype').val(as[0].conn);
-						}
-						break;
 					case 'ucctgg':
 						var as = _q_appendData("ucctgg", "", true);
 						var ass = _q_appendData("ucctggs", "", true);
@@ -446,153 +412,23 @@
 			function q_boxClose(s2) {
 				var ret;
 				switch (b_pop) {
-					case 'ucaucc_b_xy':
-						if (q_cur > 0 && q_cur < 4) {
-							b_ret = getb_ret();
-							if (!b_ret || b_ret.length == 0)
-								return;
-							if ($('#cmbKind').val() == '1') {
-								$('#txtProductno1_'+b_seq).val(b_ret[0].noa);
-							}else{
-								$('#txtProductno3_'+b_seq).val(b_ret[0].noa);
-							}
-							$('#txtProduct_'+b_seq).val(b_ret[0].product);
-							
-							/*if (!emp(b_ret[0].noa)){
-								var t_where =" noa='"+b_ret[0].noa+"' ";
-								q_gt('ucc_xy', "where=^^ "+t_where+" ^^", 0, 0, 0, "getuccspec",r_accy,1);
-								var as = _q_appendData("ucc", "", true, true);
-								if (as[0] != undefined) {
-									$('#txtUnit_'+b_seq).val(as[0].uunit);
-								}else{
-									$('#txtUnit_'+b_seq).val(b_ret[0].unit);
-								}
-							}*/
-							$('#txtUnit_'+b_seq).val(b_ret[0].unit);
-							$('#txtSpec_'+b_seq).val(b_ret[0].style+' '+b_ret[0].spec+' '+b_ret[0].engpro);
-							$('#txtStdmount_'+b_seq).val(b_ret[0].stdmount);
-							$('#txtProduct_'+b_seq).focus().select();
-						}
-						break;
 					case 'ordbt':
 						setTimeout(function(){
 							var t_noa = $.trim($('#txtNoa').val());
 							q_gt('ordb', "where=^^ noa='" + t_noa + "' ^^", 0, 0, 0, "GetTggt",r_accy);
 						},800)
 						break;
-					case 'ordes': //XY 用
-						if (q_cur > 0 && q_cur < 4) {
-							b_ret = getb_ret();
-							if (!b_ret || b_ret.length == 0)
-								return;
-							//if (q_getPara('sys.project').toUpperCase()!='XY')
-							//	return;
-								
-							for (var j = 0; j < q_bbsCount; j++) {
-								$('#btnMinus_' + j).click();
-							}
-							
-							var t_post='',t_addr='',t_memo='',t_err='';
-							for (var i = 0; i < b_ret.length; i++) {
-								var t_where =" noa='"+b_ret[i].noa+"' ";
-								q_gt('view_orde', "where=^^ "+t_where+" ^^", 0, 0, 0, "getordeaddr",r_accy,1);
-								var as = _q_appendData("view_orde", "", true);
-								if (as[0] != undefined) {
-									if(i==0){ //只取第一筆訂單
-										$('#cmbTrantype').val(as[0].trantype);
-									}
-									if(t_memo.indexOf(as[0].noa)==-1)
-										t_memo=t_memo+as[0].noa+":"+as[0].memo+" ";
-									
-									if(as[0].trantype=='直寄'){
-										if(as[0].addr2.length>0){
-											if(t_addr.indexOf(as[0].addr2)==-1){
-												t_addr=t_addr+(t_addr.length>0?',':'')+as[0].addr2;
-												t_post=t_post+(t_post.length>0?',':'')+as[0].post2;
-											}
-										}else{
-											if(t_addr.indexOf(as[0].addr)==-1){
-												t_addr=t_addr+(t_addr.length>0?',':'')+as[0].addr;
-												t_post=t_post+(t_post.length>0?',':'')+as[0].post;
-											}
-										}
-									}
-								}
-								
-								//合併
-								b_ret[i].spec=b_ret[i].classa+' '+b_ret[i].spec;
-								//產品主檔
-								if (!emp(b_ret[i].productno)){
-									var t_where =" noa='"+b_ret[i].productno+"' ";
-									q_gt('ucc_xy', "where=^^ "+t_where+" ^^", 0, 0, 0, "getuccspec",r_accy,1);
-									var as = _q_appendData("ucc", "", true, true);
-									if (as[0] != undefined) {
-										b_ret[i].spec=b_ret[i].spec+' '+as[0].engpro;
-										b_ret[i].unit=as[0].unit;
-										if(as[0].cdate!='採購'){
-											t_err=t_err+b_ret[i].product+' 採購製令方式 非【採購】\n';
-										}
-									}else{
-										t_err=t_err+b_ret[i].product+' 不在產品主檔內!!\n';
-									}
-								}
-							}
-							
-							if(t_err.length>0){
-								alert(t_err);
-							}
-							
-							ret = q_gridAddRow(bbsHtm, 'tbbs', 'txtProductno,txtProductno1,txtProduct,txtUnit,txtSpec,txtMount,txtOrdeno,txtNo2,txtCustno,txtComp,txtMemo'
-							, b_ret.length, b_ret, 'productno,productno,product,unit,spec,mount,noa,no2,custno,comp,memo', 'txtOrdeno,txtNo2');
-							sum();
-							if(t_addr.length>0){
-								$('#txtPost').val(t_post);
-								$('#txtAddr').val(t_addr);
-							}
-							if(t_memo.length>0){
-								$('#txtMemo').val(t_memo);
-							}
-							if(q_getPara('sys.project').toUpperCase()=='XY' && !emp($('#txtTggno').val())){
-								for (var j = 0; j < q_bbsCount; j++) {
-									if (!emp($('#txtProductno1_'+j).val())){
-										var t_where =" tggno='"+$('#txtTggno').val()+"' and productno='" + $('#txtProductno1_'+j).val() + "'";
-										q_gt('ucctgg', "where=^^ "+t_where+" ^^", 0, 0, 0, "ordesucctgg_"+j);
-									}
-								}
-							}
-							
-						}
-						break;
 					case q_name + '_s':
 						q_boxClose2(s2);
 						break;
 				}
-				if(s2[0]!=undefined){
-					if(s2[0]=='ucc' && q_getPara('sys.project').toUpperCase()=='RB'){
-						if (q_cur > 0 && q_cur < 4) {
-							b_ret = getb_ret();
-							if (!b_ret || b_ret.length == 0)
-								return;
-							for (var j = 0; j < q_bbsCount; j++) {
-								if(!emp($('#txtProductno1_'+j).val()))
-									$('#txtProductno_'+j).val($('#txtProductno1_'+j).val());
-							}
-							if (b_ret.length>0)
-								b_ret.splice(0, 1);
-							if (b_ret.length>0)
-								ret = q_gridAddRow(bbsHtm, 'tbbs', 'txtProductno,txtProductno1,txtProduct,txtSpec,txtUnit,txtStdmount', b_ret.length, b_ret, 'noa,noa,product,spec,unit,stdmount', 'txtProductno,txtProductno1,txtProduct,txtSpec');
-						}
-					}
-				}
+				
 				b_pop = '';
 			}
 
 			function _btnSeek() {
 				if (q_cur > 0 && q_cur < 4)
 					return;
-				if(q_getPara('sys.project').toUpperCase()=='XY')
-					q_box('ordb_s.aspx', q_name + '_s', "490px", "480px", q_getMsg("popSeek"));
-				else
 					q_box('ordb_s.aspx', q_name + '_s', "490px", "420px", q_getMsg("popSeek"));
 			}
 
@@ -607,6 +443,7 @@
 					z_nick = as[0].nick;
 				}
 				_btnIns();
+				refreshBbs();
 				$('#chkIsproj').attr('checked', true);
 				$('#txtNoa').val('AUTO');
 				$('#txtOdate').val(q_date());
@@ -614,38 +451,14 @@
 				$('#txtDatea').val(q_cdn(q_date(),10));
 				$('#txtCno').val(z_cno);
 				$('#txtAcomp').val(z_acomp);
-				product_change();
 				if (abbm[q_recno] != undefined)
-					loadCustAddr(abbm[q_recno].tggno);
-					
-				if (q_getPara('sys.project').toUpperCase()=='XY'){
-					$('#txtSalesno').val(r_userno);
-					$('#txtSales').val(r_name);
-					//1050223 預設送貨地址
-					$('#txtPost').val('333');
-					$('#txtAddr').val('桃園市龜山區綠野街88號 廖秀雲小姐');
-				}
+					loadCustAddr(abbm[q_recno].tggno);	
 				
-				if (q_getPara('sys.project').toUpperCase()=='XY' || q_getPara('sys.project').toUpperCase()=='RB'){
-					$('#cmbKind').val('1');
-				}
-				refreshBbs();
 			}
 
 			function btnModi() {
 				if (emp($('#txtNoa').val()))
 					return;
-				/*var c1CheckStr = '';
-				for(var k=0;k<q_bbsCount;k++){
-					var s_c1 = dec($('#txtC1_'+k).val());
-					if(s_c1 > 0){
-						c1CheckStr = '表身第 ' + (k+1) + ' 筆 已採購\n';
-					}
-				}
-				if($.trim(c1CheckStr).length > 0){
-					alert(c1CheckStr + '禁止修改!!');
-					return;
-				}*/
 				var t_where = "where=^^ordbno='"+$('#txtNoa').val()+"' and isnull(mount,0)>0 ^^";
 				q_gt('view_ordcs', t_where, 0, 0, 0, "",r_accy,1);
 				var as = _q_appendData("view_ordcs", "", true);
@@ -656,7 +469,6 @@
 				
 				_btnModi();
 				$('#txtOdate').focus();
-				product_change();
 				if (abbm[q_recno] != undefined)
 					loadCustAddr(abbm[q_recno].tggno);
 				sum();
@@ -676,21 +488,11 @@
 			//103/08/29根據ordb.accu判斷預估作業
 			var chack_accu=false;
 			function btnOk() {
-				
 				if ($('#txtOdate').val().length == 0 || !q_cd($('#txtOdate').val())) {
 					alert(q_getMsg('lblOdate') + '錯誤。');
 					return;
 				}
-				
-				if(q_getPara('ordb.accu')=='1' && !chack_accu &&q_getPara('sys.project').toUpperCase()=='RB'){
-					var t_year = $.trim($('#txtOdate').val()).substr(0,r_len);
-					var t_where='',t_where1='';
-					t_where="where=^^left(a.datea,"+r_len+")='"+t_year+"' and isnull(a.cancel,0)=0 and isnull(b.cancel,0)=0 and a.noa!='"+$('#txtNoa').val()+"'^^"
-					t_where1="where[1]=^^left(c.mon,"+r_len+")='"+t_year+"' ^^"
-					q_gt('accu_ordb', t_where+t_where1, 0, 0, 0, "check_accu",r_accy);
-					return;
-				}
-				
+
 				//105/04/20
 				if(q_cur==2){
 					var t_where = "where=^^ordbno='"+$('#txtNoa').val()+"' and isnull(mount,0)>0 ^^";
@@ -728,21 +530,7 @@
 				}
 				
 				sum();
-				
-				if ($('#cmbKind').val() == '1') {
-					for (var j = 0; j < q_bbsCount; j++) {
-						$('#txtProductno_' + j).val($('#txtProductno1_' + j).val());
-					}
-				} else if ($('#cmbKind').val() == '2') {
-					for (var j = 0; j < q_bbsCount; j++) {
-						$('#txtProductno_' + j).val($('#txtProductno2_' + j).val());
-					}
-				} else {
-					for (var j = 0; j < q_bbsCount; j++) {
-						$('#txtProductno_' + j).val($('#txtProductno3_' + j).val());
-					}
-				}
-				
+	
 				//106/10/25 品號有KEY數量!=0
 				for (var i = 0; i < q_bbsCount; i++) {
 					if(!emp($('#txtProductno_' + i).val()) && dec($('#txtMount_'+i).val())==0){
@@ -790,7 +578,7 @@
 			}
 
 			function bbsSave(as) {
-				if (!as['productno1'] && !as['productno2'] && !as['productno3'] && !as['product']) {
+				if (!as['productno'] && !as['product']) {
 					as[bbsKey[1]] = '';
 					return;
 				}
@@ -804,7 +592,6 @@
 
 			function refresh(recno) {
 				_refresh(recno);
-				product_change();
 				HiddenTreat();
 				refreshBbs();
 			}
@@ -827,12 +614,7 @@
 					$('#combAddr').removeAttr('disabled');
 					$('#tmp').find("input[type='text']").removeAttr('disabled');
 				}
-				if (q_getPara('sys.project').toUpperCase()=='XY' || q_getPara('sys.project').toUpperCase()=='RB'){
-					$('#cmbKind').attr('disabled', 'disabled');
-				}
-				
-				HiddenTreat();
-				
+				HiddenTreat();	
 			}
 			
 			function HiddenTreat() {
@@ -840,16 +622,12 @@
 				var isStyle = (hasStyle.toString()=='1'?$('.isStyle').show():$('.isStyle').hide());
 				var hasSpec = q_getPara('sys.isspec');
 				var isSpec = (hasSpec.toString()=='1'?$('.isSpec').show():$('.isSpec').hide());
-				if (q_getPara('sys.project').toUpperCase()!='XY'){
-					$('.isCust').hide();
-				}else{
-					$('.bbsorde').show();
-					$('.dbbs').css('width','1850px');
-				}
+				$('.isCust').hide();
 			}
 
 			function btnMinus(id) {
 				_btnMinus(id);
+				refreshBbs();
 				sum();
 			}
 
@@ -865,70 +643,12 @@
 				for (var j = 0; j < q_bbsCount; j++) {
 					$('#lblNo_' + j).text(j + 1);
 					if (!$('#btnMinus_' + j).hasClass('isAssign')) {
-						$('#btnProduct1_'+j).click(function() {
-							t_IdSeq = -1;
-							q_bodyId($(this).attr('id'));
-							b_seq = t_IdSeq;
-							if(q_getPara('sys.project').toUpperCase()=='XY'){
-								q_box("ucaucc_b.aspx?" + r_userno + ";" + r_name + ";" + q_time + ";charindex('-',noa)=0;" + r_accy, 'ucaucc_b_xy', "95%", "95%", '');
-							}
-						});
 						
-						$('#txtProductno1_' + j).change(function() {
-							t_IdSeq = -1;
-							q_bodyId($(this).attr('id'));
-							b_seq = t_IdSeq;
-							
-							if (q_getPara('sys.project').toUpperCase()=='XY' && !emp($('#txtProductno1_'+b_seq).val())){
-								var t_where =" noa='"+$('#txtProductno1_'+b_seq).val()+"' ";
-								q_gt('ucc_xy', "where=^^ "+t_where+" ^^", 0, 0, 0, "getuccspec",r_accy,1);
-								var as = _q_appendData("ucc", "", true, true);
-								if (as[0] != undefined) {
-									$('#txtUnit_'+b_seq).val(as[0].unit);
-									$('#txtSpec_'+b_seq).val(as[0].style+' '+as[0].spec+' '+as[0].engpro);
-								}
-							}
-						});
 						$('#txtMount_' + j).change(function() {
 							t_IdSeq = -1;
 							q_bodyId($(this).attr('id'));
 							b_seq = t_IdSeq;
-							if (q_getPara('sys.project').toUpperCase()=='XY' && !emp($('#txtProductno1_'+b_seq).val()) &&!emp($('#txtTggno').val())){
-								var t_where =" tggno='"+$('#txtTggno').val()+"' and productno='" + $('#txtProductno1_'+b_seq).val() + "'";
-								q_gt('ucctgg', "where=^^ "+t_where+" ^^", 0, 0, 0, "ucctgg");
-							}
 							sum();
-							if(q_getPara('sys.project').toUpperCase()=='XY'){
-								var t_max_unit='';
-								var t_max_inmout=0;
-								var t_unit=$('#txtUnit_'+b_seq).val();
-								var t_inmount=0;
-								var t_mount=dec($('#txtMount_'+b_seq).val());
-	                            var t_where = "where=^^noa='"+$('#txtProductno1_'+b_seq).val()+"'^^";
-								q_gt('pack2s', t_where, 0, 0, 0, "getpack2s", r_accy, 1);
-								var as = _q_appendData("pack2s", "", true);
-	                            for(var i=0 ; i<as.length;i++){
-									if(t_max_inmout<dec(as[i].inmount)){
-										t_max_unit=as[i].pack;
-										t_max_inmout=dec(as[i].inmount);
-									}
-									if(t_unit==as[i].pack){
-										t_inmount=dec(as[i].inmount);
-									}
-								}
-								if(t_max_inmout==0){
-									t_max_inmout=1;
-									t_max_unit=t_unit;
-								}
-								
-								if(t_max_unit!=t_unit && Math.floor(t_mount/t_max_inmout)>0){
-									var t_m1=Math.floor(q_div(t_mount,t_max_inmout));
-									var t_m2=q_sub(t_mount,(q_mul(Math.floor(q_div(t_mount,t_max_inmout)),t_max_inmout)));
-									$('#txtMemo_'+b_seq).val(t_m1+t_max_unit+(t_m2>0?('+'+t_m2+t_unit):''));
-								}else{
-									$('#txtMemo_'+b_seq).val('');
-								}
-							}
 						});
 						$('#txtPrice_' + j).change(function() {
 							sum();
@@ -972,33 +692,14 @@
 	                    	t_IdSeq = -1;
 							q_bodyId($(this).attr('id'));
 							b_seq = t_IdSeq;
-							if (q_getPara('sys.project').toUpperCase()=='XY'){
-	                    		q_box("orde_xy.aspx?" + r_userno + ";" + r_name + ";" + q_time + ";noa='" + $(this).val() + "';" + r_accy, 'orde', "95%", "95%", '訂單作業');
-	                    	}else{
-	                    		q_box("orde.aspx?" + r_userno + ";" + r_name + ";" + q_time + ";noa='" + $(this).val() + "';" + r_accy, 'orde', "95%", "95%", '訂單作業');
-	                    	}
+	                    	q_box("orde.aspx?" + r_userno + ";" + r_name + ";" + q_time + ";noa='" + $(this).val() + "';" + r_accy, 'orde', "95%", "95%", '訂單作業');
+	                    	
 	                   });
-	                   
-						$('#txtProductno2_' + j).change(function() {
-							t_IdSeq = -1;
-							q_bodyId($(this).attr('id'));
-							b_seq = t_IdSeq;
-						});
-						
-						$('#txtProductno3_' + j).change(function() {
-							t_IdSeq = -1;
-							q_bodyId($(this).attr('id'));
-							b_seq = t_IdSeq;
-						});
 					}
 				}
 				_bbsAssign();
-				product_change();
 				HiddenTreat();
-				if (q_getPara('sys.project').toUpperCase()=='XY'){
-					$('#tdpno').css('width','130px');
-					$('#tdspec').css('width','270px');
-				}
+				refreshBbs();
 			}
 
 			function bbtAssign() {
@@ -1068,88 +769,19 @@
 
 			function q_popPost(id) {
 				switch (id) {
-					case 'txtProductno1_':
-						$('#txtProductno_'+b_seq).val($('#txtProductno1_'+b_seq).val());
-						
-						if (q_getPara('sys.project').toUpperCase()=='XY' && !emp($('#txtProductno1_'+b_seq).val()) &&!emp($('#txtTggno').val())){
-							var t_where =" tggno='"+$('#txtTggno').val()+"' and productno='" + $('#txtProductno1_'+b_seq).val() + "'";
-							q_gt('ucctgg', "where=^^ "+t_where+" ^^", 0, 0, 0, "ucctgg");
-						}
-						if (q_getPara('sys.project').toUpperCase()=='XY' && !emp($('#txtProductno1_'+b_seq).val()) && $('#txtProductno1_'+b_seq).val().indexOf('-') > -1 ){
-							var t_where =" noa='"+$('#txtProductno1_'+b_seq).val().substr(0,5)+"' ";
-							q_gt('cust', "where=^^ "+t_where+" ^^", 0, 0, 0, "getcust",r_accy,1);
-							var as = _q_appendData("cust", "", true, true);
-							if (as[0] != undefined) {
-								$('#txtCustno_'+b_seq).val(as[0].noa);
-								$('#txtComp_'+b_seq).val(as[0].nick.length!=0?as[0].nick:as[0].comp);
-							}
-						}
-						if (q_getPara('sys.project').toUpperCase()=='XY' && !emp($('#txtProductno1_'+b_seq).val())){
-							var t_where =" noa='"+$('#txtProductno1_'+b_seq).val()+"' ";
-							q_gt('ucc_xy', "where=^^ "+t_where+" ^^", 0, 0, 0, "getuccspec",r_accy,1);
-							var as = _q_appendData("ucc", "", true, true);
-							if (as[0] != undefined) {
-								$('#txtUnit_'+b_seq).val(as[0].unit);
-								$('#txtSpec_'+b_seq).val(as[0].style+' '+as[0].spec+' '+as[0].engpro);
-							}
-						}
-						break;
-					case 'txtProductno2_':
-						$('#txtProductno_'+b_seq).val($('#txtProductno2_'+b_seq).val());
-						break;
-					case 'txtProductno3_':
-						$('#txtProductno_'+b_seq).val($('#txtProductno3_'+b_seq).val());
-						break;
 					case 'txtTggno':
 						loadCustAddr($.trim($('#txtTggno').val()));
-						if(q_getPara('sys.project').toUpperCase()=='XY'){
-							var t_where =" noa='"+$('#txtTggno').val()+"'";
-							q_gt('tgg', "where=^^ "+t_where+" ^^", 0, 0, 0, "xytggdata");
-						}
 						break;
 					default:
 						break;
 				}
 				id='';
 			}
-
-			function product_change() {
-				if ($('#cmbKind').val() == '1') {
-					for (var j = 0; j < q_bbsCount; j++) {
-						$('#btnProduct1_' + j).show();
-						$('#btnProduct2_' + j).hide();
-						$('#btnProduct3_' + j).hide();
-						$('#txtProductno1_' + j).show();
-						$('#txtProductno2_' + j).hide();
-						$('#txtProductno3_' + j).hide();
-						$('#txtProductno1_' + j).val($('#txtProductno_' + j).val());
-					}
-				} else if ($('#cmbKind').val() == '2') {
-					for (var j = 0; j < q_bbsCount; j++) {
-						$('#btnProduct1_' + j).hide();
-						$('#btnProduct2_' + j).show();
-						$('#btnProduct3_' + j).hide();
-						$('#txtProductno1_' + j).hide();
-						$('#txtProductno2_' + j).show();
-						$('#txtProductno3_' + j).hide();
-						$('#txtProductno2_' + j).val($('#txtProductno_' + j).val());
-					}
-				} else {
-					for (var j = 0; j < q_bbsCount; j++) {
-						$('#btnProduct1_' + j).hide();
-						$('#btnProduct2_' + j).hide();
-						$('#btnProduct3_' + j).show();
-						$('#txtProductno1_' + j).hide();
-						$('#txtProductno2_' + j).hide();
-						$('#txtProductno3_' + j).show();
-						$('#txtProductno3_' + j).val($('#txtProductno_' + j).val());
-					}
-				}
-			}
-			
 			function refreshBbs(){
-                if($('#txtTgg').val()=='大敬' || $('#txtTgg').val()=='銓威' || $('#txtTgg').val()=='弘威'){
+                if($('#cmbKind2').val()=='希得'){
                     $('.isUJCD').show();
+                }else{
+                    $('.isUJCD').hide();
                 }
             }
 		</script>
@@ -1421,8 +1053,10 @@
 						<td class="tdZ"> </td>
 					</tr>
 					<tr>
-						<td class="td1"><span> </span><a id='lblKind' class="lbl"> </a></td>
-						<td class="td2"><select id="cmbKind" class="txt c1"> </select></td>
+					    <td class="td1"><span> </span><a id='lblKind2' class="lbl">類別</a></td>
+                        <td class="td2"><select id="cmbKind2" class="txt c1"> </select></td>
+						<td class="td1" style="display: none;"><span> </span><a id='lblKind_uj' class="lbl"></a></td>
+						<td class="td2" style="display: none;"><select id="cmbKind" class="txt c1"> </select></td>
 						<td class="td3"><span> </span><a id='lblOdate' class="lbl"> </a></td>
 						<td class="td4"><input id="txtOdate" type="text" class="txt c1"/></td>
 						<td class="td5"><span> </span><a id='lblDatea' class="lbl"> </a></td>
@@ -1446,7 +1080,7 @@
 						</td>
 					</tr>
 					<tr>
-						<td class="td1"><span> </span><a id="lblTgg" class="lbl btn"> </a></td>
+						<td class="td1"><span> </span><a id="lblTgg" class="lbl btn"></a></td>
 						<td class="td2" colspan="3">
 							<input id="txtTggno" type="text" style="float:left;width:30%;"/>
 							<input id="txtTgg" type="text" style="float:left;width:70%;"/>
@@ -1501,8 +1135,8 @@
 						<td colspan="2"><input id="txtTotal" type="text" class="txt num c1" /></td>
 					</tr>
 					<tr>
-						<td class="td1"><span> </span><a id="lblOrde" class="lbl"> </a></td>
-						<td class="td2"><input id="txtOrdeno" type="text" class="txt c1" /></td>
+						<td class="td1" style="display: none;"><span> </span><a id="lblOrde" class="lbl"> </a></td>
+						<td class="td2" style="display: none;"><input id="txtOrdeno" type="text" class="txt c1" /></td>
 						<td><span> </span><a id='lblFloata' class="lbl"> </a></td>
 						<td><select id="cmbCoin" class="txt c1" onchange='coin_chg()'> </select></td>
 						<td><input id="txtFloata" type="text" class="txt c1 num" /></td>
