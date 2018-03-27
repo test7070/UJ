@@ -21,27 +21,63 @@
             }
             $(document).ready(function() {
                 q_getId();
-                q_gf('', 'z_cugp_uj');
+                q_gf('', 'z_ucc_uj');
             });
 
             function q_gfPost() {
                 $('#q_report').q_report({
-                    fileName : 'z_cugp_uj',
+                    fileName : 'z_ucc_uj',
                     options : [{
                         type : '0', //[1]
                         name : 'accy',
                         value : r_accy
-                    }, {
-                        type : '1', //[2][3]
-                        name : 'xnoa',
-                    }]
+                    },{
+                        type : '0', //[2]
+                        name : 'rlen',
+                        value : r_len
+                    },{
+                        type : '0', //[3]
+                        name : 'qdate',
+                        value : q_date()
+                    }, {//1-1
+						type : '1',
+						name : 'xdate' //[4][5]
+					}, {//1-2
+						type : '2',
+						name : 'xpno', //[6][7]
+						dbf : 'ucaucc',
+						index : 'noa,product',
+						src : 'ucaucc_b.aspx'
+					}, {//1-3
+						type : '2',
+						name : 'xstoreno', //[8][9]
+						dbf : 'store',
+						index : 'noa,store',
+						src : 'store_b.aspx'
+					}, {//1-4
+						type : '5',
+						name : 'xypea', //[10]
+						value : [q_getPara('report.all')].concat('1@成品,5@半成品,6@再製品,7S8S8P@皮料,7L8L@離型紙,9C@紙箱,9P@紙管,9B@塞頭,9W@棧板,Z@零碼'.split(','))
+					}, {//2-1
+						type : '6',
+						name : 'xuno' //[11]
+					}, {//2-2
+						type : '6',
+						name : 'xedate' //[12]
+					}]
                 });
                 q_popAssign();
                 q_getFormat();
                 q_langShow();
-
-                $('#txtXnoa1').val(q_getHref()[1]);
-                $('#txtXnoa2').val(q_getHref()[1]);
+				
+				$('#txtXdate1').mask(r_picd);
+				$('#txtXdate2').mask(r_picd);
+				$('#txtXedate').mask(r_picd);
+				
+				$('#txtXdate1').val(q_date().substr(0,r_lenm)+'/01');
+				$('#txtXdate2').val(q_cdn(q_cdn(q_date().substr(0,r_lenm)+'/01',35).substr(0,r_lenm)+'/01',-1));
+				$('#txtXedate').val(q_date());
+				
             }
 
             function q_boxClose(s2) {
@@ -50,19 +86,6 @@
             function q_gtPost(s2) {
             }
             
-            /*function codeshow() {
-            	$('.barcode').each(function(index) {
-            		var t_id=$(this).attr('id');
-					var t_code=replaceAll($(this).attr('id'),'code_','');
-					JsBarcode("#"+t_id, encodeURI(t_code) //中文只能暫時先編碼處理
-					,{
-						width:1,
-						height: 20,
-						displayValue: false
-					});
-					$(this).show();
-				});
-            }*/
 		</script>
 	</head>
 	<body ondragstart="return false" draggable="false"

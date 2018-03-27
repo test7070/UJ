@@ -1,4 +1,5 @@
 ﻿z_cugp_uj01:--z_cugp_uj01
+SET QUOTED_IDENTIFIER OFF
 declare @t_bnoa nvarchar(50)=case when '#non'=[2] then '' else [2] end
 declare @t_enoa nvarchar(50)=case when '#non'=[3] then char(255) else [3] end
 declare @pageline int= 35
@@ -29,13 +30,14 @@ declare @tmp table(
 	f12 nvarchar(MAX),
 	f13 nvarchar(MAX),
 	f14 nvarchar(MAX),
+	cubno nvarchar(MAX),
 	title nvarchar(MAX),
 	rr int,
 	page int
 )
 
 insert @tmp(gno,noa,typea,m1,m2,nos,ordeno,f01,productno,thours,dhours,f02,mount
-,f03,f04,f05,f06,f07,f08,f09,f10,f11,f12,f13,f14,title)
+,f03,f04,f05,f06,f07,f08,f09,f10,f11,f12,f13,f14,cubno,title)
 select case when a.bdate='加工' then '2' else '4' end
 ,a.noa,a.bdate,a.smount,a.hours
 ,b.nos,b.ordeno,dbo.split(b.memo,'@,#',1)
@@ -46,8 +48,9 @@ select case when a.bdate='加工' then '2' else '4' end
 ,dbo.split(b.memo,'@,#',9),dbo.split(b.memo,'@,#',10)
 ,dbo.split(b.memo,'@,#',11),dbo.split(b.memo,'@,#',12)
 ,dbo.split(b.memo,'@,#',13),dbo.split(b.memo,'@,#',14)
-,a.bdate+'派工單'
+,isnull(dbo.split(c.memo2,'@,#',1),''),a.bdate+'派工單'
 from view_cug a left join view_cugs b on a.noa=b.noa 
+outer apply (select top 1 memo2 from view_workgs where noa+'-'+noq=b.workgno)c
 where a.noa between @t_bnoa  and @t_enoa
 
 update a
@@ -64,5 +67,136 @@ insert @tmp (gno,noa,typea,title,m1,m2,page)
 select '5',noa,MAX(typea),MAX(title),MAX(m1),MAX(m2),page
 from @tmp group by noa,page
 
-select *,'' barcode from @tmp order by typea,noa,page,gno,rr
+select *,case when gno='1' or gno='3' then '<svg id="code_'+noa+'" class="barcode" style="display:none"></svg>' 
+when gno='2' then '<svg id="code_'+cubno+'" class="barcode" style="display:none"></svg>' 
+when gno='5' then "
+	<script type='text/javascript'>
+		!window.JsBarcode && document.write('<script src="+CHAR(34)+"https://cdnjs.cloudflare.com/ajax/libs/jsbarcode/3.6.0/JsBarcode.all.js"+CHAR(34)+"><\/script>')"+CHAR(59)+"
+	</script>
+	<script type='text/javascript'>
+		function codeshow() {
+			var barcodeas=document.getElementsByClassName('barcode')"+CHAR(59)+"
+           	for(var i=0"+CHAR(59)+"i<barcodeas.length"+CHAR(59)+"i++){
+           		var t_id=barcodeas[i].id"+CHAR(59)+"
+				var t_code=t_id.replace('code_','')"+CHAR(59)+"
+				JsBarcode('#'+t_id, encodeURI(t_code) //中文只能暫時先編碼處理
+				,{
+					width:1,
+					height: 20,
+					displayValue: false
+				})"+CHAR(59)+"
+				document.getElementById(t_id).style.display=''"+CHAR(59)+"
+			}
+           }
+           
+		codeshow()"+CHAR(59)+"
+	</script>
+"
+else '' end barcode 
+from @tmp order by typea,noa,page,gno,rr
+;
+
+-------------------------------------------------------------------------------------------------------
+z_cugp_uj02:--z_cugp_uj02
+SET QUOTED_IDENTIFIER OFF
+declare @t_bnoa nvarchar(50)=case when '#non'=[2] then '' else [2] end
+declare @t_enoa nvarchar(50)=case when '#non'=[3] then char(255) else [3] end
+declare @pageline int= 35
+
+declare @tmp table(
+	gno nvarchar(50),
+	noa nvarchar(100),
+	noq nvarchar(100),
+	typea nvarchar(50),
+	f01 nvarchar(MAX),f02 nvarchar(MAX),f03 nvarchar(MAX),f04 nvarchar(MAX),f05 nvarchar(MAX),
+	f06 nvarchar(MAX),f07 nvarchar(MAX),f08 nvarchar(MAX),f09 nvarchar(MAX),f10 nvarchar(MAX),
+	f11 nvarchar(MAX),f12 nvarchar(MAX),f13 nvarchar(MAX),f14 nvarchar(MAX),f15 nvarchar(MAX),
+	f16 nvarchar(MAX),f17 nvarchar(MAX),f18 nvarchar(MAX),f19 nvarchar(MAX),f20 nvarchar(MAX),
+	f21 nvarchar(MAX),f22 nvarchar(MAX),f23 nvarchar(MAX),f24 nvarchar(MAX),f25 nvarchar(MAX),
+	f26 nvarchar(MAX),f27 nvarchar(MAX),f28 nvarchar(MAX),f29 nvarchar(MAX),f30 nvarchar(MAX),
+	f31 nvarchar(MAX),f32 nvarchar(MAX),f33 nvarchar(MAX),f34 nvarchar(MAX),f35 nvarchar(MAX),
+	f36 nvarchar(MAX),f37 nvarchar(MAX),f38 nvarchar(MAX),f39 nvarchar(MAX),f40 nvarchar(MAX),
+	f41 nvarchar(MAX),f42 nvarchar(MAX),worker nvarchar(MAX),
+	title nvarchar(MAX),
+	rr int,
+	page int
+)
+
+insert @tmp(gno,noa,noq,typea,f01,f02,f03,f04,f05,f06,f07,f08,f09,f10,f11,f12,f13,f14,f15
+,f16,f17,f18,f19,f20,f21,f22,f23,worker,f24,f25,f26,f27,f28,f29,f30,f31,f32,f33,f34,f35
+,f36,f37,f38,f39,f40,f41,f42)
+select
+case when stationno='2' then '2' 
+when stationno='6' then '4'
+when stationno='5' then '6'
+when stationno='4' then '8'
+else '2' end gno,noa,noq,stationno
+,dbo.split(memo,'@,#',1)f01,dbo.split(memo,'@,#',2)f02,dbo.split(memo,'@,#',3)f03
+,dbo.split(memo,'@,#',4)f04,dbo.split(memo,'@,#',5)f05,dbo.split(memo,'@,#',6)f06
+,dbo.split(memo,'@,#',7)f07,dbo.split(memo,'@,#',8)f08,dbo.split(memo,'@,#',9)f09
+,dbo.split(memo,'@,#',10)f10,dbo.split(memo,'@,#',11)f11,dbo.split(memo,'@,#',12)f12
+,dbo.split(memo,'@,#',13)f13,dbo.split(memo,'@,#',14)f14,dbo.split(memo,'@,#',15)f15
+,dbo.split(memo,'@,#',16)f16,dbo.split(memo,'@,#',17)f17,dbo.split(memo,'@,#',18)f18
+,dbo.split(memo,'@,#',19)f19,dbo.split(memo,'@,#',20)f20,dbo.split(memo,'@,#',21)f21
+,dbo.split(memo,'@,#',22)f22,dbo.split(memo,'@,#',23)f23,worker,dbo.split(memo,'@,#',24)f24
+,dbo.split(memo,'@,#',25)f25,dbo.split(memo,'@,#',26)f26,dbo.split(memo,'@,#',27)f27
+,dbo.split(memo,'@,#',28)f28,dbo.split(memo,'@,#',29)f29,dbo.split(memo,'@,#',30)f30
+,dbo.split(memo,'@,#',31)f31,dbo.split(memo,'@,#',32)f32,dbo.split(memo,'@,#',33)f33
+,dbo.split(memo,'@,#',34)f34,dbo.split(memo,'@,#',35)f35,dbo.split(memo,'@,#',36)f36
+,dbo.split(memo,'@,#',37)f37,dbo.split(memo,'@,#',38)f38,dbo.split(memo,'@,#',39)f39
+,dbo.split(memo,'@,#',40)f40,dbo.split(memo,'@,#',41)f41,dbo.split(memo,'@,#',42)f42
+from view_cugt
+where noa between @t_bnoa and @t_enoa
+
+delete @tmp where f01=''
+
+update a
+set rr=xx,page=ceiling(cast(xx as float)/@pageline)
+from (select page,rr,ROW_NUMBER()over (partition by noa,typea order by noa,noq)xx from @tmp)a
+
+update @tmp
+set title=case when typea='2' then '加工半成品' 
+when typea='3' then '加工再製品' 
+when typea='6' then '加工物料'
+when typea='5' then '製造[皮料]'
+when typea='4' then '製造[離型紙]'
+else '' end+'備料單'
+
+--插入表頭
+insert @tmp (gno,noa,typea,title,page)
+select case when gno='2' then '1' when gno='4' then '3' when gno='6' then '5' when gno='8' then '7' else '1' end ,noa,typea,MAX(title),page
+from @tmp group by gno,noa,typea,page
+
+--插入分頁
+insert @tmp (gno,noa,typea,title,page)
+select '9',noa,typea,MAX(title),page
+from @tmp group by noa,typea,page
+
+select * 
+,case when gno='1' or gno='3' or gno='5' or gno='7' then '<svg id="code_'+noa+'" class="barcode" style="display:none"></svg>' 
+when gno='9' then "
+	<script type='text/javascript'>
+		!window.JsBarcode && document.write('<script src="+CHAR(34)+"https://cdnjs.cloudflare.com/ajax/libs/jsbarcode/3.6.0/JsBarcode.all.js"+CHAR(34)+"><\/script>')"+CHAR(59)+"
+	</script>
+	<script type='text/javascript'>
+		function codeshow() {
+			var barcodeas=document.getElementsByClassName('barcode')"+CHAR(59)+"
+           	for(var i=0"+CHAR(59)+"i<barcodeas.length"+CHAR(59)+"i++){
+           		var t_id=barcodeas[i].id"+CHAR(59)+"
+				var t_code=t_id.replace('code_','')"+CHAR(59)+"
+				JsBarcode('#'+t_id, encodeURI(t_code) //中文只能暫時先編碼處理
+				,{
+					width:1,
+					height: 20,
+					displayValue: false
+				})"+CHAR(59)+"
+				document.getElementById(t_id).style.display=''"+CHAR(59)+"
+			}
+           }
+		codeshow()"+CHAR(59)+"
+	</script>
+"
+else '' end barcode 
+from @tmp order by noa,typea,page,gno,rr,noq
+
 ;
