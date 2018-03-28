@@ -292,17 +292,27 @@ declare @t_datea nvarchar(50)=case when '#non'=[3] then '' else [3] end
 declare @t_noa nvarchar(50)=case when '#non'=[4] then '' else [4] end
 declare @worker nvarchar(50)=case when '#non'=[5] then '' else [5] end
 
---取得新的noa
-declare @noa nvarchar(50)='特'+replace(@t_kdate,'/','')+
-right('000'+cast(cast(right(isnull((select noa from view_cug 
-where noa like '特'+replace(@t_kdate,'/','')+'%'),'000'),3) as int)+1 as nvarchar(10)),3)
+--派工noa
+declare @noa nvarchar(50)=right(replace(@t_kdate,'/',''),6)+'-'+'特'
 
 --bbm
-EXEC("
-insert cug"+@accy+"(noa,kdate,datea,bdate,processno,smount,hours,memo,worker,station)
-select '"+@noa+"' noa,'"+@t_kdate+"' kdate,'"+@t_datea+"' datea,'加工' bdate,'特殊' processno
-,SUM(mount) smount,0 hours,'由生產製令【"+@t_noa+"】轉來' memo ,'"+@worker+"' worker,'"+@t_noa+"'
-from view_cubs where noa='"+@t_noa+"'")
+if((select count(*) from view_cug where noa=@noa)=0)
+begin
+	EXEC("
+	insert cug"+@accy+"(noa,kdate,datea,bdate,processno,smount,hours,memo,worker,station)
+	select '"+@noa+"' noa,'"+@t_kdate+"' kdate,'"+@t_datea+"' datea,'加工' bdate,'特殊' processno
+	,SUM(mount) smount,0 hours,'由生產製令【"+@t_noa+"】轉來' memo ,'"+@worker+"' worker,'"+@t_noa+"'
+	from view_cubs where noa='"+@t_noa+"'")
+end
+else
+begin
+	set @accy=isnull((select top 1 accy from view_cug where noa=@noa),@accy)
+
+	EXEC("
+	update cug"+@accy+"
+	set worker2='"+@worker+"',smount=smount+isnull((select SUM(mount) from view_cubs where noa='"+@t_noa+"'),0)
+	where noa='"+@t_noa+"'")
+end
 
 --bbs
 EXEC("
@@ -1231,8 +1241,11 @@ declare @tmp table(
 )
 
 insert @tmp(noa,noq,datea,workgnoa,workgnoq)
-select a.noa,b.noq,a.datea,SUBSTRING(workgno,0,charindex('-',workgno)) noa
-,SUBSTRING(workgno,charindex('-',workgno)+1,len(workgno)) noq
+select a.noa,b.noq,a.datea
+--,SUBSTRING(workgno,0,charindex('-',workgno)) noa
+--,SUBSTRING(workgno,charindex('-',workgno)+1,len(workgno)) noq
+,SUBSTRING(b.workgno,1,LEN(b.workgno)-charindex('-',REVERSE(b.workgno)))
+,SUBSTRING(b.workgno,LEN(b.workgno)-charindex('-',REVERSE(b.workgno))+2,LEN(b.workgno))
 from view_cug a left join view_cugs b on a.noa=b.noa where a.noa=@t_noa
 
 declare @typea nvarchar(50)=(select bdate from view_cug where noa=@t_noa)
