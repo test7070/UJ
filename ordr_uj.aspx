@@ -78,6 +78,13 @@
                     }
                 });
                 
+                $('#btnOrdb').click(function(e){
+                    var t_key = q_getPara('sys.key_ordb');
+                    var t_noa = $('#txtNoa').val();
+                    var t_datea = q_date();
+                    q_func('qtxt.query.ordr2ordb', 'ordr_uj.txt,ordr2ordb,'+ encodeURI(t_key) + ';'+ encodeURI(t_noa) + ';'+ encodeURI(t_datea));
+                });
+                
                 $("#cmbUccgano").change(function(e) {
                     refreshBbs();
                 });
@@ -100,6 +107,9 @@
                         var as = _q_appendData("tmp0", "", true, true);
                             q_gridAddRow(bbtHtm, 'tbbs', 'txtOrdano,txtOrdanoq,txtProductno,txtProduct,txtSpec,txtUnit,txtSmount,txtWorkdate,txtApvmount,txtFmount,txtTggno,txtComp,txtNetmount,txtTypea,txtSchmount,txtStkmount,txtStyle'
                             , as.length, as, 'noa,noq,productno,product,spec,unit,smount,workdate,apvmount,fmount,tggno,comp,netmount,typea,stkmount,schmount,style', 'txtOrdano,txtOrdanoq,txtProductno,txtProduct');
+                        break;
+                    case 'qtxt.query.ordr2ordb':
+                        alert('已轉請購!!');
                         break;
                     default:
                         break;
@@ -365,7 +375,7 @@
                     });
 				}				
 				_bbsAssign();
-
+                refreshBbs();
 			}			
 			
 			function btnIns() {

@@ -94,3 +94,97 @@ from (select ROW_NUMBER()over(partition by gno order by workdate desc,productno)
 
 select * from @tmp order by rr
 ;
+---------------------------------------------------------------------------------------------------------------------------
+ordr2ordb:--ordr2ordb希得
+set quoted_identifier off
+declare @t_key nvarchar(50) = [1]
+declare @t_noa nvarchar(50) = [2]
+declare @t_datea nvarchar(10) =[3]
+declare @t_ordbno nvarchar(50) = (select MAX(noa) from ordb where datea=@t_datea)
+
+declare @tmp table(
+	gno nvarchar(1),
+	rr int,
+	noa nvarchar(50),
+	kind2 nvarchar(50),
+	tggno nvarchar(50),
+	tgg nvarchar(50),
+	nick nvarchar(50),
+	tel nvarchar(50),
+	fax nvarchar(50),
+	post nvarchar(50),
+	addr nvarchar(50),
+	ordeno nvarchar(50),
+	no2 nvarchar(20),
+	productno nvarchar(50),
+	product nvarchar(100),
+	isnotdeal nvarchar(50),
+	scolor nvarchar(50),
+	theory float,
+	apv nvarchar(50),
+	ucolor nvarchar(50),
+	width float,
+	lengthb float,
+	unit nvarchar(50),
+	dime float,
+	weight float,
+	mount float,
+	radius float,
+	omount float,
+	size nvarchar(50),
+	stdmount float,
+	wmount float,
+	unit2 nvarchar(50),
+	sizea nvarchar(50),
+	emount nvarchar(50),
+	slit nvarchar(50),
+	memo nvarchar(max)
+)
+insert @tmp
+select '1','',@t_key+replace(@t_datea,'/','')
+,uccgano,tggno,case when len(c.comp)!=0 then c.comp else b.comp end
+,case when len(c.nick)!=0 then c.nick else b.comp end ,c.tel,c.fax,c.zip_comp,c.addr_comp,a.noa,noq,productno,product
+,apv,spec,smount,workdate,fdate,apvmount,fmount,b.unit,gweight,weight,mount,tmount,netmount,b.typea
+,safemount,schmount,b.style,apvmemo,stkmount,ldate,b.memo
+from ordrs b left join ordr a on a.noa=b.noa
+left join tgg c on b.tggno=c.noa
+where a.noa=@t_noa
+and not exists(select tggno from view_ordb where b.tggno=tggno and a.noa=workgno)
+
+insert @tmp(gno,kind2,tggno,tgg,nick,noa,ordeno,tel,fax,post,addr)
+select '0',kind2,tggno,tgg,nick,noa,ordeno,tel,fax,post,addr
+from @tmp
+group by kind2,tggno,tgg,nick,noa,ordeno,tel,fax,post,addr
+
+update a
+set rr=rx,noa=noa+REPLICATE('0',3-LEN(rx)) + RTRIM(CAST(rx AS CHAR))
+from (select ROW_NUMBER()over(partition by gno order by tggno)rx,rr,noa from @tmp where gno='0')a
+
+update a
+set rr=rx,noa=noa+REPLICATE('0',3-LEN(rx)) + RTRIM(CAST(rx AS CHAR))
+from (select ROW_NUMBER()over(partition by gno,tggno,tgg order by ordeno,no2)rx,rr,noa from @tmp where gno='1')a
+
+update @tmp
+set noa=b.noa
+from @tmp a
+outer apply(select noa from @tmp where tggno=a.tggno and a.tgg=tgg and gno='0')b
+where gno='1'
+
+Begin Transaction [Trans_Name]
+begin try
+	insert ordb107(noa,kind2,tggno,nick,tgg,tel,fax,post,addr,odate,workgno)
+	select noa,kind2,tggno,tgg,nick,tel,fax,post,addr,@t_datea,ordeno
+	from @tmp
+	where gno='0'
+
+	insert ordbs107(noa,no3,ordeno,no2,tggno,comp,productno,product,isnotdeal,scolor,theory,apv,ucolor,width,lengthb,unit,dime,weight,mount,radius,omount,size,stdmount,wmount,unit2,sizea,emount,slit,memo)
+	select noa,REPLICATE('0',3-LEN(rr)) + RTRIM(CAST(rr AS CHAR)),ordeno,no2,tggno,tgg,productno,product,isnotdeal,scolor,theory,apv,ucolor,width,lengthb,unit,dime,weight,mount,radius,omount,size,stdmount,wmount,unit2,sizea,emount,slit,memo
+	from @tmp
+	where gno='1'
+	
+Commit Transaction [Trans_Name] -- 提交所有操作所造成的變更
+end try
+begin catch
+	Rollback Transaction [Trans_Name] -- 復原所有操作所造成的變更
+end catch
+;
