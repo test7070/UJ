@@ -1,0 +1,188 @@
+﻿z_workgp_uj01:--z_workgp_uj01
+SET QUOTED_IDENTIFIER OFF
+declare @t_ndate nvarchar(50)='[2]'
+declare @t_xdate nvarchar(10)=case when '#non'=[3] then '' else [3] end
+declare @t_ydate1 nvarchar(10)=case when '#non'=[4] then '' else [4] end
+declare @t_ydate2 nvarchar(10)=case when '#non'=[5] then '' else [5] end
+declare @t_ydate3 nvarchar(10)=case when '#non'=[6] then '' else [6] end
+declare @t_ydate4 nvarchar(10)=case when '#non'=[7] then '' else [7] end
+declare @t_ydate5 nvarchar(10)=case when '#non'=[8] then '' else [8] end
+
+if(@t_xdate='')
+	set @t_xdate=@t_ndate
+
+IF OBJECT_ID('tempdb..#tmp')is not null
+BEGIN
+	drop table #tmp
+END
+
+create table #tmp(
+	gno nvarchar(10),
+	k04 nvarchar(50),
+	pno nvarchar(50),
+	product nvarchar(50),
+	glue nvarchar(50),
+	chgline nvarchar(50),
+	datea nvarchar(10),
+	mount float,
+	hours float,
+	----------------------------
+	xtmount float,xcount float,scount float,
+	xdate01 nvarchar(10),xdate02 nvarchar(10),xdate03 nvarchar(10),xdate04 nvarchar(10),xdate05 nvarchar(10),
+	xdate06 nvarchar(10),xdate07 nvarchar(10),xdate08 nvarchar(10),xdate09 nvarchar(10),xdate10 nvarchar(10),
+	xdate11 nvarchar(10),xdate12 nvarchar(10),xdate13 nvarchar(10),xdate14 nvarchar(10),xdate15 nvarchar(10),
+	ydate01 nvarchar(10),ydate02 nvarchar(10),ydate03 nvarchar(10),ydate04 nvarchar(10),ydate05 nvarchar(10),
+	
+	xm01 float,xm02 float,xm03 float,xm04 float,xm05 float,
+	xm06 float,xm07 float,xm08 float,xm09 float,xm10 float,
+	xm11 float,xm12 float,xm13 float,xm14 float,xm15 float,
+	ym01 float,ym02 float,ym03 float,ym04 float,ym05 float,
+	
+	xh01 float,xh02 float,xh03 float,xh04 float,xh05 float,
+	xh06 float,xh07 float,xh08 float,xh09 float,xh10 float,
+	xh11 float,xh12 float,xh13 float,xh14 float,xh15 float,
+	yh01 float,yh02 float,yh03 float,yh04 float,yh05 float,
+	
+	xtm01 float,xtm02 float,xtm03 float,xtm04 float,xtm05 float,
+	xtm06 float,xtm07 float,xtm08 float,xtm09 float,xtm10 float,
+	xtm11 float,xtm12 float,xtm13 float,xtm14 float,xtm15 float,
+	ytm01 float,ytm02 float,ytm03 float,ytm04 float,ytm05 float,
+	
+	xth01 float,xth02 float,xth03 float,xth04 float,xth05 float,
+	xth06 float,xth07 float,xth08 float,xth09 float,xth10 float,
+	xth11 float,xth12 float,xth13 float,xth14 float,xth15 float,
+	yth01 float,yth02 float,yth03 float,yth04 float,yth05 float
+)
+
+--明細
+insert #tmp(gno,k04,pno,product,glue,chgline,datea,mount,hours)
+select '9',dbo.split(b.memo2,'@,#',78),b.productno,c.product,c.issuedate,dbo.split(c.style,'#^#',1)
+,dbo.split(b.memo2,'@,#',91),b.mount,replace(dbo.split(b.memo2,'@,#',96),',','')
+from view_workg a left join view_workgs b on a.noa=b.noa
+left join uca c on b.productno=c.noa
+where a.stype='製造'
+and ((dbo.split(b.memo2,'@,#',91) between @t_xdate and dbo.q_cdn(@t_xdate,14))
+or dbo.split(b.memo2,'@,#',91)=@t_ydate1 or dbo.split(b.memo2,'@,#',91)=@t_ydate2
+or dbo.split(b.memo2,'@,#',91)=@t_ydate3 or dbo.split(b.memo2,'@,#',91)=@t_ydate4
+or dbo.split(b.memo2,'@,#',91)=@t_ydate5 )
+
+--日期
+declare @t_bdate nvarchar(10)=@t_xdate
+declare @count int=1
+declare @scount nvarchar(10)=''
+declare @t_edate nvarchar(10)=dbo.q_cdn(@t_xdate,14)
+while(@t_bdate<=@t_edate)
+begin
+	set @scount=right('00'+cast(@count as nvarchar(10)),2)
+
+	EXEC("update #tmp set xdate"+@scount+"='"+@t_bdate+"'")
+	
+	set @t_bdate=dbo.q_cdn(@t_bdate,1)
+	set @count=@count+1
+end
+update #tmp set ydate01=@t_ydate1
+update #tmp set ydate02=@t_ydate2
+update #tmp set ydate03=@t_ydate3
+update #tmp set ydate04=@t_ydate4
+update #tmp set ydate05=@t_ydate5
+
+--合併
+insert #tmp(gno,k04,pno,product,glue,chgline
+,xdate01,xdate02,xdate03,xdate04,xdate05,xdate06,xdate07,xdate08,xdate09,xdate10
+,xdate11,xdate12,xdate13,xdate14,xdate15,ydate01,ydate02,ydate03,ydate04,ydate05
+,xm01,xm02,xm03,xm04,xm05,xm06,xm07,xm08,xm09,xm10
+,xm11,xm12,xm13,xm14,xm15,ym01,ym02,ym03,ym04,ym05
+,xh01,xh02,xh03,xh04,xh05,xh06,xh07,xh08,xh09,xh10
+,xh11,xh12,xh13,xh14,xh15,yh01,yh02,yh03,yh04,yh05
+)
+select '0',k04,pno,product,glue,chgline
+,MAX(xdate01),MAX(xdate02),MAX(xdate03),MAX(xdate04),MAX(xdate05),MAX(xdate06),MAX(xdate07),MAX(xdate08),MAX(xdate09),MAX(xdate10)
+,MAX(xdate11),MAX(xdate12),MAX(xdate13),MAX(xdate14),MAX(xdate15),MAX(ydate01),MAX(ydate02),MAX(ydate03),MAX(ydate04),MAX(ydate05)
+,SUM(case when datea=xdate01 then mount else 0 end),SUM(case when datea=xdate02 then mount else 0 end)
+,SUM(case when datea=xdate03 then mount else 0 end),SUM(case when datea=xdate04 then mount else 0 end)
+,SUM(case when datea=xdate05 then mount else 0 end),SUM(case when datea=xdate06 then mount else 0 end)
+,SUM(case when datea=xdate07 then mount else 0 end),SUM(case when datea=xdate08 then mount else 0 end)
+,SUM(case when datea=xdate09 then mount else 0 end),SUM(case when datea=xdate10 then mount else 0 end)
+,SUM(case when datea=xdate11 then mount else 0 end),SUM(case when datea=xdate12 then mount else 0 end)
+,SUM(case when datea=xdate13 then mount else 0 end),SUM(case when datea=xdate14 then mount else 0 end)
+,SUM(case when datea=xdate15 then mount else 0 end),SUM(case when datea=ydate01 then mount else 0 end)
+,SUM(case when datea=ydate02 then mount else 0 end),SUM(case when datea=ydate03 then mount else 0 end)
+,SUM(case when datea=ydate04 then mount else 0 end),SUM(case when datea=ydate05 then mount else 0 end)
+,SUM(case when datea=xdate01 then hours else 0 end),SUM(case when datea=xdate02 then hours else 0 end)
+,SUM(case when datea=xdate03 then hours else 0 end),SUM(case when datea=xdate04 then hours else 0 end)
+,SUM(case when datea=xdate05 then hours else 0 end),SUM(case when datea=xdate06 then hours else 0 end)
+,SUM(case when datea=xdate07 then hours else 0 end),SUM(case when datea=xdate08 then hours else 0 end)
+,SUM(case when datea=xdate09 then hours else 0 end),SUM(case when datea=xdate10 then hours else 0 end)
+,SUM(case when datea=xdate11 then hours else 0 end),SUM(case when datea=xdate12 then hours else 0 end)
+,SUM(case when datea=xdate13 then hours else 0 end),SUM(case when datea=xdate14 then hours else 0 end)
+,SUM(case when datea=xdate15 then hours else 0 end),SUM(case when datea=ydate01 then hours else 0 end)
+,SUM(case when datea=ydate02 then hours else 0 end),SUM(case when datea=ydate03 then hours else 0 end)
+,SUM(case when datea=ydate04 then hours else 0 end),SUM(case when datea=ydate05 then hours else 0 end)
+from #tmp
+group by k04,pno,product,glue,chgline
+
+update #tmp
+set xtmount=xm01+xm02+xm03+xm04+xm05+xm06+xm07+xm08+xm09+xm10+xm11+xm12+xm13+xm14+xm15
++ym01+ym02+ym03+ym04+ym05
+,xcount=
+case when xm01>0 then 1 else 0 end+case when xm02>0 then 1 else 0 end+
+case when xm03>0 then 1 else 0 end+case when xm04>0 then 1 else 0 end+
+case when xm05>0 then 1 else 0 end+case when xm06>0 then 1 else 0 end+
+case when xm07>0 then 1 else 0 end+case when xm08>0 then 1 else 0 end+
+case when xm09>0 then 1 else 0 end+case when xm10>0 then 1 else 0 end+
+case when xm11>0 then 1 else 0 end+case when xm12>0 then 1 else 0 end+
+case when xm13>0 then 1 else 0 end+case when xm14>0 then 1 else 0 end+
+case when xm15>0 then 1 else 0 end+case when ym01>0 then 1 else 0 end+
+case when ym02>0 then 1 else 0 end+case when ym03>0 then 1 else 0 end+
+case when ym04>0 then 1 else 0 end+case when ym05>0 then 1 else 0 end
+where gno='0'
+
+update #tmp set xcount=null where gno='0' and xcount<2
+
+--更新合計
+update a
+set xtm01=b.xtm01,xtm02=b.xtm02,xtm03=b.xtm03,xtm04=b.xtm04,xtm05=b.xtm05
+,xtm06=b.xtm06,xtm07=b.xtm07,xtm08=b.xtm08,xtm09=b.xtm09,xtm10=b.xtm10
+,xtm11=b.xtm11,xtm12=b.xtm12,xtm13=b.xtm13,xtm14=b.xtm14,xtm15=b.xtm15
+,ytm01=b.ytm01,ytm02=b.ytm02,ytm03=b.ytm03,ytm04=b.ytm04,ytm05=b.ytm05
+
+,xth01=b.xth01,xth02=b.xth02,xth03=b.xth03,xth04=b.xth04,xth05=b.xth05
+,xth06=b.xth06,xth07=b.xth07,xth08=b.xth08,xth09=b.xth09,xth10=b.xth10
+,xth11=b.xth11,xth12=b.xth12,xth13=b.xth13,xth14=b.xth14,xth15=b.xth15
+,yth01=b.yth01,yth02=b.yth02,yth03=b.yth03,yth04=b.yth04,yth05=b.yth05
+
+from #tmp a outer apply (select 
+SUM(xm01)xtm01,SUM(xm02)xtm02,SUM(xm03)xtm03,SUM(xm04)xtm04,SUM(xm05)xtm05
+,SUM(xm06)xtm06,SUM(xm07)xtm07,SUM(xm08)xtm08,SUM(xm09)xtm09,SUM(xm10)xtm10
+,SUM(xm11)xtm11,SUM(xm12)xtm12,SUM(xm13)xtm13,SUM(xm14)xtm14,SUM(xm15)xtm15
+,SUM(ym01)ytm01,SUM(ym02)ytm02,SUM(ym03)ytm03,SUM(ym04)ytm04,SUM(ym05)ytm05
+,SUM(xh01)xth01,SUM(xh02)xth02,SUM(xh03)xth03,SUM(xh04)xth04,SUM(xh05)xth05
+,SUM(xh06)xth06,SUM(xh07)xth07,SUM(xh08)xth08,SUM(xh09)xth09,SUM(xh10)xth10
+,SUM(xh11)xth11,SUM(xh12)xth12,SUM(xh13)xth13,SUM(xh14)xth14,SUM(xh15)xth15
+,SUM(yh01)yth01,SUM(yh02)yth02,SUM(yh03)yth03,SUM(yh04)yth04,SUM(yh05)yth05
+from #tmp where gno='0')b where gno='0'
+
+update #tmp
+set scount=
+case when xth01>0 then 1 else 0 end+case when xth02>0 then 1 else 0 end+
+case when xth03>0 then 1 else 0 end+case when xth04>0 then 1 else 0 end+
+case when xth05>0 then 1 else 0 end+case when xth06>0 then 1 else 0 end+
+case when xth07>0 then 1 else 0 end+case when xth08>0 then 1 else 0 end+
+case when xth09>0 then 1 else 0 end+case when xth10>0 then 1 else 0 end+
+case when xth11>0 then 1 else 0 end+case when xth12>0 then 1 else 0 end+
+case when xth13>0 then 1 else 0 end+case when xth14>0 then 1 else 0 end+
+case when xth15>0 then 1 else 0 end+case when yth01>0 then 1 else 0 end+
+case when yth02>0 then 1 else 0 end+case when yth03>0 then 1 else 0 end+
+case when yth04>0 then 1 else 0 end+case when yth05>0 then 1 else 0 end
+where gno='0'
+
+--刪除明細
+delete #tmp where gno='9'
+
+select *,ROW_NUMBER()over(order by pno,k04)rr from #tmp order by pno,k04
+
+IF OBJECT_ID('tempdb..#tmp')is not null
+BEGIN
+	drop table #tmp
+END
+;
