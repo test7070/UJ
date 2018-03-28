@@ -101,6 +101,14 @@
 					//不經"生管"排程  直接轉cug
 					var t_noa=$('#txtNoa').val();
 					var t_datea=emp($('#txtBdate').val())?q_date():$('#txtBdate').val();
+					
+					q_gt('view_workg',"where=^^exists (select * from view_workgs where noa=view_workg.noa and workhno like '"+t_noa+"%') ^^", 0, 0, 0, "inworkgs", r_accy,1);
+					var as = _q_appendData("view_workg", "", true);
+					if (as[0] != undefined) {
+						alert('此「指令指令」已存在「'+as[0].stype+'排程表」【'+as[0].noa+'】中禁止轉派工單!!')
+						return;
+					}
+					
 					if(t_noa.length>0 && $('#cmbItype').val()=='特殊' && !(q_cur==1 || q_cur==2)){
 						if(emp($('#txtStatus').val())){
 							q_func('qtxt.query.cub2cug_uj', 'orde_uj.txt,cub2cug_uj,' + encodeURI(r_accy)+';'+encodeURI(q_date())+';'
@@ -115,6 +123,10 @@
 							}
 						}else{
 							alert('已轉過派工單【'+$('#txtStatus').val()+'】!!');
+						}
+					}else{
+						if($('#cmbItype').val()!='特殊'){
+							alert('【指令代號】非「特殊」!!')
 						}
 					}
 				});

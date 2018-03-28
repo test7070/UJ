@@ -293,3 +293,87 @@ order by
 case when source='5' then 1 when source='4' then 2 else 3 end
 ,noa,page,gno,rr,noq
 ;
+
+---------------------------------------------------------------------------------------------------
+z_cudp_uj04:--z_cudp_uj04
+SET QUOTED_IDENTIFIER OFF
+declare @t_bdate nvarchar(50)=case when '#non'=[2] then '' else [2] end
+declare @t_edate nvarchar(50)=case when '#non'=[3] then char(255) else [3] end
+
+declare @tmp table(
+	gno nvarchar(10),
+	pno2 nvarchar(50), --半成品&再製品
+	uno2  nvarchar(50), --身分證號
+	indate nvarchar(50), --製造年月
+	pno nvarchar(50), --新成品編碼
+	engpro nvarchar(MAX), --新成品編碼
+	mount float, --產出(支)
+	lengthb float, --長/支(M)
+	weight1 float, --成品產出長(M)
+	weightz float, --零碼
+	weightb float, --退料長(M)
+	weights float, --皮料長(M)
+	prate float,--成品良率(%)
+	zrate float,--零碼良率(%)
+	arate float--良率(%)
+)
+--成品
+insert @tmp(gno,pno2,uno2,indate,pno,mount,lengthb,weight1)
+select '1',productno2,product2,datea,productno,mount,weight,weight2 
+from view_cuds where source='2' and datea between @t_bdate and @t_edate
+
+--零碼
+insert @tmp(gno,pno2,uno2,indate,pno,mount,lengthb,weightz)
+select '2',a.productno2,a.product2,a.datea,b.productno,a.mount,a.weight,a.weight2 
+from view_cuds a left join view_cugs b on a.ordeno=b.noa and a.no2=b.noq 
+where a.source='6' and a.datea between @t_bdate and @t_edate
+
+--退料
+insert @tmp(gno,pno2,uno2,indate,pno,mount,lengthb,weightb)
+select '3',a.productno2,a.product2,a.datea,b.productno,a.mount,weight,weight2 
+from view_cuds a left join view_cugs b on a.ordeno=b.noa and a.no2=b.noq 
+where a.source='9' and a.datea between @t_bdate and @t_edate
+
+--退貨
+insert @tmp(gno,pno2,uno2,indate,pno,mount,lengthb,weight1)
+select '4',c.groupbno,'','',b.productno,b.mount,c.trans
+,case when b.weight=0 then b.mount*c.trans else b.weight end
+from view_vcc a left join view_vccs b on a.noa=b.noa 
+left join uca c on b.productno=c.noa
+where a.typea='2' and c.noa is not null
+and a.datea between @t_bdate and @t_edate
+
+--上皮
+insert @tmp(gno,pno2,uno2,indate,pno,mount,lengthb,weights)
+select '5',productno,uno,datea,productno2,1,lengthb,lengthb 
+from view_cuds where source='5' and isnull(enda,0)=1
+and datea between @t_bdate and @t_edate
+
+--小計
+insert @tmp(gno,pno2,uno2,pno,weight1,weightz,weightb,weights)
+select '0',a.pno2,a.uno2,a.pno,MAX(ISNULL(b.weight1,0)-ISNULL(c.weight1,0)),MAX(ISNULL(d.weightz,0))
+,MAX(ISNULL(e.weightb,0)),MAX(ISNULL(g.weights,0))
+from @tmp a
+outer apply (select SUM(weight1)weight1 from @tmp where pno=a.pno and gno='1')b
+outer apply (select SUM(weight1)weight1 from @tmp where pno=a.pno and gno='4')c
+outer apply (select SUM(weightz)weightz from @tmp where pno=a.pno and gno='2')d
+outer apply (select SUM(weightb)weightb from @tmp where pno=a.pno and gno='3')e
+outer apply (select SUM(weights)weights from @tmp where uno2=a.uno2 and gno='5')g
+where gno!='5'
+group by a.pno2,a.uno2,a.pno
+
+update @tmp
+set prate=case when (weights-weightb)=0 then 0 else round(weight1/(weights-weightb)*100,1) end
+,zrate=case when (weights-weightb)=0 then 0 else round(weightz/(weights-weightb)*100,1) end
+,arate=case when (weights-weightb)=0 then 0 else round((weight1+weightz)/(weights-weightb)*100,1) end
+from @tmp where gno='0'
+
+update a
+set engpro=b.engpro
+from @tmp a outer apply (select top 1 * from uca where noa=a.pno)b
+where gno='0'
+ 
+select *,ROW_NUMBER()over (partition by gno order by pno)rr
+from @tmp where gno='0'
+order by rr
+;
