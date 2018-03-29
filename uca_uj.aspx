@@ -708,7 +708,7 @@
 					<tr>
 						<td><input id="chkBrow.*" type="checkbox" style=''/></td>
 						<td id='noa'>~noa</td>
-						<td id='product spec'>~product</td>
+						<td id='product'>~product</td>
 					</tr>
 				</table>
 			</div>
