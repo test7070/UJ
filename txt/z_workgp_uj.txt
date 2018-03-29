@@ -179,6 +179,64 @@ where gno='0'
 --刪除明細
 delete #tmp where gno='9'
 
+--0為null,變動星期
+set @count=1
+while(@count<=15)
+begin
+	set @scount=right('00'+cast(@count as nvarchar(10)),2)
+
+	EXEC("update #tmp set xm"+@scount+"=(case when xm"+@scount+"=0 then null else xm"+@scount+" end) ")
+	EXEC("update #tmp set xh"+@scount+"=(case when xh"+@scount+"=0 then null else xh"+@scount+" end) ")
+	EXEC("update #tmp set xtm"+@scount+"=(case when xtm"+@scount+"=0 then null else xtm"+@scount+" end) ")
+	EXEC("update #tmp set xth"+@scount+"=(case when xth"+@scount+"=0 then null else xth"+@scount+" end) ")
+	
+	EXEC("
+		update #tmp
+		set xdate"+@scount+"=case 
+		when xdate"+@scount+" like '[0-9][0-9][0-9]/[0-9][0-9]/[0-9][0-9]' or 
+		xdate"+@scount+" like '[0-9][0-9][0-9][0-9]/[0-9][0-9]/[0-9][0-9]' then right(xdate"+@scount+",5)
+		+'#'+cast((DATEPART(Weekday,case when len(xdate"+@scount+")=9 then dbo.ChineseEraName2AD(xdate"+@scount+") else xdate"+@scount+" end)-1) as nvarchar(10))
+		else xdate"+@scount+" end
+	")
+	
+	EXEC("
+		update #tmp
+		set xdate"+@scount+"=LEFT(xdate"+@scount+",5)+' '+case when RIGHT(xdate"+@scount+",1)='0' then '週日' 
+		when RIGHT(xdate"+@scount+",1)='1' then '週一' when RIGHT(xdate"+@scount+",1)='2' then '週二' 
+		when RIGHT(xdate"+@scount+",1)='3' then '週三' when RIGHT(xdate"+@scount+",1)='4' then '週四'
+		when RIGHT(xdate"+@scount+",1)='5' then '週五' when RIGHT(xdate"+@scount+",1)='6' then '週六'
+		else '' end
+	")
+	
+	if(@count<=5)
+	begin
+		EXEC("update #tmp set ym"+@scount+"=(case when ym"+@scount+"=0 then null else ym"+@scount+" end) ")
+		EXEC("update #tmp set yh"+@scount+"=(case when yh"+@scount+"=0 then null else yh"+@scount+" end) ")
+		EXEC("update #tmp set ytm"+@scount+"=(case when ytm"+@scount+"=0 then null else ytm"+@scount+" end) ")
+		EXEC("update #tmp set yth"+@scount+"=(case when yth"+@scount+"=0 then null else yth"+@scount+" end) ")
+		
+		EXEC("
+			update #tmp
+			set ydate"+@scount+"=case 
+			when ydate"+@scount+" like '[0-9][0-9][0-9]/[0-9][0-9]/[0-9][0-9]' or 
+			ydate"+@scount+" like '[0-9][0-9][0-9][0-9]/[0-9][0-9]/[0-9][0-9]' then right(ydate"+@scount+",5)
+			+'#'+cast((DATEPART(Weekday,case when len(ydate"+@scount+")=9 then dbo.ChineseEraName2AD(ydate"+@scount+") else ydate"+@scount+" end)-1) as nvarchar(10))
+			else ydate"+@scount+" end
+		")
+		
+		EXEC("
+			update #tmp
+			set ydate"+@scount+"=LEFT(ydate"+@scount+",5)+' '+case when RIGHT(ydate"+@scount+",1)='0' then '週日' 
+			when RIGHT(ydate"+@scount+",1)='1' then '週一' when RIGHT(ydate"+@scount+",1)='2' then '週二' 
+			when RIGHT(ydate"+@scount+",1)='3' then '週三' when RIGHT(ydate"+@scount+",1)='4' then '週四'
+			when RIGHT(ydate"+@scount+",1)='5' then '週五' when RIGHT(ydate"+@scount+",1)='6' then '週六'
+			else '' end
+		")
+	end
+	
+	set @count=@count+1
+end
+
 select *,ROW_NUMBER()over(order by pno,k04)rr from #tmp order by pno,k04
 
 IF OBJECT_ID('tempdb..#tmp')is not null
