@@ -232,6 +232,14 @@
 			var z_cno = r_cno, z_acomp = r_comp, z_nick = r_comp.substr(0, 2);
 			function q_gtPost(t_name) {
 				switch (t_name) {
+				    case 'stpost_rc2_0':
+                        var as = _q_appendData("view_rc2", "", true);
+                        for (var i = 0; i < as.length; i++) {
+                            q_func('rc2_post.post', as[i].datea.substr(0,r_len) + ',' + as[i].noa + ',0');
+                            sleep(100);
+                        }
+                        q_func('qtxt.query.ordc2rc2_rb_0', 'ordc.txt,ordc2rc2_rb,' + encodeURI(r_accy) + ';0;' + encodeURI(q_getPara('sys.key_rc2')));
+                        break;
 				    case 'ucc':
                         var as = _q_appendData("ucc", "", true);
                         if (as[0] != undefined) {
@@ -395,12 +403,6 @@
 				for(var i=0;i<q_bbsCount;i++){
 				    t_cancel = $('#chkCancel_'+i).prop('checked');
 				    t_no2 = $.trim($('#txtNo2_'+i).val());
-			        if(t_no2.length>0){
-			            for(var j=0;j<q_bbtCount;j++){
-			                if($.trim($('#txtNo2__'+j).val())== t_no2)
-			                    $('#chkCancel__'+j).prop('checked',t_cancel);
-			            }
-			        }
 			        if($('#txtPrice_'+i).val().length==0){
 			           $('#txtPrice_'+i).val( $('#txtWidth_'+i).val()); 
 			        }
@@ -680,18 +682,6 @@
 				as['trandate'] = abbm2['trandate'];
 				return true;
 			}
-			
-			function bbtSave(as) {
-                if (!as['tggno']) {
-                    as[bbtKey[1]] = '';
-                    return;
-                }
-                q_nowf();
-                as['noa'] = abbm2['noa'];
-                if (!as['cancel'])
-                    as['cancel'] = '0';
-                return true;
-            }
 
 			function refresh(recno) {
 				_refresh(recno);
@@ -883,6 +873,11 @@
 			function q_stPost() {
 				if (!(q_cur == 1 || q_cur == 2))
 					return false;
+				/*if (!emp($('#txtNoa').val())) {
+                    Lock();
+                    t_stnoa=$('#txtNoa').val();
+                    q_gt('view_rc2', "where=^^postname='" + t_stnoa + "'^^", 0, 0, 0, "stpost_rc2_0");
+                }*/
 			}
 			
 			function q_funcPost(t_func, result) {

@@ -82,7 +82,8 @@
                     var t_key = q_getPara('sys.key_ordb');
                     var t_noa = $('#txtNoa').val();
                     var t_datea = q_date();
-                    q_func('qtxt.query.ordr2ordb', 'ordr_uj.txt,ordr2ordb,'+ encodeURI(t_key) + ';'+ encodeURI(t_noa) + ';'+ encodeURI(t_datea));
+                    var t_accy = r_accy;
+                    q_func('qtxt.query.ordr2ordb', 'ordr_uj.txt,ordr2ordb,'+ encodeURI(t_key) + ';'+ encodeURI(t_noa) + ';'+ encodeURI(t_datea)+ ';'+ encodeURI(t_accy));
                 });
                 
                 $("#cmbUccgano").change(function(e) {
