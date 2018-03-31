@@ -99,8 +99,9 @@ ordr2ordb:--ordr2ordb希得
 set quoted_identifier off
 declare @t_key nvarchar(50) = [1]
 declare @t_noa nvarchar(50) = [2]
-declare @t_datea nvarchar(10) =[3]
-declare @t_ordbno nvarchar(50) = (select MAX(noa) from ordb where datea=@t_datea)
+declare @t_datea nvarchar(10) = [3]
+declare @r_accy nvarchar(10) = [4]
+declare @t_ordbno nvarchar(50) = (select MAX(noa) from view_ordb where datea=@t_datea)
 
 declare @tmp table(
 	gno nvarchar(1),
@@ -172,15 +173,16 @@ where gno='1'
 
 Begin Transaction [Trans_Name]
 begin try
-	insert ordb107(noa,kind2,tggno,nick,tgg,tel,fax,post,addr,odate,workgno)
-	select noa,kind2,tggno,tgg,nick,tel,fax,post,addr,@t_datea,ordeno
-	from @tmp
-	where gno='0'
 
-	insert ordbs107(noa,no3,ordeno,no2,tggno,comp,productno,product,isnotdeal,scolor,theory,apv,ucolor,width,lengthb,unit,dime,weight,mount,radius,omount,size,stdmount,wmount,unit2,sizea,emount,slit,memo)
-	select noa,REPLICATE('0',3-LEN(rr)) + RTRIM(CAST(rr AS CHAR)),ordeno,no2,tggno,tgg,productno,product,isnotdeal,scolor,theory,apv,ucolor,width,lengthb,unit,dime,weight,mount,radius,omount,size,stdmount,wmount,unit2,sizea,emount,slit,memo
-	from @tmp
-	where gno='1'
+		exec("insert ordb"+@r_accy+"(noa,kind2,tggno,nick,tgg,tel,fax,post,addr,odate,workgno)
+		select noa,kind2,tggno,tgg,nick,tel,fax,post,addr,@t_datea,ordeno
+		from @tmp
+		where gno='0'")
+
+		exec("insert ordbs"+@r_accy+"(noa,no3,ordeno,no2,tggno,comp,productno,product,isnotdeal,scolor,theory,apv,ucolor,width,lengthb,unit,dime,weight,mount,radius,omount,size,stdmount,wmount,unit2,sizea,emount,slit,memo)
+		select noa,REPLICATE('0',3-LEN(rr)) + RTRIM(CAST(rr AS CHAR)),ordeno,no2,tggno,tgg,productno,product,isnotdeal,scolor,theory,apv,ucolor,width,lengthb,unit,dime,weight,mount,radius,omount,size,stdmount,wmount,unit2,sizea,emount,slit,memo
+		from @tmp
+		where gno='1'")
 	
 Commit Transaction [Trans_Name] -- 提交所有操作所造成的變更
 end try

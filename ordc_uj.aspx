@@ -23,7 +23,7 @@
 			var q_name = "ordc";
 			var q_readonly = ['txtTgg', 'txtAcomp', 'txtSales', 'txtNoa', 'txtWorker', 'txtWorker2','textXyodatea'];
 			var q_readonlys = ['txtNo2', 'txtC1', 'txtNotv','txtOmount','chkEnda','txtStdmount','txtTotal','txtOrdbno','txtNo3'];
-			var q_readonlyt = [];
+			var q_readonlyt = ['txtOrdeno'];
 
 			var bbmNum = [
 				['txtFloata', 10, 5, 1], ['txtMoney', 10, 0, 1], ['txtTax', 10, 0, 1],
@@ -36,7 +36,7 @@
 			var bbtMask = [];
 			q_sqlCount = 6;
 			brwCount = 6;
-			brwCount2 = 14;
+			brwCount2 = 16;
 			brwList = [];
 			brwNowPage = 0;
 			brwKey = 'Odate';
@@ -102,6 +102,7 @@
 								['txtStdmount', 10, q_getPara('rc2.mountPrecision'), 1],['txtC1', 10, q_getPara('rc2.mountPrecision'), 1],['txtNotv', 10, q_getPara('rc2.mountPrecision'), 1]];
 				q_mask(bbmMask);
 				q_cmbParse("cmbKind", q_getPara('ordc.kind'));
+				q_cmbParse("cmbKind2", '皮料,管芯,塞頭,棧板,耗材,工具,半成品,成品');
 				//q_cmbParse("cmbCoin", q_getPara('sys.coin'));
 				q_cmbParse("combPaytype", q_getPara('rc2.paytype'));
 				q_cmbParse("cmbTrantype", q_getPara('sys.tran'));
@@ -230,8 +231,34 @@
 
 			var focus_addr = '', zip_fact = '';
 			var z_cno = r_cno, z_acomp = r_comp, z_nick = r_comp.substr(0, 2);
+			
+			function sleep(milliseconds) {
+                var start = new Date().getTime();
+                for (var i = 0; i < 1e7; i++) {
+                    if ((new Date().getTime() - start) > milliseconds) {
+                        break;
+                    }
+                }
+            }
+            
 			function q_gtPost(t_name) {
 				switch (t_name) {
+				    case 'stpost_rc2_0':
+                        var as = _q_appendData("view_rc2", "", true);
+                        for (var i = 0; i < as.length; i++) {
+                            q_func('rc2_post.post', as[i].datea.substr(0,r_len) + ',' + as[i].noa + ',0');
+                            sleep(100);
+                        }
+                        q_func('qtxt.query.ordc2rc2_uj_0', 'ordc_uj.txt,ordc2rc2_uj,' + encodeURI(r_accy)+ ';' + encodeURI(t_stnoa) + ';0;' + encodeURI(q_getPara('sys.key_rc2')));
+                        break;
+                   case 'stpost_rc2_1':
+                        var as = _q_appendData("view_rc2", "", true);
+                        for (var i = 0; i < as.length; i++) {
+                            q_func('rc2_post.post', as[i].accy + ',' + as[i].noa + ',1');
+                            sleep(100);
+                        }
+                        Unlock();
+                        break;
 				    case 'ucc':
                         var as = _q_appendData("ucc", "", true);
                         if (as[0] != undefined) {
@@ -395,12 +422,6 @@
 				for(var i=0;i<q_bbsCount;i++){
 				    t_cancel = $('#chkCancel_'+i).prop('checked');
 				    t_no2 = $.trim($('#txtNo2_'+i).val());
-			        if(t_no2.length>0){
-			            for(var j=0;j<q_bbtCount;j++){
-			                if($.trim($('#txtNo2__'+j).val())== t_no2)
-			                    $('#chkCancel__'+j).prop('checked',t_cancel);
-			            }
-			        }
 			        if($('#txtPrice_'+i).val().length==0){
 			           $('#txtPrice_'+i).val( $('#txtWidth_'+i).val()); 
 			        }
@@ -483,14 +504,6 @@
 					if (!$('#btnMinus_' + j).hasClass('isAssign')) {
 						$('#txtUnit_' + j).change(function() {
 							sum();
-						});
-						$('#txtUno_' + j).change(function(e) {
-							if ($('#cmbTypea').val() != '2') {
-								var n = $(this).attr('id').replace(/^(.*)_(\d+)$/,'$2');
-								var t_uno = $.trim($(this).val());
-								var t_noa = $.trim($('#txtNoa').val());
-								q_gt('uccy', "where=^^uno='" + t_uno + "' and not(gform='ordcs' and gnoa='" + t_noa + "')^^", 0, 0, 0, 'checkUno_' + n);
-							}
 						});
 						$('#txtMount_' + j).change(function() {
 							var n = $(this).attr('id').split('_')[$(this).attr('id').split('_').length-1];
@@ -675,6 +688,7 @@
 				q_nowf();
 				as['datea'] = abbm2['datea'];
 				as['kind'] = abbm2['kind'];
+				as['type'] = abbm2['kind2'];
 				as['tggno'] = abbm2['tggno'];
 				as['odate'] = abbm2['odate'];
 				as['trandate'] = abbm2['trandate'];
@@ -682,14 +696,11 @@
 			}
 			
 			function bbtSave(as) {
-                if (!as['tggno']) {
+                if (!as['custno']) {
                     as[bbtKey[1]] = '';
                     return;
                 }
                 q_nowf();
-                as['noa'] = abbm2['noa'];
-                if (!as['cancel'])
-                    as['cancel'] = '0';
                 return true;
             }
 
@@ -716,11 +727,6 @@
 					$('#combAddr').removeAttr('disabled');
 					$('#txtTrandate').datepicker();
 				}
-				
-				if (q_getPara('sys.project').toUpperCase()=='XY' ){
-					$('#cmbKind').attr('disabled', 'disabled');
-				}
-				
 				product_change();
 			}
 
@@ -883,6 +889,11 @@
 			function q_stPost() {
 				if (!(q_cur == 1 || q_cur == 2))
 					return false;
+				if (!emp($('#txtNoa').val())) {
+                    Lock();
+                    t_stnoa=$('#txtNoa').val();
+                    q_gt('view_rc2', "where=^^postname='" + t_stnoa + "'^^", 0, 0, 0, "stpost_rc2_0");
+                }
 			}
 			
 			function q_funcPost(t_func, result) {
@@ -894,8 +905,23 @@
 						s2[1]="where=^^ noa<='"+$('#txtNoa').val()+"' ^^"
 						q_boxClose2(s2);
 						break;
+				    case 'qtxt.query.ordc2rc2_uj_0':
+                        var as = _q_appendData("tmp0", "", true, true);
+                        if (as[0] != undefined) {
+                            t_stnoa=as[0].noa;
+                        }
+                        sleep(100);
+                        q_func('qtxt.query.ordc2rc2_uj_1', 'ordc_uj.txt,ordc2rc2_uj,' + encodeURI(r_accy)+ ';' + encodeURI(t_stnoa) + ';1;' + encodeURI(q_getPara('sys.key_rc2')));
 					default:
 						break;
+				    case 'qtxt.query.ordc2rc2_uj_1':
+                        var as = _q_appendData("tmp0", "", true, true);
+                        if (as[0] != undefined) {
+                            t_stnoa=as[0].noa;
+                        }
+                        sleep(100);
+                        q_gt('view_rc2', "where=^^postname='" + t_stnoa + "'^^", 0, 0, 0, "stpost_rc2_1");
+                        break;
 				}
 			}
 
@@ -1089,10 +1115,10 @@
 					<tr>
 						<td style="width: 108px;"><span> </span><a id='lblKind' class="lbl"> </a></td>
 						<td style="width: 108px;"><select id="cmbKind" class="txt c1 lef"> </select></td>
-						<td style="width: 108px;"> </td>
+						<td style="width: 108px;"><span> </span><a id='lblKind2' class="lbl">類別名稱</a></td>
+                        <td style="width: 108px;"><select id="cmbKind2" class="txt c1 lef"> </select></td>
 						<td style="width: 108px;"><span> </span><a id='lblOdate' class="lbl"> </a></td>
 						<td style="width: 108px;"><input id="txtOdate" type="text" class="txt c1 lef"/></td>
-						<td style="width: 108px;"> </td>
 						<td style="width: 108px;"><span> </span><a id='lblDatea' class="lbl"> </a></td>
 						<td style="width: 108px;"><input id="txtDatea" type="text" class="txt c1 lef"/></td>
 					</tr>
@@ -1315,7 +1341,7 @@
                         <input id="btnPlut" type="button" style="font-size: medium; font-weight: bold;" value="＋"/>
                         </td>
                         <td style="width:20px;"> </td>
-                        <td style="width:50px; text-align: center;">項次</td>
+                        <td style="width:60px; text-align: center;">項次</td>
                         <td style="width:100px; text-align: center;">廠商</td>
                         <td style="width:60px; text-align: center;">提醒周期天數</td>
                         <td style="width:80px; text-align: center;">採購量(Kg)</td>
@@ -1327,7 +1353,7 @@
                         <td style="width:80px; text-align: center;">各別交貨日 </td>
                         <td style="width:80px; text-align: center;">採購優惠 </td>
                         <td style="width:100px; text-align: center;">備註</td>
-                        <td style="width:100px; text-align: center;">進貨單號</td>
+                        <td style="width:110px; text-align: center;">進貨單號</td>
                         <td style="width:40px; text-align: center;">請款</td>
                     </tr>
                     <tr>
@@ -1340,7 +1366,7 @@
                         <td><input id="txtCustno..*" type="text" style="width:95%;"/>
                             <input id="txtCust..*" type="text" style="width:95%;"/>
                         </td>
-                        <td><input id="txtNo3..*" type="text" style="width:95%;"/></td>
+                        <td><input id="txtNo3..*" type="text" style="width:95%;text-align: right;"/></td>
                         <td><input id="txtDime..*" type="text" style="width:95%;text-align: right;"/></td>
                         <td><input id="txtWeight..*" type="text" style="width:95%;text-align: right;"/></td>
                         <td><input id="txtMount..*" type="text" style="width:95%;text-align: right;"/></td>
