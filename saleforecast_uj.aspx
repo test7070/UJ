@@ -236,6 +236,26 @@
 							//F22(b_seq);
 							//F23(b_seq);
 						});
+						
+						//每個欄位變動都去變動合併儲存格
+						for (var i = 0; i < fbbs.length; i++) {
+							if(fbbs[i].substr(0,4)=='text'){
+								$('#'+fbbs[i]+'_'+j).change(function() {
+									t_IdSeq = -1;
+				                    q_bodyId($(this).attr('id'));
+				                    b_seq = t_IdSeq;
+				                    
+				                    var tstr='';
+									for (var k = 0; k < fbbs.length; k++) {
+										if(fbbs[k].substr(0,4)=='text'){
+											tstr+="@,#"+$('#'+fbbs[k]+'_'+b_seq).val();
+										}
+									}
+									
+									$('#txtSpec_'+b_seq).val(tstr);
+								});
+							}
+						}
 					}
 				}
 				_bbsAssign();

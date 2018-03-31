@@ -84,6 +84,45 @@
                 
                 document.title='生產指令';
                 
+                $('#btnOrde_uj').click(function() {
+                	var t_noa=$.trim($('#txtNoa').val());
+                	var t_custno=$.trim($('#txtCustno').val());
+                	
+                	q_gt('view_ordes',"where=^^ custno='"+t_custno+"' and not exists(select * from view_cubs where noa='"+t_noa+"' and ordeno=a.noa and no2=a.no2 ) and isnull(a.enda,0)=0 and isnull(a.cancel,0)=0 and isnull(mount,0)>0 ^^", 0, 0, 0, "getordes", r_accy,1);
+					var as = _q_appendData("view_ordes", "", true);
+					var t_i=-1;
+					for (var i = 0; i < q_bbsCount; i++) {
+						if(!emp($('#txtUcolor_'+i).val()) || !emp($('#txtProductno_'+i).val())){
+							t_i=i;
+						}
+					}
+					for (var i = 0; i < as.length; i++) {
+						for (var j = 0; j < q_bbsCount; j++) {
+							if(as[i].noa==$('#txtOrdeno_'+j).val() && as[i].no2==$('#txtNo2_'+j).val()){
+								as.splice(i, 1);
+								i--;
+								break;
+							}
+						}
+					}
+					
+					Lock(1, {
+						opacity : 0
+					});
+					for (var i = 0; i < as.length; i++) {
+						if(t_i+1>=q_bbsCount){
+							$('#btnPlus').click();
+						}
+						t_i++;
+						$('#txtUcolor_'+t_i).val(as[i].productno);
+						$('#txtMount_'+t_i).val(as[i].mount);
+						$('#txtOrdeno_'+t_i).val(as[i].noa)
+						$('#txtNo2_'+t_i).val(as[i].no2)
+						$('#txtUcolor_'+t_i).change();
+						$('#txtMount_'+t_i).change();
+					}
+					Unlock(1);
+				});
                 
                 $('#txtProduct').change(function() {
                 	var t_noa=$.trim($('#txtNoa').val());
@@ -315,6 +354,7 @@
                 if(t_para){
                 	$('#btnEnda_uj').removeAttr('disabled');
                 	$('#btnCug_uj').removeAttr('disabled');
+                	$('#btnOrde_uj').attr('disabled','disabled');
                 	for (var i = 0; i < q_bbsCount; i++) {
                 		$('#btnP1_'+i).attr('disabled','disabled');
                 		$('#btnP2_'+i).attr('disabled','disabled');
@@ -322,6 +362,7 @@
                 }else{
                 	$('#btnEnda_uj').attr('disabled','disabled');
                 	$('#btnCug_uj').attr('disabled','disabled');
+                	$('#btnOrde_uj').removeAttr('disabled');
                 	for (var i = 0; i < q_bbsCount; i++) {
                 		$('#btnP1_'+i).removeAttr('disabled');
                 		$('#btnP2_'+i).removeAttr('disabled');
@@ -537,7 +578,7 @@
 											}
 										}
 									}else{
-										alart('無此料號!!');
+										alert('無此料號!!');
 									}
 								}
 							}
@@ -1238,7 +1279,7 @@
 						<td><span> </span><a id="lblCustno_uj" class="lbl" >客戶</a></td>
 						<td><input id="txtCustno" type="text" class="txt c1" style="width: 99%;"/></td>
 						<td><input id="txtComp" type="text" class="txt c1" style="width: 99%;"/></td>
-						<td> </td>
+						<td><input id="btnOrde_uj" type="button" value="訂單匯入"/></td>
 						<td><span> </span><a id="lblMo_uj" class="lbl" >改單</a></td>
 						<td><input id="txtMo" type="text" class="txt num c1" style="width: 20%;"/></td>
 					</tr>
@@ -1252,6 +1293,7 @@
 						</td>
 						<td>
 							<input id="btnEnda_uj" type="button" value="完工" />
+							<input id="chkEnda" type="checkbox"  style="display: none;"/><!--完工-->
 							<span> </span><a id="lblMenda_uj" class="lbl">鎖單</a>
 						</td>
 						<td><input id="chkMenda" type="checkbox" /></td>
