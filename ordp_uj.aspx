@@ -22,7 +22,7 @@
 			q_tables = 's';
 			var q_name = "ordp";
 			var q_readonly = ['txtNoa','txtWorker', 'txtWorker2'];
-			var q_readonlys = [];
+			var q_readonlys = ['txtOrdbno','txtNo2'];
 			var bbmNum = [];
 			var bbsNum = [['txtSmount', 10, 0, 1],['txtApvmount', 10, 0, 1],['txtFmount', 10, 0, 1],['txtGweight', 10, 0, 1],['txtMount', 10, 0, 1],['txtWeight', 10, 0, 1],['txtTmount', 10, 0, 1],['txtSafemount', 10, 0, 1],['txtSchmount', 10, 0, 1],['txtStkmount', 10, 0, 1]];
 			var bbmMask = [];
@@ -55,7 +55,7 @@
 					return;
 				}
 				mainForm(0);
-				document.title='計畫性採購需求作業'
+				document.title='採購管理作業'
 			}
 			
 			var t_focusout='',t_focusout2='',t_fc=0,t_fbeq='';
@@ -67,9 +67,11 @@
                     $.datepicker.r_len=4;
                 }
 				q_mask(bbmMask);
+				q_cmbParse("combM6", ',通知生管1,通知生管2,通知生管3,通知生管4,通知生管5,合理','s');
+				q_cmbParse("combM7", ',延交不說明,品質不良延交,排程滿檔延交,設備故障延交,原料不足延交,人力不足延交,提早交貨,合理延交','s');
 				
 				$('#btnImport_uj').click(function(e){
-				        var t_where = "where=^^ odate='" + $('#txtDatea').val() + "' ^^";
+				        var t_where = "where=^^ odate='" + $('#txtBldate').val() + "' ^^";
                         q_gt('view_ordcs', t_where, 0, 0, 0, "");
                 });
 							
@@ -86,6 +88,19 @@
 			
 			function q_gtPost(t_name) {
 				switch (t_name) {
+				    case 'view_ordcs':
+                        var as = _q_appendData("view_ordcs", "", true);
+                        q_gridAddRow(bbsHtm, 'tbbs', 'txtOrdbno,txtNo2,txtProductno,txtProduct,txtTggno,txtTgg,txtKind,txtSpec,txtMount,textM1,textM2,txtTotal'
+                        , as.length, as, 'noa,no2,productno,product,tggno,comp,type,sizea,dime,unit2,trandate,rdate', 'txtProductno,txtProduct','');
+                        for ( i = 0; i < q_bbsCount; i++) {
+                            if (i < as.length) {
+                            }else{
+                                _btnMinus("btnMinus_" + i);
+                            }
+                        }
+                        sum();
+                        $('#txtNoa').focus();
+                        break;
 					case q_name:
                         if (q_cur == 4)
                             q_Seek_gtPost();
@@ -99,6 +114,26 @@
 					alert(t_err);
 					return;
 				}
+				
+				for (var i=0; i<q_bbsCount; i++){
+                    var ts1=$('#textM1_'+i).val()==''?'':$('#textM1_'+i).val();
+                    var ts2=$('#textM2_'+i).val()==''?'':$('#textM2_'+i).val();
+                    var ts3=$('#textM3_'+i).val()==''?'':$('#textM3_'+i).val();
+                    var ts4=$('#textM4_'+i).val()==''?'':$('#textM4_'+i).val();
+                    var ts5=$('#textM5_'+i).val()==''?'':$('#textM5_'+i).val();
+                    var ts6=$('#textM6_'+i).val()==''?'':$('#textM6_'+i).val();
+                    var ts7=$('#textM7_'+i).val()==''?'':$('#textM7_'+i).val();
+                    var ts8=$('#textM8_'+i).val()==''?'':$('#textM8_'+i).val();
+                    var ts9=$('#textM9_'+i).val()==''?'':$('#textM9_'+i).val();
+                    var ts10=$('#textM10_'+i).val()==''?'':$('#textM10_'+i).val();
+                    var ts11=$('#textM11_'+i).val()==''?'':$('#textM11_'+i).val();
+                    var ts12=$('#textM12_'+i).val()==''?'':$('#textM12_'+i).val();
+                    var ts13=$('#textM13_'+i).val()==''?'':$('#textM13_'+i).val();
+                    var ts14=$('#textM14_'+i).val()==''?'':$('#textM14_'+i).val();
+                    $('#txtContent_'+i).val(ts1+"#^#"+ts2+"#^#"+ts3+"#^#"+ts4+"#^#"+ts5+"#^#"+ts6
+                    +"#^#"+ts7+"#^#"+ts8+"#^#"+ts9+"#^#"+ts10+"#^#"+ts11+"#^#"+ts12+"#^#"+ts13+"#^#"+ts14);
+                }
+				
 				if (q_cur == 1)
 					$('#txtWorker').val(r_name);
 				else
@@ -111,6 +146,42 @@
 			    else
 			    	wrServer(t_noa);
 			}
+			
+			function showS19() {
+                for (var i=0; i<q_bbsCount; i++){
+                    var t_style=$('#txtContent_'+i).val().split('#^#');
+                    
+                    var ts1=t_style[0]==undefined?'':t_style[0];
+                    var ts2=t_style[1]==undefined?'':t_style[1];
+                    var ts3=t_style[2]==undefined?'':t_style[2];
+                    var ts4=t_style[3]==undefined?'':t_style[3];
+                    var ts5=t_style[4]==undefined?'':t_style[4];
+                    var ts6=t_style[5]==undefined?'':t_style[5];
+                    var ts7=t_style[6]==undefined?'':t_style[6];
+                    var ts8=t_style[7]==undefined?'':t_style[7];
+                    var ts9=t_style[8]==undefined?'':t_style[8];
+                    var ts10=t_style[9]==undefined?'':t_style[9];
+                    var ts11=t_style[10]==undefined?'':t_style[10];
+                    var ts12=t_style[11]==undefined?'':t_style[11];
+                    var ts13=t_style[12]==undefined?'':t_style[12];
+                    var ts14=t_style[13]==undefined?'':t_style[13];
+                    
+                    $('#textM1_'+i).val(ts1);
+                    $('#textM2_'+i).val(ts2);
+                    $('#textM3_'+i).val(ts3);
+                    $('#textM4_'+i).val(ts4);
+                    $('#textM5_'+i).val(ts5);
+                    $('#textM6_'+i).val(ts6);
+                    $('#textM7_'+i).val(ts7);
+                    $('#textM8_'+i).val(ts8);
+                    $('#textM9_'+i).val(ts9);
+                    $('#textM10_'+i).val(ts10);
+                    $('#textM11_'+i).val(ts11);
+                    $('#textM12_'+i).val(ts12);
+                    $('#textM13_'+i).val(ts13);
+                    $('#textM14_'+i).val(ts14);
+                }
+            }
 		
 			function _btnSeek() {
 				if (q_cur > 0 && q_cur < 4)
@@ -118,9 +189,85 @@
 				q_box('ordp_uj_s.aspx', q_name + '_s', "500px", "420px", q_getMsg("popSeek"));
 			}
 
-			function sum() {		
-				
+			function sum() {
+			    for (var j = 0; j < q_bbsCount; j++) {
+			        //廠商未回交期
+			        if($('#textM3_' + j).val().length==0){
+			             var t_date2;
+			             if($('#txtKind_' + j).val()=='皮料'){
+			                  t_date2=q_cdn($('#textM2_'+j).val(),7);
+                         }else if($('#txtKind_' + j).val()=='離型紙'){
+                              var t_date2=q_cdn($('#textM2_'+j).val(),3);
+                         }else if($('#txtKind_' + j).val()=='膠水'){
+                              var t_date2=q_cdn($('#textM2_'+j).val(),3);
+                         }else if($('#txtKind_' + j).val()=='紙箱'){
+                              var t_date2=q_cdn($('#textM2_'+j).val(),3);
+                         }else if($('#txtKind_' + j).val()=='管芯'){
+                              var t_date2=q_cdn($('#textM2_'+j).val(),3);
+                         }else if($('#txtKind_' + j).val()=='棧板'){
+                              var t_date2=q_cdn($('#textM2_'+j).val(),1);
+                         }else{
+                             var t_date2=q_cdn($('#textM2_'+j).val(),0);
+                         }
+			             if(q_date()>t_date2){
+                              $('#textM5_' + j).val('未回');
+                         }
+			        }else{
+			            $('#textM5_' + j).val()=='';
+			        }
+			        //交期異動天數
+			        if($('#textM3_' + j).val().length>0){
+			           if(r_len=='3'){
+			               // 日期相差轉換
+			               var Date_A = new Date(dec($('#textM2_'+j).val().substr(0,3))+1911,dec($('#textM2_'+0).val().substr(4,2)),dec($('#textM2_'+j).val().substr(7,2)),0,0,0);  
+                           var Date_B = new Date(dec($('#textM3_'+j).val().substr(0,3))+1911,dec($('#textM3_'+0).val().substr(4,2)),dec($('#textM3_'+j).val().substr(7,2)),0,0,0);  
+                           var diff=q_div((Date_A-Date_B),86400000);
+                           $('#txtOmount_'+j).val(diff);
+			           }else{
+			               var Date_A = new Date(dec($('#textM2_'+j).val().substr(0,4)),dec($('#textM2_'+0).val().substr(6,2)),dec($('#textM2_'+j).val().substr(9,2)),0,0,0);  
+                           var Date_B = new Date(dec($('#textM3_'+j).val().substr(0,4)),dec($('#textM3_'+0).val().substr(6,2)),dec($('#textM3_'+j).val().substr(9,2)),0,0,0);  
+                           var diff=q_div((Date_A-Date_B),86400000);
+                           $('#txtOmount_'+j).val(diff);
+			           }
+			        }else{
+			            $('#txtOmount_' + j).val()=='';
+			        }
+			    }
 			}
+			
+			function getweek(t_tdate) {
+			    if(t_tdate.length>0){
+			        if(r_len==3){
+                        t_tdate=dec(t_tdate.substr(0,3))+1911+t_tdate.substr(3,t_tdate.length);
+                    }
+                    switch (new Date(t_tdate).getDay()) {
+                        case 0:
+                            return '日'; 
+                            break;
+                        case 1:
+                            return '一';
+                            break;
+                        case 2:
+                            return '二';
+                            break;
+                        case 3:
+                            return '三';
+                            break;
+                        case 4:
+                            return '四';
+                            break;
+                        case 5:
+                            return '五';
+                            break;
+                        case 6:
+                            return '六';
+                            break;
+                        default:
+                            return '';
+                            break;
+                    }
+			    }  
+            }
 
 			function bbsAssign() {
 				for (var j = 0; j < q_bbsCount; j++) {
@@ -132,9 +279,43 @@
                             b_seq = t_IdSeq;
                             sum();
                     });
-                    $('#txtLdate_' + j).change(function() {
+                    
+                    $('#textM3_' + j).change(function() {
                             sum();
                     });
+                    
+                    $('#txtKind_' + j).change(function() {
+                            sum();
+                    });
+                    
+                    $('#textM2_' + j).change(function() {
+                            sum();
+                    });
+                    
+                    $('#textM3_' + j).blur(function () {
+                        t_IdSeq = -1;
+                        q_bodyId($(this).attr('id'));
+                        b_seq = t_IdSeq;
+                        
+                        $('#textM4_'+b_seq).val(getweek($('#textM3_'+b_seq).val()));
+                    });
+                    
+                    $('#combM6_' + j).change(function() {
+                            t_IdSeq = -1;
+                            q_bodyId($(this).attr('id'));
+                            b_seq = t_IdSeq;
+                            if(q_cur==1 || q_cur==2)
+                                $('#textM6_'+b_seq).val($('#combM6_'+b_seq).find("option:selected").text());
+                    });
+                    
+                    $('#combM7_' + j).change(function() {
+                            t_IdSeq = -1;
+                            q_bodyId($(this).attr('id'));
+                            b_seq = t_IdSeq;
+                            if(q_cur==1 || q_cur==2)
+                                $('#textM7_'+b_seq).val($('#combM7_'+b_seq).find("option:selected").text());
+                    });
+                    
                    
 				}				
 				_bbsAssign();
@@ -152,6 +333,7 @@
 			function btnModi() {			
 				_btnModi();
 				refreshBbs();
+				showS19();
 			}
 			function btnPrint() {
 				//q_box('z_ordp_uj.aspx' + "?;;;noa=" + trim($('#txtNoa').val()) + ";" + r_accy, '', "95%", "95%", q_getMsg("popPrint"));
@@ -174,9 +356,13 @@
 				_refresh(recno);
 				refreshBbs();
 				$('#btndiv_detail_close').click();
+				showS19();
 			}
 			
 			function refreshBbs(){
+			    for(var i=0;i<q_bbsCount;i++){
+                    
+                }
 			}
 
 			function readonly(t_para, empty) {
@@ -401,7 +587,7 @@
 			</div>
 		</div>
 		<div class='dbbs'>
-			<table id="tbbs" class='tbbs' style="width:2000px;">
+			<table id="tbbs" class='tbbs' style="width:2100px;">
 				<tr style='color:white; background:#003366;' >
 				        <td  align="center" style="width:35px;"><input class="btn"  id="btnPlus" type="button" value='+' style="font-weight: bold;"  /></td>
 					    <td align="center" style="width:165px;"><a id='lblNoa_s'>採購單號</a></td>
@@ -414,10 +600,10 @@
                         <td align="center" style="width:80px;"><a id=''>交貨日期</a></td>
                         <td align="center" style="width:80px;"><a id=''>廠商回覆交期</a></td>
                         <td align="center" style="width:40px;"><a id=''>週</a></td>
-                        <td align="center" style="width:80px;"><a id=''>廠商未回交期</a></td>
+                        <td align="center" style="width:60px;"><a id=''>廠商未回交期</a></td>
                         <td align="center" style="width:60px;"><a id=''>交期異動天數</a></td>
-                        <td align="center" style="width:80px;"><a id=''>交期異常</a></td>
-                        <td align="center" style="width:80px;"><a id=''>交期異動不準時</a></td>
+                        <td align="center" style="width:105px;"><a id=''>交期異常</a></td>
+                        <td align="center" style="width:130px;"><a id=''>交期異動不準時</a></td>
                         <td align="center" style="width:80px;"><a id=''>備註</a></td>
                         <td align="center" style="width:60px;"><a id=''>倒數進貨(天)</a></td>
                         <td align="center" style="width:60px;"><a id=''>提醒週期</a></td>
@@ -444,6 +630,7 @@
                         <td><input id="txtKind.*" type="text" class="txt c1" style="width:97%;"/></td>
 					    <td><input id="txtProductno.*" type="text" class="txt c1" style="width:97%;"/>
                             <input id="txtProduct.*" type="text" class="txt c1" style="width:80%;"/>
+                            <input id="txtContent.*" type="text" class="txt c1" style="display: none;"/>
                             <input class="btn" id="btnProduct.*" type="button" value='..' style=" font-weight: bold;" />
                         </td>
                         <td><input id="txtSpec.*" type="text" class="txt c1" style="width:97%;"/></td>
@@ -454,11 +641,14 @@
                         <td><input id="textM4.*" type="text" class="txt c1" style="width:97%;"/></td>
                         <td><input id="textM5.*" type="text" class="txt c1" style="width:97%;"/></td>
                         <td><input id="txtOmount.*" type="text" class="txt c1 num" style="width:97%;"/></td>
-                        <td><input id="textM6.*" type="text" class="txt c1" style="width:97%;"/></td>
-                        <td><input id="textM7.*" type="text" class="txt c1" style="width:97%;"/></td>
+                        <td><input id="textM6.*" type="text" class="txt c1" style="width:75%;"/>
+                            <select id="combM6.*" class="txt" style="width: 20px;"> </select></td>
+                        <td><input id="textM7.*" type="text" class="txt c1" style="width:80%;"/>
+                            <select id="combM7.*" class="txt" style="width: 20px;"> </select>
+                        </td>
                         <td><input id="textM8.*" type="text" class="txt c1" style="width:97%;"/></td>
-                        <td><input id="txtPrice.*" type="text" class="txt c1" style="width:97%;"/></td>
-                        <td><input id="txttotal.*" type="text" class="txt c1" style="width:97%;"/></td>
+                        <td><input id="txtPrice.*" type="text" class="txt c1 num" style="width:97%;"/></td>
+                        <td><input id="txttotal.*" type="text" class="txt c1 num" style="width:97%;"/></td>
                         <td><input id="textM9.*" type="text" class="txt c1" style="width:97%;"/></td>
                         <td><input id="textM10.*" type="text" class="txt c1" style="width:97%;"/></td>
                         <td><input id="textM11.*" type="text" class="txt c1" style="width:97%;"/></td>

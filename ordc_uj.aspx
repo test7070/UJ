@@ -442,9 +442,9 @@
 					}
 				}
 				
-				if(emp($('#txtTrandate').val()) && q_getPara('sys.project').toUpperCase()!='XY'){
+				/*if(emp($('#txtTrandate').val()) && q_getPara('sys.project').toUpperCase()!='XY'){
 					$('#txtTrandate').val(q_cdn(q_date(),10));
-				}
+				}*/
 				
 				var t_xy_pricezero=false;
 				for (var j = 0; j < q_bbsCount; j++) {
@@ -690,6 +690,7 @@
 				as['kind'] = abbm2['kind'];
 				as['type'] = abbm2['kind2'];
 				as['tggno'] = abbm2['tggno'];
+				as['comp'] = abbm2['tgg'];
 				as['odate'] = abbm2['odate'];
 				as['trandate'] = abbm2['trandate'];
 				return true;
