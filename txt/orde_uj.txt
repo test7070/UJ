@@ -4,8 +4,9 @@ declare @t_datea nvarchar(50)=case when '#non'=[1] then '' else [1] end
 declare @t_uno nvarchar(50)=case when '#non'=[2] then '' else [2] end
 declare @t_pno nvarchar(50)=case when '#non'=[3] then '' else [3] end
 declare @t_storeno nvarchar(50)=case when '#non'=[4] then '' else [4] end
-declare @t_isworkgno nvarchar(50)=case when '#non'=[5] then '' else [5] end --使用指定
-declare @t_workgno nvarchar(50)=case when '#non'=[6] then '' else [6] end --排除指定單號
+declare @t_noa nvarchar(50)=case when '#non'=[5] then '' else [5] end --排除單號
+declare @t_isworkgno nvarchar(50)=case when '#non'=[6] then '' else [6] end --使用指定
+declare @t_workgno nvarchar(50)=case when '#non'=[7] then '' else [7] end --排除指定單號
 ---------------------------------------------
 IF OBJECT_ID('tempdb..#tmp')is not null
 BEGIN
@@ -42,7 +43,7 @@ from view_ucce a left join view_ucces b on a.noa=b.noa
 where (b.productno=@t_pno or len(@t_pno)=0) 
 and (b.storeno=@t_storeno or len(@t_storeno)=0)
 and (b.uno=@t_uno or len(@t_uno)=0)
-and a.datea<=@t_datea
+and a.datea<=@t_datea and a.noa!=@t_noa
 
 -------------------------------------------------------------------------
 --進貨
@@ -52,7 +53,7 @@ from view_rc2 a left join view_rc2s b on a.noa=b.noa
 where a.typea='1' and (b.productno=@t_pno or len(@t_pno)=0) 
 and (b.storeno=@t_storeno or len(@t_storeno)=0)
 and (b.uno=@t_uno or len(@t_uno)=0)
-and a.datea<=@t_datea
+and a.datea<=@t_datea and a.noa!=@t_noa
 
 --入庫
 insert #tmp (typea,uno,productno,product,spec,style,datea,mount,weight,unit,storeno,store)
@@ -61,7 +62,7 @@ from view_ina a left join view_inas b on a.noa=b.noa
 where (b.productno=@t_pno or len(@t_pno)=0) 
 and (b.storeno=@t_storeno or len(@t_storeno)=0)
 and (b.uno=@t_uno or len(@t_uno)=0)
-and a.datea<=@t_datea
+and a.datea<=@t_datea and a.noa!=@t_noa
 
 --生產
 insert #tmp (typea,uno,productno,product,spec,style,datea,mount,weight,unit,storeno,store)
@@ -70,7 +71,7 @@ from view_workb a left join view_workbs b on a.noa=b.noa
 where (b.productno=@t_pno or len(@t_pno)=0) 
 and (b.storeno=@t_storeno or len(@t_storeno)=0)
 and (b.uno=@t_uno or len(@t_uno)=0)
-and a.datea<=@t_datea
+and a.datea<=@t_datea and a.noa!=@t_noa
 
 --出貨退回
 insert #tmp (typea,uno,productno,product,spec,style,datea,mount,weight,unit,storeno,store)
@@ -80,7 +81,7 @@ where a.typea='2'
 and (b.productno=@t_pno or len(@t_pno)=0) 
 and (b.storeno=@t_storeno or len(@t_storeno)=0)
 and (b.uno=@t_uno or len(@t_uno)=0)
-and a.datea<=@t_datea
+and a.datea<=@t_datea and a.noa!=@t_noa
 
 --生產領料退回
 insert #tmp (typea,uno,productno,product,spec,style,datea,mount,weight,unit,storeno,store)
@@ -90,7 +91,7 @@ where a.typea='2'
 and (b.productno=@t_pno or len(@t_pno)=0) 
 and (b.storeno=@t_storeno or len(@t_storeno)=0)
 and (b.uno=@t_uno or len(@t_uno)=0)
-and a.datea<=@t_datea
+and a.datea<=@t_datea and a.noa!=@t_noa
 ------------------------------------------------------------------------
 --進貨退回
 insert #tmp (typea,uno,productno,product,spec,style,datea,mount,weight,unit,storeno,store)
@@ -100,7 +101,7 @@ where a.typea='2'
 and (b.productno=@t_pno or len(@t_pno)=0) 
 and (b.storeno=@t_storeno or len(@t_storeno)=0)
 and (b.uno=@t_uno or len(@t_uno)=0)
-and a.datea<=@t_datea
+and a.datea<=@t_datea and a.noa!=@t_noa
 
 --出貨
 insert #tmp (typea,uno,productno,product,spec,style,datea,mount,weight,unit,storeno,store)
@@ -110,7 +111,7 @@ where a.typea='1'
 and (b.productno=@t_pno or len(@t_pno)=0) 
 and (b.storeno=@t_storeno or len(@t_storeno)=0)
 and (b.uno=@t_uno or len(@t_uno)=0)
-and a.datea<=@t_datea
+and a.datea<=@t_datea and a.noa!=@t_noa
 
 --領料
 insert #tmp (typea,uno,productno,product,spec,style,datea,mount,weight,unit,storeno,store)
@@ -119,7 +120,7 @@ from view_get a left join view_gets b on a.noa=b.noa
 where (b.productno=@t_pno or len(@t_pno)=0) 
 and (b.storeno=@t_storeno or len(@t_storeno)=0)
 and (b.uno=@t_uno or len(@t_uno)=0)
-and a.datea<=@t_datea
+and a.datea<=@t_datea and a.noa!=@t_noa
 
 --生產領料
 insert #tmp (typea,uno,productno,product,spec,style,datea,mount,weight,unit,storeno,store)
@@ -129,7 +130,7 @@ where a.typea='1'
 and (b.productno=@t_pno or len(@t_pno)=0) 
 and (b.storeno=@t_storeno or len(@t_storeno)=0)
 and (b.uno=@t_uno or len(@t_uno)=0)
-and a.datea<=@t_datea
+and a.datea<=@t_datea and a.noa!=@t_noa
 ------------------------------------------------------------------------
 --調撥出庫
 insert #tmp (typea,uno,productno,product,spec,style,datea,mount,weight,unit,storeno,store)
@@ -138,7 +139,7 @@ from view_cng a left join view_cngs b on a.noa=b.noa
 where (b.productno=@t_pno or len(@t_pno)=0) 
 and (a.storeno=@t_storeno or len(@t_storeno)=0)
 and (b.uno=@t_uno or len(@t_uno)=0)
-and a.datea<=@t_datea
+and a.datea<=@t_datea and a.noa!=@t_noa
 
 --調撥入庫
 insert #tmp (typea,uno,productno,product,spec,style,datea,mount,weight,unit,storeno,store)
@@ -147,7 +148,7 @@ from view_cng a left join view_cngs b on a.noa=b.noa
 where (b.productno=@t_pno or len(@t_pno)=0) 
 and (a.storeinno=@t_storeno or len(@t_storeno)=0)
 and (b.uno=@t_uno or len(@t_uno)=0)
-and a.datea<=@t_datea
+and a.datea<=@t_datea and a.noa!=@t_noa
 ------------------------------------------------------------------------
 update #tmp
 set uno=ISNULL(uno,''),productno=ISNULL(productno,''),spec=ISNULL(spec,''),style=ISNULL(style,''),storeno=ISNULL(storeno,'')

@@ -1393,7 +1393,7 @@
 						}
 								
 						var t_noa=emp($('#txtNoa').val())?'#non':$('#txtNoa').val();
-			            q_func('qtxt.query.div_stk_uj', 'orde_uj.txt,stk_uj,' + encodeURI(q_date())+';'+encodeURI('#non')+';'+encodeURI(t_productno)+';'+encodeURI('#non')+';'+encodeURI('1')+';'+encodeURI(t_noa));
+			            q_func('qtxt.query.div_stk_uj', 'orde_uj.txt,stk_uj,' + encodeURI(q_date())+';'+encodeURI('#non')+';'+encodeURI(t_productno)+';'+encodeURI('#non')+';'+encodeURI('#non')+';'+encodeURI('1')+';'+encodeURI(t_noa));
 					}
 				});
 				
@@ -1610,7 +1610,7 @@
 				var t_mount=0; //可動用量
 				var t_noa=emp($('#txtNoa').val())?'#non':$('#txtNoa').val();
             	if(t_i05.length>0){
-					q_func('qtxt.query.stk_uj', 'orde_uj.txt,stk_uj,' + encodeURI(q_date())+';'+encodeURI('#non')+';'+encodeURI(t_i05)+';'+encodeURI('#non')+';'+encodeURI('1')+';'+encodeURI(t_noa),r_accy,1);
+					q_func('qtxt.query.stk_uj', 'orde_uj.txt,stk_uj,' + encodeURI(q_date())+';'+encodeURI('#non')+';'+encodeURI(t_i05)+';'+encodeURI('#non')+';'+encodeURI('#non')+';'+encodeURI('1')+';'+encodeURI(t_noa),r_accy,1);
 					var as = _q_appendData("tmp0", "", true, true);
 					for (var j = 0; j < as.length; j++) {
 						t_mount=q_add(t_mount,dec(as[j].mount));
@@ -1668,7 +1668,7 @@
 				var t_mount=0; //可動用量
 				var t_noa=emp($('#txtNoa').val())?'#non':$('#txtNoa').val();
             	if(t_i08.length>0){
-					q_func('qtxt.query.stk_uj', 'orde_uj.txt,stk_uj,' + encodeURI(q_date())+';'+encodeURI('#non')+';'+encodeURI(t_i08)+';'+encodeURI('#non')+';'+encodeURI('1')+';'+encodeURI(t_noa),r_accy,1);
+					q_func('qtxt.query.stk_uj', 'orde_uj.txt,stk_uj,' + encodeURI(q_date())+';'+encodeURI('#non')+';'+encodeURI(t_i08)+';'+encodeURI('#non')+';'+encodeURI('#non')+';'+encodeURI('1')+';'+encodeURI(t_noa),r_accy,1);
 					var as = _q_appendData("tmp0", "", true, true);
 					for (var j = 0; j < as.length; j++) {
 						t_mount=q_add(t_mount,dec(as[j].mount));
@@ -1725,7 +1725,7 @@
 				var t_mount=0; //可動用量
 				var t_noa=emp($('#txtNoa').val())?'#non':$('#txtNoa').val();
             	if(t_i11.length>0){
-					q_func('qtxt.query.stk_uj', 'orde_uj.txt,stk_uj,' + encodeURI(q_date())+';'+encodeURI('#non')+';'+encodeURI(t_i11)+';'+encodeURI('#non')+';'+encodeURI('1')+';'+encodeURI(t_noa),r_accy,1);
+					q_func('qtxt.query.stk_uj', 'orde_uj.txt,stk_uj,' + encodeURI(q_date())+';'+encodeURI('#non')+';'+encodeURI(t_i11)+';'+encodeURI('#non')+';'+encodeURI('#non')+';'+encodeURI('1')+';'+encodeURI(t_noa),r_accy,1);
 					var as = _q_appendData("tmp0", "", true, true);
 					for (var j = 0; j < as.length; j++) {
 						t_mount=q_add(t_mount,dec(as[j].mount));
@@ -2604,7 +2604,7 @@
 				
 				var t_noa=emp($('#txtNoa').val())?'#non':$('#txtNoa').val();
             	if(t_productno.length>0){
-					q_func('qtxt.query.stk_uj', 'orde_uj.txt,stk_uj,' + encodeURI(q_date())+';'+encodeURI('#non')+';'+encodeURI(t_productno)+';'+encodeURI('#non')+';'+encodeURI('1')+';'+encodeURI(t_noa),r_accy,1);
+					q_func('qtxt.query.stk_uj', 'orde_uj.txt,stk_uj,' + encodeURI(q_date())+';'+encodeURI('#non')+';'+encodeURI(t_productno)+';'+encodeURI('#non')+';'+encodeURI('#non')+';'+encodeURI('1')+';'+encodeURI(t_noa),r_accy,1);
 					var as = _q_appendData("tmp0", "", true, true);
 					var t_weight=0,t_mount=0;
 					for (var i = 0; i < as.length; i++) {
