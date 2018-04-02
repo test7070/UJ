@@ -220,12 +220,14 @@
 			           if(r_len=='3'){
 			               // 日期相差轉換
 			               var Date_A = new Date(dec($('#textM2_'+j).val().substr(0,3))+1911,dec($('#textM2_'+0).val().substr(4,2)),dec($('#textM2_'+j).val().substr(7,2)),0,0,0);  
-                           var Date_B = new Date(dec($('#textM3_'+j).val().substr(0,3))+1911,dec($('#textM3_'+0).val().substr(4,2)),dec($('#textM3_'+j).val().substr(7,2)),0,0,0);  
+                           var Date_B = new Date(dec($('#textM3_'+j).val().substr(0,3))+1911,dec($('#textM3_'+0).val().substr(4,2)),dec($('#textM3_'+j).val().substr(7,2)),0,0,0);
+                           var Date_B = new Date(dec($('#textM12_'+j).val().substr(0,3))+1911,dec($('#textM12_'+0).val().substr(4,2)),dec($('#textM12_'+j).val().substr(7,2)),0,0,0); 
                            var diff=q_div((Date_A-Date_B),86400000);
                            $('#txtOmount_'+j).val(diff);
 			           }else{
 			               var Date_A = new Date(dec($('#textM2_'+j).val().substr(0,4)),dec($('#textM2_'+0).val().substr(6,2)),dec($('#textM2_'+j).val().substr(9,2)),0,0,0);  
-                           var Date_B = new Date(dec($('#textM3_'+j).val().substr(0,4)),dec($('#textM3_'+0).val().substr(6,2)),dec($('#textM3_'+j).val().substr(9,2)),0,0,0);  
+                           var Date_B = new Date(dec($('#textM3_'+j).val().substr(0,4)),dec($('#textM3_'+0).val().substr(6,2)),dec($('#textM3_'+j).val().substr(9,2)),0,0,0);
+                           var Date_B = new Date(dec($('#textM12_'+j).val().substr(0,4)),dec($('#textM12_'+0).val().substr(6,2)),dec($('#textM12_'+j).val().substr(9,2)),0,0,0);  
                            var diff=q_div((Date_A-Date_B),86400000);
                            $('#txtOmount_'+j).val(diff);
 			           }
