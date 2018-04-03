@@ -180,6 +180,11 @@
 				
 				$('#txtStyle').val(ts1+"#^#"+ts2+"#^#"+ts3+"#^#"+ts4+"#^#"+ts5+"#^#"+ts6+"#^#"+ts7+"#^#"+ts8+"#^#"+ts9);
 				
+				var tc1=$('#textC1').val();
+				var tc2=$('#textC2').val();
+				var tc3=$('#textC3').val();
+				$('#txtCust').val(tc1+"#^#"+tc2+"#^#"+tc3);
+				
 				if(q_cur==1)
 					$('#txtWorker').val(r_name);
 				else
@@ -302,6 +307,7 @@
 					return;
 				_btnModi();
 				showS19();
+				showC13();
 			}
 			
 			function btnPrint() {
@@ -345,6 +351,7 @@
 			function refresh(recno) {
 				_refresh(recno);
 				showS19();
+				showC13();
 				$('.images').html('');
 				if(!emp($('#txtImages').val())&&!emp($('#txtNoa').val())){
 					imagename=$('#txtImages').val().split(';');
@@ -391,6 +398,18 @@
 				$('#textS7').val(ts7);
 				$('#textS8').val(ts8);
 				$('#textS9').val(ts9);
+			}
+			
+			function showC13() {
+				var t_cust=$('#txtCust').val().split('#^#');
+				
+				var tc1=t_cust[0]==undefined?'':t_cust[0];
+				var tc2=t_cust[1]==undefined?'':t_cust[1];
+				var tc3=t_cust[2]==undefined?'':t_cust[2];
+				
+				$('#textC1').val(tc1);
+				$('#textC2').val(tc2);
+				$('#textC3').val(tc3);
 			}
 			
 			function TypeaChange() {
@@ -864,8 +883,17 @@
                         <td colspan='5'>
                         	<input id="txtMemo" type="text" class="txt c1"/>
                         	<input id="txtStyle" type="hidden" class="txt c1"/>
+                        	<input id="txtCust" type="hidden" class="txt c1"/>
                         </td>
                     </tr>
+                    <tr>
+                    	<td><span> </span><a id="lblC1_uj" class="lbl">標籤號1</a></td>
+						<td><input id="textC1" type="text" class="txt c1"/></td>
+						<td><span> </span><a id="lblC2_uj" class="lbl">標籤號2</a></td>
+						<td><input id="textC2" type="text" class="txt c1"/></td>
+						<td><span> </span><a id="lblC3_uj" class="lbl">標籤號3</a></td>
+						<td><input id="textC3" type="text" class="txt c1"/></td>
+					</tr>
                     <tr>
                     	<td><span> </span><a id="lblBdate_uj" class="lbl">現場列印標籤</a></td>
 						<td><input id="txtBdate" type="text" class="txt c1"/></td>
