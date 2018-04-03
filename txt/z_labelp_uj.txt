@@ -1,0 +1,300 @@
+﻿z_labelp_uj01:--z_labelp_uj01
+SET QUOTED_IDENTIFIER OFF
+declare @t_typea nvarchar(50)='[1]'
+declare @t_pno nvarchar(50)=case when '#non'='[2]' then '' else '[2]' end 
+declare @t_uno nvarchar(50)=case when '#non'='[3]' then '' else '[3]' end 
+declare @t_para1 nvarchar(50)=case when '#non'='[4]' then '' else '[4]' end 
+
+IF OBJECT_ID('tempdb..#tmp')is not null
+BEGIN
+	drop table #tmp
+END
+--//庫存begin----------------------------------------------------------------------
+create table #tmp(
+	typea nvarchar(10),
+	uno nvarchar(50),
+	productno nvarchar(100),
+	product nvarchar(255), --出貨品名/標準料號參照
+	spec nvarchar(200),
+	style nvarchar(200),
+	datea nvarchar(10),
+	indate nvarchar(10), --入庫日
+	mount float,--數量
+	weight float,--長
+	unit nvarchar(50),
+	storeno nvarchar(50),
+	store nvarchar(150),
+	lengthb float, --標準長
+	engpro nvarchar(MAX), --舊成品編碼
+	ucaucc nvarchar(MAX),--2成品,3半成,8再製,4原料 5物料
+	
+	bmount float, --指定數量
+	bweight float, --指定長度
+	
+) 
+
+--盤點
+insert #tmp (typea,uno,productno,product,spec,style,datea,mount,weight,unit,storeno,store)
+select '0',b.uno,b.productno,b.product,b.spec,b.style,a.datea,b.mount,b.weight,b.unit,b.storeno,b.store
+from view_ucce a left join view_ucces b on a.noa=b.noa 
+where (b.productno=@t_pno or len(@t_pno)=0) and (b.uno=@t_uno or len(@t_uno)=0)
+	-------------------------------------------------------------------------
+--進貨
+insert #tmp (typea,uno,productno,product,spec,style,datea,mount,weight,unit,storeno,store)
+select '1',b.uno,b.productno,b.product,b.spec,b.style,a.datea,b.mount,b.weight,b.unit,b.storeno,b.store
+from view_rc2 a left join view_rc2s b on a.noa=b.noa 
+where a.typea='1' and (b.productno=@t_pno or len(@t_pno)=0) and (b.uno=@t_uno or len(@t_uno)=0)
+
+--入庫
+insert #tmp (typea,uno,productno,product,spec,style,datea,mount,weight,unit,storeno,store)
+select '2',b.uno,b.productno,b.product,b.spec,b.style,a.datea,b.mount,b.weight,b.unit,b.storeno,b.store
+from view_ina a left join view_inas b on a.noa=b.noa
+where (b.productno=@t_pno or len(@t_pno)=0) and (b.uno=@t_uno or len(@t_uno)=0)
+
+--生產
+insert #tmp (typea,uno,productno,product,spec,style,datea,mount,weight,unit,storeno,store)
+select '3',b.uno,b.productno,b.product,b.spec,b.style,a.datea,b.mount,b.weight,b.unit,b.storeno,b.store
+from view_workb a left join view_workbs b on a.noa=b.noa
+where (b.productno=@t_pno or len(@t_pno)=0) and (b.uno=@t_uno or len(@t_uno)=0)
+
+--出貨退回
+insert #tmp (typea,uno,productno,product,spec,style,datea,mount,weight,unit,storeno,store)
+select '4',b.uno,b.productno,b.product,b.spec,b.style,a.datea,b.mount,b.weight,b.unit,b.storeno,b.store
+from view_vcc a left join view_vccs b on a.noa=b.noa 
+where a.typea='2' and (b.productno=@t_pno or len(@t_pno)=0) and (b.uno=@t_uno or len(@t_uno)=0)
+
+--生產領料退回
+insert #tmp (typea,uno,productno,product,spec,style,datea,mount,weight,unit,storeno,store)
+select '4-2',b.uno,b.productno,b.product,b.spec,b.style,a.datea,b.mount,b.weight,b.unit,b.storeno,b.store
+from view_worka a left join view_workas b on a.noa=b.noa
+where a.typea='2' and (b.productno=@t_pno or len(@t_pno)=0) and (b.uno=@t_uno or len(@t_uno)=0)
+------------------------------------------------------------------------
+--進貨退回
+insert #tmp (typea,uno,productno,product,spec,style,datea,mount,weight,unit,storeno,store)
+select '5',b.uno,b.productno,b.product,b.spec,b.style,a.datea,-1*b.mount,-1*b.weight,b.unit,b.storeno,b.store
+from view_rc2 a left join view_rc2s b on a.noa=b.noa 
+where a.typea='2' and (b.productno=@t_pno or len(@t_pno)=0) and (b.uno=@t_uno or len(@t_uno)=0)
+
+--出貨
+insert #tmp (typea,uno,productno,product,spec,style,datea,mount,weight,unit,storeno,store)
+select '6',b.uno,b.productno,b.product,b.spec,b.style,a.datea,-1*b.mount,-1*b.weight,b.unit,b.storeno,b.store
+from view_vcc a left join view_vccs b on a.noa=b.noa 
+where a.typea='1' and (b.productno=@t_pno or len(@t_pno)=0) and (b.uno=@t_uno or len(@t_uno)=0)
+
+--領料
+insert #tmp (typea,uno,productno,product,spec,style,datea,mount,weight,unit,storeno,store)
+select '7',b.uno,b.productno,b.product,b.spec,b.style,a.datea,-1*b.mount,-1*b.weight,b.unit,b.storeno,b.store
+from view_get a left join view_gets b on a.noa=b.noa
+where (b.productno=@t_pno or len(@t_pno)=0) and (b.uno=@t_uno or len(@t_uno)=0)
+
+--生產領料
+insert #tmp (typea,uno,productno,product,spec,style,datea,mount,weight,unit,storeno,store)
+select '8',b.uno,b.productno,b.product,b.spec,b.style,a.datea,-1*b.mount,-1*b.weight,b.unit,b.storeno,b.store
+from view_worka a left join view_workas b on a.noa=b.noa
+where a.typea='1' and (b.productno=@t_pno or len(@t_pno)=0) and (b.uno=@t_uno or len(@t_uno)=0)
+------------------------------------------------------------------------
+--調撥出庫
+insert #tmp (typea,uno,productno,product,spec,style,datea,mount,weight,unit,storeno,store)
+select '9-1',b.uno,b.productno,b.product,b.spec,b.style,a.datea,-1*b.mount,-1*b.weight,b.unit,a.storeno,a.store
+from view_cng a left join view_cngs b on a.noa=b.noa
+where (b.productno=@t_pno or len(@t_pno)=0) and (b.uno=@t_uno or len(@t_uno)=0)
+
+--調撥入庫
+insert #tmp (typea,uno,productno,product,spec,style,datea,mount,weight,unit,storeno,store)
+select '9-2',b.uno,b.productno,b.product,b.spec,b.style,a.datea,b.mount,b.weight,b.unit,a.storeinno,a.storein
+from view_cng a left join view_cngs b on a.noa=b.noa
+where (b.productno=@t_pno or len(@t_pno)=0) and (b.uno=@t_uno or len(@t_uno)=0)
+------------------------------------------------------------------------
+update #tmp
+set uno=ISNULL(uno,''),productno=ISNULL(productno,''),spec=ISNULL(spec,''),style=ISNULL(style,''),storeno=ISNULL(storeno,'')
+,mount=ISNULL(mount,0),weight=ISNULL(weight,0)
+
+delete a from #tmp a where not exists (select * from view_ucaucc where noa=a.productno)
+and not exists (select * from uca where groupkno=a.productno and isnull(groupkno,'')!='')
+and not exists (select * from uca where grouplno=a.productno and isnull(grouplno,'')!='')
+
+update a
+set indate=isnull(b.indate,'')
+from #tmp a outer apply (select MIN(datea) indate from #tmp where uno=a.uno and productno=a.productno and spec=a.spec and style=a.style and typea<'5') b
+
+delete a 
+from #tmp a outer apply (select MAX(datea)udate from #tmp where typea='0' and uno=a.uno and productno=a.productno and spec=a.spec and style=a.style and storeno=a.storeno)b --盤點
+where typea!='0' and datea<isnull(udate,'')
+
+--正常庫存
+insert #tmp (typea,uno,productno,product,spec,style,datea,indate,mount,weight,unit,storeno,store,lengthb,engpro,ucaucc,bmount,bweight)
+select '99',uno,productno,'',spec,style,'',indate,SUM(mount),SUM(weight),'',storeno,'',0,'','',0,0
+from #tmp group by uno,productno,spec,style,storeno,indate
+	
+--刪除明細
+--delete #tmp where typea!='99'
+
+--更新 名稱/參照,標準長,類別,倉庫
+update a 
+set product=b.product,lengthb=b.trans,engpro=b.engpro,ucaucc=b.typea,unit=b.unit
+from #tmp a left join uca b on a.productno=b.noa
+where b.noa is not null
+
+update a 
+set product=b.product,lengthb=b.reserve,ucaucc=b.typea,unit=b.unit
+from #tmp a left join ucc b on a.productno=b.noa
+where b.noa is not null
+
+update a
+set store=b.store
+from #tmp a left join store b on a.storeno=b.noa
+where b.noa is not null
+	
+--//庫存end----------------------------------------------------------------------
+
+--typea
+--F 成品 G1
+--D 半成品 E(製造),G(加工) 再製品  G2
+--H 公版標籤  G3
+--N 公版標籤 + 數量 G4
+--J 零碼 A 皮料 G5 
+--K 不良 G6
+--L 板號單 G7
+--M 條碼 G8
+--C 離型紙 G9
+--B 膠水 G10
+
+declare @tmp table(
+	gno nvarchar(10),
+	label nvarchar(MAX),--標籤logo
+	lab01 nvarchar(MAX),
+	lab02 nvarchar(MAX),
+	lab03 nvarchar(MAX),
+	para nvarchar(MAX),
+	uno nvarchar(MAX),
+	pno nvarchar(MAX),
+	product nvarchar(MAX),
+	barcode nvarchar(MAX),
+	
+	spec nvarchar(MAX),
+	style nvarchar(MAX),
+
+	sno nvarchar(MAX),
+	reason nvarchar(MAX),
+	way nvarchar(MAX),
+	memo2 nvarchar(MAX),
+
+	pageno int,
+	total float,
+	cubno1 nvarchar(MAX),cubno2 nvarchar(MAX),cubno3 nvarchar(MAX),
+	cpno1 nvarchar(MAX),cpno2 nvarchar(MAX),cpno3 nvarchar(MAX),
+	cproduct1 nvarchar(MAX),cproduct2 nvarchar(MAX),cproduct3 nvarchar(MAX),
+	cm1 float,cm2 float,cm3 float,
+
+	ean nvarchar(MAX)
+)
+
+--條碼預設
+--日期&長度&批號
+
+if(@t_typea='F')
+begin
+	insert @tmp(gno,barcode,label,lab01,lab02,lab03,uno,para)
+	select top 1 '1',case when a.uno is null then ''
+	else '<svg id="svg_barcode" class="barcode" style="display:none"></svg><input id="txt_barcode" value="code_'+a.indate+'&'+cast(a.weight as nvarchar(50))+'&'+a.uno+'" type="hidden" >' end
+	,'<img src="http://59.125.143.173/label_uj.png">'
+	,dbo.split(b.cust,'#^#',0),dbo.split(b.cust,'#^#',1),dbo.split(b.cust,'#^#',2)
+	,@t_uno,a.weight
+	from #tmp a outer apply (select top 1 * from uca where noa=a.productno )b
+	where a.typea between '1' and '4-2' and a.uno=@t_uno and (a.productno=@t_pno or len(@t_pno)=0)
+	order by a.datea,a.productno
+end
+
+if(@t_typea='D' or @t_typea='E' or @t_typea='G')
+begin
+	insert @tmp(gno,barcode,pno,product,uno,para,spec,style)
+	select top 1 '2',case when a.uno is null then ''
+	else '<svg id="svg_barcode" class="barcode" style="display:none"></svg><input id="txt_barcode" value="code_'+a.indate+'&'+cast(a.weight as nvarchar(50))+'&'+a.uno+'" type="hidden" >' end
+	,a.productno,a.product,@t_uno,a.weight,a.spec,a.style
+	from #tmp a
+	where a.typea between '1' and '4-2' and a.uno=@t_uno and (a.productno=@t_pno or len(@t_pno)=0)
+	order by a.datea,a.productno
+end
+
+if(@t_typea='H' or @t_typea='N')
+begin
+	insert @tmp(gno,barcode,pno,lab01,lab02,lab03,uno,para)
+	select top 1 case when @t_typea='H' then '3' else '4' end
+	,case when a.uno is null then ''
+	else '<svg id="svg_barcode" class="barcode" style="display:none'+CHAR(59)+'width:100%'+CHAR(59)+'"></svg><input id="txt_barcode" value="code_'+a.indate+'&'+cast(a.weight as nvarchar(50))+'&'+a.uno+'" type="hidden" >' end
+	,a.productno,dbo.split(b.cust,'#^#',0),dbo.split(b.cust,'#^#',1),dbo.split(b.cust,'#^#',2)
+	,@t_uno,a.indate
+	from #tmp a outer apply (select top 1 * from uca where noa=a.productno )b
+	where a.typea between '1' and '4-2' and a.uno=@t_uno and (a.productno=@t_pno or len(@t_pno)=0)
+	order by a.datea,a.productno
+end
+
+if(@t_typea='J')
+begin
+	insert @tmp(gno,barcode,pno,uno,para)
+	select top 1 '5',case when a.uno is null then ''
+	else '<svg id="svg_barcode" class="barcode" style="display:none'+CHAR(59)+'width:100%'+CHAR(59)+'"></svg><input id="txt_barcode" value="code_'+a.datea+'&'+cast(a.weight as nvarchar(50))+'&'+a.uno+'" type="hidden" >' end
+	,a.productno,@t_uno,a.weight
+	from view_cuds a
+	where a.uno=@t_uno and (a.productno=@t_pno or len(@t_pno)=0)
+	order by a.datea,a.productno
+end
+
+if(@t_typea='K')
+begin
+	insert @tmp(gno,barcode,pno,product,uno,para,reason,way,sno,memo2)
+	select top 1 '6'
+	,case when a.uno is null then ''
+	else '<svg id="svg_barcode" class="barcode" style="display:none'+CHAR(59)+'width:100%'+CHAR(59)+'"></svg><input id="txt_barcode" value="code_'+a.datea+'&'+cast(a.weight as nvarchar(50))+'&'+a.uno+'" type="hidden" >' end
+	,a.productno,b.product,@t_uno,a.weight
+	,dbo.split(a.memo,'@,#',3),dbo.split(a.memo,'@,#',1),dbo.split(a.memo,'@,#',9),dbo.split(a.memo,'@,#',10)
+	from view_cuds a outer apply (select top 1 * from uca where productno=a.productno)b
+	where a.uno=@t_uno and (a.productno=@t_pno or len(@t_pno)=0)
+	order by a.datea,a.productno
+end
+
+--if(@t_typea='L')
+--begin
+--
+--end
+
+if(@t_typea='M')
+begin
+	insert @tmp(gno,barcode,pno,uno,para)
+	select '8','<svg id="svg_barcode" class="barcode" style="display:none'+CHAR(59)+'width:100%'+CHAR(59)+'"></svg><input id="txt_barcode" value="code_'+@t_para1+'&'+@t_uno+'" type="hidden" >'
+	,@t_pno,@t_uno,@t_para1
+end
+
+insert @tmp(gno,barcode)
+select '11',"
+	<script type='text/javascript'>
+		!window.JsBarcode && document.write('<script src="+CHAR(34)+"https://cdnjs.cloudflare.com/ajax/libs/jsbarcode/3.6.0/JsBarcode.all.js"+CHAR(34)+"><\/script>')"+CHAR(59)+"
+	</script>
+	<script type='text/javascript'>
+		function codeshow() {
+			var barcodeas=document.getElementsByClassName('barcode')"+CHAR(59)+"
+           	for(var i=0"+CHAR(59)+"i<barcodeas.length"+CHAR(59)+"i++){
+           		var t_id=barcodeas[i].id"+CHAR(59)+"
+           		var txt_id=t_id.replace('svg_','txt_')"+CHAR(59)+"
+           		var tvalue=document.getElementById(txt_id)"+CHAR(59)+"
+           		var t_code=tvalue.value"+CHAR(59)+"
+				JsBarcode('#'+t_id, encodeURI(t_code) //中文只能暫時先編碼處理
+				,{
+					width:1,
+					height: 30,
+					displayValue: false
+				})"+CHAR(59)+"
+				document.getElementById(t_id).style.display=''"+CHAR(59)+"
+			}
+           }
+           
+		codeshow()"+CHAR(59)+"
+	</script>
+"
+select * from @tmp order by right('00'+gno,2)
+
+IF OBJECT_ID('tempdb..#tmp')is not null
+BEGIN
+	drop table #tmp
+END
+;

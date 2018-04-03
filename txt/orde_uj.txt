@@ -155,6 +155,8 @@ set uno=ISNULL(uno,''),productno=ISNULL(productno,''),spec=ISNULL(spec,''),style
 ,mount=ISNULL(mount,0),weight=ISNULL(weight,0)
 
 delete a from #tmp a where not exists (select * from view_ucaucc where noa=a.productno)
+and not exists (select * from uca where groupkno=a.productno and isnull(groupkno,'')!='')
+and not exists (select * from uca where grouplno=a.productno and isnull(grouplno,'')!='')
 
 update a
 set indate=isnull(b.indate,'')
@@ -462,6 +464,8 @@ set uno=ISNULL(uno,''),productno=ISNULL(productno,''),spec=ISNULL(spec,''),style
 ,mount=ISNULL(mount,0),weight=ISNULL(weight,0)
 
 delete a from #tmp a where not exists (select * from view_ucaucc where noa=a.productno)
+and not exists (select * from uca where groupkno=a.productno and isnull(groupkno,'')!='')
+and not exists (select * from uca where grouplno=a.productno and isnull(grouplno,'')!='')
 
 update a
 set indate=isnull(b.indate,'')
@@ -949,6 +953,8 @@ set uno=ISNULL(uno,''),productno=ISNULL(productno,''),spec=ISNULL(spec,''),style
 ,mount=ISNULL(mount,0),weight=ISNULL(weight,0)
 
 delete a from #tmp a where not exists (select * from view_ucaucc where noa=a.productno)
+and not exists (select * from uca where groupkno=a.productno and isnull(groupkno,'')!='')
+and not exists (select * from uca where grouplno=a.productno and isnull(grouplno,'')!='')
 
 update a
 set indate=isnull(b.indate,'')
@@ -1411,6 +1417,8 @@ begin
 	,mount=ISNULL(mount,0),weight=ISNULL(weight,0)
 	
 	delete a from #tmp a where not exists (select * from view_ucaucc where noa=a.productno)
+	and not exists (select * from uca where groupkno=a.productno and isnull(groupkno,'')!='')
+	and not exists (select * from uca where grouplno=a.productno and isnull(grouplno,'')!='')
 
 	update a
 	set indate=isnull(b.indate,'')
@@ -1754,6 +1762,8 @@ set uno=ISNULL(uno,''),productno=ISNULL(productno,''),spec=ISNULL(spec,''),style
 ,mount=ISNULL(mount,0),weight=ISNULL(weight,0)
 
 delete a from #tmp a where not exists (select * from view_ucaucc where noa=a.productno)
+and not exists (select * from uca where groupkno=a.productno and isnull(groupkno,'')!='')
+and not exists (select * from uca where grouplno=a.productno and isnull(grouplno,'')!='')
 
 update a
 set indate=isnull(b.indate,'')
@@ -2543,6 +2553,8 @@ set uno=ISNULL(uno,''),productno=ISNULL(productno,''),spec=ISNULL(spec,''),style
 ,mount=ISNULL(mount,0),weight=ISNULL(weight,0)
 
 delete a from #tmp a where not exists (select * from view_ucaucc where noa=a.productno)
+and not exists (select * from uca where groupkno=a.productno and isnull(groupkno,'')!='')
+and not exists (select * from uca where grouplno=a.productno and isnull(grouplno,'')!='')
 
 update a
 set indate=isnull(b.indate,'')
@@ -2796,6 +2808,8 @@ set uno=ISNULL(uno,''),productno=ISNULL(productno,''),spec=ISNULL(spec,''),style
 ,mount=ISNULL(mount,0),weight=ISNULL(weight,0)
 
 delete a from #tmp a where not exists (select * from view_ucaucc where noa=a.productno)
+and not exists (select * from uca where groupkno=a.productno and isnull(groupkno,'')!='')
+and not exists (select * from uca where grouplno=a.productno and isnull(grouplno,'')!='')
 
 update a
 set indate=isnull(b.indate,'')
