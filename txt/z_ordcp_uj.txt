@@ -1,0 +1,56 @@
+﻿z_ordcp_uj1:--z_ordcp_uj1
+SET QUOTED_IDENTIFIER OFF
+declare @t_bnoa nvarchar(30) = case when '#non' = [2] then '' else [2] end
+declare @t_enoa nvarchar(30) = case when '#non' = [3] then CHAR(255) else [3] end
+declare @t_bdatea nvarchar(30) = case when '#non' = [4] then '' else [4] end
+declare @t_edatea nvarchar(30) = case when '#non' = [5] then CHAR(255) else [5] end
+declare @t_btggno nvarchar(30) = case when '#non' = [8] then '' else [8] end
+declare @t_etggno nvarchar(30) = case when '#non' = [9] then CHAR(255) else [9] end
+declare @t_bproductno nvarchar(30) = case when '#non' = [10] then '' else [10] end
+declare @t_eproductno nvarchar(30) = case when '#non' = [11] then CHAR(255) else [11] end
+
+declare @tmp table(
+	gno nvarchar(1),
+	custno nvarchar(50),
+	comp nvarchar(100),
+	tel nvarchar(50),
+	conn nvarchar(50),
+	typea nvarchar(50),
+	datea nvarchar(20),	
+	noa nvarchar(50),
+	pno nvarchar(50),
+	product nvarchar(100),
+	spec nvarchar(max),
+	stype nvarchar(50),
+	mount float,
+	unit nvarchar(50),
+	price float,
+	unit2 nvarchar(50),
+	trandate nvarchar(20),
+	amemo nvarchar(max),
+	smemo nvarchar(max)
+)
+insert @tmp
+select '0',a.tggno,a.tgg,a.tel,c.conn,a.kind2,a.datea,a.noa,b.productno,b.product,d.spec,d.team,b.mount,b.unit2
+,b.price,b.unit,b.trandate,b.memo,REPLACE(a.memo,'chr(10)','<br>')
+from view_ordcs b left join view_ordc a on a.noa=b.noa
+left join tgg c on a.tgg=c.noa
+left join ucc d on b.productno=d.noa
+where (a.noa between @t_bnoa and @t_enoa)
+and (a.datea between @t_bdatea and @t_edatea)
+and (a.tggno between @t_btggno and @t_etggno)
+and (b.productno between @t_bproductno and @t_eproductno)
+
+insert @tmp(gno,noa,amemo)
+select '1',noa,amemo
+from @tmp
+group by noa,amemo
+
+insert @tmp(gno,noa)
+select '2',noa
+from @tmp
+group by noa
+
+select * from @tmp
+order by noa,gno,trandate,pno
+;

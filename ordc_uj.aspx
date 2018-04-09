@@ -671,7 +671,7 @@
 			}
 
 			function btnPrint() {
-				q_box("z_ordcp.aspx?" + r_userno + ";" + r_name + ";" + q_time + ";noa=" + $('#txtNoa').val() + ";" + r_accy, 'z_ordcp', "95%", "95%", q_getMsg('popPrint'));
+				q_box("z_ordcp_uj.aspx?" + r_userno + ";" + r_name + ";" + q_time + ";noa=" + $('#txtNoa').val() + ";" + r_accy, 'z_ordcp', "95%", "95%", q_getMsg('popPrint'));
 			}
 
 			function wrServer(key_value) {
@@ -1261,7 +1261,7 @@
                     <td align="center" style="width:20px;"> </td>
                     <td class="isAD" align="center" style="width:180px;"><a id='lblUno'> </a></td>
 					<td align="center" style="width:180px;"><a id='lblProductno_uj'>料號</a></td>
-					<td align="center" style="width:200px;"><a id='lblProduct_uj'>貨品名稱</a><a class="isSpec">/</a><a id='lblSpec' class="isSpec"> </a></td>
+					<td align="center" style="width:200px;"><a id='lblProduct_uj'>貨品名稱</a></td>
 					<td align="center" style="width:60px;"><a id='lblStyles_uj'>屬性</a></td>
 					<td align="center" style="width:60px;"><a id='lblRdate'>提醒周期天數</a></td>
 					<td align="center" style="width:100px;"><a id='lblDime_uj'>採購量(Kg)</a></td>

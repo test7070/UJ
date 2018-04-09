@@ -201,7 +201,7 @@
 			function _btnSeek() {
 				if (q_cur > 0 && q_cur < 4)
 					return;
-				q_box('orda_uj_s.aspx', q_name + '_s', "500px", "420px", q_getMsg("popSeek"));
+				q_box('orda_s.aspx', q_name + '_s', "500px", "420px", q_getMsg("popSeek"));
 			}
 
 			function sum() {		

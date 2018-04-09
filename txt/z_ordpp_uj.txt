@@ -1,0 +1,66 @@
+﻿z_ordpp_uj1:--z_ordpp_uj1
+SET QUOTED_IDENTIFIER OFF
+declare @t_bdatea nvarchar(30) = case when '#non' = [4] then '' else [4] end
+declare @t_edatea nvarchar(30) = case when '#non' = [5] then CHAR(255) else [5] end
+
+declare @tmp table(
+	gno nvarchar(1),
+	noa nvarchar(50),
+	t1 nvarchar(50),
+	tgg nvarchar(50),
+	tel nvarchar(50),
+	conn nvarchar(50),
+	productno nvarchar(50),
+	t2 nvarchar(50),
+	mount float,
+	unit  nvarchar(50),
+	datea nvarchar(50),
+	trandate nvarchar(50),
+	tdate nvarchar(50),
+	week nvarchar(50),
+	t3 nvarchar(50),
+	t4 nvarchar(50),
+	t5 nvarchar(50),
+	memo nvarchar(max),
+	sdate nvarchar(50),
+	t6 nvarchar(50),
+	t7 nvarchar(50),
+	ldate nvarchar(50),
+	t8 nvarchar(50)
+)
+insert @tmp
+select '0',a.ordbno,spec,tgg,c.tel,c.boss,productno,a.kind,mount,a.unit,case when len(b.bldate)>9 then b.bldate else cast(LEFT(b.bldate,3)+1911 as nvarchar(10))+RIGHT(b.bldate,6) end
+,case when len(dbo.split(content,'#^#',0))>9 then dbo.split(content,'#^#',0) else cast(LEFT(dbo.split(content,'#^#',0),3)+1911 as nvarchar(10))+RIGHT(dbo.split(content,'#^#',0),6) end
+,case when len(dbo.split(content,'#^#',1))>9 then dbo.split(content,'#^#',1) else cast(LEFT(dbo.split(content,'#^#',1),3)+1911 as nvarchar(10))+RIGHT(dbo.split(content,'#^#',1),6) end
+,dbo.split(content,'#^#',2)
+,dbo.split(content,'#^#',3)
+,dbo.split(content,'#^#',4)
+,dbo.split(content,'#^#',5)
+,a.memo
+,''
+,''
+,''
+,case when len(dbo.split(content,'#^#',8))>9 then dbo.split(content,'#^#',8) else cast(LEFT(dbo.split(content,'#^#',8),3)+1911 as nvarchar(10))+RIGHT(dbo.split(content,'#^#',8),6) end
+,total
+from ordps a left join ordp b on a.noa=b.noa
+left join tgg c on a.tggno=c.noa
+where b.bldate between @t_bdatea and @t_edatea
+
+declare @datea nvarchar(10)=(select Convert(varchar(10),Getdate(),111))
+
+update @tmp
+set sdate=case when len(ldate)>0 then DATEDIFF(DAY,@datea,ldate)+1 else (case when len(tdate)>0 then DATEDIFF(DAY,@datea,tdate)+1 else DATEDIFF(DAY,@datea,isnull(trandate,''))+1 end) end
+,t6=case when DATEDIFF(DAY,@datea,trandate)% t8=0 then '追蹤' end
+
+update @tmp
+set t7=case when t2='皮料' and sdate=3 then '提醒' else 
+(case when t2='離型紙' and sdate=1 then '提醒' else 
+(case when t2='膠水' and sdate=1 then '提醒' else 
+(case when t2='紙箱' and sdate=1 then '提醒' else 
+(case when t2='管芯' and sdate=1 then '提醒' else 
+(case when t2='塞頭' and sdate=0 then '提醒' else 
+(case when t2='棧板' and sdate=1 then '提醒'end)end)end)end)end)end)end
+
+select * from @tmp
+;
+
