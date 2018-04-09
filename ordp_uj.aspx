@@ -22,7 +22,7 @@
 			q_tables = 's';
 			var q_name = "ordp";
 			var q_readonly = ['txtNoa','txtWorker', 'txtWorker2'];
-			var q_readonlys = ['txtOrdbno','txtNo2'];
+			var q_readonlys = ['txtOrdbno','txtNo2','textPrice'];
 			var bbmNum = [];
 			var bbsNum = [['txtSmount', 10, 0, 1],['txtApvmount', 10, 0, 1],['txtFmount', 10, 0, 1],['txtGweight', 10, 0, 1],['txtMount', 10, 0, 1],['txtWeight', 10, 0, 1],['txtTmount', 10, 0, 1],['txtSafemount', 10, 0, 1],['txtSchmount', 10, 0, 1],['txtStkmount', 10, 0, 1]];
 			var bbmMask = [];
@@ -69,6 +69,8 @@
 				q_mask(bbmMask);
 				q_cmbParse("combM6", ',通知生管1,通知生管2,通知生管3,通知生管4,通知生管5,合理','s');
 				q_cmbParse("combM7", ',延交不說明,品質不良延交,排程滿檔延交,設備故障延交,原料不足延交,人力不足延交,提早交貨,合理延交','s');
+				q_cmbParse("combM11", ',完工,持續進貨','s');
+				q_cmbParse("combM14", ',延交不說明,品質不良延交,排程滿檔延交,設備故障延交,原料不足延交,人力不足延交,提早交貨,合理延交','s');
 				
 				$('#btnImport_uj').click(function(e){
 				        var t_where = "where=^^ odate='" + $('#txtBldate').val() + "' ^^";
@@ -124,14 +126,14 @@
                     var ts6=$('#textM6_'+i).val()==''?'':$('#textM6_'+i).val();
                     var ts7=$('#textM7_'+i).val()==''?'':$('#textM7_'+i).val();
                     var ts8=$('#textM8_'+i).val()==''?'':$('#textM8_'+i).val();
-                    var ts9=$('#textM9_'+i).val()==''?'':$('#textM9_'+i).val();
-                    var ts10=$('#textM10_'+i).val()==''?'':$('#textM10_'+i).val();
+                    //var ts9=$('#textM9_'+i).val()==''?'':$('#textM9_'+i).val();
+                    //var ts10=$('#textM10_'+i).val()==''?'':$('#textM10_'+i).val();
                     var ts11=$('#textM11_'+i).val()==''?'':$('#textM11_'+i).val();
                     var ts12=$('#textM12_'+i).val()==''?'':$('#textM12_'+i).val();
                     var ts13=$('#textM13_'+i).val()==''?'':$('#textM13_'+i).val();
                     var ts14=$('#textM14_'+i).val()==''?'':$('#textM14_'+i).val();
                     $('#txtContent_'+i).val(ts1+"#^#"+ts2+"#^#"+ts3+"#^#"+ts4+"#^#"+ts5+"#^#"+ts6
-                    +"#^#"+ts7+"#^#"+ts8+"#^#"+ts9+"#^#"+ts10+"#^#"+ts11+"#^#"+ts12+"#^#"+ts13+"#^#"+ts14);
+                    +"#^#"+ts7+"#^#"+ts8+"#^#"+ts11+"#^#"+ts12+"#^#"+ts13+"#^#"+ts14);
                 }
 				
 				if (q_cur == 1)
@@ -159,12 +161,12 @@
                     var ts6=t_style[5]==undefined?'':t_style[5];
                     var ts7=t_style[6]==undefined?'':t_style[6];
                     var ts8=t_style[7]==undefined?'':t_style[7];
-                    var ts9=t_style[8]==undefined?'':t_style[8];
-                    var ts10=t_style[9]==undefined?'':t_style[9];
-                    var ts11=t_style[10]==undefined?'':t_style[10];
-                    var ts12=t_style[11]==undefined?'':t_style[11];
-                    var ts13=t_style[12]==undefined?'':t_style[12];
-                    var ts14=t_style[13]==undefined?'':t_style[13];
+                    //var ts9=t_style[8]==undefined?'':t_style[8];
+                    //var ts10=t_style[9]==undefined?'':t_style[8];
+                    var ts11=t_style[8]==undefined?'':t_style[8];
+                    var ts12=t_style[9]==undefined?'':t_style[9];
+                    var ts13=t_style[10]==undefined?'':t_style[10];
+                    var ts14=t_style[11]==undefined?'':t_style[11];
                     
                     $('#textM1_'+i).val(ts1);
                     $('#textM2_'+i).val(ts2);
@@ -174,8 +176,8 @@
                     $('#textM6_'+i).val(ts6);
                     $('#textM7_'+i).val(ts7);
                     $('#textM8_'+i).val(ts8);
-                    $('#textM9_'+i).val(ts9);
-                    $('#textM10_'+i).val(ts10);
+                    //$('#textM9_'+i).val(ts9);
+                    //$('#textM10_'+i).val(ts10);
                     $('#textM11_'+i).val(ts11);
                     $('#textM12_'+i).val(ts12);
                     $('#textM13_'+i).val(ts13);
@@ -219,21 +221,39 @@
 			        if($('#textM3_' + j).val().length>0){
 			           if(r_len=='3'){
 			               // 日期相差轉換
-			               var Date_A = new Date(dec($('#textM2_'+j).val().substr(0,3))+1911,dec($('#textM2_'+0).val().substr(4,2)),dec($('#textM2_'+j).val().substr(7,2)),0,0,0);  
-                           var Date_B = new Date(dec($('#textM3_'+j).val().substr(0,3))+1911,dec($('#textM3_'+0).val().substr(4,2)),dec($('#textM3_'+j).val().substr(7,2)),0,0,0);
-                           var Date_B = new Date(dec($('#textM12_'+j).val().substr(0,3))+1911,dec($('#textM12_'+0).val().substr(4,2)),dec($('#textM12_'+j).val().substr(7,2)),0,0,0); 
+			               var Date_A = new Date(dec($('#textM2_'+j).val().substr(0,3))+1911,dec($('#textM2_'+j).val().substr(4,2)),dec($('#textM2_'+j).val().substr(7,2)),0,0,0);  
+                           var Date_B = new Date(dec($('#textM3_'+j).val().substr(0,3))+1911,dec($('#textM3_'+j).val().substr(4,2)),dec($('#textM3_'+j).val().substr(7,2)),0,0,0);
                            var diff=q_div((Date_A-Date_B),86400000);
                            $('#txtOmount_'+j).val(diff);
 			           }else{
-			               var Date_A = new Date(dec($('#textM2_'+j).val().substr(0,4)),dec($('#textM2_'+0).val().substr(6,2)),dec($('#textM2_'+j).val().substr(9,2)),0,0,0);  
-                           var Date_B = new Date(dec($('#textM3_'+j).val().substr(0,4)),dec($('#textM3_'+0).val().substr(6,2)),dec($('#textM3_'+j).val().substr(9,2)),0,0,0);
-                           var Date_B = new Date(dec($('#textM12_'+j).val().substr(0,4)),dec($('#textM12_'+0).val().substr(6,2)),dec($('#textM12_'+j).val().substr(9,2)),0,0,0);  
+			               var Date_A = new Date(dec($('#textM2_'+j).val().substr(0,4)),dec($('#textM2_'+j).val().substr(6,2)),dec($('#textM2_'+j).val().substr(9,2)),0,0,0);  
+                           var Date_B = new Date(dec($('#textM3_'+j).val().substr(0,4)),dec($('#textM3_'+j).val().substr(6,2)),dec($('#textM3_'+j).val().substr(9,2)),0,0,0);
                            var diff=q_div((Date_A-Date_B),86400000);
                            $('#txtOmount_'+j).val(diff);
 			           }
 			        }else{
 			            $('#txtOmount_' + j).val()=='';
 			        }
+			        refreshBbs();
+			        
+			        //交期差異天數
+                    if($('#textM12_' + j).val().length>0){
+                       if(r_len=='3'){
+                           // 日期相差轉換
+                           var Date_A = new Date(dec($('#textM3_'+j).val().substr(0,3))+1911,dec($('#textM3_'+j).val().substr(4,2)),dec($('#textM3_'+j).val().substr(7,2)),0,0,0);  
+                           var Date_B = new Date(dec($('#textM12_'+j).val().substr(0,3))+1911,dec($('#textM12_'+j).val().substr(4,2)),dec($('#textM12_'+j).val().substr(7,2)),0,0,0);
+                           var diff=q_div((Date_A-Date_B),86400000);
+                           $('#textM13_'+j).val(diff);
+                       }else{
+                           var Date_A = new Date(dec($('#textM3_'+j).val().substr(0,4)),dec($('#textM3_'+j).val().substr(6,2)),dec($('#textM3_'+j).val().substr(9,2)),0,0,0);  
+                           var Date_B = new Date(dec($('#textM12_'+j).val().substr(0,4)),dec($('#textM12_'+j).val().substr(6,2)),dec($('#textM12_'+j).val().substr(9,2)),0,0,0);
+                           var diff=q_div((Date_A-Date_B),86400000);
+                           $('#textM13_'+j).val(diff);
+                       }
+                    }else{
+                        $('#txtOmount_' + j).val()=='';
+                    }
+			        
 			    }
 			}
 			
@@ -294,6 +314,10 @@
                             sum();
                     });
                     
+                    $('#textM12_' + j).change(function() {
+                            sum();
+                    });
+
                     $('#textM3_' + j).blur(function () {
                         t_IdSeq = -1;
                         q_bodyId($(this).attr('id'));
@@ -318,7 +342,21 @@
                                 $('#textM7_'+b_seq).val($('#combM7_'+b_seq).find("option:selected").text());
                     });
                     
-                   
+                    $('#combM11_' + j).change(function() {
+                            t_IdSeq = -1;
+                            q_bodyId($(this).attr('id'));
+                            b_seq = t_IdSeq;
+                            if(q_cur==1 || q_cur==2)
+                                $('#textM11_'+b_seq).val($('#combM11_'+b_seq).find("option:selected").text());
+                    });
+                    
+                    $('#combM14_' + j).change(function() {
+                            t_IdSeq = -1;
+                            q_bodyId($(this).attr('id'));
+                            b_seq = t_IdSeq;
+                            if(q_cur==1 || q_cur==2)
+                                $('#textM14_'+b_seq).val($('#combM14_'+b_seq).find("option:selected").text());
+                    });
 				}				
 				_bbsAssign();
                 refreshBbs();
@@ -356,14 +394,64 @@
 			}
 			function refresh(recno) {
 				_refresh(recno);
-				refreshBbs();
 				$('#btndiv_detail_close').click();
 				showS19();
+				refreshBbs();
+				
 			}
 			
 			function refreshBbs(){
-			    for(var i=0;i<q_bbsCount;i++){
+			    for(var j=0;j<q_bbsCount;j++){
+                    //倒數進貨(天)
+                    var t_odate;
+                    if($('#textM12_' + j).val()!=''){
+                        t_odate=$('#textM12_' + j).val();
+                    }else if($('#textM3_' + j).val()!=''){
+                        t_odate=$('#textM3_' + j).val();
+                    }else if($('#textM2_' + j).val()!=''){
+                        t_odate=$('#textM2_' + j).val();
+                    }else{
+                        t_odate='';
+                    }
+                       
+                    if(r_len=='3' && t_odate!=''){
+                           // 日期相差轉換
+                           var Date_A = new Date(dec(q_date().substr(0,3))+1911,dec(q_date().substr(4,2)),dec(q_date().substr(7,2)),0,0,0);  
+                           var Date_B = new Date(dec(t_odate.substr(0,3))+1911,dec(t_odate.substr(4,2)),dec(t_odate.substr(7,2)),0,0,0);
+                           var Date_c = new Date(dec($('#textM2_' + j).val().substr(0,3))+1911,dec($('#textM2_' + j).val().substr(4,2)),dec($('#textM2_' + j).val().substr(7,2)),0,0,0);
+                           var diff=q_div((Date_B-Date_A),86400000);
+                           var diff_b=dec(dec(q_div((Date_A-Date_c),86400000)) % dec($('#txtTotal_' + j).val()));
+                           $('#textPrice_'+j).val(diff);
+                           if(diff_b==0)
+                                $('#textM9_'+j).val('追蹤');
+                       
+                    }else if(r_len=='4' &&  t_odate!=''){
+                           var Date_A = new Date(dec(q_date().substr(0,4))+1911,dec(q_date().substr(6,2)),dec(q_date().substr(9,2)),0,0,0);  
+                           var Date_B = new Date(dec(t_odate.substr(0,4))+1911,dec(t_odate.substr(6,2)),dec(t_odate.substr(9,2)),0,0,0);
+                           var Date_c = new Date(dec($('#textM2_' + j).val().substr(0,4))+1911,dec($('#textM2_' + j).val().substr(6,2)),dec($('#textM2_' + j).val().substr(9,2)),0,0,0);
+                           var diff=q_div((Date_B-Date_A),86400000);
+                           $('#textPrice_'+j).val(diff);
+                    }else{
+                           $('#textPrice_'+j).val('');
+                    }
                     
+                    if($('#txtKind_' + j).val()=='皮料' && $('#textPrice_'+j).val()=='3'){
+                          $('#textM10_'+j).val('提醒');
+                    }else if($('#txtKind_' + j).val()=='離型紙' && $('#textPrice_'+j).val()=='1'){
+                          $('#textM10_'+j).val('提醒');
+                    }else if($('#txtKind_' + j).val()=='膠水' && $('#textPrice_'+j).val()=='1'){
+                          $('#textM10_'+j).val('提醒');
+                    }else if($('#txtKind_' + j).val()=='紙箱' && $('#textPrice_'+j).val()=='1'){
+                          $('#textM10_'+j).val('提醒');
+                    }else if($('#txtKind_' + j).val()=='管芯' && $('#textPrice_'+j).val()=='1'){
+                          $('#textM10_'+j).val('提醒');
+                    }else if($('#txtKind_' + j).val()=='棧板' && $('#textPrice_'+j).val()=='1'){
+                          $('#textM10_'+j).val('提醒');
+                    }else if($('#txtKind_' + j).val()=='棧板' && $('#textPrice_'+j).val()=='0'){
+                          $('#textM10_'+j).val('提醒');
+                    }else{
+                          $('textM10_'+j).val('');
+                    }
                 }
 			}
 
@@ -589,7 +677,7 @@
 			</div>
 		</div>
 		<div class='dbbs'>
-			<table id="tbbs" class='tbbs' style="width:2100px;">
+			<table id="tbbs" class='tbbs' style="width:2200px;">
 				<tr style='color:white; background:#003366;' >
 				        <td  align="center" style="width:35px;"><input class="btn"  id="btnPlus" type="button" value='+' style="font-weight: bold;"  /></td>
 					    <td align="center" style="width:165px;"><a id='lblNoa_s'>採購單號</a></td>
@@ -611,10 +699,10 @@
                         <td align="center" style="width:60px;"><a id=''>提醒週期</a></td>
                         <td align="center" style="width:50px;"><a id=''>追蹤</a></td>
                         <td align="center" style="width:50px;"><a id=''>到貨前提醒</a></td>
-                        <td align="center" style="width:80px;"><a id=''>貨到確認</a></td>
+                        <td align="center" style="width:90px;"><a id=''>貨到確認</a></td>
                         <td align="center" style="width:80px;"><a id=''>實際交貨日</a></td>
                         <td align="center" style="width:60px;"><a id=''>交期差異天數</a></td>
-                        <td align="center" style="width:80px;"><a id=''>交期不準時原因 </a></td>
+                        <td align="center" style="width:130px;"><a id=''>交期不準時原因 </a></td>
                         <td align="center" style="width:100px;"><a id='lblMemo_s'> </a></td>
 				</tr>
 				<tr style='background:#cad3ff;' class="ishide.*">
@@ -649,14 +737,18 @@
                             <select id="combM7.*" class="txt" style="width: 20px;"> </select>
                         </td>
                         <td><input id="textM8.*" type="text" class="txt c1" style="width:97%;"/></td>
-                        <td><input id="txtPrice.*" type="text" class="txt c1 num" style="width:97%;"/></td>
-                        <td><input id="txttotal.*" type="text" class="txt c1 num" style="width:97%;"/></td>
+                        <td><input id="textPrice.*" type="text" class="txt c1 num" style="width:97%;"/></td>
+                        <td><input id="txtTotal.*" type="text" class="txt c1 num" style="width:97%;"/></td>
                         <td><input id="textM9.*" type="text" class="txt c1" style="width:97%;"/></td>
                         <td><input id="textM10.*" type="text" class="txt c1" style="width:97%;"/></td>
-                        <td><input id="textM11.*" type="text" class="txt c1" style="width:97%;"/></td>
+                        <td><input id="textM11.*" type="text" class="txt c1" style="width:72%;"/>
+                            <select id="combM11.*" class="txt" style="width: 20px;"> </select>
+                        </td>
                         <td><input id="textM12.*" type="text" class="txt c1" style="width:97%;"/></td>
-                        <td><input id="textM13.*" type="text" class="txt c1" style="width:97%;"/></td>
-                        <td><input id="textM14.*" type="text" class="txt c1" style="width:97%;"/></td>
+                        <td><input id="textM13.*" type="text" class="txt c1 num" style="width:97%;"/></td>
+                        <td><input id="textM14.*" type="text" class="txt c1" style="width:82%;"/>
+                            <select id="combM14.*" class="txt" style="width: 20px;"> </select>
+                        </td>
                         <td><input id="txtMemo.*" type="text" class="txt c1" style="width:97%;"/></td>
 				</tr>
 			</table>
