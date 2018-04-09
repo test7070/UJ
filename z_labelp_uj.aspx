@@ -71,6 +71,10 @@
                 q_popAssign();
                 q_getFormat();
                 q_langShow();
+                
+                if(t_typea.length>0 || t_pno.length>0 || t_uno>0 || t_para1 >0){
+                	$('#btnOk').click();
+                }
             }
 
             function q_boxClose(s2) {

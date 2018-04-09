@@ -595,7 +595,11 @@
 				});
 				
 				$('#btnPrinttag').click(function() {
-					
+					if(!emp($('#txtProductno2_0').val()) && !emp($('#txtProduct2_0').val()) && dec($('#lblWeight2').text())>0
+						&& !emp($('#cmbMome1').val()) && $('#cmbMome1').val()!='歸0'
+					){
+						q_box('z_labelp_uj.aspx' + "?;;;typea='C' and productno='"+$('#txtProductno2_0').val()+"' and uno='"+$('#txtProduct2_0').val()+"' and para='"+dec($('#lblWeight2').text())+"' ;" + r_accy, '', "95%", "95%", q_getMsg("popPrint"));
+					}
 				});
 				
 				$('#txtCugstation1').change(function() {

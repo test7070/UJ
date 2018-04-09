@@ -240,10 +240,23 @@
 							});
 						}
 						
-						$('btnPrint_'+i).click(function() {
+						$('#btnPrint_'+i).click(function() {
+							t_IdSeq = -1;  /// 要先給  才能使用 q_bodyId()
+							q_bodyId($(this).attr('id'));
+							b_seq = t_IdSeq;
+							
 							if($('#txtEdime').val()=='1'){
 			            		alert('已完工,禁止列印!!');
 			            		return;
+			            	}else{
+			            		if(dec($('#txtWeight2_'+b_seq).val())>0){
+				            		if($('#txtStyle').val()=='5'){ //皮
+				            			q_box('z_labelp_uj.aspx' + "?;;;typea='A' and productno='"+$('#txtProductno2_'+b_seq).val()+"' and uno='"+$('#txtProduct2_'+b_seq).val()+"' and para='"+dec($('#txtWeight2_'+b_seq).val())+"' ;" + r_accy, '', "95%", "95%", q_getMsg("popPrint"));
+				            		}
+				            		if($('#txtStyle').val()=='4'){ //紙
+				            			q_box('z_labelp_uj.aspx' + "?;;;typea='C' and productno='"+$('#txtProductno2_'+b_seq).val()+"' and uno='"+$('#txtProduct2_'+b_seq).val()+"' and para='"+dec($('#txtWeight2_'+b_seq).val())+"' ;" + r_accy, '', "95%", "95%", q_getMsg("popPrint"));
+				            		}
+			            		}
 			            	}
 						});
 					}
