@@ -147,18 +147,6 @@ where b.noa is not null
 	
 --//庫存end----------------------------------------------------------------------
 
---typea
---F 成品 G1
---D 半成品 E(製造),G(加工) 再製品  G2
---H 公版標籤  G3
---N 公版標籤 + 數量 G4
---J 零碼 A 皮料 G5 
---K 不良 G6
---L 板號單 G7
---M 條碼 G8
---C 離型紙 G9
---B 膠水 G10
-
 declare @tmp table(
 	gno nvarchar(10),
 	label nvarchar(MAX),--標籤logo
@@ -181,16 +169,28 @@ declare @tmp table(
 
 	pageno int,
 	total float,
-	cubno1 nvarchar(MAX),cubno2 nvarchar(MAX),cubno3 nvarchar(MAX),
-	cpno1 nvarchar(MAX),cpno2 nvarchar(MAX),cpno3 nvarchar(MAX),
-	cproduct1 nvarchar(MAX),cproduct2 nvarchar(MAX),cproduct3 nvarchar(MAX),
-	cm1 float,cm2 float,cm3 float,
+	cubno1 nvarchar(MAX),cubno2 nvarchar(MAX),cubno3 nvarchar(MAX),cubno4 nvarchar(MAX),
+	cpno1 nvarchar(MAX),cpno2 nvarchar(MAX),cpno3 nvarchar(MAX),cpno4 nvarchar(MAX),
+	cproduct1 nvarchar(MAX),cproduct2 nvarchar(MAX),cproduct3 nvarchar(MAX),cproduct4 nvarchar(MAX),
+	cm1 float,cm2 float,cm3 float,cm4 float,
 
 	ean nvarchar(MAX)
 )
 
 --條碼預設
 --日期&長度&批號
+
+--typea
+--F 成品 G1
+--D 半成品 E(製造),G(加工) 再製品  G2
+--H 公版標籤  G3
+--N 公版標籤 + 數量 G4
+--J 零碼 A 皮料 G5 
+--K 不良 G6
+--L 板號單 G7
+--M 條碼 G8
+--C 離型紙 G9
+--B 膠水 G10
 
 if(@t_typea='F')
 begin
@@ -236,7 +236,7 @@ begin
 	else '<svg id="svg_barcode" class="barcode" style="display:none'+CHAR(59)+'width:100%'+CHAR(59)+'"></svg><input id="txt_barcode" value="code_'+a.datea+'&'+cast(a.weight as nvarchar(50))+'&'+a.uno+'" type="hidden" >' end
 	,a.productno,@t_uno,a.weight
 	from view_cuds a
-	where a.uno=@t_uno and (a.productno=@t_pno or len(@t_pno)=0)
+	where a.uno=@t_uno and (a.productno=@t_pno or len(@t_pno)=0) and source='8'
 	order by a.datea,a.productno
 end
 
@@ -249,20 +249,96 @@ begin
 	,a.productno,b.product,@t_uno,a.weight
 	,dbo.split(a.memo,'@,#',3),dbo.split(a.memo,'@,#',1),dbo.split(a.memo,'@,#',9),dbo.split(a.memo,'@,#',10)
 	from view_cuds a outer apply (select top 1 * from uca where productno=a.productno)b
-	where a.uno=@t_uno and (a.productno=@t_pno or len(@t_pno)=0)
+	where a.uno=@t_uno and (a.productno=@t_pno or len(@t_pno)=0) and source='7'
 	order by a.datea,a.productno
 end
 
---if(@t_typea='L')
---begin
---
---end
+declare @tmpa table(
+	barcode nvarchar(MAX),
+	uno nvarchar(MAX),
+	pageno int,
+	rr int,
+	total float,
+	cubno nvarchar(MAX),
+	cpno nvarchar(MAX),
+	cproduct nvarchar(MAX),
+	cm float
+)
+
+if(@t_typea='L')
+begin
+	insert @tmpa(uno,cubno,cpno,cproduct,cm,rr)
+	select dbo.split(a.memo,'@,#',7),dbo.split(a.memo,'@,#',5),a.productno,b.product,sum(mount)
+	,ROW_NUMBER() over (order by dbo.split(a.memo,'@,#',5),a.productno)
+	from view_cuds a outer apply (select top 1 * from uca where productno=a.productno)b
+	where dbo.split(a.memo,'@,#',7)=@t_uno --板號
+	and (a.productno=@t_pno or len(@t_pno)=0) and (source='1' or source='8' or source='9')
+	group by dbo.split(a.memo,'@,#',7),dbo.split(a.memo,'@,#',5),a.productno,b.product
+
+	update @tmpa
+	set barcode=case when uno is null then '' else '<svg id="svg_barcode" class="barcode" style="display:none'+CHAR(59)+'width:100%'+CHAR(59)+'"></svg><input id="txt_barcode" value="code_'+uno+'" type="hidden" >' end
+	,pageno=ceiling(cast(rr as float)/4)
+
+	update a set total=b.ctotal from @tmpa a
+	outer apply (select sum(cm)ctotal from @tmpa where pageno=a.pageno)b
+
+	insert @tmp(gno,barcode,uno,total,pageno)
+	select '7',MAX(barcode),MAX(uno),MAX(total),pageno from @tmpa group by pageno
+
+	update  a
+	set cubno1=b1.cubno,cubno2=b2.cubno,cubno3=b3.cubno,cubno4=b4.cubno
+	,cpno1=b1.cpno,cpno2=b2.cpno,cpno3=b3.cpno,cpno4=b4.cpno
+	,cproduct1=b1.cproduct,cproduct2=b2.cproduct,cproduct3=b3.cproduct,cproduct4=b4.cproduct
+	,cm1=b1.cm,cm2=b2.cm,cm3=b3.cm,cm4=b4.cm
+	from @tmp a outer apply (select * from @tmpa where pageno=a.pageno and rr=1) b1
+	outer apply (select * from @tmpa where pageno=a.pageno and rr=2) b2
+	outer apply (select * from @tmpa where pageno=a.pageno and rr=3) b3
+	outer apply (select * from @tmpa where pageno=a.pageno and rr=4) b4
+
+end
 
 if(@t_typea='M')
 begin
 	insert @tmp(gno,barcode,pno,uno,para)
 	select '8','<svg id="svg_barcode" class="barcode" style="display:none'+CHAR(59)+'width:100%'+CHAR(59)+'"></svg><input id="txt_barcode" value="code_'+@t_para1+'&'+@t_uno+'" type="hidden" >'
 	,@t_pno,@t_uno,@t_para1
+end
+
+if(@t_typea='A')
+begin
+	--@t_para 印退料用，否則印庫存
+
+	insert @tmp(gno,barcode,pno,uno,para)
+	select top 1 '5',case when a.uno is null then ''
+	else '<svg id="svg_barcode" class="barcode" style="display:none'+CHAR(59)+'width:100%'+CHAR(59)+'"></svg><input id="txt_barcode" value="code_'+a.indate+'&'+cast(a.weight as nvarchar(50))+'&'+a.uno+'" type="hidden" >' end
+	,a.productno,@t_uno,case when len(@t_para1)>0 then @t_para1 else a.weight end
+	from #tmp a
+	where a.uno=@t_uno and (a.productno=@t_pno or len(@t_pno)=0) 
+	order by a.indate,a.productno
+end
+
+if(@t_typea='C')
+begin
+	--@t_para 印退料用，否則印庫存
+
+	insert @tmp(gno,barcode,pno,product,uno,para,ean)
+	select top 1 '9',case when a.uno is null then ''
+	else '<svg id="svg_barcode" class="barcode" style="display:none'+CHAR(59)+'width:100%'+CHAR(59)+'"></svg><input id="txt_barcode" value="code_'+a.indate+'&'+cast(a.weight as nvarchar(50))+'&'+a.uno+'" type="hidden" >' end
+	,a.productno,a.product,@t_uno,case when len(@t_para1)>0 then @t_para1 else a.weight end,b.ean
+	from #tmp a outer apply (select top 1 * from ucc where noa=a.productno )b
+	where a.uno=@t_uno and (a.productno=@t_pno or len(@t_pno)=0) 
+	order by a.indate,a.productno
+end
+
+if(@t_typea='B')
+begin
+	insert @tmp(gno,barcode,pno,uno,para)
+	select top 1 '10',case when a.uno is null then ''
+	else '<svg id="svg_barcode" class="barcode" style="display:none'+CHAR(59)+'width:100%'+CHAR(59)+'"></svg><input id="txt_barcode" value="code_'+a.indate+'&'+cast(a.weight as nvarchar(50))+'&'+a.uno+'" type="hidden" >' end
+	,a.productno,@t_uno,a.weight
+	from #tmp a
+	where a.uno=@t_uno and (a.productno=@t_pno or len(@t_pno)=0) 
+	order by a.indate,a.productno
 end
 
 insert @tmp(gno,barcode)

@@ -349,6 +349,42 @@
 					}
 				});
 				
+				$('#btnPrint1').click(function() {
+					if(!emp($('#lblProductno').text()) && !emp($('#lblProductno2').text())){
+						q_box('z_labelp_uj.aspx' + "?;;;typea='G' and productno='"+$('#lblProductno').text()+"' and uno='"+$('#lblProductno2').text()+"' and para='"+$('#lblDhours').text()+"' ;" + r_accy, '', "95%", "95%", q_getMsg("popPrint"));
+					}
+				});
+				
+				$('#btnPrint11').click(function() {
+					if(!emp($('#txtUcano').val()) && !emp($('#txtUno').val())){
+						q_box('z_labelp_uj.aspx' + "?;;;typea='M' and productno='"+$('#txtUcano').val()+"' and uno='"+$('#txtUno').val()+"' and para='"+$('#txtPdate').val()+"' ;" + r_accy, '', "95%", "95%", q_getMsg("popPrint"));
+					}
+				});
+				
+				$('#btnPrint2').click(function() {
+					if(!emp($('#lblUcano2').text()) && !emp($('#lblUno2').text())){
+						q_box('z_labelp_uj.aspx' + "?;;;typea='K' and productno='"+$('#lblUcano2').text()+"' and uno='"+$('#lblUno2').text()+"' and para='"+$('#txtWeight2').txt()+"' ;" + r_accy, '', "95%", "95%", q_getMsg("popPrint"));
+					}
+				});
+				
+				$('#btnPrint3').click(function() {
+					if(!emp($('#lblUcano3').text()) && !emp($('#lblUno3').text())){
+						q_box('z_labelp_uj.aspx' + "?;;;typea='J' and productno='"+$('#lblUcano3').text()+"' and uno='"+$('#lblUno3').text()+"' and para='"+$('#txtWeight3').txt()+"' ;" + r_accy, '', "95%", "95%", q_getMsg("popPrint"));
+					}
+				});
+				
+				$('#btnPrint33').click(function() {
+					if(!emp($('#lblUcano3').text()) && !emp($('#lblUno3').text())){
+						q_box('z_labelp_uj.aspx' + "?;;;typea='M' and productno='"+$('#lblUcano3').text()+"' and uno='"+$('#lblUno3').text()+"' and para='"+$('#txtPdate').val()+"' ;" + r_accy, '', "95%", "95%", q_getMsg("popPrint"));
+					}
+				});
+				
+				$('#btnPrint4').click(function() {
+					if(!emp($('#txtUcano').val()) && !emp($('#txtUno').val()) && dec($('#lblWeight2').text())>0){
+						q_box('z_labelp_uj.aspx' + "?;;;typea='D' and productno='"+$('#txtUcano').val()+"' and uno='"+$('#txtUno').val()+"' and para='"+dec($('#lblWeight2').text())+"' ;" + r_accy, '', "95%", "95%", q_getMsg("popPrint"));
+					}
+				});
+				
 				$('#btnIns1').click(function() {
 					
 				});
