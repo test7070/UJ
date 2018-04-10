@@ -61,7 +61,7 @@
 			var t_focusout='',t_focusout2='',t_fc=0,t_fbeq='';
 			function mainPost() {
 				q_getFormat();
-				bbmMask = [['txtDatea', r_picd]];
+				bbmMask = [['txtDatea', r_picd],['txtBldate', r_picd]];
 				$('#txtDatea').datepicker();
 				if(r_len==4){           
                     $.datepicker.r_len=4;
@@ -73,7 +73,7 @@
 				q_cmbParse("combM14", ',延交不說明,品質不良延交,排程滿檔延交,設備故障延交,原料不足延交,人力不足延交,提早交貨,合理延交','s');
 				
 				$('#btnImport_uj').click(function(e){
-				        var t_where = "where=^^ odate='" + $('#txtBldate').val() + "' ^^";
+				        var t_where = "where=^^ odate='" + $('#txtBldate').val() + "' and not exists(select * from ordps where view_ordcs.noa=ordbno and view_ordcs.no2=no2) ^^";
                         q_gt('view_ordcs', t_where, 0, 0, 0, "");
                 });
 							
@@ -92,8 +92,8 @@
 				switch (t_name) {
 				    case 'view_ordcs':
                         var as = _q_appendData("view_ordcs", "", true);
-                        q_gridAddRow(bbsHtm, 'tbbs', 'txtOrdbno,txtNo2,txtProductno,txtProduct,txtTggno,txtTgg,txtKind,txtSpec,txtMount,textUnit,textM2,txtTotal'
-                        , as.length, as, 'noa,no2,productno,product,tggno,comp,type,sizea,dime,unit2,trandate,rdate', 'txtProductno,txtProduct','');
+                        q_gridAddRow(bbsHtm, 'tbbs', 'txtOrdbno,txtNo2,txtProductno,txtProduct,txtTggno,txtTgg,txtKind,txtSpec,txtMount,txtUnit,textM2,txtTotal'
+                        , as.length, as, 'noa,no2,productno,product,tggno,comp,type,sizea,dime,unit,trandate,rdate', 'txtProductno,txtProduct','');
                         for ( i = 0; i < q_bbsCount; i++) {
                             if (i < as.length) {
                             }else{
@@ -188,7 +188,7 @@
 			function _btnSeek() {
 				if (q_cur > 0 && q_cur < 4)
 					return;
-				q_box('ordp_uj_s.aspx', q_name + '_s', "500px", "420px", q_getMsg("popSeek"));
+				q_box('ordp_s.aspx', q_name + '_s', "500px", "420px", q_getMsg("popSeek"));
 			}
 
 			function sum() {

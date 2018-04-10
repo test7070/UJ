@@ -103,7 +103,12 @@ declare @t_datea nvarchar(10) = [3]
 declare @r_accy nvarchar(10) = [4]
 declare @t_ordbno nvarchar(50) = (select MAX(noa) from view_ordb where datea=@t_datea)
 
-declare @tmp table(
+IF OBJECT_ID('tempdb..#tmp')is not null
+BEGIN
+	drop table #tmp
+END
+
+create table #tmp(
 	gno nvarchar(1),
 	rr int,
 	noa nvarchar(50),
@@ -141,7 +146,7 @@ declare @tmp table(
 	slit nvarchar(50),
 	memo nvarchar(max)
 )
-insert @tmp
+insert #tmp
 select '1','',@t_key+replace(@t_datea,'/','')
 ,uccgano,tggno,case when len(c.comp)!=0 then c.comp else b.comp end
 ,case when len(c.nick)!=0 then c.nick else b.comp end ,c.tel,c.fax,c.zip_comp,c.addr_comp,a.noa,noq,productno,product
@@ -150,43 +155,60 @@ select '1','',@t_key+replace(@t_datea,'/','')
 from ordrs b left join ordr a on a.noa=b.noa
 left join tgg c on b.tggno=c.noa
 where a.noa=@t_noa
+and gweight!=0 and weight!=0
 and not exists(select tggno from view_ordb where b.tggno=tggno and a.noa=workgno)
 
-insert @tmp(gno,kind2,tggno,tgg,nick,noa,ordeno,tel,fax,post,addr)
+insert #tmp(gno,kind2,tggno,tgg,nick,noa,ordeno,tel,fax,post,addr)
 select '0',kind2,tggno,tgg,nick,noa,ordeno,tel,fax,post,addr
-from @tmp
+from #tmp
 group by kind2,tggno,tgg,nick,noa,ordeno,tel,fax,post,addr
 
-update a
-set rr=rx,noa=noa+REPLICATE('0',3-LEN(rx)) + RTRIM(CAST(rx AS CHAR))
-from (select ROW_NUMBER()over(partition by gno order by tggno)rx,rr,noa from @tmp where gno='0')a
+if(isnull(@t_ordbno,'')='') 
+begin
+	update a
+	set rr=rx,noa=noa+REPLICATE('0',3-LEN(rx)) + RTRIM(CAST(rx AS CHAR))
+	from (select ROW_NUMBER()over(partition by gno order by tggno)rx,rr,noa from #tmp where gno='0')a
+end
+else
+begin
+	update a
+	set rr=rx,noa=noa+REPLICATE('0',3-LEN(right(@t_ordbno,3)+rx)) + RTRIM(CAST(right(@t_ordbno,3)+rx AS CHAR))
+	from (select ROW_NUMBER()over(partition by gno order by tggno)rx,rr,noa from #tmp where gno='0')a
+end
 
 update a
 set rr=rx,noa=noa+REPLICATE('0',3-LEN(rx)) + RTRIM(CAST(rx AS CHAR))
-from (select ROW_NUMBER()over(partition by gno,tggno,tgg order by ordeno,no2)rx,rr,noa from @tmp where gno='1')a
+from (select ROW_NUMBER()over(partition by gno,tggno,tgg order by ordeno,no2)rx,rr,noa from #tmp where gno='1')a
 
-update @tmp
+update #tmp
 set noa=b.noa
-from @tmp a
-outer apply(select noa from @tmp where tggno=a.tggno and a.tgg=tgg and gno='0')b
+from #tmp a
+outer apply(select noa from #tmp where tggno=a.tggno and a.tgg=tgg and gno='0')b
 where gno='1'
+
+select * from #tmp
 
 Begin Transaction [Trans_Name]
 begin try
 
-		exec("insert ordb"+@r_accy+"(noa,kind2,tggno,nick,tgg,tel,fax,post,addr,odate,workgno)
-		select noa,kind2,tggno,tgg,nick,tel,fax,post,addr,@t_datea,ordeno
-		from @tmp
-		where gno='0'")
+	exec("insert ordb"+@r_accy+"(noa,kind2,tggno,nick,tgg,tel,fax,post,addr,odate,workgno)
+	select noa,kind2,tggno,tgg,nick,tel,fax,post,addr,'"+@t_datea+"',ordeno
+	from #tmp
+	where gno='0'")
 
-		exec("insert ordbs"+@r_accy+"(noa,no3,ordeno,no2,tggno,comp,productno,product,isnotdeal,scolor,theory,apv,ucolor,width,lengthb,unit,dime,weight,mount,radius,omount,size,stdmount,wmount,unit2,sizea,emount,slit,memo)
-		select noa,REPLICATE('0',3-LEN(rr)) + RTRIM(CAST(rr AS CHAR)),ordeno,no2,tggno,tgg,productno,product,isnotdeal,scolor,theory,apv,ucolor,width,lengthb,unit,dime,weight,mount,radius,omount,size,stdmount,wmount,unit2,sizea,emount,slit,memo
-		from @tmp
-		where gno='1'")
-	
+	exec("insert ordbs"+@r_accy+"(noa,no3,ordeno,no2,tggno,comp,productno,product,isnotdeal,scolor,theory,apv,ucolor,width,lengthb,unit,dime,weight,mount,radius,omount,size,stdmount,wmount,unit2,sizea,emount,slit,memo)
+	select noa,REPLICATE('0',3-LEN(rr)) + RTRIM(CAST(rr AS CHAR)),ordeno,no2,tggno,tgg,productno,product,isnotdeal,scolor,theory,apv,ucolor,width,lengthb,unit,dime,weight,mount,radius,omount,size,stdmount,wmount,unit2,sizea,emount,slit,memo
+	from #tmp
+	where gno='1'")
+
 Commit Transaction [Trans_Name] -- 提交所有操作所造成的變更
 end try
 begin catch
 	Rollback Transaction [Trans_Name] -- 復原所有操作所造成的變更
 end catch
+
+IF OBJECT_ID('tempdb..#tmp')is not null
+BEGIN
+	drop table #tmp
+END
 ;
