@@ -92,7 +92,7 @@
 				switch (t_name) {
 				    case 'view_ordcs':
                         var as = _q_appendData("view_ordcs", "", true);
-                        q_gridAddRow(bbsHtm, 'tbbs', 'txtOrdbno,txtNo2,txtProductno,txtProduct,txtTggno,txtTgg,txtKind,txtSpec,txtMount,textM1,textM2,txtTotal'
+                        q_gridAddRow(bbsHtm, 'tbbs', 'txtOrdbno,txtNo2,txtProductno,txtProduct,txtTggno,txtTgg,txtKind,txtSpec,txtMount,textUnit,textM2,txtTotal'
                         , as.length, as, 'noa,no2,productno,product,tggno,comp,type,sizea,dime,unit2,trandate,rdate', 'txtProductno,txtProduct','');
                         for ( i = 0; i < q_bbsCount; i++) {
                             if (i < as.length) {
@@ -118,7 +118,7 @@
 				}
 				
 				for (var i=0; i<q_bbsCount; i++){
-                    var ts1=$('#textM1_'+i).val()==''?'':$('#textM1_'+i).val();
+                    //var ts1=$('#textM1_'+i).val()==''?'':$('#textM1_'+i).val();
                     var ts2=$('#textM2_'+i).val()==''?'':$('#textM2_'+i).val();
                     var ts3=$('#textM3_'+i).val()==''?'':$('#textM3_'+i).val();
                     var ts4=$('#textM4_'+i).val()==''?'':$('#textM4_'+i).val();
@@ -132,7 +132,7 @@
                     var ts12=$('#textM12_'+i).val()==''?'':$('#textM12_'+i).val();
                     var ts13=$('#textM13_'+i).val()==''?'':$('#textM13_'+i).val();
                     var ts14=$('#textM14_'+i).val()==''?'':$('#textM14_'+i).val();
-                    $('#txtContent_'+i).val(ts1+"#^#"+ts2+"#^#"+ts3+"#^#"+ts4+"#^#"+ts5+"#^#"+ts6
+                    $('#txtContent_'+i).val(ts2+"#^#"+ts3+"#^#"+ts4+"#^#"+ts5+"#^#"+ts6
                     +"#^#"+ts7+"#^#"+ts8+"#^#"+ts11+"#^#"+ts12+"#^#"+ts13+"#^#"+ts14);
                 }
 				
@@ -153,22 +153,22 @@
                 for (var i=0; i<q_bbsCount; i++){
                     var t_style=$('#txtContent_'+i).val().split('#^#');
                     
-                    var ts1=t_style[0]==undefined?'':t_style[0];
-                    var ts2=t_style[1]==undefined?'':t_style[1];
-                    var ts3=t_style[2]==undefined?'':t_style[2];
-                    var ts4=t_style[3]==undefined?'':t_style[3];
-                    var ts5=t_style[4]==undefined?'':t_style[4];
-                    var ts6=t_style[5]==undefined?'':t_style[5];
-                    var ts7=t_style[6]==undefined?'':t_style[6];
-                    var ts8=t_style[7]==undefined?'':t_style[7];
+                    //var ts1=t_style[0]==undefined?'':t_style[0];
+                    var ts2=t_style[0]==undefined?'':t_style[0];
+                    var ts3=t_style[1]==undefined?'':t_style[1];
+                    var ts4=t_style[2]==undefined?'':t_style[2];
+                    var ts5=t_style[3]==undefined?'':t_style[3];
+                    var ts6=t_style[4]==undefined?'':t_style[4];
+                    var ts7=t_style[5]==undefined?'':t_style[5];
+                    var ts8=t_style[6]==undefined?'':t_style[6];
                     //var ts9=t_style[8]==undefined?'':t_style[8];
                     //var ts10=t_style[9]==undefined?'':t_style[8];
-                    var ts11=t_style[8]==undefined?'':t_style[8];
-                    var ts12=t_style[9]==undefined?'':t_style[9];
-                    var ts13=t_style[10]==undefined?'':t_style[10];
-                    var ts14=t_style[11]==undefined?'':t_style[11];
+                    var ts11=t_style[7]==undefined?'':t_style[7];
+                    var ts12=t_style[8]==undefined?'':t_style[8];
+                    var ts13=t_style[9]==undefined?'':t_style[9];
+                    var ts14=t_style[10]==undefined?'':t_style[10];
                     
-                    $('#textM1_'+i).val(ts1);
+                    //$('#textM1_'+i).val(ts1);
                     $('#textM2_'+i).val(ts2);
                     $('#textM3_'+i).val(ts3);
                     $('#textM4_'+i).val(ts4);
@@ -376,7 +376,7 @@
 				showS19();
 			}
 			function btnPrint() {
-				//q_box('z_ordp_uj.aspx' + "?;;;noa=" + trim($('#txtNoa').val()) + ";" + r_accy, '', "95%", "95%", q_getMsg("popPrint"));
+				q_box('z_ordpp_uj.aspx' + "?;;;noa=" + trim($('#txtNoa').val()) + ";" + r_accy, '', "95%", "95%", q_getMsg("popPrint"));
 			}
 
 			function wrServer(key_value) {
@@ -426,9 +426,9 @@
                                 $('#textM9_'+j).val('追蹤');
                        
                     }else if(r_len=='4' &&  t_odate!=''){
-                           var Date_A = new Date(dec(q_date().substr(0,4))+1911,dec(q_date().substr(6,2)),dec(q_date().substr(9,2)),0,0,0);  
-                           var Date_B = new Date(dec(t_odate.substr(0,4))+1911,dec(t_odate.substr(6,2)),dec(t_odate.substr(9,2)),0,0,0);
-                           var Date_c = new Date(dec($('#textM2_' + j).val().substr(0,4))+1911,dec($('#textM2_' + j).val().substr(6,2)),dec($('#textM2_' + j).val().substr(9,2)),0,0,0);
+                           var Date_A = new Date(dec(q_date().substr(0,4)),dec(q_date().substr(6,2)),dec(q_date().substr(9,2)),0,0,0);  
+                           var Date_B = new Date(dec(t_odate.substr(0,4)),dec(t_odate.substr(6,2)),dec(t_odate.substr(9,2)),0,0,0);
+                           var Date_c = new Date(dec($('#textM2_' + j).val().substr(0,4)),dec($('#textM2_' + j).val().substr(6,2)),dec($('#textM2_' + j).val().substr(9,2)),0,0,0);
                            var diff=q_div((Date_B-Date_A),86400000);
                            $('#textPrice_'+j).val(diff);
                     }else{
@@ -725,7 +725,7 @@
                         </td>
                         <td><input id="txtSpec.*" type="text" class="txt c1" style="width:97%;"/></td>
                         <td><input id="txtMount.*" type="text" class="txt c1 num" style="width:97%;"/></td>
-                        <td><input id="textM1.*" type="text" class="txt c1" style="width:97%;"/></td>
+                        <td><input id="txtUnit.*" type="text" class="txt c1" style="width:97%;"/></td>
                         <td><input id="textM2.*" type="text" class="txt c1" style="width:97%;"/></td>
                         <td><input id="textM3.*" type="text" class="txt c1" style="width:97%;"/></td>
                         <td><input id="textM4.*" type="text" class="txt c1" style="width:97%;"/></td>
