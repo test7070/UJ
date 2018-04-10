@@ -26,7 +26,7 @@
 			var q_name = "cng";
 			var q_readonly = ['txtNoa', 'txtWorker', 'txtWorker2', 'txtWeight', 'txtMount'];
 			var q_readonlys = [];
-			var bbmNum = [['txtPrice', 15, 3, 1], ['txtWeight', 15, 3, 1], ['txtTranmoney', 10, 0, 1]];
+			var bbmNum = [['txtPrice', 15, 3, 1],['txtTranmoney', 10, 0, 1]];
 			var bbsNum = [['textSize1', 10, 3, 1], ['textSize2', 10, 2, 1], ['textSize3', 10, 3, 1], ['textSize4', 10, 2, 1], ['txtMount', 10, 0, 1], ['txtWeight', 15, 2, 1]];
 			var bbmMask = [];
 			var bbsMask = [];
@@ -41,7 +41,7 @@
 			,['txtStoreinno_', '', 'store', 'noa,store', 'txtStoreinno_', 'store_b.aspx']
 			, ['txtTggno', 'lblTgg', 'tgg', 'noa,comp', 'txtTggno,txtTgg', 'tgg_b.aspx']
 			, ['txtCardealno', 'lblCardeal', 'cardeal', 'noa,comp', 'txtCardealno,txtCardeal', 'cardeal_b.aspx']
-			, ['txtUno_', 'btnUno_', 'view_uccc', 'uno,uno,productno,class,product,unit,radius,width,dime,lengthb,spec,spec,emount,eweight', '0txtUno_,txtUno_,txtProductno_,txtClass_,txtProduct_,txtUnit_,txtRadius_,txtWidth_,txtDime_,txtLengthb_,txtSpec_,combSpec_,txtMount_,txtWeight_', 'uccc_seek_b.aspx?;;;1=0', '95%', '60%']
+			//, ['txtUno_', 'btnUno_', 'view_uccc', 'uno,uno,productno,class,product,unit,radius,width,dime,lengthb,spec,spec,emount,eweight', '0txtUno_,txtUno_,txtProductno_,txtClass_,txtProduct_,txtUnit_,txtRadius_,txtWidth_,txtDime_,txtLengthb_,txtSpec_,combSpec_,txtMount_,txtWeight_', 'uccc_seek_b.aspx?;;;1=0', '95%', '60%']
 			, ['txtProductno_', 'btnProduct_', 'ucc', 'noa,product', 'txtProductno_,txtProduct_', 'ucc_b.aspx']
 			, ['txtStyle_', 'btnStyle_', 'style', 'noa,product', 'txtStyle_', 'style_b.aspx']);
 			
@@ -73,7 +73,7 @@
                 if (t_price != 0) {
                     $('#txtTranmoney').val(FormatNumber(round(q_mul(t_weight, t_price), 0)));
                 }
-				$('#txtWeight').val(FormatNumber(t_weight));
+				//$('#txtWeight').val(FormatNumber(t_weight));
 				$('#txtMount').val(FormatNumber(t_mount));
 			}
 
@@ -405,6 +405,14 @@
 
 			function readonly(t_para, empty) {
 				_readonly(t_para, empty);
+                if(t_para){
+                    $('#txtDatea').datepicker('destroy');
+                    $('#btnOrde').attr('disabled','disabled');
+                }else{
+                    $('#txtDatea').datepicker();
+                    $('#btnOrde').removeAttr('disabled');
+                }
+
 				size_change();
 				refreshBbs();
 			}
@@ -768,16 +776,16 @@
 					</tr>
 					<tr>
 						<td><span> </span><a id="lblCardeal" class="lbl btn"> </a></td>
-						<td colspan="3">
-							<input id="txtCardealno" type="text"  class="txt c4"/>
-							<input id="txtCardeal" type="text"  class="txt c5"/>
+						<td>
+						<input id="txtCardealno" type="text"  class="txt c4"/>
+						<input id="txtCardeal" type="text"  class="txt c5"/>
 						</td>
 						<td><span> </span><a id="lblCarno" class="lbl" > </a></td>
 						<td><input id="txtCarno" type="text" class="txt c1"/></td>
+						<td></td>
+						<td><input id="btnOrde" type="button" value="訂單匯入" style="width:100%;"/></td>
 					</tr>
 					<tr>
-						<td><span> </span><a id="lblWeight" class="lbl" > </a></td>
-						<td><input id="txtWeight"   type="text" class="txt c1 num"/></td>
 						<td><span> </span><a id="lblWorker" class="lbl"> </a></td>
 						<td><input id="txtWorker" type="text"  class="txt c1"/></td>
 						<td><span> </span><a id="lblWorker2" class="lbl"> </a></td>
@@ -788,7 +796,6 @@
 						<td><input id="txtPrice"   type="text" class="txt c1 num"/></td>
 						<td><span> </span><a id="lblTranmoney" class="lbl" > </a></td>
 						<td><input id="txtTranmoney"   type="text" class="txt c1 num"/></td>
-						<td><input id="btnOrde" type="button" value="訂單匯入" style="width:100%;"/></td>
 					</tr>
 					<tr>
 						<td><span> </span><a id="lblMemo" class="lbl"> </a></td>
@@ -804,9 +811,9 @@
 					<td style="width:2%;"> </td>
 					<td align="center" style="width:190px;"><a id='lblUno_st'> </a></td>
 					<td align="center" style="width:120px;"><a>品號<BR>品名</a></td>
+					<td align="center" style="width:80px;"><a>類別</a></td>
 					<td align="center" style="width: 45px;"><a id='lblUnit_st'> </a></td>
 					<td align="center" style="width: 100px;"><a id='lblMount_st'> </a></td>
-					<td align="center" style="width: 100px;"><a id='lblWeight_st'> </a></td>
 					<td align="center" style="width: 80px;"><a>調出倉</a></td>
 					<td align="center" style="width: 80px;"><a>調入倉</a></td>
 					<td align="center" ><a id='lblMemo_st'> </a></td>
@@ -823,9 +830,9 @@
 						<input type="text" id="txtProduct.*" style="width:95%;" />
 						<input class="btn" id="btnProduct.*" type="button" style="display:none;"/>
 					</td>
+					<td><input class="txt c1" id="txtClass.*" type="text" /></td>
 					<td><input class="txt c1" id="txtUnit.*" type="text" /></td>
 					<td><input class="txt num c1" id="txtMount.*" type="text"/></td>
-					<td><input class="txt num c1" id="txtWeight.*" type="text" /></td>
 					<td><input class="txt c1" id="txtStoreno.*" type="text" /></td>
 					<td><input class="txt c1" id="txtStoreinno.*" type="text" /></td>
 					<td>

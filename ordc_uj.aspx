@@ -41,9 +41,9 @@
 			brwNowPage = 0;
 			brwKey = 'Odate';
 			aPop = new Array(
-				['txtProductno1_', 'btnProduct1_', 'ucaucc2', 'noa,product,unit', 'txtProductno1_,txtProduct_,txtUnit_', 'ucaucc2_b.aspx'],
-				['txtProductno2_', 'btnProduct2_', 'bcc', 'noa,product,unit', 'txtProductno2_,txtProduct_,txtUnit_,txtMount_', 'bcc_b.aspx'],
-				['txtProductno3_', 'btnProduct3_', 'fixucc', 'noa,namea,unit', 'txtProductno3_,txtProduct_,txtUnit_,txtMount_', 'fixucc_b.aspx'],
+				['txtProductno1_', 'btnProduct1_', 'ucaucc2', 'noa,product,unit', 'txtProductno1_,txtProduct_,txtUnit2_', 'ucaucc2_b.aspx'],
+				['txtProductno2_', 'btnProduct2_', 'bcc', 'noa,product,unit', 'txtProductno2_,txtProduct_,txtUnit2_,txtMount_', 'bcc_b.aspx'],
+				['txtProductno3_', 'btnProduct3_', 'fixucc', 'noa,namea,unit', 'txtProductno3_,txtProduct_,txtUnit2_,txtMount_', 'fixucc_b.aspx'],
 				['txtSalesno', 'lblSales', 'sss', 'noa,namea', 'txtSalesno,txtSales', 'sss_b.aspx'],
 				['txtCno', 'lblAcomp', 'acomp', 'noa,acomp,addr', 'txtCno,txtAcomp,txtAddr2', 'acomp_b.aspx'],
 				['txtTggno', 'lblTgg', 'tgg', 'noa,comp,trantype,paytype,salesno,sales,tel,fax,zip_comp,addr_comp'
@@ -214,7 +214,7 @@
                             }
                             
                             ret = q_gridAddRow(bbsHtm, 'tbbs', 
-                                'txtProductno,txtProduct,txtDime,txtWeight,txtMount,txtUnit2,txtUcolor,txtOrdbno,txtNo3', b_ret.length, b_ret, 
+                                'txtProductno,txtProduct,txtDime,txtWeight,txtMount,txtUnit,txtUcolor,txtOrdbno,txtNo3', b_ret.length, b_ret, 
                                 'productno,product,dime,weight,mount,unit,scolor,noa,no3', 'txtProductno,txtProduct');
                             for (var i = 0; i< q_bbsCount; i++) {
                                 var t_where = "where=^^ noa='" + $('#txtProductno_'+i).val() + "' ^^";
@@ -265,7 +265,7 @@
                             for (var i = 0; i< q_bbsCount; i++) {
                                 if($('#txtProductno_'+i).val()==as[0].noa){
                                    $('#txtSizea_'+i).val(as[0].area);
-                                   $('#txtUnit_'+i).val(as[0].unit);
+                                   $('#txtUnit2_'+i).val(as[0].unit);
                                 }
                                 var t_where = "where=^^ tggno='"+$('#txtTggno').val()+"' and productno='"+$('#txtProductno_'+i).val()+"' order by datea desc^^ stop=1";
                                 q_gt('view_rc2s', t_where, 0, 0, 0, "rc2s");
@@ -502,7 +502,7 @@
 				for (var j = 0; j < q_bbsCount; j++) {
 				    $('#lblNo_'+j).text(j+1);
 					if (!$('#btnMinus_' + j).hasClass('isAssign')) {
-						$('#txtUnit_' + j).change(function() {
+						$('#txtUnit2_' + j).change(function() {
 							sum();
 						});
 						$('#txtMount_' + j).change(function() {
@@ -1304,9 +1304,9 @@
 					<td><input id="txtDime.*" type="text" class="txt num c1" /></td>
 					<td><input id="txtWeight.*" type="text" class="txt num c1" /></td>
 					<td><input id="txtMount.*" type="text" class="txt num c1" /></td>
-					<td><input id="txtUnit2.*" type="text" class="txt c1"/></td>
-                    <td><input id="txtWidth.*" type="text" class="txt num c1" /></td>
 					<td><input id="txtUnit.*" type="text" class="txt c1"/></td>
+                    <td><input id="txtWidth.*" type="text" class="txt num c1" /></td>
+					<td><input id="txtUnit2.*" type="text" class="txt c1"/></td>
 					<td><input id="txtPrice.*" type="text" class="txt num c1" /></td>
 					<td><input id="txtTotal.*" type="text" class="txt num c1" /></td>
 					<td class="aprice"><input id="chkAprice.*" type="checkbox" class="txt c1" /></td>

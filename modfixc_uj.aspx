@@ -149,23 +149,23 @@
                     if($('#textBtime3_'+i).val().length==0){
                         if($('#txtBtime2_'+i).val()=='B'){
                             if(t_mon=='2'){
-                                $('#txtMount_'+i).val(q_mul(dec($('#txtBebottom_'+i).val()),0.8));
+                                $('#txtMount_'+i).val(round(q_mul(dec($('#txtBebottom_'+i).val()),0.8),0));
                             }else if(t_mon=='9'){
-                                $('#txtMount_'+i).val(q_mul(dec($('#txtBebottom_'+i).val()),1.2));
+                                $('#txtMount_'+i).val(round(q_mul(dec($('#txtBebottom_'+i).val()),1.2),0));
                             }else{
                                 $('#txtMount_'+i).val(q_mul(dec($('#txtBebottom_'+i).val()),1));
                             }  
                         }else if($('#txtBtime2_'+i).val()=='C'){
                             if(t_mon=='2'){
-                                $('#txtMount_'+i).val(q_mul(dec($('#txtBebottom_'+i).val()),0.8));
+                                $('#txtMount_'+i).val(round(q_mul(dec($('#txtBebottom_'+i).val()),0.8),0));
                             }else if(t_mon=='10' || t_mon=='11' || t_mon=='12'){
-                                $('#txtMount_'+i).val(q_mul(dec($('#txtBebottom_'+i).val()),1.2));
+                                $('#txtMount_'+i).val(round(q_mul(dec($('#txtBebottom_'+i).val()),1.2),0));
                             }else{
                                 $('#txtMount_'+i).val(q_mul(dec($('#txtBebottom_'+i).val()),1));
                             } 
                         }else{
                             if(t_mon=='2'){
-                                $('#txtMount_'+i).val(q_mul(dec($('#txtBebottom_'+i).val()),0.8));
+                                $('#txtMount_'+i).val(round(q_mul(dec($('#txtBebottom_'+i).val()),0.8),0));
                             }else{
                                 $('#txtMount_'+i).val(q_mul(dec($('#txtBebottom_'+i).val()),1));
                             }
@@ -183,17 +183,17 @@
                     if($('#textEtime2_'+i).val().length==0){
                         if($('#txtBtime2_'+i).val()=='B'){
                             if(t_mon=='2'){
-                                $('#txtWeight_'+i).val(q_mul(dec($('#txtBebottom_'+i).val()),0.8));
+                                $('#txtWeight_'+i).val(round(q_mul(dec($('#txtBebottom_'+i).val()),0.8),0));
                             }else if(t_mon=='9'){
-                                $('#txtWeight_'+i).val(q_mul(dec($('#txtBebottom_'+i).val()),1.2));
+                                $('#txtWeight_'+i).val(round(q_mul(dec($('#txtBebottom_'+i).val()),1.2),0));
                             }else{
                                 $('#txtWeight_'+i).val(q_mul(dec($('#txtBebottom_'+i).val()),1));
                             }  
                         }else if($('#txtBtime2_'+i).val()=='C'){
                             if(t_mon=='2'){
-                                $('#txtWeight_'+i).val(q_mul(dec($('#txtBebottom_'+i).val()),0.8));
+                                $('#txtWeight_'+i).val(round(q_mul(dec($('#txtBebottom_'+i).val()),0.8),0));
                             }else if(t_mon=='10' || t_mon=='11' || t_mon=='12'){
-                                $('#txtWeight_'+i).val(q_mul(dec($('#txtBebottom_'+i).val()),1.2));
+                                $('#txtWeight_'+i).val(round(q_mul(dec($('#txtBebottom_'+i).val()),1.2),0));
                             }else{
                                 $('#txtWeight_'+i).val(q_mul(dec($('#txtBebottom_'+i).val()),1));
                             } 
@@ -201,7 +201,7 @@
                             $('#txtWeight_'+i).val($('#txtBebottom_'+i).val());
                         }else{
                             if(t_mon=='2'){
-                                $('#txtWeight_'+i).val(q_mul(dec($('#txtBebottom_'+i).val()),0.8));
+                                $('#txtWeight_'+i).val(round(q_mul(dec($('#txtBebottom_'+i).val()),0.8),0));
                             }else{
                                 $('#txtWeight_'+i).val(q_mul(dec($('#txtBebottom_'+i).val()),1));
                             }
@@ -256,6 +256,10 @@
                     });
                     
                     $('#txtLoss_' + j).change(function() {
+                            sum();
+                    });
+                    
+                    $('#txtMount_' + j).change(function() {
                             sum();
                     });
 				}				

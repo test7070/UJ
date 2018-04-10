@@ -359,7 +359,7 @@
 				_btnIns();
 				$('#txtWorkgno').change(function() {
                     if($('#txtWorkgno').val().length!=0){
-                        t_where = "where=^^ noa='"+$('#txtWorkgno').val()+"' ^^";
+                        t_where = "where=^^ noa='"+$('#txtWorkgno').val()+"' and not exists(select * from orda where modfixc.noa=workgno) ^^";
                         q_gt('modfixc', t_where, 0, 0, 0, "", r_accy);
                     }
                 });

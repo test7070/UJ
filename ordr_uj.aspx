@@ -106,7 +106,7 @@
                         break;
                     case 'qtxt.query.ordr_orda':
                         var as = _q_appendData("tmp0", "", true, true);
-                            q_gridAddRow(bbtHtm, 'tbbs', 'txtOrdano,txtOrdanoq,txtProductno,txtProduct,txtSpec,txtUnit,txtSmount,txtWorkdate,txtApvmount,txtFmount,txtTggno,txtComp,txtNetmount,txtTypea,txtSchmount,txtStkmount,txtStyle'
+                            q_gridAddRow(bbtHtm, 'tbbs', 'txtOrdano,txtOrdanoq,txtProductno,txtProduct,txtSpec,txtUnit,txtSmount,txtWorkdate,txtApvmount,txtFmount,txtTggno,txtComp,txtNetmount,txtTypea,txtStkmount,txtSchmount,txtStyle'
                             , as.length, as, 'noa,noq,productno,product,spec,unit,smount,workdate,apvmount,fmount,tggno,comp,netmount,typea,stkmount,schmount,style', 'txtOrdano,txtOrdanoq,txtProductno,txtProduct');
                         break;
                     case 'qtxt.query.ordr2ordb':
@@ -240,7 +240,7 @@
 			function _btnSeek() {
 				if (q_cur > 0 && q_cur < 4)
 					return;
-				q_box('ordr_uj_s.aspx', q_name + '_s', "500px", "420px", q_getMsg("popSeek"));
+				q_box('ordr_s.aspx', q_name + '_s', "500px", "420px", q_getMsg("popSeek"));
 			}
 
 			function sum() {		
