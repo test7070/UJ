@@ -22,10 +22,14 @@
             q_tables = 't';
             var q_name = "modcuw";
             var q_readonly = ['txtNoa', 'txtWorker', 'txtWorker2'];
-            var q_readonlys = [];
-            var q_readonlyt = [];
+            var q_readonlys = ['txtMech','txtAddtime','txtFaulttime','txtWaitfedtime','txtClassk'];
+            var q_readonlyt = ['txtMech'];
             var bbmNum = [];
-            var bbsNum = [];
+            var bbsNum = [
+            	['txtBorntime',15,0,1],['txtAddtime',10,1,1],['txtChgfre',10,0,1],
+            	['txtChgtime',15,0,1],['txtFaulttime',10,1,1],['txtDelaytime',10,0,1],
+            	['txtWaittime',15,0,1],['txtWaitfedtime',10,1,1],['txtLacksss',10,0,1],['txtClassk',10,0,1]
+            ];
             var bbtNum = [];
             var bbmMask = [];
             var bbsMask = [];
@@ -38,7 +42,8 @@
             brwCount2 = 4;
 
             aPop = new Array(
-            	['txtCustno', 'lblTgg', 'cust', 'noa,nick', 'txtTggno,txtTgg', 'cust_b.aspx']
+            	['txtMechno_', '', 'cust', 'noa,nick', 'txtMechno_,txtMech_', 'cust_b.aspx'],
+            	['txtMechno__', '', 'cust', 'noa,nick', 'txtMechno__,txtMech__', 'cust_b.aspx']
             );
 
             $(document).ready(function() {
@@ -60,9 +65,15 @@
             function mainPost() {
                 q_getFormat();
                 bbmMask = [['txtDatea', r_picd]];
+                bbsMask = [['txtBdate', r_picd],['txtEdate', r_picd]];
                 q_mask(bbmMask);
                 
                 document.title='績效達成回饋獎勵主檔';
+                
+                $('#btnClosesModcuwt').click(function() {
+                	$('#textMechno').val('');
+                	$('#dbbt').hide();
+				});
             }
             
             function q_boxClose(s2) {
@@ -108,21 +119,131 @@
                     return;
                 //q_box('modcuw_s.aspx', q_name + '_s', "550px", "450px", q_getMsg("popSeek"));
             }
-
+			
+			var t_orgcustno='',t_orgcust='';
             function bbsAssign() {
                 for (var i = 0; i < q_bbsCount; i++) {
                     $('#lblNo_' + i).text(i + 1);
                     if (!$('#btnMinus_' + i).hasClass('isAssign')) {
+                    	
+                    	$('#txtMechno_'+i).focusin(function() {
+                    		t_IdSeq = -1;
+							q_bodyId($(this).attr('id'));
+							b_seq = t_IdSeq;
+							t_orgcustno=$('#txtMechno_'+b_seq).val();
+							t_orgcust=$('#txtMech_'+b_seq).val();
+						});
+                    	
+                    	$('#txtMechno_'+i).blur(function() {
+                    		t_IdSeq = -1;
+							q_bodyId($(this).attr('id'));
+							b_seq = t_IdSeq;
+							
+						});
+                    	
                     	$('#btnBbt_'+i).click(function(e) {
                     		t_IdSeq = -1;
 							q_bodyId($(this).attr('id'));
 							b_seq = t_IdSeq;
-                    		if(emp($('#txtMechno_'+i).val())){
+                    		if(emp($('#txtMechno_'+b_seq).val())){
                     			alert('請先輸入(母公司)客戶編號!!');
                     		}else{
-                    			//$('#dbbt').show();
+                    			var t_custno=$('#txtMechno_'+b_seq).val();
+                    			$('#textMechno').val(t_custno);
+                    			for (var i = 0; i < q_bbtCount; i++) {
+                    				if($('#txtWorktime__'+i).val()==t_custno || (emp($('#txtWorktime__'+i).val()) && emp($('#txtMechno__'+i).val()))){
+                    					$('#bbtid__'+i).show();
+                    				}else{
+                    					$('#bbtid__'+i).hide();
+                    				}
+                    			}
+                    			$('#dbbt').css('top', e.pageY+5);
+								$('#dbbt').css('left', e.pageX-$('#dbbt').width()-25);
+                    			$('#dbbt').show();
                     		}
 						});
+						
+						$('#txtBorntime_'+i).change(function() {
+							t_IdSeq = -1;
+							q_bodyId($(this).attr('id'));
+							b_seq = t_IdSeq;
+							var t_money=dec($('#txtBorntime_'+b_seq).val());
+							
+							$('#txtAddtime_'+b_seq).val(round(q_div(t_money,1000000),1));
+						});
+						
+						$('#txtChgtime_'+i).change(function() {
+							t_IdSeq = -1;
+							q_bodyId($(this).attr('id'));
+							b_seq = t_IdSeq;
+							var t_money=dec($('#txtChgtime_'+b_seq).val());
+							
+							$('#txtFaulttime_'+b_seq).val(round(q_div(t_money,1000000),1));
+						});
+						
+						$('#txtWaittime_'+i).change(function() {
+							t_IdSeq = -1;
+							q_bodyId($(this).attr('id'));
+							b_seq = t_IdSeq;
+							var t_money=dec($('#txtWaittime_'+b_seq).val());
+							
+							$('#txtWaitfedtime_'+b_seq).val(round(q_div(t_money,1000000),1));
+						});
+						
+						$('#txtBdate_'+i).blur(function() {
+							t_IdSeq = -1;
+							q_bodyId($(this).attr('id'));
+							b_seq = t_IdSeq;
+							
+							var tbdate=$('#txtBdate_'+b_seq).val();
+							var tedate=$('#txtEdate_'+b_seq).val();
+							
+							if(tbdate.length>0 && tedate.length>0){
+								var tdatea = new Date();  
+								var tdateb = new Date();  								
+								
+								if(r_len==3){
+									tdatea = new Date(dec(tbdate.substr(0,r_len))+1911,dec(tbdate.substr(r_len+1,2)),dec(tbdate.substr(r_lenm+1,2)),0,0,0);  
+									tdateb = new Date(dec(tedate.substr(0,r_len))+1911,dec(tedate.substr(r_len+1,2)),dec(tedate.substr(r_lenm+1,2)),0,0,0);
+								}else{
+									tdatea = new Date(dec(tbdate.substr(0,r_len)),dec(tbdate.substr(r_len+1,2)),dec(tbdate.substr(r_lenm+1,2)),0,0,0);  
+									tdateb = new Date(dec(tedate.substr(0,r_len)),dec(tedate.substr(r_len+1,2)),dec(tedate.substr(r_lenm+1,2)),0,0,0);
+								}
+								var tdiff = tdateb-tdatea;
+								var dmon=round(tdiff/(1000 * 60 * 60 * 24 * 30),0)
+								$('#txtClassk_'+b_seq).val(dmon);
+							}else{
+								$('#txtClassk_'+b_seq).val('');
+							}
+						});
+						
+						$('#txtEdate_'+i).blur(function() {
+							t_IdSeq = -1;
+							q_bodyId($(this).attr('id'));
+							b_seq = t_IdSeq;
+							
+							var tbdate=$('#txtBdate_'+b_seq).val();
+							var tedate=$('#txtEdate_'+b_seq).val();
+							
+							if(tbdate.length>0 && tedate.length>0){
+								var tdatea = new Date();  
+								var tdateb = new Date();  								
+								
+								if(r_len==3){
+									tdatea = new Date(dec(tbdate.substr(0,r_len))+1911,dec(tbdate.substr(r_len+1,2)),dec(tbdate.substr(r_lenm+1,2)),0,0,0);  
+									tdateb = new Date(dec(tedate.substr(0,r_len))+1911,dec(tedate.substr(r_len+1,2)),dec(tedate.substr(r_lenm+1,2)),0,0,0);
+								}else{
+									tdatea = new Date(dec(tbdate.substr(0,r_len)),dec(tbdate.substr(r_len+1,2)),dec(tbdate.substr(r_lenm+1,2)),0,0,0);  
+									tdateb = new Date(dec(tedate.substr(0,r_len)),dec(tedate.substr(r_len+1,2)),dec(tedate.substr(r_lenm+1,2)),0,0,0);
+								}
+								var tdiff = tdateb-tdatea;
+								var dmon=round(tdiff/(1000 * 60 * 60 * 24 * 30),0)
+								$('#txtClassk_'+b_seq).val(dmon);
+							}else{
+								$('#txtClassk_'+b_seq).val('');
+							}
+						});
+						
                     }
                 }
                 _bbsAssign();
@@ -131,11 +252,61 @@
                 for (var i = 0; i < q_bbtCount; i++) {
                     $('#lblNo__' + i).text(i + 1);
                     if (!$('#btnMinut__' + i).hasClass('isAssign')) {
-                    	
+                    	$('#txtMechno__'+i).change(function() {
+                    		t_IdSeq = -1;
+							q_bodyId($(this).attr('id'));
+							b_seq = t_IdSeq;
+							
+							if(!emp($('#txtMechno__'+b_seq).val())){
+								$('#txtWorktime__'+b_seq).val('');
+							}
+						});
                     }
                 }
                 _bbtAssign();
             }
+            
+            function q_popPost(s1) {
+				switch (s1) {
+					case 'txtMechno_':
+						if(emp($('#txtMechno_'+b_seq).val())){
+							for (var j = 0; j < q_bbtCount; j++) {
+								if($('#txtWorktime__'+j).val()==t_orgcustno)
+									$('#btnMinut__'+j).click();
+							}
+						}else{
+							var t_custno=$('#txtMechno_'+b_seq).val();
+							var t_count=0;
+							for (var j = 0; j < q_bbsCount; j++) {
+								if($('#txtMechno_'+j).val()==t_custno){
+									t_count++;
+								}
+							}
+							if(t_count>1){
+								$('#txtMechno_'+b_seq).val(t_orgcustno);
+								$('#txtMech_'+b_seq).val(t_orgcust)
+								alert('母公司客戶編號重覆!!');
+							}else{
+								if($('#txtMechno_'+b_seq).val()!=t_orgcustno && t_orgcustno!=''){
+									for (var j = 0; j < q_bbtCount; j++) {
+										if($('#txtWorktime__'+j).val()==t_orgcustno)
+											$('#txtWorktime__'+j).val($('#txtMechno_'+b_seq).val());
+									}
+								}
+							}
+						}
+						t_orgcustno='';
+						break;
+					case 'txtMechno__':
+						var t_custno=$('#textMechno').val();
+						if(t_custno.length>0 && !emp($('#txtMechno__'+b_seq).val())){
+							$('#txtWorktime__'+b_seq).val(t_custno);
+						}else{
+							$('#txtWorktime__'+b_seq).val('');
+						}
+						break;
+				}
+			}
 
             function btnIns() {
                 _btnIns();
@@ -165,8 +336,17 @@
             }
 
             function bbsSave(as) {
-                if (!as['product']) {
+                if (!as['mechno']) {
                     as[bbsKey[1]] = '';
+                    return;
+                }
+                q_nowf();
+                return true;
+            }
+            
+            function bbtSave(as) {
+                if (!as['mechno']) {
+                    as[bbtKey[1]] = '';
                     return;
                 }
                 q_nowf();
@@ -497,12 +677,13 @@
         </div>
         <div id="dbbt" class="dbbt" style="position:absolute;display:none;">
         	<input id="btnClosesModcuwt" type="button" value="關閉" style=" float: right;"/>
+        	<input id="textMechno" type="hidden"/>
 			<BR>
             <table id="tbbt">
                 <tbody>
                     <tr class="head" style="color:white; background:#003366;">
                         <td style="width:30px;"><input id="btnPlut" type="button" style="font-size: medium; font-weight: bold;" value="+"/></td>
-                        <td style="width:30px;"> </td>
+                        <td style="width:30px;display: none;"> </td>
                         <td style="width:110px; text-align: center;"><a id='lblMechno_uj_t'>客戶編號</a></td>
                         <td style="width:140px; text-align: center;"><a id='lblMech_uj_t'>客戶簡稱</a></td>
                     </tr>
@@ -512,7 +693,7 @@
                             <input id="txtNoq..*" type="text" style="display:none;"/>
                             <input id="txtWorktime..*" type="hidden"/><!--bbs.mechno-->
                         </td>
-                        <td><a id="lblNo..*" style="font-weight: bold;text-align: center;display: block;"> </a></td>
+                        <td style="display: none;"><a id="lblNo..*" style="font-weight: bold;text-align: center;display: block;"> </a></td>
                         <td><input id="txtMechno..*" type="text" style="float:left;width:95%;"/></td>
                         <td><input id="txtMech..*" type="text" style="float:left;width:95%;"/></td>
                     </tr>
