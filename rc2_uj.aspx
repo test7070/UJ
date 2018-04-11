@@ -20,7 +20,7 @@
 			var decbbs = ['money', 'total', 'mount', 'price', 'sprice', 'dime', 'width', 'lengthb', 'weight2'];
 			var decbbm = ['payed', 'unpay', 'usunpay', 'uspayed', 'ustotal', 'discount', 'money', 'tax', 'total', 'weight', 'floata', 'mount', 'price', 'tranmoney', 'totalus'];
 			var q_readonly = ['txtNoa', 'txtAcomp', 'txtTgg', 'txtWorker', 'txtWorker2','txtTranstart','txtMoney','txtTotal'];
-			var q_readonlys = ['txtNoq','txtOrdeno','txtNo2','txtComp'];
+			var q_readonlys = ['txtNoq','txtOrdeno','txtNo2','txtUno','txtStore','txtProduct'];
 			var bbmNum = [];
 			var bbsNum = [];
 			var bbmMask = [];
@@ -611,7 +611,29 @@
 				$('#txtAccno').val(s1[0]);
 				
 				//產生批號
+				var tnoa=emp($('#txtNoa').val())?'#non':$('#txtNoa').val();
+				var tdatea=emp($('#txtDatea').val())?q_date():$('#txtDatea').val();
+				q_func('qtxt.query.genunos', 'orde_uj.txt,genunos,' + encodeURI(tnoa)+';'+encodeURI('rc2')+';'+encodeURI(r_accy)+';'+encodeURI(tdatea),r_accy,1);
+				var as = _q_appendData("tmp0", "", true, true);
+				if (as[0] != undefined) {
+					if(as[0].genuno=='Y'){
+						//表示有產生UNO重新抓取表身UNO
+						q_gt('view_rc2s', "where=^^ noa='"+tnoa+"'^^", 0, 0, 0, "getrc2s",r_accy,1);
+						var ass = _q_appendData("view_rc2s", "", true);
+						if (ass[0] != undefined) {
+							for ( i = 0; i < ass.length; i++) {
+								for (var j = 0; j < q_bbsCount; j++) {
+									if(ass[i].noa==$('#txtNoa').val() && ass[i].noq==$('#txtNoq_'+j).val()){
+										$('#txtUno_'+j).val(ass[i].uno);
+										break;
+									}
+								}
+							}
+						}
+					}
+				}
 				
+				Unlock(1);
 			}
 			
 			var check_startdate=false;
@@ -684,6 +706,10 @@
 				else
 					$('#txtWorker2').val(r_name);
 				sum();
+				
+				Lock(1, {
+					opacity : 0
+				});
 				
 				var t_noa = trim($('#txtNoa').val());
 				var t_date = trim($('#txtDatea').val());
