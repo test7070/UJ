@@ -21,7 +21,7 @@
 			var decbbs = ['mount', 'weight'];
 			var decbbm = ['mount'];
 			var q_readonly = ['txtNoa','txtWorker','txtWorker2', 'txtStore', 'txtStation', 'txtProcess', 'txtMech'];
-			var q_readonlys = ['txtWorkno', 'txtOrdeno', 'txtNo2'];
+			var q_readonlys = ['txtWorkno', 'txtOrdeno', 'txtNo2','txtProductno','txtProduct','txtSpec','txtStore'];
 			var bbmNum = [];
 			var bbsNum = [
 				['txtMount', 10, 0, 1], ['txtWeight', 15, 2, 1]
@@ -111,22 +111,51 @@
 					q_gtnoa(q_name, replaceAll(q_getPara('sys.key_worka') + (t_date.length == 0 ? q_date() : t_date), '/', ''));
 				else
 					wrServer(s1);
-				
-				
 			}
 			
 
 			function _btnSeek() {
 				if (q_cur > 0 && q_cur < 4)
 					return;
-				q_box('worka_uj_s.aspx', q_name + '_s', "500px", "410px", q_getMsg("popSeek"));
+				q_box('worka_uj_s.aspx', q_name + '_s', "500px", "350px", q_getMsg("popSeek"));
 			}
 
 			function bbsAssign() {
 				for (var i = 0; i < q_bbsCount; i++) {
 					$('#lblNo_' + i).text(i + 1);
 					if (!$('#btnMinus_' + i).hasClass('isAssign')) {
-						
+						$('#txtUno_'+i).change(function() {
+							t_IdSeq = -1;
+							q_bodyId($(this).attr('id'));
+							b_seq = t_IdSeq;
+							
+							var t_datea=emp($('#txtDatea').val())?q_date():$('#txtDatea').val();
+							if(!emp($('#txtUno_'+b_seq).val())){
+								q_func('qtxt.query.stk_uj', 'orde_uj.txt,stk_uj,' + encodeURI(t_datea)+';'+encodeURI($('#txtUno_'+b_seq).val())+';'+encodeURI('#non')+';'+encodeURI('#non')+';'+encodeURI($('#txtNoa').val())+';'+encodeURI('#non')+';'+encodeURI('#non'),r_accy,1);
+								var as = _q_appendData("tmp0", "", true, true);
+								if (as[0] != undefined) {
+									if((as[0].mount<=0 || as[0].weight<=0) && $('#cmbTypea').val()=='1'){
+										alert('【'+$('#txtUno_'+b_seq).val()+'】已無庫存量!!');
+										$('#txtUno_'+b_seq).val('');
+									}else{
+										$('#txtProductno_'+b_seq).val(as[0].productno);
+										$('#txtProduct_'+b_seq).val(as[0].product);
+										$('#txtSpec_'+b_seq).val(as[0].spec);
+										$('#txtStyle_'+b_seq).val(as[0].style);
+										$('#txtStoreno_'+b_seq).val(as[0].storeno);
+										$('#txtStore_'+b_seq).val(as[0].store);
+										
+										if($('#cmbTypea').val()=='1'){									
+											$('#txtMount_'+b_seq).val(as[0].mount);
+											$('#txtWeight_'+b_seq).val(as[0].weight);
+										}
+									}
+								}else{
+									alert('【'+$('#txtUno_'+b_seq).val()+'】批號不存在!!');
+								}
+							}
+							
+						});
 					}
 				}
 				_bbsAssign();
@@ -460,7 +489,10 @@
 						<!--<input class="btn" id="btnProductno.*" type="button" value='.' style="width:10%;" />-->
 					</td>
 					<td><input id="txtProduct.*" type="text" class="txt c1"/></td>
-					<td><input id="txtSpec.*" type="text" class="txt c1"/></td>
+					<td>
+						<input id="txtSpec.*" type="text" class="txt c1"/>
+						<input id="txtStyle.*" type="hidden" class="txt c1"/>
+					</td>
 					<td><input id="txtMount.*" type="text" class="txt c1 num"/></td>
 					<td><input id="txtWeight.*" type="text" class="txt c1 num"/></td>
 					<td>

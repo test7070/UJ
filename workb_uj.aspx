@@ -1,7 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" dir="ltr">
 	<head>
-		<title></title>
+		<title> </title>
 		<script src="../script/jquery.min.js" type="text/javascript"></script>
 		<script src='../script/qj2.js' type="text/javascript"></script>
 		<script src='qset.js' type="text/javascript"></script>
@@ -35,7 +35,8 @@
 			brwKey = 'Datea';
 			aPop = new Array(
 				['txtStoreno', 'lblStore', 'store', 'noa,store', 'txtStoreno,txtStore', 'store_b.aspx'],
-				['txtStoreno_', 'btnStore_', 'store', 'noa,store', 'txtStoreno_,txtStore_', 'store_b.aspx']
+				['txtStoreno_', 'btnStore_', 'store', 'noa,store', 'txtStoreno_,txtStore_', 'store_b.aspx'],
+				['txtProductno_', 'btnProductno_', 'uca', 'noa,product', 'txtProductno_,txtProduct_', 'uca_b.aspx']
 			);
 			$(document).ready(function() {
 				bbmKey = ['noa'];
@@ -118,7 +119,7 @@
 			function _btnSeek() {
 				if (q_cur > 0 && q_cur < 4)
 					return;
-				q_box('workb_uj_s.aspx', q_name + '_s', "500px", "410px", q_getMsg("popSeek"));
+				q_box('workb_uj_s.aspx', q_name + '_s', "500px", "310px", q_getMsg("popSeek"));
 			}
 
 			function bbsAssign() {
@@ -436,15 +437,15 @@
 						<input class="btn" id="btnPlus" type="button" value='＋' style="font-weight: bold;" />
 					</td>
 					<td align="center" style="width:20px;"> </td>
-					<td align="center" style="width:120px;"><a id='lblUno_s'>批號</a></td>
-					<td align="center" style="width:180px;"><a id='lblProductno_s'>料號</a></td>
-					<td align="center" style="width:180px;"><a id='lblProduct_s'>品名/參照</a></td>
-					<td align="center" style="width:95px;"><a id='lblSpec_s'>列管備註</a></td>
-					<td align="center" style="width:80px;"><a id='lblMount_s'>入庫數量</a></td>
-					<td align="center" style="width:80px;"><a id='lblWeight_s'>入庫長度</a></td>
-					<td align="center" style="width:150px;"><a id='lblStore_s'>倉庫</a></td>
+					<td align="center" style="width:120px;"><a id='lblUno_uj_s'>批號</a></td>
+					<td align="center" style="width:180px;"><a id='lblProductno_uj_s'>料號</a></td>
+					<td align="center" style="width:180px;"><a id='lblProduct_uj_s'>品名/參照</a></td>
+					<td align="center" style="width:110px;"><a id='lblSpec_uj_s'>列管備註</a><BR><a id='lblStyle_uj_s'>製造/加工備註</a></td>
+					<td align="center" style="width:80px;"><a id='lblMount_uj_s'>入庫數量</a></td>
+					<td align="center" style="width:80px;"><a id='lblWeight_uj_s'>入庫長度</a></td>
+					<td align="center" style="width:150px;"><a id='lblStore_uj_s'>倉庫</a></td>
 					<td align="center"><a id='lblMemo_s'>備註</a></td>
-					<td align="center" style="display: none;"><a id='lblWorkno_s'>日報表</a></td>
+					<td align="center" style="display: none;"><a id='lblWorkno_uj_s'>日報表</a></td>
 				</tr>
 				<tr style='background:#cad3ff;'>
 					<td>
@@ -457,7 +458,10 @@
 						<!--<input class="btn" id="btnProductno.*" type="button" value='.' style="width:10%;" />-->
 					</td>
 					<td><input id="txtProduct.*" type="text" class="txt c1"/></td>
-					<td><input id="txtSpec.*" type="text" class="txt c1"/></td>
+					<td>
+						<input id="txtSpec.*" type="text" class="txt c1"/>
+						<input id="txtStyle.*" type="text" class="txt c1"/>
+					</td>
 					<td><input id="txtMount.*" type="text" class="txt c1 num"/></td>
 					<td><input id="txtWeight.*" type="text" class="txt c1 num"/></td>
 					<td>

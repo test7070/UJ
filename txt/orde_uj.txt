@@ -184,8 +184,9 @@ end
 
 --刪除明細
 delete #tmp where typea!='99'
---刪除無庫存
-delete #tmp where weight<=0 and mount<=0
+--刪除無庫存(指定批號不刪除0)
+if(len(@t_uno)=0)
+	delete #tmp where weight<=0 and mount<=0
 
 --更新 名稱/參照,標準長,類別,倉庫
 update a 
