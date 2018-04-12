@@ -476,7 +476,7 @@
 			function _btnSeek() {
 				if (q_cur > 0 && q_cur < 4)
 					return;
-				q_box('workg_s.aspx', q_name + '_s', "500px", "400px", q_getMsg("popSeek"));
+				q_box('workg_uj_s.aspx', q_name + '_s', "500px", "300px", q_getMsg("popSeek"));
 			}
 
 			function btnIns() {
@@ -2979,7 +2979,7 @@
 				<table class="tview" id="tview" >
 					<tr>
 						<td style="width:24px; color:black;"><a id='vewChk'> </a></td>
-						<td style="width:110px; color:black;"><a id='vewNoa'> </a></td>
+						<td style="width:110px; color:black;"><a id='vewNoa_uj'>排程單號</a></td>
 						<td style="width:50px; color:black;"><a id='vewStype'> </a></td>
 						<td style="width:170px; color:black;"><a id='vewRang_uj'>訂單預交日</a></td>
 					</tr>
@@ -3009,7 +3009,7 @@
 							<input id="txtSfbdate" type="hidden"/>
 							<input id="txtSfedate" type="hidden"/>
 						</td>
-						<td><span> </span><a id="lblNoa" class="lbl"> </a></td>
+						<td><span> </span><a id="lblNoa_uj" class="lbl">排程單號</a></td>
 						<td colspan="2"><input id="txtNoa" type="text" class="txt c1"/></td>
 					</tr>
 					<tr>
