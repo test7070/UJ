@@ -1,0 +1,80 @@
+﻿z_modcuwp_uj01:--z_modcuwp_uj01
+SET QUOTED_IDENTIFIER OFF
+
+declare @t_datea nvarchar(50)='[2]'
+declare @t_noa nvarchar(50)=case when '#non'=[3] then char(255) else [3] end
+
+declare @tmp table(
+	gno nvarchar(10),
+	noa nvarchar(50),
+	noq nvarchar(50),
+	custno nvarchar(50),
+	comp nvarchar(MAX),
+	bdate nvarchar(50),
+	edate nvarchar(50),
+	salemoney1 float,
+	discount1 float,
+	salemoney2 float,
+	discount2 float,
+	salemoney3 float,
+	discount3 float,
+	monnum nvarchar(50),
+	daynum nvarchar(50),
+	smoney float,
+	dmoney float,
+	nrate float,
+	rdiscount float,
+	acrate float,
+	diffmoney float,
+	acmoney float
+)
+
+insert @tmp(gno,noa,noq,custno,comp,bdate,edate
+,salemoney1,discount1,salemoney2,discount2,salemoney3,discount3,monnum)
+select '0',a.noa,a.noq,a.mechno,a.mech,a.bdate,a.edate
+,a.borntime,a.chgfre,a.chgtime,a.delaytime,a.waittime,a.lacksss,a.classk
+from modcuws a
+where noa=@t_noa
+
+update @tmp set daynum=dbo.q_cdd(edate,@t_datea) where edate!=''
+update @tmp set daynum='結止' where edate!='' and cast(daynum as int)<0
+
+update a
+set smoney=isnull(b.smoney,0)
+from @tmp a
+outer apply (select sum(case when typea='1' then 1 else -1 end*money)smoney 
+	from view_vcc v where v.datea between a.bdate and a.edate 
+	and (v.custno=a.custno or exists (select * from modcuwt where noa=a.noa and worktime=a.custno and mechno=v.custno))
+)b
+
+update @tmp
+set dmoney=case when daynum='結止' then null else round(salemoney1/dbo.q_cdd(edate,bdate),0) end
+
+update @tmp
+set nrate=case when daynum='結止' then null else round(smoney/(dbo.q_cdd(@t_datea,bdate)*dmoney)*100,0) end
+
+update @tmp
+set acrate=case when daynum='結止' then null else round(smoney/salemoney1*100,0) end
+
+update @tmp
+set rdiscount=case when daynum='結止' or acrate<1 then null else
+	case when smoney>salemoney3 then discount3
+	when smoney>salemoney2 then discount2
+	when smoney>salemoney1 then discount1
+	else null end
+end
+
+update @tmp
+set diffmoney=case when daynum='結止' then null else case when salemoney1-smoney<0 then null else salemoney1-smoney end end
+
+update @tmp
+set acmoney=round(smoney*rdiscount,0)
+
+select dbo.getComma(nrate,-1)+'%' nrate,
+dbo.getComma(rdiscount,-1)+'%' rdiscount,
+dbo.getComma(acrate,-1)+'%' acrate,
+dbo.getComma(smoney,-1) smoney,
+dbo.getComma(dmoney,-1) dmoney,
+dbo.getComma(diffmoney,-1) diffmoney,
+dbo.getComma(acmoney,-1) acmoney,
+* from @tmp order by noa,noq;
