@@ -168,8 +168,7 @@
           		$('#txtNoa').focus();
             }
             function btnPrint() {
-            	if(q_getPara('sys.project').toUpperCase()!="VU")
-                	q_box("z_uccfe.aspx?" + r_userno + ";" + r_name + ";" + q_time + ";" + JSON.stringify({noa:trim($('#txtNoa').val())}) + ";" + r_accy + "_" + r_cno, 'drp', "95%", "95%", m_print);
+                	q_box("z_uccp_uj.aspx?" + r_userno + ";" + r_name + ";" + q_time + ";" + JSON.stringify({noa:trim($('#txtNoa').val())}) + ";" + r_accy + "_" + r_cno, 'drp', "95%", "95%", m_print);
             }
             function wrServer(key_value) {
                 var i;
@@ -428,7 +427,7 @@
                     </tr>
                     <tr>
                     	<td><span> </span><a id="lblSpec_uj" class="lbl">規格</a></td>
-                        <td><input id="txtSpec_uj" type="text" class="txt c1"/></td>
+                        <td><input id="txtSpec" type="text" class="txt c1"/></td>
                         <td><span> </span><a id="lblColor_uj" class="lbl">顏色</a></td>
                         <td><input id="txtColor" type="text" class="txt c1"/></td>
                     </tr>
