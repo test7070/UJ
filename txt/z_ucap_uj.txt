@@ -7,57 +7,60 @@ declare @tmp table(
 	gno nvarchar(1),
 	rr int,
 	noa nvarchar(50),
-	product nvarchar(50),
-	groupdno nvarchar(20),
-	rev nvarchar(20),
-	stationgno nvarchar(20),
-	mechs nvarchar(20),
-	trans nvarchar(20),
-	unit nvarchar(20),
+	engpro nvarchar(max),
+	product nvarchar(max),
+	typea nvarchar(50),
+	groupdno nvarchar(50),
+	unit nvarchar(50),
+	uweight nvarchar(50),
+	rev nvarchar(50),
+	stationgno nvarchar(50),
+	stationgp nvarchar(50),
+	mechs nvarchar(50),
+	trans nvarchar(50),
 	molds nvarchar(50),
-	pro1 nvarchar(50),
-	pro2 nvarchar(50),
-	pro3 nvarchar(50),
-	engpro nvarchar(100),
-	pro4 nvarchar(50),
+	preday nvarchar(50),
+	makes nvarchar(50),
+	pretime nvarchar(50),
+	modelno nvarchar(50),
+	sec nvarchar(50),
+	wages nvarchar(50),
+	minutes nvarchar(50),
+	hours nvarchar(50),
+	groupbno nvarchar(50),
+	groupkno nvarchar(50),
+	groupcno nvarchar(50),
+	grouplno nvarchar(50),
+	groupeno nvarchar(50),
+	groupfno nvarchar(50),
+	groupgno nvarchar(50),
+	s6 nvarchar(50),
+	s7 nvarchar(50),
+	s8 nvarchar(50),
+	badperc nvarchar(50),
+	stdmount nvarchar(50),
+	s9 nvarchar(50),
+	c1 nvarchar(50),
+	c2 nvarchar(50),
+	c3 nvarchar(50),
+	bdate nvarchar(50),
 	memo nvarchar(max)
 )
 insert @tmp
-select '0','',a.noa,a.product,a.groupdno,a.rev,a.stationgno,a.mechs,a.trans,a.unit,a.molds,'','','',a.engpro,'',a.memo
-from uca a
-where a.typea='2'
-and(a.noa between @t_bproduct and @t_eproduct)
-and (len(@t_groupdno)=0 or a.groupdno=@t_groupdno)
+select '0',0,noa,engpro,product,'製成品',groupdno,unit,uweight,rev,stationgno,stationg,mechs,trans,molds
+,preday,makes,pretime,modelno,sec,wages,minutes,hours,groupbno,groupkno,groupcno,grouplno,groupeno,groupfno
+,groupgno,dbo.split(style,'#^#',5),dbo.split(style,'#^#',6),dbo.split(style,'#^#',7),badperc,stdmount,dbo.split(style,'#^#',8),dbo.split(cust,'#^#',0),dbo.split(cust,'#^#',1),dbo.split(cust,'#^#',2),bdate,memo
+from uca
+where typea='2'
+and(noa between @t_bproduct and @t_eproduct)
+and (len(@t_groupdno)=0 or groupdno=@t_groupdno)
 
 update a
 set rr=rx
-from (select ROW_NUMBER()over(partition by gno order by noa)rx,rr from @tmp)a
-
-update @tmp
-set pro1=b.productno
-from @tmp a left join ucas b on a.noa=b.noa
-left join uca c on b.productno=c.noa
-where c.typea='3'
-
-update @tmp
-set pro2=b.productno
-from @tmp a left join ucas b on a.noa=b.noa
-left join ucc c on b.productno=c.noa
-where c.groupano='9P'
-
-update @tmp
-set pro3=b.productno
-from @tmp a left join ucas b on a.noa=b.noa
-left join ucc c on b.productno=c.noa
-where c.groupano='9C'
-
-update @tmp
-set pro4=b.productno
-from @tmp a left join ucas b on a.noa=b.noa
-left join ucc c on b.productno=c.noa
-where c.groupano='9B'
+from(select ROW_NUMBER()over(partition by gno order by noa)rx,rr from @tmp)a
 
 select * from @tmp
+order by rr
 ;
 ------------------------------------------------------------------------------------------------
 z_ucap_uj2:--z_ucap_uj2
@@ -66,65 +69,107 @@ declare @t_eproduct nvarchar(20) = case when '#non'=[3] then char(255) else [3] 
 declare @t_groupdno nvarchar(20) = case when '#non'=[5] then '' else [5] end
 
 declare @tmp table(
-	gno nvarchar(1),	
+	gno nvarchar(1),
 	rr int,
 	noa nvarchar(50),
-	product nvarchar(100),
+	engpro nvarchar(max),
+	product nvarchar(max),
+	typea nvarchar(50),
+	groupdno nvarchar(50),
+	unit nvarchar(50),
+	uweight nvarchar(50),
 	rev nvarchar(50),
 	stationgno nvarchar(50),
-	pro1 nvarchar(50),
-	pro2 nvarchar(50),
-	pro5 nvarchar(50),
-	pno3 nvarchar(50),
-	prom3 float,
-	pro3 nvarchar(50),
-	pno4 nvarchar(50),
-	prom4 float,
-	pro4 nvarchar(50),
-	style1 nvarchar(50),
-	style2 nvarchar(50),
-	hsec float,
+	stationgp nvarchar(50),
+	mechs nvarchar(50),
+	trans nvarchar(50),
+	preday nvarchar(50),
 	modelno nvarchar(50),
-	team float,
+	sec nvarchar(50),
+	grouphno nvarchar(50),
+	groupino nvarchar(50),
+	groupjno nvarchar(50),
+	issuedate nvarchar(50),
+	s1 nvarchar(50),
+	s2 nvarchar(50),
+	s3 nvarchar(50),
+	s4 nvarchar(50),
+	s5 nvarchar(50),
+	hsec nvarchar(50),
+	hminutes nvarchar(50),
+	badperc nvarchar(50),
+	stdmount nvarchar(50),
+	c1 nvarchar(50),
+	c2 nvarchar(50),
+	c3 nvarchar(50),
+	bdate nvarchar(50),
 	memo nvarchar(max)
 )
-insert @tmp(gno,noa,product,rev,stationgno,style1,style2,hsec,modelno,team,memo)
-select '0',noa,product,rev,stationgno
-,replace(replace(SUBSTRING(right(style,14), 1, CHARINDEX('#^#', right(style,14)) - 1),'^',''),'#','')
-,replace(replace(SUBSTRING(right(style,14), CHARINDEX('#^#', right(style,14)) + 3,5),'^',''),'#','')
-,hsec,modelno,team,memo
+insert @tmp
+select '0',0,noa,engpro,product,'半成品',groupdno,unit,uweight,rev,stationgno,stationg,mechs,trans,preday,modelno
+,sec,grouphno,groupino,groupjno,issuedate,dbo.split(style,'#^#',0),dbo.split(style,'#^#',1)
+,dbo.split(style,'#^#',2),dbo.split(style,'#^#',3),dbo.split(style,'#^#',4),hsec,hminutes
+,badperc,stdmount,dbo.split(cust,'#^#',0),dbo.split(cust,'#^#',1),dbo.split(cust,'#^#',2),bdate,memo
 from uca
 where typea='3'
 and(noa between @t_bproduct and @t_eproduct)
+and (len(@t_groupdno)=0 or groupdno=@t_groupdno)
 
 update a
 set rr=rx
-from (select ROW_NUMBER()over(partition by gno order by noa)rx,rr from @tmp)a
-
-update @tmp
-set pro1=b.productno
-from @tmp a left join ucas b on a.noa=b.noa
-where b.noq='001'
-
-update @tmp
-set pro2=b.productno
-from @tmp a left join ucas b on a.noa=b.noa
-where b.noq='002'
-
-update @tmp
-set pno3=b.productno,prom3=b.mount,pro3=b.product
-from @tmp a left join ucas b on a.noa=b.noa
-where b.memo='膠號1'
-
-update @tmp
-set pno4=b.productno,prom4=b.mount,pro4=b.product
-from @tmp a left join ucas b on a.noa=b.noa
-where b.memo='膠號2'
-
-update @tmp
-set pro5=b.productno,prom4=b.mount,pro4=b.product
-from @tmp a left join ucas b on a.noa=b.noa
-where b.memo='材料(面材或底材)'
+from(select ROW_NUMBER()over(partition by gno order by noa)rx,rr from @tmp)a
 
 select * from @tmp
+order by rr
+;
+-----------------------------------------------------------------------------------------
+z_ucap_uj3:--z_ucap_uj3
+declare @t_bproduct nvarchar(20) = case when '#non'=[2] then '' else [2] end
+declare @t_eproduct nvarchar(20) = case when '#non'=[3] then char(255) else [3] end
+declare @t_groupdno nvarchar(20) = case when '#non'=[5] then '' else [5] end
+
+declare @tmp table(
+	gno nvarchar(1),
+	rr int,
+	noa nvarchar(50),
+	engpro nvarchar(max),
+	product nvarchar(max),
+	typea nvarchar(50),
+	groupdno nvarchar(50),
+	unit nvarchar(50),
+	uweight nvarchar(50),
+	rev nvarchar(50),
+	stationgno nvarchar(50),
+	stationgp nvarchar(50),
+	mechs nvarchar(50),
+	trans nvarchar(50),
+	molds nvarchar(50),
+	modelno nvarchar(50),
+	sec nvarchar(50),
+	wages nvarchar(50),
+	groupbno nvarchar(50),
+	groupkno nvarchar(50),
+	grouplno nvarchar(50),
+	badperc nvarchar(50),
+	stdmount nvarchar(50),
+	c1 nvarchar(50),
+	c2 nvarchar(50),
+	c3 nvarchar(50),
+	bdate nvarchar(50),
+	memo nvarchar(max)
+)
+insert @tmp
+select '0',0,noa,engpro,product,'再製品',groupdno,unit,uweight,rev,stationgno,stationg,mechs,trans,molds
+,modelno,sec,wages,groupbno,groupkno,grouplno,badperc,stdmount,dbo.split(cust,'#^#',0),dbo.split(cust,'#^#',1),dbo.split(cust,'#^#',2),bdate,memo
+from uca
+where typea='8'
+and(noa between @t_bproduct and @t_eproduct)
+and (len(@t_groupdno)=0 or groupdno=@t_groupdno)
+
+update a
+set rr=rx
+from(select ROW_NUMBER()over(partition by gno order by noa)rx,rr from @tmp)a
+
+select * from @tmp
+order by rr
 ;

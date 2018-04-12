@@ -1,0 +1,56 @@
+﻿z_uccp_uj1:--z_uccp_uj1
+declare @t_bproduct nvarchar(20) = case when '#non'=[2] then '' else [2] end
+declare @t_eproduct nvarchar(20) = case when '#non'=[3] then char(255) else [3] end
+declare @t_typea nvarchar(20) = case when '#non'=[4] then '' else [4] end
+declare @t_area nvarchar(20) = case when '#non'=[5] then '' else [5] end
+
+declare @tmp table(
+	gno nvarchar(1),
+	rr int,
+	noa nvarchar(50),
+	product nvarchar(250),
+	typea nvarchar(50),
+	groupano nvarchar(50),
+	reserve nvarchar(50),
+	drcr nvarchar(50),
+	inprice nvarchar(50),
+	saleprice nvarchar(50),
+	uweight nvarchar(50),
+	price2 nvarchar(50),
+	spec nvarchar(max),
+	color nvarchar(50),
+	stdmount nvarchar(50),
+	beginmount nvarchar(50),
+	area nvarchar(50),
+	ordctype nvarchar(50),
+	unit nvarchar(50),
+	unit2 nvarchar(50),
+	safemount nvarchar(50),
+	days nvarchar(50),
+	beginmoney nvarchar(50),
+	start nvarchar(50),
+	stkmoney nvarchar(50),
+	stkmount nvarchar(50),
+	density nvarchar(50),
+	ean nvarchar(50),
+	team nvarchar(50),
+	tgg nvarchar(50),
+	memo nvarchar(max)
+)
+insert @tmp
+select '0',0,a.noa,product,case typea when 1 then '商品' when 4 then '原料' when 5 then '物料' when 6 then '下腳品' when 7 then '加工' end
+,b.namea,reserve,drcr,inprice,saleprice,uweight,price2,spec,color,stdmount,
+beginmoney,area,ordctype,unit,unit2,safemount,days,beginmoney,start,stkmoney,stkmount,density,ean,team,tgg,memo
+from ucc a
+left join uccga b on a.groupano=b.noa
+where (a.noa between @t_bproduct and @t_eproduct)
+and (len(@t_area)=0 or area=@t_area)
+and (len(@t_typea)=0 or typea=@t_typea)
+
+update a
+set rr=rx
+from(select ROW_NUMBER()over(partition by gno order by noa)rx,rr from @tmp)a
+
+select * from @tmp
+order by rr
+;

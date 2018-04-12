@@ -20,30 +20,30 @@
             }
             $(document).ready(function() {
             	q_getId();
-                q_gf('', 'z_ucap_uj'); //123
+                q_gf('', 'z_uccp_uj'); //123
             });
 
             function q_gfPost() {
                $('#q_report').q_report({
-                        fileName : 'z_ucap_uj',
+                        fileName : 'z_uccp_uj',
                         options : [{
 	                        type : '0', //[1]
 	                        name : 'accy',
 	                        value : r_accy
 	                    }, {
-                        type : '2', //[2][3]
-                        name : 'spno',
-                        dbf : 'uca',
-                        index : 'noa,product',
-                        src : 'uca_b.aspx'
+                            type : '2', //[2][3]
+                            name : 'spno',
+                            dbf : 'ucc',
+                            index : 'noa,product',
+                            src : 'ucc_b.aspx'
                         }, {
                             type : '5', //[4]
                             name : 'xtypea',
-                            value : [q_getPara('report.all')].concat(q_getPara('uca.typea').split(','))
+                            value : [q_getPara('report.all')].concat(q_getPara('ucc.typea').split(','))
                         }, {
                             type : '5', //[5]
                             name : 'xgroupdno',
-                            value : (',訂單,成-計,半-計,半-訂,計畫').split(',')
+                            value : (',計畫,訂單').split(',')
                         }]
                     });
                 q_popAssign();
