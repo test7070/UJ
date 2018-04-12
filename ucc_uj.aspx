@@ -168,7 +168,7 @@
           		$('#txtNoa').focus();
             }
             function btnPrint() {
-                	q_box("z_uccp_uj.aspx?" + r_userno + ";" + r_name + ";" + q_time + ";" + JSON.stringify({noa:trim($('#txtNoa').val())}) + ";" + r_accy + "_" + r_cno, 'drp', "95%", "95%", m_print);
+                	q_box("z_uccp_uj.aspx?" + r_userno + ";" + r_name + ";" + q_time + ";noa='" + $('#txtNoa').val() + "' and product='" + $('#txtProduct').val() + "';" + r_accy, '', "95%", "95%", q_getMsg("popPrint"));
             }
             function wrServer(key_value) {
                 var i;
