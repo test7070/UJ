@@ -55,7 +55,7 @@
 					return;
 				}
 				mainForm(0);
-				document.title='計畫性採購需求作業'
+				document.title='計畫性請購彙整作業'
 			}
 			
 			var t_focusout='',t_focusout2='',t_fc=0,t_fbeq='';
@@ -108,6 +108,7 @@
                         var as = _q_appendData("tmp0", "", true, true);
                             q_gridAddRow(bbtHtm, 'tbbs', 'txtOrdano,txtOrdanoq,txtProductno,txtProduct,txtSpec,txtUnit,txtSmount,txtWorkdate,txtApvmount,txtFmount,txtTggno,txtComp,txtNetmount,txtTypea,txtStkmount,txtSchmount,txtStyle'
                             , as.length, as, 'noa,noq,productno,product,spec,unit,smount,workdate,apvmount,fmount,tggno,comp,netmount,typea,stkmount,schmount,style', 'txtOrdano,txtOrdanoq,txtProductno,txtProduct');
+                        sum();
                         break;
                     case 'qtxt.query.ordr2ordb':
                         alert('已轉請購!!');
