@@ -50,7 +50,7 @@ declare @datea nvarchar(10)=(select Convert(varchar(10),Getdate(),111))
 
 update @tmp
 set sdate=case when len(ldate)>0 then DATEDIFF(DAY,@datea,ldate) else (case when len(tdate)>0 then DATEDIFF(DAY,@datea,tdate) else DATEDIFF(DAY,@datea,isnull(trandate,'')) end) end
-,t6=case when DATEDIFF(DAY,@datea,trandate)% t8=0 then '追蹤' end
+,t6=case when DATEDIFF(DAY,@datea,trandate)% nullif(t8,0)=0 then '追蹤' end
 
 update @tmp
 set t7=case when t2='皮料' and sdate=3 then '提醒' else 

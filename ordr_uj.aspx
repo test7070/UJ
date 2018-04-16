@@ -55,7 +55,7 @@
 					return;
 				}
 				mainForm(0);
-				document.title='計畫性採購需求作業'
+				document.title='計畫性請購彙整作業'
 			}
 			
 			var t_focusout='',t_focusout2='',t_fc=0,t_fbeq='';
@@ -108,6 +108,7 @@
                         var as = _q_appendData("tmp0", "", true, true);
                             q_gridAddRow(bbtHtm, 'tbbs', 'txtOrdano,txtOrdanoq,txtProductno,txtProduct,txtSpec,txtUnit,txtSmount,txtWorkdate,txtApvmount,txtFmount,txtTggno,txtComp,txtNetmount,txtTypea,txtStkmount,txtSchmount,txtStyle'
                             , as.length, as, 'noa,noq,productno,product,spec,unit,smount,workdate,apvmount,fmount,tggno,comp,netmount,typea,stkmount,schmount,style', 'txtOrdano,txtOrdanoq,txtProductno,txtProduct');
+                        sum();
                         break;
                     case 'qtxt.query.ordr2ordb':
                         alert('已轉請購!!');
@@ -145,23 +146,25 @@
                                     $('#txtWeight_'+i).val('');
                                 }else{
                                     var t_t1=0,t_t2=0;
-                                    if($('#txtUnit_'+i).val()=='M' && dec($('#txtApvmount_'+i).val())>0){
-                                       if(dec($('#txtNetmount_'+i).val())>dec($('#txtApvmount_'+i).val())){
-                                           t_t1=dec($('#txtNetmount_'+i).val());
-                                       }else{
-                                           t_t1=dec($('#txtApvmount_'+i).val());
-                                       }
-                                    }else{
-                                       t_t1=0; 
-                                    }
-                                    if($('#txtUnit_'+i).val()=='KG' && dec($('#txtFmount_'+i).val())>0){
-                                       if(dec($('#txtNetmount_'+i).val())>dec($('#txtFmount_'+i).val())){
-                                           t_t2=round(q_div(dec($('#txtNetmount_'+i).val()),as[0].uweight),0);
-                                       }else{
-                                           t_t2=round(q_div(dec($('#txtFmount_'+i).val()),as[0].uweight),0);
-                                       }
-                                    }else{
-                                       t_t2=0; 
+                                    if($('#txtProductno_'+i).val()==as[0].noa){
+                                        if($('#txtUnit_'+i).val()=='M' && dec($('#txtApvmount_'+i).val())>0){
+                                           if(dec($('#txtNetmount_'+i).val())>dec($('#txtApvmount_'+i).val())){
+                                               t_t1=dec($('#txtNetmount_'+i).val());
+                                           }else{
+                                               t_t1=dec($('#txtApvmount_'+i).val());
+                                           }
+                                        }else{
+                                           t_t1=0; 
+                                        }
+                                        if($('#txtUnit_'+i).val()=='KG' && dec($('#txtFmount_'+i).val())>0){
+                                           if(dec($('#txtNetmount_'+i).val())>dec($('#txtFmount_'+i).val())){
+                                               t_t2=round(q_div(dec($('#txtNetmount_'+i).val()),as[0].uweight),0);
+                                           }else{
+                                               t_t2=round(q_div(dec($('#txtFmount_'+i).val()),as[0].uweight),0);
+                                           }
+                                        }else{
+                                           t_t2=0; 
+                                        }
                                     }
                                     $('#txtWeight_'+i).val(q_add(t_t1,t_t2));
                                 }

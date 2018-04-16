@@ -42,7 +42,7 @@
 			function q_gfPost() {
 				q_getFormat();
 				q_langShow();
-				q_cmbParse("cmbTypea", '@全部,' + q_getPara('uca.typea'));
+				q_cmbParse("cmbTypea", '@全部,' + q_getPara('uca.typea')+',8@再製品');
 				q_cmbParse("cmbGroupdno", ',訂單,全-訂,半-訂,共-訂,成-計,半-計');	
 				$('#txtNoa').focus();
 				
