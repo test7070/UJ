@@ -623,6 +623,7 @@
 						$('#combJ11_'+i).attr('disabled', 'disabled');
 						$('#combJ17_'+i).attr('disabled', 'disabled');
 						$('#combL05_'+i).attr('disabled', 'disabled');
+						$('#btnO01_'+i).removeAttr('disabled');
 					}
 				} else {
 					for (var i = 0; i < q_bbsCount; i++) {
@@ -630,6 +631,7 @@
 						$('#combJ11_'+i).removeAttr('disabled');
 						$('#combJ17_'+i).removeAttr('disabled');
 						$('#combL05_'+i).removeAttr('disabled');
+						$('#btnO01_'+i).attr('disabled', 'disabled');
 					}
 				}
 				change_field();
@@ -1239,6 +1241,34 @@
 							FN02(b_seq)
 						});
 						
+						$('#btnO01_'+i).click(function() {
+							t_IdSeq = -1;
+							q_bodyId($(this).attr('id'));
+							b_seq = t_IdSeq;
+							
+							if(!(q_cur==1 || q_cur==2)){
+								if(confirm('確定要完工?')){
+									var t_noa=emp($('#txtNoa').val())?'#non':$('#txtNoa').val();
+									var t_noq=emp($('#txtNoq_'+b_seq).val())?'#non':$('#txtNoq_'+b_seq).val();
+									if(t_noa.length>0 && t_noq.length>0){
+										q_func('qtxt.query.clearworkgsf', 'orde_uj.txt,clearworkgsf,' + encodeURI(t_noa)+';'+encodeURI(t_noq),r_accy,1);
+										var as = _q_appendData("tmp0", "", true, true);
+										if (as[0] != undefined) {
+											if($('#txtNoa').val()==as[0].noa){
+												for (var j = 0; j < q_bbsCount; j++) {
+													if($('#txtNoq_'+j).val()==as[0].noq){
+														$('#txtMemo2_'+j).val(as[0].memo2);
+														splitbbsf();
+														break;
+													}
+												}	
+											}
+										}
+									}
+								}
+							}
+						});
+						
 						$('#textP05_'+i).change(function() {
 							t_IdSeq = -1;
 							q_bodyId($(this).attr('id'));
@@ -1421,6 +1451,15 @@
 					}
 				});
 				
+				if(!(q_cur==1 || q_cur==2)) {
+					for (var i = 0; i < q_bbsCount; i++) {
+						$('#btnO01_'+i).removeAttr('disabled');
+					}
+				} else {
+					for (var i = 0; i < q_bbsCount; i++) {
+						$('#btnO01_'+i).attr('disabled', 'disabled');
+					}
+				}
 			}
 			
 			//---------------------------------------------------------------

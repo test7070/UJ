@@ -468,15 +468,18 @@
 						<input class="btn" id="btnPlus" type="button" value='＋' style="font-weight: bold;" />
 					</td>
 					<td align="center" style="width:20px;"> </td>
-					<td align="center" style="width:120px;"><a id='lblUno_s'>批號</a></td>
-					<td align="center" style="width:180px;"><a id='lblProductno_s'>料號</a></td>
-					<td align="center" style="width:180px;"><a id='lblProduct_s'>品名/參照</a></td>
-					<td align="center" style="width:95px;"><a id='lblSpec_s'>列管備註</a></td>
-					<td align="center" style="width:80px;"><a id='lblMount_s'>領料數量</a></td>
-					<td align="center" style="width:80px;"><a id='lblWeight_s'>領料長度</a></td>
-					<td align="center" style="width:150px;"><a id='lblStore_s'>倉庫</a></td>
-					<td align="center"><a id='lblMemo_s'>備註</a></td>
-					<td align="center" style="display: none;"><a id='lblWorkno_s'>日報表</a></td>
+					<td align="center" style="width:120px;"><a id='lblUno_uj_s'>批號</a></td>
+					<td align="center" style="width:180px;"><a id='lblProductno_uj_s'>料號</a></td>
+					<td align="center" style="width:180px;"><a id='lblProduct_uj_s'>品名/參照</a></td>
+					<td align="center" style="width:110px;">
+						<a id='lblSpec_uj_s'>列管備註</a><BR>
+						<a id='lblStyle_uj_s'>製造備註</a>
+					</td>
+					<td align="center" style="width:80px;"><a id='lblMount_uj_s'>領料數量</a></td>
+					<td align="center" style="width:80px;"><a id='lblWeight_uj_s'>領料長度</a></td>
+					<td align="center" style="width:150px;"><a id='lblStore_uj_s'>倉庫</a></td>
+					<td align="center"><a id='lblMemo_uj_s'>備註</a></td>
+					<td align="center" style="display: none;"><a id='lblWorkno_uj_s'>日報表</a></td>
 				</tr>
 				<tr style='background:#cad3ff;'>
 					<td>
@@ -491,7 +494,7 @@
 					<td><input id="txtProduct.*" type="text" class="txt c1"/></td>
 					<td>
 						<input id="txtSpec.*" type="text" class="txt c1"/>
-						<input id="txtStyle.*" type="hidden" class="txt c1"/>
+						<input id="txtStyle.*" type="text" class="txt c1"/>
 					</td>
 					<td><input id="txtMount.*" type="text" class="txt c1 num"/></td>
 					<td><input id="txtWeight.*" type="text" class="txt c1 num"/></td>

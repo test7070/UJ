@@ -386,13 +386,17 @@
 				});
 				
 				$('#btnIns1').click(function() {
-					
+					q_func('qtxt.query.addpallet', 'orde_uj.txt,addpallet,'+ encodeURI(q_date()),r_accy,1);
+					var as = q_appendData("tmp0", "", true, true);
+					if (as[0] != undefined) {
+						$('#txtUcauno').val(as[0].palletno);
+					}
 				});
 				$('#btnModi1').click(function() {
-					
+					//看不懂
 				});
 				$('#btnOk1').click(function() {
-					
+					//看不懂
 				});
 				
 				$('#btnEnter1').click(function() {
@@ -596,13 +600,17 @@
 				});
 				
 				$('#btnIns3').click(function() {
-					
+					q_func('qtxt.query.addpallet', 'orde_uj.txt,addpallet,'+ encodeURI(q_date()),r_accy,1);
+					var as = q_appendData("tmp0", "", true, true);
+					if (as[0] != undefined) {
+						$('#txtUcauno3').val(as[0].palletno);
+					}
 				});
 				$('#btnModi3').click(function() {
-					
+					//看不懂
 				});
 				$('#btnOk3').click(function() {
-					
+					//看不懂
 				});
 				
 				$('#btnEnter3').click(function() {

@@ -233,8 +233,11 @@
 						return;	
 					}
 					
-					q_gt('view_cubs',"where=^^ noa='"+t_noa+"' ^^", 0, 0, 0, "getcubs", r_accy,1);
-					var as = _q_appendData("view_cubs", "", true);
+					//q_gt('view_cubs',"where=^^ noa='"+t_noa+"' ^^", 0, 0, 0, "getcubs", r_accy,1);
+					//var as = _q_appendData("view_cubs", "", true);
+					
+					q_func('qtxt.query.getcubs', 'orde_uj.txt,getcubs,' + encodeURI(t_noa)+';'+encodeURI('#non'),r_accy,1);
+					var as = _q_appendData("tmp0", "", true, true);
 					for (var i = 0; i < as.length; i++) {
 						for (var j = 0; j < q_bbsCount; j++) {
 							if(as[i].noa==$('#textF03_'+j).val() && as[i].no2==$('#textF04_'+j).val()){
@@ -269,6 +272,10 @@
 							$('#textF04_'+t_i).val(as[i].noq)
 							$('#txtOrdeno_'+t_i).val(as[i].ordeno)
 							$('#txtNo2_'+t_i).val(as[i].no2)
+							if(as[i].cudsmemo.length>0)
+								$('#textF02_'+t_i).val(as[i].cudsmemo.split('_')[7]);
+							//$('#txtUno_'+t_i).val(as[i].cudsuno);
+							
 							$('#txtUcolor_'+t_i).change();
 						}
 						Unlock(1);
