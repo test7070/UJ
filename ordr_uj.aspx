@@ -146,23 +146,25 @@
                                     $('#txtWeight_'+i).val('');
                                 }else{
                                     var t_t1=0,t_t2=0;
-                                    if($('#txtUnit_'+i).val()=='M' && dec($('#txtApvmount_'+i).val())>0){
-                                       if(dec($('#txtNetmount_'+i).val())>dec($('#txtApvmount_'+i).val())){
-                                           t_t1=dec($('#txtNetmount_'+i).val());
-                                       }else{
-                                           t_t1=dec($('#txtApvmount_'+i).val());
-                                       }
-                                    }else{
-                                       t_t1=0; 
-                                    }
-                                    if($('#txtUnit_'+i).val()=='KG' && dec($('#txtFmount_'+i).val())>0){
-                                       if(dec($('#txtNetmount_'+i).val())>dec($('#txtFmount_'+i).val())){
-                                           t_t2=round(q_div(dec($('#txtNetmount_'+i).val()),as[0].uweight),0);
-                                       }else{
-                                           t_t2=round(q_div(dec($('#txtFmount_'+i).val()),as[0].uweight),0);
-                                       }
-                                    }else{
-                                       t_t2=0; 
+                                    if($('#txtProductno_'+i).val()==as[0].noa){
+                                        if($('#txtUnit_'+i).val()=='M' && dec($('#txtApvmount_'+i).val())>0){
+                                           if(dec($('#txtNetmount_'+i).val())>dec($('#txtApvmount_'+i).val())){
+                                               t_t1=dec($('#txtNetmount_'+i).val());
+                                           }else{
+                                               t_t1=dec($('#txtApvmount_'+i).val());
+                                           }
+                                        }else{
+                                           t_t1=0; 
+                                        }
+                                        if($('#txtUnit_'+i).val()=='KG' && dec($('#txtFmount_'+i).val())>0){
+                                           if(dec($('#txtNetmount_'+i).val())>dec($('#txtFmount_'+i).val())){
+                                               t_t2=round(q_div(dec($('#txtNetmount_'+i).val()),as[0].uweight),0);
+                                           }else{
+                                               t_t2=round(q_div(dec($('#txtFmount_'+i).val()),as[0].uweight),0);
+                                           }
+                                        }else{
+                                           t_t2=0; 
+                                        }
                                     }
                                     $('#txtWeight_'+i).val(q_add(t_t1,t_t2));
                                 }

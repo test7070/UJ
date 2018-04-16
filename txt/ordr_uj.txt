@@ -95,7 +95,7 @@ from (select ROW_NUMBER()over(partition by gno order by workdate desc,productno)
 select * from @tmp order by rr
 ;
 ---------------------------------------------------------------------------------------------------------------------------
-ordr2ordb:--ordr2ordb希得
+ordr2ordb:--ordr2ordb
 set quoted_identifier off
 declare @t_key nvarchar(50) = [1]
 declare @t_noa nvarchar(50) = [2]

@@ -62,6 +62,7 @@
 			function mainPost() {
 				q_getFormat();
 				bbmMask = [['txtDatea', r_picd],['txtBldate', r_picd]];
+				bbsMask = [['textM2', r_picd],['textM3', r_picd],['textM12', r_picd]];
 				$('#txtDatea').datepicker();
 				if(r_len==4){           
                     $.datepicker.r_len=4;
@@ -116,6 +117,8 @@
 					alert(t_err);
 					return;
 				}
+				
+				sum();
 				
 				for (var i=0; i<q_bbsCount; i++){
                     //var ts1=$('#textM1_'+i).val()==''?'':$('#textM1_'+i).val();
@@ -226,8 +229,8 @@
                            var diff=q_div((Date_A-Date_B),86400000);
                            $('#txtOmount_'+j).val(diff);
 			           }else{
-			               var Date_A = new Date(dec($('#textM2_'+j).val().substr(0,4)),dec($('#textM2_'+j).val().substr(6,2)),dec($('#textM2_'+j).val().substr(9,2)),0,0,0);  
-                           var Date_B = new Date(dec($('#textM3_'+j).val().substr(0,4)),dec($('#textM3_'+j).val().substr(6,2)),dec($('#textM3_'+j).val().substr(9,2)),0,0,0);
+			               var Date_A = new Date(dec($('#textM2_'+j).val().substr(0,4)),dec($('#textM2_'+j).val().substr(5,2)),dec($('#textM2_'+j).val().substr(8,2)),0,0,0);  
+                           var Date_B = new Date(dec($('#textM3_'+j).val().substr(0,4)),dec($('#textM3_'+j).val().substr(5,2)),dec($('#textM3_'+j).val().substr(8,2)),0,0,0);
                            var diff=q_div((Date_A-Date_B),86400000);
                            $('#txtOmount_'+j).val(diff);
 			           }
@@ -245,8 +248,8 @@
                            var diff=q_div((Date_A-Date_B),86400000);
                            $('#textM13_'+j).val(diff);
                        }else{
-                           var Date_A = new Date(dec($('#textM3_'+j).val().substr(0,4)),dec($('#textM3_'+j).val().substr(6,2)),dec($('#textM3_'+j).val().substr(9,2)),0,0,0);  
-                           var Date_B = new Date(dec($('#textM12_'+j).val().substr(0,4)),dec($('#textM12_'+j).val().substr(6,2)),dec($('#textM12_'+j).val().substr(9,2)),0,0,0);
+                           var Date_A = new Date(dec($('#textM3_'+j).val().substr(0,4)),dec($('#textM3_'+j).val().substr(5,2)),dec($('#textM3_'+j).val().substr(8,2)),0,0,0);  
+                           var Date_B = new Date(dec($('#textM12_'+j).val().substr(0,4)),dec($('#textM12_'+j).val().substr(5,2)),dec($('#textM12_'+j).val().substr(8,2)),0,0,0);
                            var diff=q_div((Date_A-Date_B),86400000);
                            $('#textM13_'+j).val(diff);
                        }
@@ -426,9 +429,9 @@
                                 $('#textM9_'+j).val('追蹤');
                        
                     }else if(r_len=='4' &&  t_odate!=''){
-                           var Date_A = new Date(dec(q_date().substr(0,4)),dec(q_date().substr(6,2)),dec(q_date().substr(9,2)),0,0,0);  
-                           var Date_B = new Date(dec(t_odate.substr(0,4)),dec(t_odate.substr(6,2)),dec(t_odate.substr(9,2)),0,0,0);
-                           var Date_c = new Date(dec($('#textM2_' + j).val().substr(0,4)),dec($('#textM2_' + j).val().substr(6,2)),dec($('#textM2_' + j).val().substr(9,2)),0,0,0);
+                           var Date_A = new Date(dec(q_date().substr(0,4)),dec(q_date().substr(5,2)),dec(q_date().substr(8,2)),0,0,0);  
+                           var Date_B = new Date(dec(t_odate.substr(0,4)),dec(t_odate.substr(5,2)),dec(t_odate.substr(8,2)),0,0,0);
+                           var Date_c = new Date(dec($('#textM2_' + j).val().substr(0,4)),dec($('#textM2_' + j).val().substr(5,2)),dec($('#textM2_' + j).val().substr(8,2)),0,0,0);
                            var diff=q_div((Date_B-Date_A),86400000);
                            $('#textPrice_'+j).val(diff);
                     }else{

@@ -1225,8 +1225,8 @@
 					<td class='isUJCD' style="display: none;"><input id="txtStdmount.*" type="text" class="txt c2 num"/></td>
 					<td><input id="txtWmount.*" type="text" class="txt c2 num"/></td>
 					<td><input id="txtUnit2.*" type="text" class="txt c2"/></td>
-					<td><input id="txtSizea.*" type="text" class="txt c2"/></td>
-					<td class='isUJCD' style="display: none;"><input id="txtEmount.*" type="text" class="txt c2 num"/></td>
+					<td class='isUJCD' style="display: none;"><input id="txtSizea.*" type="text" class="txt c2"/></td>
+					<td><input id="txtEmount.*" type="text" class="txt c2 num"/></td>
 					<td class='isUJCD' style="display: none;"><input id="txtSlit.*" type="text" class="txt c2"/></td>
 					<td><input id="txtMemo.*" type="text" class="txt c2 num"/></td>
 				</tr>
