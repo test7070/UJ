@@ -1077,6 +1077,10 @@
 							var tuno=$('#txtUno_'+b_seq).val();
 							var tnoa=$('#txtNoa').val();
 							var tdatea=emp($('#txtDatea').val())?q_date():$('#txtDatea').val();
+							
+							if(!(q_cur==1 || q_cur==2)){
+								return;
+							}
 							if(tpno.length>0 && tsno.length>0){
 								$('#Stkuj_Seq').val(b_seq);
 								q_func('qtxt.query.div_stk_uj', 'orde_uj.txt,stk_uj,' + encodeURI(tdatea)+';'+encodeURI('#non')+';'+encodeURI(tpno)+';'+encodeURI(tsno)+';'+encodeURI(tnoa)+';'+encodeURI('#non')+';'+encodeURI('#non'),r_accy,1);
@@ -1119,12 +1123,12 @@
 									tr.innerHTML+="<td id='stk_tdUno_"+j+"'>"+as[j].uno+"</td>"; //身分證號
 									tr.innerHTML+="<td id='stk_tdSpec_"+j+"'>"+as[j].spec+"</td>"; //列管品
 									tr.innerHTML+="<td id='stk_tdStyle_"+j+"' style='display:none;'>"+as[j].style+"</td>"; //加工製造備註
-									tr.innerHTML+="<td id='stk_tdIndate_"+j+"'>"+as[j].indate+"</td>"; //進貨(生產)日
-									tr.innerHTML+="<td id='stk_tdMount_"+j+"'>"+FormatNumber(as[j].mount)+"</td>"; //庫存數量
-									tr.innerHTML+="<td id='stk_tdUnit_"+j+"'>"+as[j].unit+"</td>"; //單位
-									tr.innerHTML+="<td id='stk_tdLengthb_"+j+"'>"+FormatNumber(as[j].lengthb)+"</td>"; //標準長(M)同規格
-									tr.innerHTML+="<td id='stk_tdLengthc_"+j+"'>"+FormatNumber(as[j].lengthc)+"</td>"; //原長(M)
-									tr.innerHTML+="<td id='stk_tdWeight_"+j+"'>"+FormatNumber(as[j].weight)+"</td>"; //可用長
+									tr.innerHTML+="<td id='stk_tdIndate_"+j+"' style='text-align:center;'>"+as[j].indate+"</td>"; //進貨(生產)日
+									tr.innerHTML+="<td id='stk_tdMount_"+j+"' style='text-align:right;'>"+FormatNumber(as[j].mount)+"</td>"; //庫存數量
+									tr.innerHTML+="<td id='stk_tdUnit_"+j+"' style='text-align:center;'>"+as[j].unit+"</td>"; //單位
+									tr.innerHTML+="<td id='stk_tdLengthb_"+j+"' style='text-align:right;'>"+FormatNumber(as[j].lengthb)+"</td>"; //標準長(M)同規格
+									tr.innerHTML+="<td id='stk_tdLengthc_"+j+"' style='text-align:right;'>"+FormatNumber(as[j].lengthc)+"</td>"; //原長(M)
+									tr.innerHTML+="<td id='stk_tdWeight_"+j+"' style='text-align:right;'>"+FormatNumber(as[j].weight)+"</td>"; //可用長
 									
 									var tmp = document.getElementById("stkuj_close");
 									tmp.parentNode.insertBefore(tr,tmp);
@@ -1877,7 +1881,7 @@
 				</table>
 			</div>
 		</div>
-		<div class='dbbs' style="width: 2000px;">
+		<div class='dbbs' style="width: 2030px;">
 			<table id="tbbs" class='tbbs'>
 				<tr style='color:White; background:#003366;' >
 					<td align="center" style="width:40px;"><input class="btn" id="btnPlus" type="button" value='＋' style="font-weight: bold;width:" /></td>
@@ -1895,7 +1899,7 @@
 					<td align="center" style="width:80px;"><a id='lblPrice_uj_s'>單價</a></td>
 					<td align="center" style="width:100px;"><a id='lblTotal_uj_s'>小計</a></td>
 					<td align="center" style="width:120px;"><a id='lblF02_uj_s'>板號</a></td>
-					<td align="center" style="width:150px;"><a id='lblMemo_uj_s'>備註</a></td>
+					<td align="center" style="width:180px;"><a id='lblMemo_uj_s'>備註</a></td>
 					<td align="center" style="width:80px;"><a id='lblWidth2_uj_s'>Booking</a></td>
 					<td align="center" style="width:120px;"><a id='lblF05_uj_s'>長度備註</a></td>
 					<td align="center" style="width:90px;"><a id='lblWidth3_uj_s'>台幣</a></td>
@@ -1940,8 +1944,8 @@
 					<td align="center">
 						<input class="txt c1" id="txtMemo.*" type="text"/>
 						<!--<select id="combOrdelist.*" style="width: 10%;"> </select>-->
-						<input class="txt c1" id="textF03.*" type="text" style="width:64%;"/><!--生產指令號-->
-						<input class="txt c1" id="textF04.*" type="text" style="width:30%;"/><!--生產指令序-->
+						<input class="txt c1" id="textF03.*" type="text" style="width:69%;"/><!--生產指令號-->
+						<input class="txt c1" id="textF04.*" type="text" style="width:25%;"/><!--生產指令序-->
 						<input class="txt c1" id="txtOrdeno.*" type="text" style="width:64%;display: none;"/><!--訂單號-->
 						<input class="txt c1" id="txtNo2.*" type="text" style="width:30%;display: none;"/><!--訂單序-->
 					</td>

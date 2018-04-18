@@ -60,7 +60,7 @@
 				});
 				
 				$('#txtNoa').change(function() {
-					var t_noa=emp($(this).val())?'#non':$(this).val();
+					var t_noa=emp($(this).val())?'':$(this).val();
 					if(t_noa.length>0){
 						q_func('qtxt.query.getviewcug', 'orde_uj.txt,getviewcug,' + encodeURI(t_noa),r_accy,1);
 						var as = _q_appendData("tmp0", "", true, true);
@@ -70,6 +70,7 @@
 									alert('派工單【'+t_noa+'】已完工!!');
 									$('#txtNoa').val('');
 								}else{
+									$('#txtNoa').attr('disabled', 'disabled');
 									$('#txtDatea').val(as[0].datea);
 									$('#txtMechno').val(as[0].processno);
 									

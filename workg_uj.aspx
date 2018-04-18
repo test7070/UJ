@@ -299,6 +299,12 @@
 										}
 									}
 									$('#txtMemo2_'+j).val(tstr);
+									
+									if($('#cmbStype').val()=='製造'){
+										$('#txtProductno_'+j).val($('#textK03_'+j).val());
+										$('#txtUcano_'+j).val($('#textK03_'+j).val());
+										$('#txtMount_'+j).val($('#textK08_'+j).val());
+									}
 										
 									t_iswrite=true;
 									t_j=j;
@@ -1423,7 +1429,9 @@
 						}
 								
 						var t_noa=emp($('#txtNoa').val())?'#non':$('#txtNoa').val();
-			            q_func('qtxt.query.div_stk_uj', 'orde_uj.txt,stk_uj,' + encodeURI(q_date())+';'+encodeURI('#non')+';'+encodeURI(t_productno)+';'+encodeURI('#non')+';'+encodeURI('#non')+';'+encodeURI('1')+';'+encodeURI(t_noa));
+						var t_datea=emp($('#txtWadate').val())?q_date():$('#txtWadate').val();
+						
+			            q_func('qtxt.query.div_stk_uj', 'orde_uj.txt,stk_uj,' + encodeURI(t_datea)+';'+encodeURI('#non')+';'+encodeURI(t_productno)+';'+encodeURI('#non')+';'+encodeURI('#non')+';'+encodeURI('1')+';'+encodeURI(t_noa));
 					}
 				});
 				
@@ -1851,7 +1859,7 @@
 					t_sec=dec(tuca[0].sec);
 				}
 				
-				$('#textJ05_'+i).val(q_div(q_mul(t_f03,t_sec),3600));
+				$('#textJ05_'+i).val(round(q_div(q_mul(t_f03,t_sec),3600),1));
 			}
 			
 			function FJ06() { //B表 分1
@@ -1956,7 +1964,7 @@
 					t_minutes=dec(tuca[0].minutes);
 				}
 				
-				$('#textJ12_'+i).val(q_div(q_mul(t_g03,t_minutes),3600));
+				$('#textJ12_'+i).val(round(q_div(q_mul(t_g03,t_minutes),3600),1));
 			}
 			
 			function FJ13() { //B表 覆1
@@ -2370,10 +2378,14 @@
 						break;
 					case 'textF01_':
 						var t_pno=$('#textF01_'+b_seq).val();
-						q_gt('uca',"where=^^noa='"+t_pno+"'^^", 0, 0, 0, "getuca", r_accy,1);
-						var tuca = _q_appendData("uca", "", true);
-						if (tuca[0] != undefined) {
-							$('#textI16_'+b_seq).val(tuca[0].preday);//熟成(天)
+						if(t_pno.length>0){
+							q_gt('uca',"where=^^noa='"+t_pno+"'^^", 0, 0, 0, "getuca", r_accy,1);
+							var tuca = _q_appendData("uca", "", true);
+							if (tuca[0] != undefined) {
+								$('#textI16_'+b_seq).val(tuca[0].preday);//熟成(天)
+							}
+						}else{
+							$('#textI16_'+b_seq).val(0);//熟成(天)
 						}
 						getstk(b_seq,'2');
 						break;
@@ -2394,38 +2406,41 @@
 						break;
 					case 'textK03_':
 						var t_noa=$('#textK03_'+b_seq).val();
-						q_gt('uca',"where=^^noa='"+t_noa+"' and typea='3' ^^", 0, 0, 0, "getuca", r_accy,1);
-						var tuca = _q_appendData("uca", "", true);
-						if (tuca[0] != undefined) {
-							var t_style=tuca[0].style.split('#^#');
+						if(t_noa.length>0){
+							q_gt('uca',"where=^^noa='"+t_noa+"' and typea='3' ^^", 0, 0, 0, "getuca", r_accy,1);
+							var tuca = _q_appendData("uca", "", true);
+							if (tuca[0] != undefined) {
+								var t_style=tuca[0].style.split('#^#');
+								
+								$('#textL01_'+b_seq).val(t_style[1]); //換線屬性
+								$('#textL02_'+b_seq).val(t_style[2]); //補水
+								$('#textL06_'+b_seq).val(tuca[0].modelno); //限定機台別
+								$('#textP01_'+b_seq).val(tuca[0].groupino); //上紙(投入)
+								$('#textQ01_'+b_seq).val(tuca[0].grouphno); //上皮(投入)
+							}else{
+								alert('無此料號!!');
+								$('#btnMinus_'+b_seq).click();
+							}
 							
-							$('#textL01_'+b_seq).val(t_style[1]); //換線屬性
-							$('#textL02_'+b_seq).val(t_style[2]); //補水
-							$('#textL06_'+b_seq).val(tuca[0].modelno); //限定機台別
-							$('#textP01_'+b_seq).val(tuca[0].groupino); //上紙(投入)
-							$('#textQ01_'+b_seq).val(tuca[0].grouphno); //上皮(投入)
-						}else{
-							alert('無此料號!!');
-							$('#btnMinus_'+b_seq).click();
-						}
-						
-						//判斷是否在計畫內
-						if(emp($('#txtNoq_'+b_seq).val())){
-							var t_mon=emp($('#txtWadate').val())?q_date().substr(0,r_lenm):$('#txtWadate').val().substr(0,r_lenm);
-							q_gt('saleforecast',"where=^^mon='"+t_mon+"' and exists (select * from saleforecasts where noa=saleforecast.noa and productno='"+t_noa+"') ^^", 0, 0, 0, "getsaleforecasts", r_accy,1);
-							var as = _q_appendData("saleforecasts", "", true);
-							if (as[0] != undefined) {
-								$('#textK04_'+b_seq).val('計');
-								$('#textK05_'+b_seq).val(as[0].unit);
+							//判斷是否在計畫內
+							if(emp($('#txtNoq_'+b_seq).val())){
+								var t_mon=emp($('#txtWadate').val())?q_date().substr(0,r_lenm):$('#txtWadate').val().substr(0,r_lenm);
+								q_gt('saleforecast',"where=^^mon='"+t_mon+"' and exists (select * from saleforecasts where noa=saleforecast.noa and productno='"+t_noa+"') ^^", 0, 0, 0, "getsaleforecasts", r_accy,1);
+								var as = _q_appendData("saleforecasts", "", true);
+								if (as[0] != undefined) {
+									$('#textK04_'+b_seq).val('計');
+									$('#textK05_'+b_seq).val(as[0].unit);
+								}else{
+									$('#textK04_'+b_seq).val('');
+									$('#textK05_'+b_seq).val('');
+								}
 							}else{
 								$('#textK04_'+b_seq).val('');
 								$('#textK05_'+b_seq).val('');
 							}
 						}else{
-							$('#textK04_'+b_seq).val('');
-							$('#textK05_'+b_seq).val('');
+							$('#btnMinus_'+b_seq).click();
 						}
-						
 						break;
 					default:
 						break;
@@ -2491,8 +2506,8 @@
 									as.splice(i, 1);
                                     i--;
 								}else{
-									as[i].mount=q_sub(dec(as[i].mount),dec(as[i].bmount));
-									as[i].weight=q_sub(dec(as[i].weight),dec(as[i].bweight));
+									as[i].mount=round(q_sub(dec(as[i].mount),dec(as[i].bmount)),3);
+									as[i].weight=round(q_sub(dec(as[i].weight),dec(as[i].bweight)),3);
 								}
 							}
 							

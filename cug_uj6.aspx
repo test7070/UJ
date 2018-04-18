@@ -132,6 +132,7 @@
 							$('#txtUcano').attr('disabled', 'disabled');
 							$('#txtUno').attr('disabled', 'disabled');
 							$('#cmbUno').attr('disabled', 'disabled');
+							$('#lblAlert').text('');
 						}else{
 							alert('派工單無使用此料號!!');
 							$('#lblAlert').text('禁止');
@@ -175,13 +176,17 @@
 				
 				$('#txtUno').change(function() {
 					var t_uno=$.trim($('#txtUno').val());
+					var t_datea=emp($('#txtDatea').val())?q_date():$.trim($('#txtDatea').val());
 					if(t_uno.length>0){
-						q_func('qtxt.query.stk_uj', 'orde_uj.txt,stk_uj,' + encodeURI(q_date())+';'+encodeURI(t_uno)+';'+encodeURI('#non')+';'+encodeURI('#non')+';'+encodeURI('#non')+';'+encodeURI('#non')+';'+encodeURI('#non'),r_accy,1);
+						q_func('qtxt.query.stk_uj', 'orde_uj.txt,stk_uj,' + encodeURI(t_datea)+';'+encodeURI(t_uno)+';'+encodeURI('#non')+';'+encodeURI('#non')+';'+encodeURI('#non')+';'+encodeURI('#non')+';'+encodeURI('#non'),r_accy,1);
 						var as = _q_appendData("tmp0", "", true, true);
 						if (as[0] != undefined) {
 							$('#txtUcano').val(as[0].productno);
 							$('#lblSpec').text(as[0].spec);
-							$('#lblLengthb').text(round(dec(as[0].lengthb),0));
+							if(as[0].mount>1)
+								$('#lblLengthb').text(round(dec(as[0].lengthb),0));
+							else
+								$('#lblLengthb').text(round(dec(as[0].weight),0));
 							getucatypea();
 						}else{
 							alert('【'+t_uno+'】批號不存在!!');
@@ -387,7 +392,7 @@
 				
 				$('#btnIns1').click(function() {
 					q_func('qtxt.query.addpallet', 'orde_uj.txt,addpallet,'+ encodeURI(q_date()),r_accy,1);
-					var as = q_appendData("tmp0", "", true, true);
+					var as = _q_appendData("tmp0", "", true, true);
 					if (as[0] != undefined) {
 						$('#txtUcauno').val(as[0].palletno);
 					}
@@ -601,7 +606,7 @@
 				
 				$('#btnIns3').click(function() {
 					q_func('qtxt.query.addpallet', 'orde_uj.txt,addpallet,'+ encodeURI(q_date()),r_accy,1);
-					var as = q_appendData("tmp0", "", true, true);
+					var as = _q_appendData("tmp0", "", true, true);
 					if (as[0] != undefined) {
 						$('#txtUcauno3').val(as[0].palletno);
 					}

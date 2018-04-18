@@ -622,9 +622,9 @@
 						var ass = _q_appendData("view_rc2s", "", true);
 						if (ass[0] != undefined) {
 							for ( i = 0; i < ass.length; i++) {
-								for (var j = 0; j < q_bbsCount; j++) {
-									if(ass[i].noa==$('#txtNoa').val() && ass[i].noq==$('#txtNoq_'+j).val()){
-										$('#txtUno_'+j).val(ass[i].uno);
+								for (var j = 0; j < abbs.length; j++) {
+									if(ass[i].noa==abbs[j].noa && ass[i].noq==abbs[j].noq){
+										abbs[j].uno=ass[i].uno;
 										break;
 									}
 								}

@@ -78,7 +78,9 @@
                 bbmMask = [['txtDatea', r_picd], ['txtBdate', r_picd], ['txtEdate', r_picd], ['txtMedate', r_picd]];
                 bbsMask = [['txtDatea', r_picd],['txtDate2', r_picd]];
                 
-                q_cmbParse("cmbItype", '業務,內分,內覆,生管,預留,特殊');	
+                q_cmbParse("cmbItype", '業務,內分,內覆,生管,預留,特殊');
+                q_cmbParse("cmbM1", ',±10%,限定,裝滿,不Booking,委外,轉倉,其他');
+                q_cmbParse("cmbM2", ',零碼裝箱,零碼裸裝,可接頭,尾支零碼,其他');
                 
                 q_mask(bbmMask);
                 
@@ -1328,11 +1330,15 @@
 					</tr>
 					<tr>
 						<td><span> </span><a id="lblM1_uj" class="lbl" >成品指令</a></td>
-						<td colspan="5"><input id="txtM1" type="text" class="txt c1" style="width: 99%;"/></td>
-					</tr>
-					<tr>
+						<td>
+							<!--<input id="txtM1" type="text" class="txt c1" style="width: 99%;"/>-->
+							<select id="cmbM1" class="txt c1"> </select>
+						</td>
 						<td><span> </span><a id="lblM2_uj" class="lbl" >餘料指令</a></td>
-						<td colspan="5"><input id="txtM2" type="text" class="txt c1" style="width: 99%;"/></td>
+						<td>
+							<!--<input id="txtM2" type="text" class="txt c1" style="width: 99%;"/>-->
+							<select id="cmbM2" class="txt c1"> </select>
+						</td>
 					</tr>
 					<tr>
 						<td><span> </span><a id="lblM3_uj" class="lbl" >指送客戶</a></td>
