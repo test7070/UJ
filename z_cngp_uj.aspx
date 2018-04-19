@@ -27,12 +27,6 @@
                     options : [ {
                         type : '6',//[1][2]
                         name : 'xnoa'
-                    },{
-                        type : '6',//[1][2]
-                        name : 'unit'
-                    },{
-                        type : '6',//[1][2]
-                        name : 'store2'
                     }]
                 });
                 q_popAssign();
