@@ -31,11 +31,11 @@
 	                        name : 'accy',
 	                        value : r_accy
 	                    }, {
-                        type : '2', //[2][3]
-                        name : 'spno',
-                        dbf : 'uca',
-                        index : 'noa,product',
-                        src : 'uca_b.aspx'
+	                        type : '2', //[2][3]
+	                        name : 'spno',
+	                        dbf : 'uca',
+	                        index : 'noa,engpro,product',
+	                        src : 'uca_b.aspx'
                         }, {
                             type : '5', //[4]
                             name : 'xtypea',
@@ -43,7 +43,7 @@
                         }, {
                             type : '5', //[5]
                             name : 'xgroupdno',
-                            value : (',訂單,成-計,半-計,半-訂,計畫').split(',')
+                            value : (' @全部,訂單,成-計,半-計,半-訂,計畫').split(',')
                         }]
                     });
                 q_popAssign();
