@@ -1976,7 +1976,7 @@
 						<td><span> </span><a id='lblAccc' class="lbl btn"> </a></td>
 						<td colspan='2'><input id="txtAccno" type="text" class="txt c1"/></td>
 						<td> </td>
-						<td><a id='lblInvomemo' class="lbl" style="color: red;"> </a></td>
+						<td><a id='lblInvomemo' class="lbl" style="color: red;float: left;"> </a></td>
 						<!--<td align="right"><input id="btnst4rc2vcc" type="button" value="轉回典盈" style="display: none;"/></td>-->
 					</tr>
 					<tr>
