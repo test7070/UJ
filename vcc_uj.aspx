@@ -42,7 +42,7 @@
 				['txtCardealno', 'lblCardeal', 'cardeal', 'noa,comp', 'txtCardealno,txtCardeal', 'cardeal_b.aspx'],
 				['txtCno', 'lblAcomp', 'acomp', 'noa,acomp', 'txtCno,txtAcomp', 'acomp_b.aspx'],
 				['txtSalesno', 'lblSales', 'sss', 'noa,namea', 'txtSalesno,txtSales', 'sss_b.aspx'],
-				['txtSalesno2', 'lblSales2_uj', 'cust', 'noa,nick', 'txtSalesno2,txtSales2', 'cust_b.aspx'],
+				['txtSalesno2', 'lblSales2_uj', 'cust', 'noa,nick,zip_comp,addr_comp', 'txtSalesno2,txtSales2,txtPost2,txtAddr2', 'cust_b.aspx'],
 				['txtCustno2', 'lblCust2', 'cust', 'noa,comp', 'txtCustno2,txtComp2', 'cust_b.aspx'],
 				//['txtPost', 'lblAddr', 'addr', 'post,addr', 'txtPost,txtAddr', 'addr_b.aspx'],
 				//['txtPost2', 'lblAddr2', 'addr', 'post,addr', 'txtPost2,txtAddr2', 'addr_b.aspx'],
@@ -207,14 +207,21 @@
 					if(t_product.length>0){
 						q_gt('view_cub',"where=^^ product='"+t_product+"'^^", 0, 0, 0, "getcub", r_accy,1);
 					}else{
-						q_gt('view_cub',"where=^^ custno='"+t_custno+"' and isnull(enda,0)=0 ^^", 0, 0, 0, "getcub", r_accy,1);
+						//107/06/07 改成匯入已完工
+						//(原未完工 ref:"0.業務生產指令 2017.8.25-1.xlsx"生產指令說明 參照25 完成【出貨單】作業,才按下"完工"此筆"生產指令"完成任務)
+						//q_gt('view_cub',"where=^^ custno='"+t_custno+"' and isnull(enda,0)=0 ^^", 0, 0, 0, "getcub", r_accy,1);
+						q_gt('view_cub',"where=^^ custno='"+t_custno+"' and isnull(enda,0)=1 ^^", 0, 0, 0, "getcub", r_accy,1);
 					}
 					var as = _q_appendData("view_cub", "", true);
 					var t_noa='',t_storeno='',t_store='';
 					if(as[0] != undefined){
 						if(t_product.length>0){
-							if(as[0].enda=='true'){
+							/*if(as[0].enda=='true'){
 								alert('生產指令【'+t_product+'】已完工!!');
+								return;	
+							}*/
+							if(as[0].enda=='false'){
+								alert('生產指令【'+t_product+'】未完工!!');
 								return;	
 							}else{
 								$('#txtCustno').val(as[0].custno);
@@ -282,6 +289,10 @@
 					}else{
 						alert('資料已存在表身，不重覆匯入!!');
 					}
+				});
+				
+				$('#cmbCubnouj').change(function() {
+					$('#txtTimea').val($.trim($('#cmbCubnouj').val()));
 				});
 
 				$('#lblOrdeno').click(function() {
@@ -842,7 +853,7 @@
 						_btnModi();
 						Unlock(1);
 						$('#txtCustno').focus();
-
+						
 						if (!emp($('#txtCustno').val())) {
 							var t_where = "where=^^ noa='" + $('#txtCustno').val() + "' ^^ stop=100";
 							q_gt('custaddr', t_where, 0, 0, 0, "");
@@ -852,6 +863,7 @@
 						var t_where = "where=^^ noa=N'" + thisVal + "' ^^";
 						q_gt('cardeal', t_where, 0, 0, 0, "getCardealCarno");
 						bbsGetOrdeList();
+						getcubno();
 						break;
 					case q_name:
 						if (q_cur == 4)
@@ -1060,6 +1072,63 @@
 							
 							$('#textF01_'+b_seq).change();
 						});
+						
+						/*$('#txtProductno_'+ i).change(function() {
+							t_IdSeq = -1;
+							q_bodyId($(this).attr('id'));
+							b_seq = t_IdSeq;
+							
+							var t_pno=$.trim($('#txtProductno_'+ b_seq).val());
+							if(t_pno.length>0){
+								var t_where = "where=^^ noa='" + t_pno + "' ^^ stop=1";
+								q_gt('uca', t_where, 0, 0, 0, "getuca", r_accy,1);
+								var as = _q_appendData("uca", "", true);
+								if (as[0] != undefined) {
+									$('#txtProduct_'+b_seq).val(as[0].product);//物品名稱
+									$('#textF01_'+b_seq).val(as[0].groupdno);//銷售政策
+									$('#txtUnit_'+b_seq).val(as[0].unit);//單位
+									$('#textF05_'+b_seq).val(as[0].style.split('#^#')[8]);//長度備註
+									$('#textF06_'+b_seq).val(as[0].rev);//產品系列
+									$('#txtWidth_'+b_seq).val(as[0].mechs);//寬幅
+									$('#txtLengthb_'+b_seq).val(as[0].trans);//標準長
+								}
+								
+								//庫存
+								var t_sno=$('#txtStoreno_'+b_seq).val();
+								var t_uno=$('#txtUno_'+b_seq).val();
+								if(t_sno.length==0){
+									t_sno='#non';
+								}
+								if(t_uno.length==0){
+									t_uno='#non';
+								}
+								if(t_pno.length>0){
+									var t_mount=0;
+									var tdatea=emp($('#txtDatea').val())?q_date():$('#txtDatea').val();
+									q_func('qtxt.query.stk_uj', 'orde_uj.txt,stk_uj,' + encodeURI(tdatea)+';'+encodeURI(t_uno)+';'+encodeURI(t_pno)+';'+encodeURI(t_sno)+';'+encodeURI('#non')+';'+encodeURI('#non')+';'+encodeURI('#non'),r_accy,1);
+									var as = _q_appendData("tmp0", "", true, true);
+									for(var j=0;j<as.length;j++){
+										if(as[j].storeno==$('#txtStoreno_'+b_seq).val())
+											t_mount=q_add(t_mount,dec(as[j].mount));
+									}
+									
+									$('#txtWcost_'+b_seq).val(t_mount);//庫存
+								}
+							}else{
+								$('#txtProductno_'+b_seq).val('');//新料號
+								$('#txtProduct_'+b_seq).val('');//物品名稱
+								$('#textF01_'+b_seq).val('');//銷售政策
+								$('#txtUnit_'+b_seq).val('');//單位
+								$('#textF05_'+b_seq).val('');//長度備註
+								$('#textF06_'+b_seq).val('');//產品系列
+								$('#txtWidth_'+b_seq).val('');//寬幅
+								$('#txtWcost_'+b_seq).val('');//庫存
+								$('#txtLengthb_'+b_seq).val('');//標準長
+								$('#txtLengthc_'+b_seq).val('');//原長度
+							}
+							
+							$('#textF01_'+b_seq).change();
+						});*/
 						
 						$('#txtStoreno_'+ i).change(function() {
 							t_IdSeq = -1;
@@ -1364,6 +1433,7 @@
 				HiddenTreat();
 				stype_chang();
 				refreshBbm();
+				getinvomemo();
 			}
 
 			function HiddenTreat(returnType){
@@ -1520,6 +1590,8 @@
 							var t_where = "where=^^ noa='" + $('#txtCustno').val() + "' ^^ stop=100";
 							q_gt('custaddr', t_where, 0, 0, 0, "");
 						}
+						getinvomemo();
+						getcubno();
 						//bbsGetOrdeList();
 						break;
 					/*case 'txtPost2':
@@ -1534,6 +1606,36 @@
 					case 'txtProductno_':
 						bbsGetOrdeList();
 						break;*/	
+				}
+			}
+			
+			function getinvomemo() {
+				if(emp($('#txtCustno').val())){
+					$('#lblInvomemo').text('');
+				}else{
+					q_gt('custm',"where=^^ noa='"+$('#txtCustno').val()+"'^^", 0, 0, 0, "getinvomemo", r_accy,1);
+					var as = _q_appendData("custm", "", true);
+					if(as[0] != undefined){
+						$('#lblInvomemo').text(as[0].invomemo);
+					}else{
+						$('#lblInvomemo').text('');
+					}
+				}
+			}
+			
+			function getcubno() {
+				$('#cmbCubnouj').text('');
+				if(!emp($('#txtCustno').val())){
+					var t_custno=$('#txtCustno').val();
+					q_gt('view_cub',"where=^^ custno='"+t_custno+"' and isnull(enda,0)=1 ^^", 0, 0, 0, "getcub", r_accy,1);
+					var as = _q_appendData("view_cub", "", true);
+					var t_item = " @ ";
+					if (as[0] != undefined) {
+						for ( i = 0; i < as.length; i++) {
+							t_item = t_item + (t_item.length > 0 ? ',' : '') + as[i].noa + '@' + as[i].product;
+						}
+					}
+					q_cmbParse("cmbCubnouj", t_item);
 				}
 			}
 
@@ -1790,6 +1892,7 @@
 						<td colspan='2' align="center">	
 							<!--<input id="btnOrdes" type="button"/>-->
 							<input id="btnCubs" type="button" value="匯入生產指令"/>
+							<select id="cmbCubnouj" style="width: 20px;"> </select>
 						</td>
 					</tr>
 					<tr>
@@ -1872,6 +1975,8 @@
 						<td><input id="txtWorker2" type="text" class="txt c1"/></td>
 						<td><span> </span><a id='lblAccc' class="lbl btn"> </a></td>
 						<td colspan='2'><input id="txtAccno" type="text" class="txt c1"/></td>
+						<td> </td>
+						<td><a id='lblInvomemo' class="lbl" style="color: red;"> </a></td>
 						<!--<td align="right"><input id="btnst4rc2vcc" type="button" value="轉回典盈" style="display: none;"/></td>-->
 					</tr>
 					<tr>

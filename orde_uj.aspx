@@ -35,11 +35,11 @@
 			brwCount2 = 12;
 			
 			aPop = new Array(
-				['txtProductno_', 'btnProduct_', 'ucaucc', 'noa,product,unit,spec', 'txtProductno_,txtProduct_,txtUnit_,txtSpec_', 'ucaucc_b.aspx'],
+				['txtProductno_', 'btnProduct_', 'ucaucc', 'noa,product', 'txtProductno_,txtProduct_', 'ucaucc_b.aspx'],
 				['txtSalesno', 'lblSales', 'sss', 'noa,namea', 'txtSalesno,txtSales', 'sss_b.aspx'],
 				['txtCno', 'lblAcomp', 'acomp', 'noa,acomp', 'txtCno,txtAcomp', 'acomp_b.aspx'],
-				['txtCustno', 'lblCust', 'cust', 'noa,nick,paytype,trantype,tel,fax,zip_comp,addr_fact', 'txtCustno,txtComp,txtPaytype,cmbTrantype,txtTel,txtFax,txtPost,txtAddr', 'cust_b.aspx'],
-				['txtCustno2', 'lblCust2_uj', 'cust', 'noa,nick', 'txtCustno2,txtCust2', 'cust_b.aspx'],
+				['txtCustno', 'lblCust', 'cust', 'noa,nick,paytype,trantype,tel,fax,zip_comp,addr_comp', 'txtCustno,txtComp,txtPaytype,cmbTrantype,txtTel,txtFax,txtPost,txtAddr', 'cust_b.aspx'],
+				['txtCustno2', 'lblCust2_uj', 'cust', 'noa,nick,zip_comp,addr_comp', 'txtCustno2,txtCust2,txtPost2,txtAddr2', 'cust_b.aspx'],
 				['ordb_txtTggno_', '', 'tgg', 'noa,comp', 'ordb_txtTggno_,ordb_txtTgg_', '']
 			);
 			
@@ -924,6 +924,16 @@
 						if (!emp($('#txtCustno').val())) {
 							var t_where = "where=^^ noa='" + $('#txtCustno').val() + "'^^ stop=100";
 							q_gt('custaddr', t_where, 0, 0, 0, "");
+						}
+						break;
+					case 'txtProductno_':
+						if (!emp($('#txtProductno_'+b_seq).val())) {
+							var t_where="where=^^ noa='"+$('#txtProductno_'+b_seq).val()+"' ^^";
+		                	q_gt('view_ucaucc', t_where, 0, 0, 0, "", r_accy,1);
+		                	var as = _q_appendData("view_ucaucc", "", true);
+							if (as[0] != undefined) {
+								$('#txtUnit_'+b_seq).val(as[0].unit);
+							}
 						}
 						break;
 				}

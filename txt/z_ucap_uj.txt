@@ -2,6 +2,8 @@
 declare @t_bproduct nvarchar(20) = case when '#non'=[2] then '' else [2] end
 declare @t_eproduct nvarchar(20) = case when '#non'=[3] then char(255) else [3] end
 declare @t_groupdno nvarchar(20) = case when '#non'=[5] then '' else [5] end
+declare @t_stationgno nvarchar(20) = case when '#non'=[6] then '' else [6] end
+declare @t_rev nvarchar(20) = case when '#non'=[7] then '' else [7] end
 
 declare @tmp table(
 	gno nvarchar(1),
@@ -54,6 +56,8 @@ from uca
 where typea='2'
 and(noa between @t_bproduct and @t_eproduct)
 and (len(@t_groupdno)=0 or groupdno=@t_groupdno)
+and (len(@t_stationgno)=0 or stationgno=@t_stationgno)
+and (len(@t_rev)=0 or rev=@t_rev)
 
 update a
 set rr=rx
@@ -67,6 +71,8 @@ z_ucap_uj2:--z_ucap_uj2
 declare @t_bproduct nvarchar(20) = case when '#non'=[2] then '' else [2] end
 declare @t_eproduct nvarchar(20) = case when '#non'=[3] then char(255) else [3] end
 declare @t_groupdno nvarchar(20) = case when '#non'=[5] then '' else [5] end
+declare @t_stationgno nvarchar(20) = case when '#non'=[6] then '' else [6] end
+declare @t_rev nvarchar(20) = case when '#non'=[7] then '' else [7] end
 
 declare @tmp table(
 	gno nvarchar(1),
@@ -114,6 +120,8 @@ from uca
 where typea='3'
 and(noa between @t_bproduct and @t_eproduct)
 and (len(@t_groupdno)=0 or groupdno=@t_groupdno)
+and (len(@t_stationgno)=0 or stationgno=@t_stationgno)
+and (len(@t_rev)=0 or rev=@t_rev)
 
 update a
 set rr=rx
@@ -127,6 +135,8 @@ z_ucap_uj3:--z_ucap_uj3
 declare @t_bproduct nvarchar(20) = case when '#non'=[2] then '' else [2] end
 declare @t_eproduct nvarchar(20) = case when '#non'=[3] then char(255) else [3] end
 declare @t_groupdno nvarchar(20) = case when '#non'=[5] then '' else [5] end
+declare @t_stationgno nvarchar(20) = case when '#non'=[6] then '' else [6] end
+declare @t_rev nvarchar(20) = case when '#non'=[7] then '' else [7] end
 
 declare @tmp table(
 	gno nvarchar(1),
@@ -165,6 +175,8 @@ from uca
 where typea='8'
 and(noa between @t_bproduct and @t_eproduct)
 and (len(@t_groupdno)=0 or groupdno=@t_groupdno)
+and (len(@t_stationgno)=0 or stationgno=@t_stationgno)
+and (len(@t_rev)=0 or rev=@t_rev)
 
 update a
 set rr=rx

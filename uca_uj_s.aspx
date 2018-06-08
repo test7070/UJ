@@ -2,7 +2,7 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
-		<title></title>
+		<title> </title>
 		<script src="../script/jquery.min.js" type="text/javascript"></script>
 		<script src='../script/qj2.js' type="text/javascript"></script>
 		<script src='qset.js' type="text/javascript"></script>
@@ -13,7 +13,7 @@
 			var q_name = "uca_s";
 			
 			aPop = new Array(
-				['txtNoa', '', 'uca', 'noa,product', 'txtNoa,txtProduct', "uca_b.aspx"]
+				['txtNoa', '', 'uca', 'noa,product', 'txtNoa', "uca_b.aspx"]
 			);
 
 			$(document).ready(function() {	
@@ -78,10 +78,14 @@
 				t_product = $('#txtProduct').val();
 				t_typea = $('#cmbTypea').val();
 				t_groupdno = $('#cmbGroupdno').val();
+				t_stationgno=$('#txtStationgno').val();
+				t_rev=$('#txtRev').val();
 
 				var t_where = " 1=1 " + q_sqlPara2("noa", t_noa) +
 										q_sqlPara2("typea", t_typea)+
-                                        q_sqlPara2("groupdno", t_groupdno);
+                                        q_sqlPara2("groupdno", t_groupdno)+
+                                        q_sqlPara2("stationgno", t_stationgno)+
+                                        q_sqlPara2("rev", t_rev);
 				
 				if (t_product.length > 0)
 					t_where += " and charindex('" + t_product + "',product)>0";
@@ -110,9 +114,17 @@
 					<td class='seek' style="width:20%;"><a id='lblNoa'> </a></td>
 					<td><input class="txt c1" id="txtNoa" type="text"/></td>
 				</tr>
-				<tr class='seek_tr'>
+				<tr class='seek_tr' style="display: none;">
 					<td class='seek' style="width:20%;"><a id='lblProduct'> </a></td>
 					<td><input class="txt c1" id="txtProduct" type="text" /></td>
+				</tr>
+				<tr class='seek_tr'>
+					<td class='seek' style="width:20%;"><a id='lblStationgno_uj'>客戶</a></td>
+					<td><input class="txt c1" id="txtStationgno" type="text"/></td>
+				</tr>
+				<tr class='seek_tr'>
+					<td class='seek' style="width:20%;"><a id='lblRev_uj'>系列</a></td>
+					<td><input class="txt c1" id="txtRev" type="text"/></td>
 				</tr>
 				<tr class='seek_tr'>
 					<td class='seek' style="width:20%;"><a id='lblTypea'> </a></td>

@@ -44,7 +44,13 @@
                             type : '5', //[5]
                             name : 'xgroupdno',
                             value : (' @全部,訂單,成-計,半-計,半-訂,計畫').split(',')
-                        }]
+                        },{
+	                        type : '6',//[6]
+	                        name : 'xstationgno'
+	                    },{
+	                        type : '6',//[7]
+	                        name : 'xrev'
+	                    }]
                     });
                 q_popAssign();
                 q_getFormat();

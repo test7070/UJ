@@ -798,7 +798,7 @@
 							<input id="txtModelno" type="text" class="txt c1"/>
 							<input id="txtModel" type="text" class="txt c1" style="display: none;"/>
 						</td>
-						<td><span> </span><a id="lblSec_uj" class="lbl">分條工時(Sec/M)</a></td>
+						<td><span> </span><a id="lblSec_uj" class="lbl">分條工時(Hr/M)</a></td>
 						<td><input id="txtSec" type="text" class="txt num c1"/></td>
 						<td><span> </span><a id="lblWages_uj" class="lbl">分條人工</a></td>
 						<td><input id="txtWages" type="text" class="txt num c1"/></td>
@@ -806,7 +806,7 @@
 					<tr class="type2"><!--成品才顯示-->
 						<td> </td>
 						<td> </td>
-						<td><span> </span><a id="lblMinutes_uj" class="lbl">覆捲工時(Sec/M)</a></td>
+						<td><span> </span><a id="lblMinutes_uj" class="lbl">覆捲工時(Hr/M)</a></td>
 						<td><input id="txtMinutes" type="text" class="txt num c1"/></td>
 						<td><span> </span><a id="lblHours_uj" class="lbl">覆捲人工</a></td>
 						<td><input id="txtHours" type="text" class="txt num c1"/></td>

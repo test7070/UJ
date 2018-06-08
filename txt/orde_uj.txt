@@ -3372,3 +3372,13 @@ outer apply (
 )xa
 where a.noa=@t_noa and (a.noq=@t_noq or len(@t_noq)=0)
 -----------------------------------------------------------------------------
+cubenda:--cubenda
+SET QUOTED_IDENTIFIER OFF
+declare @t_noa nvarchar(50)=case when '#non'=[1] then '' else [1] end
+
+declare @accy nvarchar(50)=(select top 1 accy from view_cub where noa=@t_noa)
+
+EXEC("update cub"+@accy+" set enda=1 where noa='"+@t_noa+"' ")
+
+select @t_noa noa;
+--------------------------------------------------------------------

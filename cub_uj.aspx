@@ -196,6 +196,20 @@
 					//1.當對應所有"生產指令"都"完工",方可執行完工作業
 					//2.權限為"生產"
 					
+					//目前只先寫完工 (餘料轉調撥單等確認怎麼寫)
+					var t_noa=$.trim($('#txtNoa').val());
+					if(t_noa.length>0 && !(q_cur==1 || q_cur==2)){
+						q_func('qtxt.query.cubenda', 'orde_uj.txt,cubenda,' + encodeURI(t_noa)+';'+encodeURI(q_date())+';'
+						+';'+encodeURI(r_userno)+';'+encodeURI(r_name),r_accy,1);
+						var as = _q_appendData("tmp0", "", true, true);
+						if (as[0] != undefined) {
+							if(as[0].noa==$('#txtNoa').val()){
+								$('#chkEnda').prop('checked',true);
+								abbm[q_recno].enda="true";
+							}
+						}
+					}
+					
 				});
                 
                 $('#btnClose_div_stk').click(function() {
