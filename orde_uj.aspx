@@ -606,7 +606,7 @@
 			function _btnSeek() {
 				if (q_cur > 0 && q_cur < 4)
 					return;
-				q_box('orde_s.aspx', q_name + '_s', "500px", "450px", q_getMsg("popSeek"));
+				q_box('orde_uj_s.aspx', q_name + '_s', "500px", "450px", q_getMsg("popSeek"));
 			}
 
 			function combPaytype_chg() {
@@ -927,12 +927,23 @@
 						}
 						break;
 					case 'txtProductno_':
-						if (!emp($('#txtProductno_'+b_seq).val())) {
-							var t_where="where=^^ noa='"+$('#txtProductno_'+b_seq).val()+"' ^^";
+						var t_pno=$('#txtProductno_'+b_seq).val();
+						if (!emp(t_pno)) {
+							var t_where="where=^^ noa='"+t_pno+"' ^^";
 		                	q_gt('view_ucaucc', t_where, 0, 0, 0, "", r_accy,1);
 		                	var as = _q_appendData("view_ucaucc", "", true);
 							if (as[0] != undefined) {
 								$('#txtUnit_'+b_seq).val(as[0].unit);
+							}
+							
+							var t_custno=emp($('#txtCustno').val())?'#non':$('#txtCustno').val();
+							var t_datea=emp($('#txtOdate').val())?q_date():$('#txtOdate').val();
+							
+							q_func('qtxt.query.getcustprices', 'orde_uj.txt,getcustprices,' + encodeURI(t_pno)+';'+encodeURI(t_custno)+';'
+							+';'+encodeURI(t_datea),r_accy,1);
+							var as = _q_appendData("tmp0", "", true, true);
+							if (as[0] != undefined) {
+								$('#txtPrice_'+b_seq).val(as[0].price);
 							}
 						}
 						break;
@@ -1245,8 +1256,8 @@
 						<td><input id="txtFloata" type="text" class="txt num c1" /></td>
 						<td><span> </span><a id='lblTotalus' class="lbl"> </a></td>
 						<td colspan='2'><input id="txtTotalus" type="text" class="txt num c1"/></td>
-						<td><span> </span><a id="lblApv" class="lbl"> </a></td>
-						<td><input id="txtApv" type="text" class="txt c1"/></td>
+						<td style="display: none;"><span> </span><a id="lblApv" class="lbl"> </a></td>
+						<td style="display: none;"><input id="txtApv" type="text" class="txt c1"/></td>
 					</tr>					
 					<tr>
 						<td><span> </span><a id='lblWorker' class="lbl"> </a></td>
@@ -1289,7 +1300,7 @@
 					<td align="center" style="width:100px;"><a id='lblPackway_s'> </a></td>
 					<td align="center" style="width:85px;"><a id='lblCuft_s'> </a></td>
 					-->
-					<td align="center" style="width:175px;"><a id='lblMemos'> </a></td>
+					<td align="center" style="width:175px;"><a id='lblMemos_uj'>備註</a></td>
 					<td align="center" style="width:90px;"><a id='lblDateas'> </a></td>
 					<td align="center" style="width:43px;"><a id='lblEndas'> </a></td>
 					<td align="center" style="width:43px;"><a id='lblCancels'> </a></td>
@@ -1333,8 +1344,8 @@
 					-->
 					<td>
 						<input class="txt c7" id="txtMemo.*" type="text" />
-						<input class="txt" id="txtQuatno.*" type="text" style="width: 70%;" />
-						<input class="txt" id="txtNo3.*" type="text" style="width: 20%;"/>
+						<input class="txt" id="txtQuatno.*" type="text" style="width: 70%;display: none;" />
+						<input class="txt" id="txtNo3.*" type="text" style="width: 20%;display: none;"/>
 						<input id="recno.*" type="hidden" />
 					</td>
 					<td><input class="txt c7" id="txtDatea.*" type="text" /></td>

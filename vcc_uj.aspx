@@ -18,7 +18,7 @@
 			q_tables = 's';
 			var q_name = "vcc";
 			var q_readonly = ['txtNoa', 'txtAccno', 'txtComp','txtCardeal','txtSales', 'txtAcomp', 'txtMoney', 'txtTax', 'txtTotal', 'txtTotalus', 'txtWorker', 'txtWorker2','txtTranstart','txtCartrips'];
-			var q_readonlys = ['txtProductno','textF01','txtWcost','txtUnit','textF03','textF04','textF05','textF06','txtWidth','txtWidth3','txtTotal', 'txtOrdeno','txtNo2','txtNoq'
+			var q_readonlys = ['textF01','txtWcost','txtUnit','textF03','textF04','textF05','textF06','txtWidth','txtWidth3','txtTotal', 'txtOrdeno','txtNo2','txtNoq'
 			,'txtUno','txtSpec','txtStyle','txtWidth2','txtWeight'];
 			var bbmNum = [
 				['txtPrice', 10, 3, 1], ['txtTranmoney', 11, 0, 1], ['txtMoney', 15, 0, 1], ['txtTax', 15, 0, 1],
@@ -48,7 +48,7 @@
 				//['txtPost2', 'lblAddr2', 'addr', 'post,addr', 'txtPost2,txtAddr2', 'addr_b.aspx'],
 				['txtPost', 'lblAddr', 'addr2', 'noa,post', 'txtPost', 'addr2_b.aspx'],
 				['txtPost2', 'lblAddr2', 'addr2', 'noa,post', 'txtPost2', 'addr2_b.aspx'],
-				//['txtProductno_', 'btnProductno_', 'ucaucc', 'noa,product,unit,spec', 'txtProductno_,txtProduct_,txtUnit_,txtSpec_', 'ucaucc_b.aspx'],
+				['txtProductno_', 'btnProductno_', 'ucaucc', 'noa,product', 'txtProductno_,txtProduct_', 'ucaucc_b.aspx'],
 				['txtTranstartno', 'lblTranstart', 'addr2', 'noa,post','txtTranstartno,txtTranstart', 'addr2_b.aspx']
 			);
 
@@ -269,7 +269,7 @@
 								$('#btnPlus').click();
 							}
 							t_i++;
-							$('#txtUcolor_'+t_i).val(as[i].ucolor);
+							//$('#txtUcolor_'+t_i).val(as[i].ucolor);
 							$('#txtProductno_'+t_i).val(as[i].productno);
 							$('#textF01_'+t_i).val(as[i].btime);
 							$('#txtStoreno_'+t_i).val(t_storeno);
@@ -283,7 +283,7 @@
 								$('#textF02_'+t_i).val(as[i].cudsmemo.split('_')[7]);
 							//$('#txtUno_'+t_i).val(as[i].cudsuno);
 							
-							$('#txtUcolor_'+t_i).change();
+							$('#txtProductno_'+t_i).change();
 						}
 						Unlock(1);
 					}else{
@@ -381,7 +381,7 @@
 							
 							if(t_n!=t_on){
 								q_bbs_addrow('bbs', t_n, 0);
-								$('#txtUcolor_'+t_n).val($('#txtUcolor_'+t_on).val());
+								//$('#txtUcolor_'+t_n).val($('#txtUcolor_'+t_on).val());
 								$('#txtProductno_'+t_n).val($('#txtProductno_'+t_on).val());
 								$('#txtProduct_'+t_n).val($('#txtProduct_'+t_on).val());
 								$('#textF01_'+t_n).val($('#textF01_'+t_on).val());
@@ -423,8 +423,10 @@
 				
 				$('#txtDatea').focusout(function() {
 					for (var j = 0; j < q_bbsCount; j++) {
-						if(!emp($('#txtUcolor_'+ j).val()))
-							$('#txtUcolor_'+ j).change();
+						//if(!emp($('#txtUcolor_'+ j).val()))
+						//	$('#txtUcolor_'+ j).change();
+						if(!emp($('#txtProductno_'+ j).val()))
+							$('#txtProductno_'+ j).change();
 					}
 				});
 			}
@@ -552,7 +554,6 @@
 								$('#txtTranmoney2_'+b_seq).val(q_mul(t_cuft,t_pcmount));
 		                	}
 	                	}
-						break;
 						break;
 					
 					case q_name + '_s':
@@ -1003,7 +1004,7 @@
 			function bbsAssign() {
 				for (var i = 0; i < q_bbsCount; i++) {
 					if (!$('#btnMinus_' + i).hasClass('isAssign')) {
-						$('#txtUcolor_'+ i).change(function() {
+						/*$('#txtUcolor_'+ i).change(function() {
 							t_IdSeq = -1;
 							q_bodyId($(this).attr('id'));
 							b_seq = t_IdSeq;
@@ -1060,63 +1061,6 @@
 								}
 							}else{
 								$('#txtProductno_'+b_seq).val('');//新料號
-								$('#textF01_'+b_seq).val('');//銷售政策
-								$('#txtUnit_'+b_seq).val('');//單位
-								$('#textF05_'+b_seq).val('');//長度備註
-								$('#textF06_'+b_seq).val('');//產品系列
-								$('#txtWidth_'+b_seq).val('');//寬幅
-								$('#txtWcost_'+b_seq).val('');//庫存
-								$('#txtLengthb_'+b_seq).val('');//標準長
-								$('#txtLengthc_'+b_seq).val('');//原長度
-							}
-							
-							$('#textF01_'+b_seq).change();
-						});
-						
-						/*$('#txtProductno_'+ i).change(function() {
-							t_IdSeq = -1;
-							q_bodyId($(this).attr('id'));
-							b_seq = t_IdSeq;
-							
-							var t_pno=$.trim($('#txtProductno_'+ b_seq).val());
-							if(t_pno.length>0){
-								var t_where = "where=^^ noa='" + t_pno + "' ^^ stop=1";
-								q_gt('uca', t_where, 0, 0, 0, "getuca", r_accy,1);
-								var as = _q_appendData("uca", "", true);
-								if (as[0] != undefined) {
-									$('#txtProduct_'+b_seq).val(as[0].product);//物品名稱
-									$('#textF01_'+b_seq).val(as[0].groupdno);//銷售政策
-									$('#txtUnit_'+b_seq).val(as[0].unit);//單位
-									$('#textF05_'+b_seq).val(as[0].style.split('#^#')[8]);//長度備註
-									$('#textF06_'+b_seq).val(as[0].rev);//產品系列
-									$('#txtWidth_'+b_seq).val(as[0].mechs);//寬幅
-									$('#txtLengthb_'+b_seq).val(as[0].trans);//標準長
-								}
-								
-								//庫存
-								var t_sno=$('#txtStoreno_'+b_seq).val();
-								var t_uno=$('#txtUno_'+b_seq).val();
-								if(t_sno.length==0){
-									t_sno='#non';
-								}
-								if(t_uno.length==0){
-									t_uno='#non';
-								}
-								if(t_pno.length>0){
-									var t_mount=0;
-									var tdatea=emp($('#txtDatea').val())?q_date():$('#txtDatea').val();
-									q_func('qtxt.query.stk_uj', 'orde_uj.txt,stk_uj,' + encodeURI(tdatea)+';'+encodeURI(t_uno)+';'+encodeURI(t_pno)+';'+encodeURI(t_sno)+';'+encodeURI('#non')+';'+encodeURI('#non')+';'+encodeURI('#non'),r_accy,1);
-									var as = _q_appendData("tmp0", "", true, true);
-									for(var j=0;j<as.length;j++){
-										if(as[j].storeno==$('#txtStoreno_'+b_seq).val())
-											t_mount=q_add(t_mount,dec(as[j].mount));
-									}
-									
-									$('#txtWcost_'+b_seq).val(t_mount);//庫存
-								}
-							}else{
-								$('#txtProductno_'+b_seq).val('');//新料號
-								$('#txtProduct_'+b_seq).val('');//物品名稱
 								$('#textF01_'+b_seq).val('');//銷售政策
 								$('#txtUnit_'+b_seq).val('');//單位
 								$('#textF05_'+b_seq).val('');//長度備註
@@ -1347,16 +1291,6 @@
 				stype_chang();
 				splitbbsf();
 				
-				if (q_cur==2 && q_getPara('sys.project').toUpperCase()=='AD' && !emp($('#txtNoa').val())){
-					var t_where = " where=^^ noa='" + $('#txtNoa').val() + "' and (len(isnull(zipname,''))>0 or len(isnull(zipcode,''))>0) ^^";
-					q_gt('view_vcc', t_where, 0, 0, 0, 'getst4rc2vcc_ad', r_accy,1);
-					var as = _q_appendData("view_vcc", "", true);
-					if (as[0] != undefined) {
-						for (var i = 0; i < q_bbsCount; i++) {
-							$('#btnMinus_'+i).attr('disabled', 'disabled');
-						}
-					}
-				}
 			}
 
 			function btnIns() {
@@ -1533,17 +1467,6 @@
 					opacity : 0
 				});
 				
-				/*if (q_getPara('sys.project').toUpperCase()=='AD' && !emp($('#txtNoa').val())){
-					var t_where = " where=^^ noa='" + $('#txtNoa').val() + "' and (len(isnull(zipname,''))>0 or len(isnull(zipcode,''))>0) ^^";
-					q_gt('view_vcc', t_where, 0, 0, 0, 'getst4rc2vcc_ad', r_accy,1);
-					var as = _q_appendData("view_vcc", "", true);
-					if (as[0] != undefined) {
-						alert('已轉回典盈禁止刪除!!');
-						Unlock(1);
-						return;
-					}
-				}*/
-				
 				var t_where = " where=^^ vccno='" + $('#txtNoa').val() + "'^^";
 				q_gt('umms', t_where, 0, 0, 0, 'btnDele', r_accy);
 			}
@@ -1554,6 +1477,71 @@
 
 			function q_popPost(s1) {
 				switch (s1) {
+					case 'txtProductno_':
+						var t_pno=$.trim($('#txtProductno_'+ b_seq).val());
+						if(t_pno.length>0){
+							var t_where = "where=^^ noa='" + t_pno + "' ^^ stop=1";
+							q_gt('uca', t_where, 0, 0, 0, "getuca", r_accy,1);
+							var as = _q_appendData("uca", "", true);
+							if (as[0] != undefined) {
+								$('#txtProduct_'+b_seq).val(as[0].product);//物品名稱
+								$('#textF01_'+b_seq).val(as[0].groupdno);//銷售政策
+								$('#txtUnit_'+b_seq).val(as[0].unit);//單位
+								$('#textF05_'+b_seq).val(as[0].style.split('#^#')[8]);//長度備註
+								$('#textF06_'+b_seq).val(as[0].rev);//產品系列
+								$('#txtWidth_'+b_seq).val(as[0].mechs);//寬幅
+								$('#txtLengthb_'+b_seq).val(as[0].trans);//標準長
+							}
+							
+							//庫存
+							var t_sno=$('#txtStoreno_'+b_seq).val();
+							var t_uno=$('#txtUno_'+b_seq).val();
+							if(t_sno.length==0){
+								t_sno='#non';
+							}
+							if(t_uno.length==0){
+								t_uno='#non';
+							}
+							if(t_pno.length>0){
+								var t_mount=0;
+								var tdatea=emp($('#txtDatea').val())?q_date():$('#txtDatea').val();
+								q_func('qtxt.query.stk_uj', 'orde_uj.txt,stk_uj,' + encodeURI(tdatea)+';'+encodeURI(t_uno)+';'+encodeURI(t_pno)+';'+encodeURI(t_sno)+';'+encodeURI('#non')+';'+encodeURI('#non')+';'+encodeURI('#non'),r_accy,1);
+								var as = _q_appendData("tmp0", "", true, true);
+								for(var j=0;j<as.length;j++){
+									if(as[j].storeno==$('#txtStoreno_'+b_seq).val())
+										t_mount=q_add(t_mount,dec(as[j].mount));
+								}
+								
+								$('#txtWcost_'+b_seq).val(t_mount);//庫存
+							}
+							
+							var t_custno=emp($('#txtCustno').val())?'#non':$('#txtCustno').val();
+							var t_datea=emp($('#txtDatea').val())?q_date():$('#txtDatea').val();
+							
+							q_func('qtxt.query.getcustprices', 'orde_uj.txt,getcustprices,' + encodeURI(t_pno)+';'+encodeURI(t_custno)+';'
+							+';'+encodeURI(t_datea),r_accy,1);
+							var as = _q_appendData("tmp0", "", true, true);
+							if (as[0] != undefined) {
+								$('#txtPrice_'+b_seq).val(as[0].price);
+								sum();
+							}
+							
+						}else{
+							$('#txtProductno_'+b_seq).val('');//新料號
+							$('#txtProduct_'+b_seq).val('');//物品名稱
+							$('#textF01_'+b_seq).val('');//銷售政策
+							$('#txtUnit_'+b_seq).val('');//單位
+							$('#textF05_'+b_seq).val('');//長度備註
+							$('#textF06_'+b_seq).val('');//產品系列
+							$('#txtWidth_'+b_seq).val('');//寬幅
+							$('#txtWcost_'+b_seq).val('');//庫存
+							$('#txtLengthb_'+b_seq).val('');//標準長
+							$('#txtLengthc_'+b_seq).val('');//原長度
+						}
+							
+						$('#textF01_'+b_seq).change();
+						break;
+					//---------------------------------------------
 					case 'txtStoreno_':
 						var t_pno=$('#txtProductno_'+b_seq).val();
 						var t_sno=$('#txtStoreno_'+b_seq).val();
@@ -1632,7 +1620,7 @@
 					var t_item = " @ ";
 					if (as[0] != undefined) {
 						for ( i = 0; i < as.length; i++) {
-							t_item = t_item + (t_item.length > 0 ? ',' : '') + as[i].noa + '@' + as[i].product;
+							t_item = t_item + (t_item.length > 0 ? ',' : '') + as[i].product + '@' + as[i].product;
 						}
 					}
 					q_cmbParse("cmbCubnouj", t_item);
@@ -1829,14 +1817,16 @@
 						<td align="center" style="width:5%"><a id='vewChk'> </a></td>
 						<td align="center" style="width:5%"><a id='vewType'> </a></td>
 						<td align="center" style="width:25%"><a id='vewDatea'> </a></td>
-						<td align="center" style="width:25%"><a id='vewNoa'> </a></td>
+						<td align="center" style="width:25%;display: none;"><a id='vewNoa'> </a></td>
+						<td align="center" style="width:25%"><a id='vewTimea_uj'>指令名稱</a></td>
 						<td align="center" style="width:40%"><a id='vewComp'> </a></td>
 					</tr>
 					<tr>
 						<td><input id="chkBrow.*" type="checkbox" style=''/></td>
 						<td align="center" id='typea=vcc.typea'>~typea=vcc.typea</td>
 						<td align="center" id='datea'>~datea</td>
-						<td align="center" id='noa'>~noa</td>
+						<td align="center" id='noa' style="display: none;">~noa</td>
+						<td align="center" id='timea'>~timea</td>
 						<td align="center" id='comp,4'>~comp,4</td>
 					</tr>
 				</table>
@@ -1991,9 +1981,9 @@
 				<tr style='color:White; background:#003366;' >
 					<td align="center" style="width:40px;"><input class="btn" id="btnPlus" type="button" value='＋' style="font-weight: bold;width:" /></td>
 					<td align="center" style="width:55px;"><a id='lblNoq_uj_s'>項次</a></td>
-					<td align="center" style="width:170px;"><a id='lblScolor_uj_s'>料號(需求)</a></td>
-					<td align="center" style="width:170px;"><a id='lblProductno_uj_s'>新料號</a></td>
-					<td align="center" style="width:170px;display: none;"><a id='lblProduct_uj_s'>出貨名稱</a></td>
+					<td align="center" style="width:170px;display: none;"><a id='lblUcolor_uj_s'>料號(需求)</a></td>
+					<td align="center" style="width:170px;"><a id='lblProductno_uj_s'>料號</a></td>
+					<td align="center" style="width:170px;"><a id='lblProduct_uj_s'>出貨名稱</a></td>
 					<td align="center" style="width:55px;"><a id='lblF01_uj_s'>銷售<BR>政策</a></td>
 					<td align="center" style="width:60px;"><a id='lblStoreno_uj_s'>出貨<BR>倉別</a></td>
 					<td align="center" style="width:75px;"><a id='lblWcost_uj_s'>庫存</a></td>
@@ -2023,9 +2013,9 @@
 						<input class="txt c1" id="txtNoq.*" type="text"/>
 						<input class="txt c1" id="txtSize.*" type="hidden"/>
 					</td>
-					<td><input class="txt c1" id="txtUcolor.*" type="text" /></td>
+					<td style="display: none;"><input class="txt c1" id="txtUcolor.*" type="text" /></td>
 					<td><input class="txt c1" id="txtProductno.*" type="text" /></td>
-					<td style="display: none;"><input class="txt c1" id="txtProduct.*" type="text"/></td>
+					<td><input class="txt c1" id="txtProduct.*" type="text"/></td>
 					<td><input class="txt c1" id="textF01.*" type="text" /></td>
 					<td>
 						<input class="txt c1" id="txtStoreno.*" type="text"/>

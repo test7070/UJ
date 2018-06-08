@@ -33,8 +33,9 @@
             brwNowPage = 0;
             brwKey = 'noa';
             aPop = new Array(['txtCustno', 'lblCustno', 'cust', 'noa,nick', 'txtCustno,txtComp', 'cust_b.aspx'],
-            	['txtProductno_', 'btnProductno_', 'uca', 'noa,product,unit,engpro', 'txtProductno_,txtProduct_,txtUnit_,txtMemo1_', 'uca_b.aspx'],
-            	['txtMemo2_', '', 'adsec', 'noa,product,price', 'txtMemo2_,txtMemo3_,txtDiscount_', '']
+            	//['txtProductno_', 'btnProductno_', 'uca', 'noa,product,unit,engpro', 'txtProductno_,txtProduct_,txtUnit_,txtMemo1_', 'uca_b.aspx'],
+            	['txtProductno_', 'btnProductno_', 'uca', 'noa,product,unit', 'txtProductno_,txtProduct_,txtUnit_', 'uca_b.aspx'],
+            	['txtMemo2_', '', 'adsec', 'noa,product,price', 'txtMemo2_,txtMemo3_,txtDiscount_', '_b.aspx']
             );
             $(document).ready(function() {
                 bbmKey = ['noa'];
@@ -85,7 +86,10 @@
             }
             function btnOk() {
                 var t_err = '';
-                t_err = q_chkEmpField([['txtNoa', q_getMsg('lblNoa')], ['txtCustno', q_getMsg('lblCustno')]]);
+                //t_err = q_chkEmpField([['txtNoa', q_getMsg('lblNoa')], ['txtCustno', q_getMsg('lblCustno')]]);
+                //不鎖客戶因為會有統一售價
+                t_err = q_chkEmpField([['txtNoa', q_getMsg('lblNoa')], ['lblBdate', q_getMsg('lblBdate')]]);
+                
                 if (t_err.length > 0) {
                     alert(t_err);
                     return;
@@ -102,7 +106,7 @@
             function _btnSeek() {
                 if (q_cur > 0 && q_cur < 4)// 1-3
                     return;
-                q_box('custprice_s.aspx', q_name + '_s', "500px", "320px", q_getMsg("popSeek"));
+                q_box('custprice_uj_s.aspx', q_name + '_s', "500px", "320px", q_getMsg("popSeek"));
             }
             function btnIns() {
                 _btnIns();
@@ -447,10 +451,10 @@
 					<td  align="center" style="width: 2%;">
 						<input class="btn" id="btnPlus" type="button" value='+' style="font-weight: bold;"  />
 					</td>
-					<td align="center" style="width:12%;"><a id='lblProductno_uj_s'>新編碼</a></td>
-					<td align="center" style="width:18%;display: none;"><a id='lblProduct_s'> </a></td>
+					<td align="center" style="width:12%;"><a id='lblProductno_uj_s'>物品編號</a></td><!--新編碼-->
+					<td align="center" style="width:18%;"><a id='lblProduct_uj_s'>物品名稱</a></td>
 					<td align="center" style="width:4%;display: none;"><a id='lblUnit_s'> </a></td>
-					<td align="center" style="width:12%;"><a id='lblMemo1_uj_s'>舊編號</a></td>
+					<td align="center" style="width:12%;display: none;"><a id='lblMemo1_uj_s'>舊編號</a></td>
 					<td align="center" style="width:8%;"><a id='lblOprice_uj_s'>單價</a></td>
 					<td align="center" style="width:8%;"><a id='lblMemo2_uj_s'>優惠類別</a></td>
 					<td align="center" style="width:10%;"><a id='lblMemo3_uj_s'>產品分類</a></td>
@@ -469,9 +473,9 @@
 						<input id="txtProductno.*" type="text" class="txt c1"/>
 						<input id="btnProductno.*" type="button" style="width: 1%;float:left;font-size: medium; font-weight: bold;display: none;" value="."/>
 					</td>
-					<td style="display: none;"><input id="txtProduct.*" type="text" class="txt c1"/></td>
+					<td><input id="txtProduct.*" type="text" class="txt c1"/></td>
 					<td style="display: none;"><input id="txtUnit.*" type="text" class="txt c1"/></td>
-					<td><input id="txtMemo1.*" type="text" class="txt c1"/></td>
+					<td style="display: none;"><input id="txtMemo1.*" type="text" class="txt c1"/></td>
 					<td><input id="txtOprice.*" type="text" class="txt num c1"/></td>
 					<td><input id="txtMemo2.*" type="text" class="txt c1"/></td>
 					<td><input id="txtMemo3.*" type="text" class="txt c1"/></td>

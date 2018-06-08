@@ -19,7 +19,7 @@
             var q_name = "cuc";
             var q_readonly = ['txtNoa', 'txtWorker', 'txtWorker2'];
             var q_readonlys = ['txtMount3','txtMount4','txtSize','txtParab','txtUcolor','txtMount','txtW02','txtEtime','txtWeight3','txtParac','txtWeight9','txtM02','txtM03','txtWaste'
-            ,'txtProductno','txtParad','txtParae','txtBtime','txtLengthb','txtMount1','txtMount2','txtWeight4','txtWeight5','txtW05'];
+            ,'txtParad','txtParae','txtBtime','txtLengthb','txtMount1','txtMount2','txtWeight4','txtWeight5','txtW05'];
             var bbmNum = [];
             var bbsNum = [['txtLengthb', 10, 0, 1], ['txtMount1', 10, 0, 1]
             , ['txtMount2', 10, 0, 1], ['txtMount3', 10, 0, 1], ['txtMount4', 10, 0, 1]
@@ -147,7 +147,7 @@
 					$('#lblNo_' + j).text(j + 1);
                     if (!$('#btnMinus_' + j).hasClass('isAssign')) {
                     	
-                    	$('#txtSize2_'+j).change(function() {
+                    	/*$('#txtSize2_'+j).change(function() {
                     		t_IdSeq = -1;
 							q_bodyId($(this).attr('id'));
 							b_seq = t_IdSeq;
@@ -160,6 +160,44 @@
 							if (as[0] != undefined) {
 								$('#txtBtime_'+b_seq).val(as[0].rev);
 								$('#txtProductno_'+b_seq).val(as[0].noa);
+								if($('#cmbTypea').val()=='希德'){ //用Y
+									$('#txtLengthb_'+b_seq).val(round(q_div(dec(as[0].trans),0.9144),0));
+								}else{
+									$('#txtLengthb_'+b_seq).val(as[0].trans);
+								}
+								
+								$('#txtParae_'+b_seq).val(as[0].groupbno);
+								if($('#cmbTypea').val()=='希德'){
+									$('#txtParad_'+b_seq).val(as[0].groupcno);
+								}
+								$('#txtMount1_'+b_seq).val(as[0].omount);
+								$('#txtMount2_'+b_seq).val(as[0].smount);
+								$('#txtMount3_'+b_seq).val(as[0].asmount);
+								if($('#cmbTypea').val()=='希德'){
+									$('#txtWeight4_'+b_seq).val(as[0].dmount);
+									$('#txtWeight5_'+b_seq).val(as[0].emount);
+								}else{
+									$('#txtW05_'+b_seq).val(as[0].emount);
+								}
+								$('#txtLengthb_'+b_seq).change();
+								$('#txtMount2_'+b_seq).change();
+							}
+							
+						});*/
+						
+						$('#txtProductno_'+j).change(function() {
+                    		t_IdSeq = -1;
+							q_bodyId($(this).attr('id'));
+							b_seq = t_IdSeq;
+							
+							var t_datea=emp($('#txtDatea').val())?q_date():$('#txtDatea').val();
+							var t_pno=$('#txtProductno_'+b_seq).val();
+							
+							q_func('qtxt.query.cucsbbs', 'orde_uj.txt,cucsbbs,' + encodeURI(t_datea)+';'+encodeURI(t_pno),r_accy,1);
+							var as = _q_appendData("tmp0", "", true, true);
+							if (as[0] != undefined) {
+								$('#txtBtime_'+b_seq).val(as[0].rev);
+								//$('#txtProductno_'+b_seq).val(as[0].noa);
 								if($('#cmbTypea').val()=='希德'){ //用Y
 									$('#txtLengthb_'+b_seq).val(round(q_div(dec(as[0].trans),0.9144),0));
 								}else{
@@ -918,8 +956,8 @@
 						<td align="center" style="width: 35px;"><input class="btn" id="btnPlus" type="button" value='+' style="font-weight: bold;"/></td>
 						<td align="center" style="width: 30px;"> </td>
 						<td align="center" style="width: 60px;"><a id='lblBtime_s_uj'>產品別</a></td><!--C-->
-						<td align="center" style="width: 180px;"><a id='lblSize2_s_uj'>原成品料號</a></td><!--D-->
-						<td align="center" style="width: 180px;"><a id='lblProductno_s_uj'>新料號</a></td>
+						<td align="center" style="width: 180px;display: none;"><a id='lblSize2_s_uj'>原成品料號</a></td><!--D-->
+						<td align="center" style="width: 180px;"><a id='lblProductno_s_uj'>料號</a></td>
 						<td align="center" style="width: 80px;"><a id='lblLengthb_s_uj'>長度<BR>(Y)</a></td><!--E-->
 						<td align="center" style="width: 50px;"><a id='lblIsfreeze_s_uj'>可做</a></td><!--F-->
 						<td align="center" style="width: 80px;"><a id='lblMount1_s_uj'>已排未產<BR>(支)</a></td><!--G-->
@@ -970,7 +1008,7 @@
 							<input id="txtNoq.*" type="hidden" class="txt c1"/>
 						</td>
 						<td><input id="txtBtime.*" type="text" class="txt c1"/></td>
-						<td><input id="txtSize2.*" type="text" class="txt c1"/></td>
+						<td style="display: none;"><input id="txtSize2.*" type="text" class="txt c1"/></td>
 						<td><input id="txtProductno.*" type="text" class="txt c1"/></td>
 						<td><input id="txtLengthb.*" type="text" class="txt num c1"/></td>
 						<td align="center"><input id="chkIsfreeze.*" type="checkbox"/></td>
