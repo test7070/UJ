@@ -651,7 +651,7 @@
 				<tr style='color:white; background:#003366;' >
 					<td style="width:40px;" align="center"><input class="btn" id="btnPlus" type="button" value='＋' style="font-weight: bold;"  /></td>
 					<td style="width:25px;"> </td>
-					<td align="center" style="width:180px;"><a id='lblProductno_uj_s'>料號(新成品名)</a></td>
+					<td align="center" style="width:180px;"><a id='lblProductno_uj_s'>料號</a></td>
 					<td align="center" style="width:80px;"><a id='lblClass_uj_s'>類別</a></td>
 					<td align="center" style="width:150px;"><a id='lblUno_uj_s'>批號(身分證號)</a></td>
 					<td align="center" style="width:130px;"><a id='lblSpec_uj_s'>列管備註<BR>加工/製造備註</a></td>

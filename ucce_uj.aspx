@@ -440,7 +440,7 @@
 					<td align="center" style="width:1%;"><input class="btn" id="btnPlus" type="button" value='+' style="font-weight: bold;" /></td>
 					<td align="center" style="width:100px;"><a id='lblStoreno_s'> </a></td>
 					<td align="center" style="width:140px;"><a id='lblUno_uj_s'>批號</a></td>
-					<td align="center" style="width:150px;"><a id='lblProductno_uj_s'>新料號</a></td>
+					<td align="center" style="width:150px;"><a id='lblProductno_uj_s'>料號</a></td>
 					<td align="center" style="width:180px;"><a id='lblProduct_s'>品名</a></td>
 					<td align="center" style="width:150px;">
 						<a id='lblSpec_uj_s'>列管備註</a><BR>

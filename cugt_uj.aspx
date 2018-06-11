@@ -220,8 +220,8 @@
 					<td align="center" style="width:150px;display: none;" class="S2 S3"><a id='lblF11_uj'>列管備註</a></td>
 					<!---物料-------->
 					<td align="center" style="width:170px;display: none;" class="S6"><a id='lblF12_uj'>指令名稱</a></td>
-					<td align="center" style="width:170px;display: none;" class="S6"><a id='lblF13_uj'>料號(原成品名)</a></td>
-					<td align="center" style="width:170px;display: none;" class="S6"><a id='lblF14_uj'>新成品編碼</a></td>
+					<td align="center" style="width:170px;display: none;"><a id='lblF13_uj'>料號(原成品名)</a></td>
+					<td align="center" style="width:170px;display: none;" class="S6"><a id='lblF14_uj'>料號</a></td><!--新成品編碼-->
 					<td align="center" style="width:80px;display: none;" class="S6"><a id='lblF15_uj'>數量</a></td>
 					<td align="center" style="width:50px;display: none;" class="S6"><a id='lblF16_uj'>餘數</a></td>
 					<td align="center" style="width:150px;display: none;" class="S6"><a id='lblF17_uj'>紙管</a></td>
@@ -280,7 +280,7 @@
 					<td class="S2 S3" style="display: none;"><input id="textF11.*" type="text" class="txt c1" style="width:95%;"/></td>
 					<!---物料-------->
 					<td class="S6" style="display: none;"><input id="textF12.*" type="text" class="txt c1" style="width:95%;"/></td>
-					<td class="S6" style="display: none;"><input id="textF13.*" type="text" class="txt c1" style="width:95%;"/></td>
+					<td style="display: none;"><input id="textF13.*" type="text" class="txt c1" style="width:95%;"/></td>
 					<td class="S6" style="display: none;"><input id="textF14.*" type="text" class="txt c1" style="width:95%;"/></td>
 					<td class="S6" style="display: none;"><input id="textF15.*" type="text" class="txt c1" style="width:95%;text-align: right;"/></td>
 					<td class="S6" style="display: none;"><input id="textF16.*" type="text" class="txt c1" style="width:95%;"/></td>

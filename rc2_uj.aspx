@@ -1361,7 +1361,7 @@
 					<td align="center" style="width:1%;"><input class="btn" id="btnPlus" type="button" value='＋' style="font-weight: bold;" /></td>
 					<td align="center" style="width:50px;"><a id='lblNoq'>NO.</a></td>
 					<td align="center" style="width:130px;"><a id='lblUno'> </a></td>
-					<td align="center" style="width:150px;"><a id='lblProductno_uj'>料號(新成品名)</a></td>
+					<td align="center" style="width:150px;"><a id='lblProductno_uj'>料號</a></td>
 					<td align="center" style="width:180px;"><a id='lblProduct_uj'>品名/列管備註</a></td>
 					<td align="center" style="width:95px;display: none;" class="isStyle"><a id='lblStyle'> </a></td>
 					<!--<td align="center" style="width:100px;"><a id='lblDime_uj'>進貨量(Kg)</a></td>-->

@@ -151,7 +151,7 @@
 											$('#textA01_'+j).val(as[i].noa);
 											$('#txtWorkhno_'+j).val(as[i].cubno);
 											$('#textA02_'+j).val(as[i].product);
-											$('#textA03_'+j).val(as[i].ucolor);
+											//$('#textA03_'+j).val(as[i].ucolor);
 											$('#textA04_'+j).val(as[i].productno);
 											$('#textA05_'+j).val(as[i].edate);
 											$('#textA06_'+j).val(as[i].m1);
@@ -726,7 +726,7 @@
 		                    row_bbsbbt = 'bbs';
 		                });
 						
-						$('#textA03_'+i).change(function() {
+						/*$('#textA03_'+i).change(function() {
 							t_IdSeq = -1;
 							q_bodyId($(this).attr('id'));
 							b_seq = t_IdSeq;
@@ -816,7 +816,7 @@
 							FI10(b_seq);
 							FI12(b_seq);
 							FI13(b_seq);
-						});
+						});*/
 						
 						//新成品
 						$('#textA04_'+i).change(function() {
@@ -3176,8 +3176,8 @@
 						<!--原生產指令需求-->
 						<td class="M1 M2" style="width:150px;"><a id="lblA01_uj_s">指令流水號</a></td>
 						<td class="M1 M2" style="width:150px;"><a id="lblA02_uj_s">指令名稱</a></td>
-						<td class="M1 M2" style="width:200px;"><a id="lblA03_uj_s">料號<BR>(原成品名)</a></td>
-						<td class="M1 M2" style="width:200px;"><a id="lblA04_uj_s">新成品<BR>編碼</a></td>
+						<td style="width:200px;display: none;"><a id="lblA03_uj_s">料號<BR>(原成品名)</a></td>
+						<td class="M1 M2" style="width:200px;"><a id="lblA04_uj_s">料號</a></td><!--新成品<BR>編碼-->
 						<td class="M1 M2" style="width:100px;"><a id="lblA05_uj_s">交期</a></td>
 						<td class="M1" style="width:100px;"><a id="lblA06_uj_s">成品指令</a></td>
 						<td class="M1" style="width:100px;"><a id="lblA07_uj_s">銷售政策</a></td>
@@ -3339,7 +3339,7 @@
 							<input id="textA02.*" type="text" class="txt c1"/>
 							<input id="txtMemo2.*" type="hidden"/>
 						</td>
-						<td class="M1 M2"><input id="textA03.*" type="text" class="txt c1"/></td>
+						<td style="display: none;"><input id="textA03.*" type="text" class="txt c1"/></td>
 						<td class="M1 M2">
 							<input id="textA04.*" type="text" class="txt c1"/>
 							<input id="txtProductno.*" type="hidden"/>

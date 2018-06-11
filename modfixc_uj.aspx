@@ -523,20 +523,20 @@
 				<tr style='color:white; background:#003366;' >
 					<td  align="center" style="width:35px;"><input class="btn"  id="btnPlus" type="button" value='+' style="font-weight: bold;"  /></td>
 					<td align="center" style="width:30px;"><a id='lblFrame_uj' >別</a></td>
-					<td align="center" style="width:170px;"><a id='lblProductno' >新料號</a></td>
+					<td align="center" style="width:170px;"><a id='lblProductno' >料號</a></td>
 					<td align="center" style="width:90px;"><a id='lblBebottom' >原月均(M)</a></td>
 					<td align="center" style="width:90px;"><a id='lblEnbottom' >手調月均(M)</a></td>
 					<td align="center" style="width:90px;"><a id='lblMount_uj' >本月月均(M)</a></td>
 					<td align="center" style="width:40px;"><a id='lblBtime' >購買月份</a></td>
-					<td align="center" style="width:90px;"><a id='lblBrepair' >手調未來月均(M)</a></td>
+					<td align="center" style="width:90px;"><a id='lblEtime2' >手調未來月均(M)</a></td>
 					<td align="center" style="width:90px;"><a id='lblWeight_uj' >未來月均(M)</a></td>
 					<td align="center" style="width:65px;"><a id='lblEtime' >安全庫存</a></td>
-					<td align="center" style="width:60px;"><a id='lblEnbottom' >採購交期天數</a></td>
-					<td align="center" style="width:60px;"><a id='lblEnbottom' >採購點(天)</a></td>
-					<td align="center" style="width:40px;"><a id='lblEnbottom' >管理類別</a></td>
-					<td align="center" style="width:40px;"><a id='lblEnbottom' >可採</a></td>
-					<td align="center" style="width:60px;"><a id='lblEnbottom' >採購週期(天)</a></td>
-					<td align="center" style="width:60px;"><a id='lblEnbottom' >滿足點</a></td>
+					<td align="center" style="width:60px;"><a id='lblFixmount' >採購交期天數</a></td>
+					<td align="center" style="width:60px;"><a id='lblBottom' >採購點(天)</a></td>
+					<td align="center" style="width:40px;"><a id='lblBtime2' >管理類別</a></td>
+					<td align="center" style="width:40px;"><a id='lblErepair' >可採</a></td>
+					<td align="center" style="width:60px;"><a id='lblLoss' >採購週期(天)</a></td>
+					<td align="center" style="width:60px;"><a id='lblBrepair' >滿足點</a></td>
 					<td align="center" style="width:100px;"><a id='lblMemo_s'> </a></td>
 				</tr>
 				<tr style='background:#cad3ff;' class="ishide.*">

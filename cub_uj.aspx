@@ -131,11 +131,13 @@
 								$('#btnPlus').click();
 							}
 							t_i++;
-							$('#txtUcolor_'+t_i).val(as[i].productno);
+							//$('#txtUcolor_'+t_i).val(as[i].productno);
+							$('#txtProductno_'+t_i).val(as[i].productno);
 							$('#txtMount_'+t_i).val(as[i].mount);
 							$('#txtOrdeno_'+t_i).val(as[i].noa)
 							$('#txtNo2_'+t_i).val(as[i].no2)
-							$('#txtUcolor_'+t_i).change();
+							//$('#txtUcolor_'+t_i).change();
+							ordespno(t_i);
 							$('#txtMount_'+t_i).change();
 						}
 						Unlock(1);
@@ -454,7 +456,7 @@
 							b_seq = t_IdSeq;
 						});
 						
-						$('#txtUcolor_'+i).change(function() {
+						/*$('#txtUcolor_'+i).change(function() {
 							t_IdSeq = -1;
 							q_bodyId($(this).attr('id'));
 							b_seq = t_IdSeq;
@@ -616,7 +618,7 @@
 									}
 								}
 							}
-						});
+						});*/
                     	
                     	$('#txtMount_'+i).change(function() {
                     		t_IdSeq = -1;
@@ -1081,6 +1083,86 @@
 				}
             }
             
+            function ordespno(t_n) {
+            	if($('#txtProductno_' + t_n).val().length>0){
+					var t_productno= $('#txtProductno_' + t_n).val();
+                    q_gt('uca',"where=^^noa='"+t_productno+"'^^", 0, 0, 0, "getuca", r_accy,1);
+					var tuca = _q_appendData("uca", "", true);
+					if (tuca[0] != undefined) {
+						if(tuca[0].typea=='2'){//成品
+							$('#txtBtime_'+t_n).val(tuca[0].groupdno);//銷售政策
+							$('#txtWidth_'+t_n).val(tuca[0].mechs);//寬(mm)
+							$('#txtLengthb_'+t_n).val(tuca[0].trans);//長(M)
+							if(tuca[0].groupdno=='特規')
+								$('#txtUnit_'+t_n).val('');//單位
+							else
+								$('#txtUnit_'+t_n).val(tuca[0].unit);//單位
+							
+							getstk('0',t_n);
+							
+							$('#txtProductno2_'+t_n).val(tuca[0].groupbno)//中繼產品料號
+							$('#txtOrdcno2_'+t_n).val(tuca[0].groupcno)//再製品
+							if($('#txtProductno2_'+t_n).val().length>0){
+								var t_productno= $('#txtProductno2_'+t_n).val();
+                   				q_gt('uca',"where=^^noa='"+t_productno+"'^^", 0, 0, 0, "getuca2", r_accy,1);
+                   				var tpuca = _q_appendData("uca", "", true);
+                   				if (tpuca[0] != undefined) {
+									$('#txtClass_'+t_n).val(tpuca[0].stdmount);//MOQ //groupdno
+									$('#txtMakeno_'+t_n).val(tpuca[0].grouphno)//上皮
+									$('#txtOrdcno_'+t_n).val(tpuca[0].groupino)//上紙
+								}
+								getstk('1',t_n);
+							}
+							if($('#txtOrdcno2_'+t_n).val().length>0){
+								getstk('2',t_n);
+							}
+							if($('#txtMakeno_'+t_n).val().length>0){
+								getstk('3',t_n);
+								getordcnotv('3',t_n);
+							}
+							if($('#txtOrdcno_'+t_n).val().length>0){
+								getstk('4',t_n);
+								getordcnotv('4',t_n);
+							}
+						}else{
+							t_unit1=t_productno.substr(0,1).toLocaleUpperCase();
+							if(t_unit1=='1' || t_unit1=='2' || t_unit1=='P' || t_unit1=='Z'|| t_unit1=='S'){
+								$('#txtUnit_'+t_n).val('支');//單位
+							}else if(t_unit1=='C'){
+								$('#txtUnit_'+t_n).val('張');//單位
+							}else if(t_unit1=='6' || t_unit1=='5' || t_unit1=='#'|| t_unit1=='7' || t_unit1=='8'){
+								$('#txtUnit_'+t_n).val('M');//單位
+							}else{
+								$('#txtUnit_'+t_n).val('');//單位
+							}
+									
+							if(tuca[0].typea=='3'){//半成品
+								$('#txtProductno2_'+t_n).val(t_productno)//中繼產品料號
+								if($('#txtProductno2_'+t_n).val().length>0){
+									var t_productno= $('#txtProductno2_'+t_n).val();
+	                   				q_gt('uca',"where=^^noa='"+t_productno+"'^^", 0, 0, 0, "getuca2", r_accy,1);
+	                   				var tpuca = _q_appendData("uca", "", true);
+	                   				if (tpuca[0] != undefined) {
+										$('#txtClass_'+t_n).val(tpuca[0].stdmount);//MOQ //groupdno
+										$('#txtMakeno_'+t_n).val(tpuca[0].grouphno)//上皮
+										$('#txtOrdcno_'+t_n).val(tpuca[0].groupino)//上紙
+									}
+									getstk('1',t_n);
+								}
+								if($('#txtMakeno_'+t_n).val().length>0){
+									getstk('3',t_n);
+									getordcnotv('3',t_n);
+								}
+								if($('#txtOrdcno_'+t_n).val().length>0){
+									getstk('4',t_n);
+									getordcnotv('4',t_n);
+								}
+							}
+						}
+					}
+				}
+            }
+            
 			function FormatNumber(n) {
             	var xx = "";
             	if(n<0){
@@ -1376,9 +1458,9 @@
 					<tr style='color:white; background:#003366;' >
 						<td style="width:30px;"><input id="btnPlus" type="button" style="font-size: medium; font-weight: bold;" value="＋"/></td>
 						<td style="width:50px;">項次</td>
-						<td style="width:180px;"><a id='lblUcolor_uj'>料號(需求)</a></td>
+						<td style="width:180px;display: none;"><a id='lblUcolor_uj'>料號(需求)</a></td>
 						<td style="width:90px;"><a id='lblBtime_uj_s'>銷售政策</a></td>
-						<td style="width:180px;"><a id='lblProductno_uj_s'>新料號</a></td>
+						<td style="width:180px;"><a id='lblProductno_uj_s'>料號</a></td>
 						<td style="width:90px;"><a id='lblWidth_uj_s'>寬(mm)</a></td>
 						<td style="width:90px;"><a id='lblLengthb_uj_s'>長(M)</a></td>
 						<td style="width:90px;"><a id='lblMount_uj_s'>數量</a></td>
@@ -1414,7 +1496,7 @@
 							<input id="txtNo2.*" type="text" style="display: none;"/><!--訂單用-->
 						</td>
 						<td><a id="lblNo.*" style="font-weight: bold;text-align: center;display: block;"> </a></td>
-						<td><input id="txtUcolor.*" type="text" class="txt c1"/></td>
+						<td style="display: none;"><input id="txtUcolor.*" type="text" class="txt c1"/></td>
 						<td><input id="txtBtime.*" type="text" class="txt c1"/></td>
 						<td><input id="txtProductno.*" type="text" class="txt c1"/></td>
 						<td><input id="txtWidth.*" type="text" class="txt num c1"/></td>

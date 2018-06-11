@@ -745,8 +745,8 @@
 					<tr>
 						<td><span> </span><a id="lblNoa" class="lbl"> </a></td>
 						<td colspan="2"><input id="txtNoa" type="text" class="txt c1"/></td>
-						<td><span> </span><a id="lblEngpro_uj" class="lbl">舊成品編碼</a></td>
-						<td colspan="2"><input id="txtEngpro" type="text" class="txt c1"/></td>
+						<td style="display: none;"><span> </span><a id="lblEngpro_uj" class="lbl">舊成品編碼</a></td>
+						<td colspan="2" style="display: none;"><input id="txtEngpro" type="text" class="txt c1"/></td>
 					</tr>
 					<tr>
 						<td><span> </span><a id="lblProduct" class="lbl"> </a></td>

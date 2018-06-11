@@ -124,7 +124,7 @@
 											$('#txtWorkgno_'+j).val(as[i].workgno);
 											$('#txtHours_'+j).val(as[i].hours);
 											$('#txtOrdeno_'+j).val(as[i].ordeno);
-											$('#textF01_'+j).val(as[i].f01);
+											//$('#textF01_'+j).val(as[i].f01);
 											$('#txtProductno_'+j).val(as[i].productno);
 											$('#txtThours_'+j).val(as[i].thours);
 											$('#txtDhours_'+j).val(as[i].dhours);
@@ -475,7 +475,7 @@
 				}else{
 					$('.M3').hide();
 					$('.M1').show();
-					$('.dbbs').css('width','1650px');
+					$('.dbbs').css('width','1450px');
 				}
 			}
 
@@ -802,9 +802,9 @@
 					<td style="width:20px;"> </td>
 					<td align="center" style="width:75px;"><a id='lblNos_uj_s'>排序</a></td>
 					<td align="center" style="width:150px;" class="M1"><a id='lblOrdeno_uj_s'>訂單名稱</a></td>
-					<td align="center" style="width:200px;" class="M1"><a id='lblF01_s'>料號(原成品名)</a></td>
+					<td align="center" style="width:200px;display: none;"><a id='lblF01_s'>料號(原成品名)</a></td>
 					<td align="center" style="width:200px;">
-						<a id='lblProductno1_uj_s' class="M1">新成品編碼</a>
+						<a id='lblProductno1_uj_s' class="M1">料號</a><!--新成品編碼-->
 						<a id='lblProductno2_uj_s' class="M3">生產料號</a>
 					</td>
 					<td align="center" style="width:100px;">
@@ -844,7 +844,7 @@
 						<input id="txtHours.*" type="hidden" class="txt c1"/>
 					</td>
 					<td class="M1"><input id="txtOrdeno.*" type="text" class="txt c1"/></td>
-					<td class="M1"><input id="textF01.*" type="text" class="txt c1"/></td>
+					<td style="display: none;"><input id="textF01.*" type="text" class="txt c1"/></td>
 					<td><input id="txtProductno.*" type="text" class="txt c1"/></td>
 					<td><input id="txtThours.*" type="text" class="txt num c1"/></td>
 					<td class="M1"><input id="txtDhours.*" type="text" class="txt num c1"/></td>
