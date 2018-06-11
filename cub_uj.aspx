@@ -693,7 +693,7 @@
 	                        	$('#div_stk').css('top', e.pageY- $('#div_stk').height());
 								$('#div_stk').css('left', e.pageX - $('#div_stk').width());
 								
-			                	q_func('qtxt.query.div_stk_uj', 'orde_uj.txt,stk_uj,' + encodeURI(q_date())+';'+encodeURI('#non')+';'+encodeURI(t_productno)+';'+encodeURI('#non')+';'+encodeURI('#non')+';'+encodeURI('1')+';'+encodeURI('#non'));
+			                	q_func('qtxt.query.div_stk_uj', 'orde_uj.txt,stk_uj,' + encodeURI(q_date())+';'+encodeURI('#non')+';'+encodeURI(t_productno)+';'+encodeURI('#non')+';'+encodeURI('#non')+';'+encodeURI('#non')+';'+encodeURI('1')+';'+encodeURI('#non'));
 							}
 						});
 						
@@ -711,7 +711,7 @@
 	                        	
 	                        	$('#div_stk').css('top', e.pageY- $('#div_stk').height());
 								$('#div_stk').css('left', e.pageX - $('#div_stk').width());
-			                	q_func('qtxt.query.div_stk_uj', 'orde_uj.txt,stk_uj,' + encodeURI(q_date())+';'+encodeURI('#non')+';'+encodeURI(t_productno)+';'+encodeURI('#non')+';'+encodeURI('#non')+';'+encodeURI('1')+';'+encodeURI('#non'));
+			                	q_func('qtxt.query.div_stk_uj', 'orde_uj.txt,stk_uj,' + encodeURI(q_date())+';'+encodeURI('#non')+';'+encodeURI(t_productno)+';'+encodeURI('#non')+';'+encodeURI('#non')+';'+encodeURI('#non')+';'+encodeURI('1')+';'+encodeURI('#non'));
 							}
 						});
 						
@@ -1031,7 +1031,7 @@
             		t_productno= $('#txtOrdcno_' + n).val();
             	}
             	if(t_productno.length>0){
-					q_func('qtxt.query.stk_uj', 'orde_uj.txt,stk_uj,' + encodeURI(q_date())+';'+encodeURI('#non')+';'+encodeURI(t_productno)+';'+encodeURI('#non')+';'+encodeURI('#non')+';'+encodeURI('1')+';'+encodeURI('#non'),r_accy,1);
+					q_func('qtxt.query.stk_uj', 'orde_uj.txt,stk_uj,' + encodeURI(q_date())+';'+encodeURI('#non')+';'+encodeURI(t_productno)+';'+encodeURI('#non')+';'+encodeURI('#non')+';'+encodeURI('#non')+';'+encodeURI('1')+';'+encodeURI('#non'),r_accy,1);
 					var as = _q_appendData("tmp0", "", true, true);
 					var t_weight=0,t_mount=0;;
 					for (var i = 0; i < as.length; i++) {

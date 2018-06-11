@@ -135,7 +135,7 @@
 							
 							var t_datea=emp($('#txtDatea').val())?q_date():$('#txtDatea').val();
 							if(!emp($('#txtUno_'+b_seq).val())){
-								q_func('qtxt.query.stk_uj', 'orde_uj.txt,stk_uj,' + encodeURI(t_datea)+';'+encodeURI($('#txtUno_'+b_seq).val())+';'+encodeURI('#non')+';'+encodeURI('#non')+';'+encodeURI($('#txtNoa').val())+';'+encodeURI('#non')+';'+encodeURI('#non'),r_accy,1);
+								q_func('qtxt.query.stk_uj', 'orde_uj.txt,stk_uj,' + encodeURI(t_datea)+';'+encodeURI($('#txtUno_'+b_seq).val())+';'+encodeURI('#non')+';'+encodeURI('#non')+';'+encodeURI('#non')+';'+encodeURI($('#txtNoa').val())+';'+encodeURI('#non')+';'+encodeURI('#non'),r_accy,1);
 								var as = _q_appendData("tmp0", "", true, true);
 								if (as[0] != undefined) {
 									$('#txtProductno_'+b_seq).val(as[0].productno);
@@ -144,6 +144,7 @@
 									$('#txtStyle_'+b_seq).val(as[0].style);
 									$('#txtStoreno_'+b_seq).val(as[0].storeno);
 									$('#txtStore_'+b_seq).val(as[0].store);
+									$('#txtRackno_'+b_seq).val(as[0].rackno);
 									
 									if(!(as[0].mount<=0 || as[0].weight<=0)){
 										$('#txtEmount2_'+b_seq).val(as[0].mount);
@@ -434,11 +435,12 @@
 				</table>
 			</div>
 		</div>
-		<div class='dbbs' style="width: 1600px;">
+		<div class='dbbs' style="width: 1800px;">
 			<table id="tbbs" class='tbbs' border="1" cellpadding='2' cellspacing='1' >
 				<tr style='color:White; background:#003366;' >
 					<td align="center" style="width:1%;"><input class="btn" id="btnPlus" type="button" value='+' style="font-weight: bold;" /></td>
 					<td align="center" style="width:100px;"><a id='lblStoreno_s'> </a></td>
+					<td align="center" style="width:100px;"><a id='lblRackno_s'>儲位</a></td>
 					<td align="center" style="width:140px;"><a id='lblUno_uj_s'>批號</a></td>
 					<td align="center" style="width:150px;"><a id='lblProductno_uj_s'>料號</a></td>
 					<td align="center" style="width:180px;"><a id='lblProduct_s'>品名</a></td>
@@ -462,6 +464,7 @@
 						<!--<input class="btn" id="btnStoreno.*" type="button" value='.' style="width:1%;" />-->
 						<BR><input class="txt c1" id="txtStore.*" type="text" />
 					</td>
+					<td><input class="txt c1" id="txtRackno.*" type="text" /></td>
 					<td><input class="txt c1" id="txtUno.*" type="text" /></td>
 					<td>
 						<!--<input id="btnProduct.*" type="button" value='.' style="float:left;width:1%;" />-->

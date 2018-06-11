@@ -260,8 +260,10 @@
 							
 							var t_datea=emp($('#txtDatea').val())?q_date():$.trim($('#txtDatea').val());
 							var t_uno=emp($('#txtUno_'+b_seq).val())?'':$.trim($('#txtUno_'+b_seq).val());
+							var t_storeno=emp($('#txtStoreno').val())?'#non':$.trim($('#txtStoreno').val());
+							var t_rackno=emp($('#txtRackno').val())?'#non':$.trim($('#txtRackno').val());
 							if(t_uno.length>0){
-								q_func('qtxt.query.stk_uj', 'orde_uj.txt,stk_uj,' + encodeURI(t_datea)+';'+encodeURI(t_uno)+';'+encodeURI('#non')+';'+encodeURI('#non')+';'+encodeURI($('#txtNoa').val())+';'+encodeURI('#non')+';'+encodeURI('#non'),r_accy,1);
+								q_func('qtxt.query.stk_uj', 'orde_uj.txt,stk_uj,' + encodeURI(t_datea)+';'+encodeURI(t_uno)+';'+encodeURI('#non')+';'+encodeURI(t_storeno)+';'+encodeURI(t_rackno)+';'+encodeURI($('#txtNoa').val())+';'+encodeURI('#non')+';'+encodeURI('#non'),r_accy,1);
 								var as = _q_appendData("tmp0", "", true, true);
 								if (as[0] != undefined) {
 									$('#txtProductno_'+b_seq).val(as[0].productno);
@@ -605,6 +607,12 @@
 						<td><select id="cmbTrantype" class="txt c1"> </select></td>
 					</tr>
 					<tr>
+						<td><span> </span><a id="lblRackno_uj" class="lbl">調出儲位</a></td>
+						<td><input id="txtRackno" type="text" class="txt c1"/></td>
+						<td><span> </span><a id="lblRackinno_uj" class="lbl">調入儲位</a></td>
+						<td><input id="txtRackinno" type="text" class="txt c1"/></td>
+					</tr>
+					<tr>
 						<td><span> </span><a id="lblTgg" class="lbl btn"> </a></td>
 						<td>
 							<input id="txtTggno" type="text" class="txt" style="width:30%;"/>
@@ -658,8 +666,8 @@
 					<td align="center" style="width:45px;"><a id='lblUnit_uj_s'>單位</a></td>
 					<td align="center" style="width:80px;"><a id='lblMount_uj_s'>數量</a></td>
 					<td align="center" style="width:80px;"><a id='lblWeight_uj_s'>長度</a></td>
-					<td align="center" style="width:50px;"><a id='lblStoreno_uj_s'>出倉</a></td>
-					<td align="center" style="width:50px;"><a id='lblStoreinno_uj_s'>入倉</a></td>
+					<td align="center" style="width:50px;display: none;"><a id='lblStoreno_uj_s'>出倉</a></td>
+					<td align="center" style="width:50px;display: none;"><a id='lblStoreinno_uj_s'>入倉</a></td>
 					<td align="center"><a id='lblMemo_uj_s'>備註</a></td>
 				</tr>
 				<tr style='background:#cad3ff;'>
@@ -678,8 +686,8 @@
 					<td><input class="txt c1" id="txtUnit.*" type="text" /></td>
 					<td><input class="txt num c1" id="txtMount.*" type="text"/></td>
 					<td><input class="txt num c1" id="txtWeight.*" type="text" /></td>
-					<td><input class="txt c1" id="txtStoreno.*" type="text" /></td>
-					<td><input class="txt c1" id="txtStoreinno.*" type="text" /></td>
+					<td style="display: none;"><input class="txt c1" id="txtStoreno.*" type="text" /></td>
+					<td style="display: none;"><input class="txt c1" id="txtStoreinno.*" type="text" /></td>
 					<td>
 						<input class="txt c1" id="txtMemo.*" type="text"/>
 						<input id="txtNoq.*" type="hidden" />

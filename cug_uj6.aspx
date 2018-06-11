@@ -178,7 +178,7 @@
 					var t_uno=$.trim($('#txtUno').val());
 					var t_datea=emp($('#txtDatea').val())?q_date():$.trim($('#txtDatea').val());
 					if(t_uno.length>0){
-						q_func('qtxt.query.stk_uj', 'orde_uj.txt,stk_uj,' + encodeURI(t_datea)+';'+encodeURI(t_uno)+';'+encodeURI('#non')+';'+encodeURI('#non')+';'+encodeURI('#non')+';'+encodeURI('#non')+';'+encodeURI('#non'),r_accy,1);
+						q_func('qtxt.query.stk_uj', 'orde_uj.txt,stk_uj,' + encodeURI(t_datea)+';'+encodeURI(t_uno)+';'+encodeURI('#non')+';'+encodeURI('#non')+';'+encodeURI('#non')+';'+encodeURI('#non')+';'+encodeURI('#non')+';'+encodeURI('#non'),r_accy,1);
 						var as = _q_appendData("tmp0", "", true, true);
 						if (as[0] != undefined) {
 							$('#txtUcano').val(as[0].productno);

@@ -49,6 +49,9 @@
 						type : '0',//[9]
 						name : 'isspec',
 						value : q_getPara('sys.isspec')
+					},{
+						type : '1',//[10][11]
+						name : 'xrackno'
 					}]
 				});
 				q_popAssign();

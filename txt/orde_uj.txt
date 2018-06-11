@@ -4,9 +4,10 @@ declare @t_datea nvarchar(50)=case when '#non'=[1] then '' else [1] end
 declare @t_uno nvarchar(50)=case when '#non'=[2] then '' else [2] end
 declare @t_pno nvarchar(50)=case when '#non'=[3] then '' else [3] end
 declare @t_storeno nvarchar(50)=case when '#non'=[4] then '' else [4] end
-declare @t_noa nvarchar(50)=case when '#non'=[5] then '' else [5] end --排除單號
-declare @t_isworkgno nvarchar(50)=case when '#non'=[6] then '' else [6] end --使用指定
-declare @t_workgno nvarchar(50)=case when '#non'=[7] then '' else [7] end --排除指定單號
+declare @t_rackno nvarchar(50)=case when '#non'=[5] then '' else [5] end
+declare @t_noa nvarchar(50)=case when '#non'=[6] then '' else [6] end --排除單號
+declare @t_isworkgno nvarchar(50)=case when '#non'=[7] then '' else [7] end --使用指定
+declare @t_workgno nvarchar(50)=case when '#non'=[8] then '' else [8] end --排除指定單號
 ---------------------------------------------
 IF OBJECT_ID('tempdb..#tmp')is not null
 BEGIN
@@ -27,6 +28,7 @@ create table #tmp(
 	unit nvarchar(50),
 	storeno nvarchar(50),
 	store nvarchar(150),
+	rackno nvarchar(50),
 	lengthb float, --標準長
 	engpro nvarchar(MAX), --舊成品編碼
 	ucaucc nvarchar(MAX),--2成品,3半成,8再製,4原料 5物料
@@ -37,122 +39,136 @@ create table #tmp(
 ) 
 
 --盤點
-insert #tmp (typea,uno,productno,product,spec,style,datea,mount,weight,unit,storeno,store)
-select '0',b.uno,b.productno,b.product,b.spec,b.style,a.datea,b.mount,b.weight,b.unit,b.storeno,b.store
+insert #tmp (typea,uno,productno,product,spec,style,datea,mount,weight,unit,storeno,store,rackno)
+select '0',b.uno,b.productno,b.product,b.spec,b.style,a.datea,b.mount,b.weight,b.unit,b.storeno,b.store,b.rackno
 from view_ucce a left join view_ucces b on a.noa=b.noa 
 where (b.productno=@t_pno or len(@t_pno)=0) 
 and (b.storeno=@t_storeno or len(@t_storeno)=0)
 and (b.uno=@t_uno or len(@t_uno)=0)
+and (b.rackno=@t_rackno or len(@t_rackno)=0)
 and a.datea<=@t_datea and a.noa!=@t_noa
 
 -------------------------------------------------------------------------
 --進貨
-insert #tmp (typea,uno,productno,product,spec,style,datea,mount,weight,unit,storeno,store)
-select '1',b.uno,b.productno,b.product,b.spec,b.style,a.datea,b.mount,b.weight,b.unit,b.storeno,b.store
+insert #tmp (typea,uno,productno,product,spec,style,datea,mount,weight,unit,storeno,store,rackno)
+select '1',b.uno,b.productno,b.product,b.spec,b.style,a.datea,b.mount,b.weight,b.unit,b.storeno,b.store,b.rackno
 from view_rc2 a left join view_rc2s b on a.noa=b.noa 
 where a.typea='1' and (b.productno=@t_pno or len(@t_pno)=0) 
 and (b.storeno=@t_storeno or len(@t_storeno)=0)
 and (b.uno=@t_uno or len(@t_uno)=0)
+and (b.rackno=@t_rackno or len(@t_rackno)=0)
 and a.datea<=@t_datea and a.noa!=@t_noa
 
 --入庫
-insert #tmp (typea,uno,productno,product,spec,style,datea,mount,weight,unit,storeno,store)
-select '2',b.uno,b.productno,b.product,b.spec,b.style,a.datea,b.mount,b.weight,b.unit,b.storeno,b.store
+insert #tmp (typea,uno,productno,product,spec,style,datea,mount,weight,unit,storeno,store,rackno)
+select '2',b.uno,b.productno,b.product,b.spec,b.style,a.datea,b.mount,b.weight,b.unit,b.storeno,b.store,a.rackno
 from view_ina a left join view_inas b on a.noa=b.noa
 where (b.productno=@t_pno or len(@t_pno)=0) 
 and (b.storeno=@t_storeno or len(@t_storeno)=0)
 and (b.uno=@t_uno or len(@t_uno)=0)
+and (a.rackno=@t_rackno or len(@t_rackno)=0)
 and a.datea<=@t_datea and a.noa!=@t_noa
 
 --生產
-insert #tmp (typea,uno,productno,product,spec,style,datea,mount,weight,unit,storeno,store)
-select '3',b.uno,b.productno,b.product,b.spec,b.style,a.datea,b.mount,b.weight,b.unit,b.storeno,b.store
+insert #tmp (typea,uno,productno,product,spec,style,datea,mount,weight,unit,storeno,store,rackno)
+select '3',b.uno,b.productno,b.product,b.spec,b.style,a.datea,b.mount,b.weight,b.unit,b.storeno,b.store,b.rackno
 from view_workb a left join view_workbs b on a.noa=b.noa
 where (b.productno=@t_pno or len(@t_pno)=0) 
 and (b.storeno=@t_storeno or len(@t_storeno)=0)
 and (b.uno=@t_uno or len(@t_uno)=0)
+and (b.rackno=@t_rackno or len(@t_rackno)=0)
 and a.datea<=@t_datea and a.noa!=@t_noa
 
 --出貨退回
-insert #tmp (typea,uno,productno,product,spec,style,datea,mount,weight,unit,storeno,store)
-select '4',b.uno,b.productno,b.product,b.spec,b.style,a.datea,b.mount,b.weight,b.unit,b.storeno,b.store
+insert #tmp (typea,uno,productno,product,spec,style,datea,mount,weight,unit,storeno,store,rackno)
+select '4',b.uno,b.productno,b.product,b.spec,b.style,a.datea,b.mount,b.weight,b.unit,b.storeno,b.store,b.rackno
 from view_vcc a left join view_vccs b on a.noa=b.noa 
 where a.typea='2' 
 and (b.productno=@t_pno or len(@t_pno)=0) 
 and (b.storeno=@t_storeno or len(@t_storeno)=0)
 and (b.uno=@t_uno or len(@t_uno)=0)
+and (b.rackno=@t_rackno or len(@t_rackno)=0)
 and a.datea<=@t_datea and a.noa!=@t_noa
 
 --生產領料退回
-insert #tmp (typea,uno,productno,product,spec,style,datea,mount,weight,unit,storeno,store)
-select '4',b.uno,b.productno,b.product,b.spec,b.style,a.datea,b.mount,b.weight,b.unit,b.storeno,b.store
+insert #tmp (typea,uno,productno,product,spec,style,datea,mount,weight,unit,storeno,store,rackno)
+select '4',b.uno,b.productno,b.product,b.spec,b.style,a.datea,b.mount,b.weight,b.unit,b.storeno,b.store,b.rackno
 from view_worka a left join view_workas b on a.noa=b.noa
 where a.typea='2'
 and (b.productno=@t_pno or len(@t_pno)=0) 
 and (b.storeno=@t_storeno or len(@t_storeno)=0)
 and (b.uno=@t_uno or len(@t_uno)=0)
+and (b.rackno=@t_rackno or len(@t_rackno)=0)
 and a.datea<=@t_datea and a.noa!=@t_noa
 ------------------------------------------------------------------------
 --進貨退回
-insert #tmp (typea,uno,productno,product,spec,style,datea,mount,weight,unit,storeno,store)
-select '5',b.uno,b.productno,b.product,b.spec,b.style,a.datea,-1*b.mount,-1*b.weight,b.unit,b.storeno,b.store
+insert #tmp (typea,uno,productno,product,spec,style,datea,mount,weight,unit,storeno,store,rackno)
+select '5',b.uno,b.productno,b.product,b.spec,b.style,a.datea,-1*b.mount,-1*b.weight,b.unit,b.storeno,b.store,b.rackno
 from view_rc2 a left join view_rc2s b on a.noa=b.noa 
 where a.typea='2' 
 and (b.productno=@t_pno or len(@t_pno)=0) 
 and (b.storeno=@t_storeno or len(@t_storeno)=0)
 and (b.uno=@t_uno or len(@t_uno)=0)
+and (b.rackno=@t_rackno or len(@t_rackno)=0)
 and a.datea<=@t_datea and a.noa!=@t_noa
 
 --出貨
-insert #tmp (typea,uno,productno,product,spec,style,datea,mount,weight,unit,storeno,store)
-select '6',b.uno,b.productno,b.product,b.spec,b.style,a.datea,-1*b.mount,-1*b.weight,b.unit,b.storeno,b.store
+insert #tmp (typea,uno,productno,product,spec,style,datea,mount,weight,unit,storeno,store,rackno)
+select '6',b.uno,b.productno,b.product,b.spec,b.style,a.datea,-1*b.mount,-1*b.weight,b.unit,b.storeno,b.store,b.rackno
 from view_vcc a left join view_vccs b on a.noa=b.noa 
 where a.typea='1' 
 and (b.productno=@t_pno or len(@t_pno)=0) 
 and (b.storeno=@t_storeno or len(@t_storeno)=0)
 and (b.uno=@t_uno or len(@t_uno)=0)
+and (b.rackno=@t_rackno or len(@t_rackno)=0)
 and a.datea<=@t_datea and a.noa!=@t_noa
 
 --領料
-insert #tmp (typea,uno,productno,product,spec,style,datea,mount,weight,unit,storeno,store)
-select '7',b.uno,b.productno,b.product,b.spec,b.style,a.datea,-1*b.mount,-1*b.weight,b.unit,b.storeno,b.store
+insert #tmp (typea,uno,productno,product,spec,style,datea,mount,weight,unit,storeno,store,rackno)
+select '7',b.uno,b.productno,b.product,b.spec,b.style,a.datea,-1*b.mount,-1*b.weight,b.unit,b.storeno,b.store,a.rackno
 from view_get a left join view_gets b on a.noa=b.noa
 where (b.productno=@t_pno or len(@t_pno)=0) 
 and (b.storeno=@t_storeno or len(@t_storeno)=0)
 and (b.uno=@t_uno or len(@t_uno)=0)
+and (a.rackno=@t_rackno or len(@t_rackno)=0)
 and a.datea<=@t_datea and a.noa!=@t_noa
 
 --生產領料
-insert #tmp (typea,uno,productno,product,spec,style,datea,mount,weight,unit,storeno,store)
-select '8',b.uno,b.productno,b.product,b.spec,b.style,a.datea,-1*b.mount,-1*b.weight,b.unit,b.storeno,b.store
+insert #tmp (typea,uno,productno,product,spec,style,datea,mount,weight,unit,storeno,store,rackno)
+select '8',b.uno,b.productno,b.product,b.spec,b.style,a.datea,-1*b.mount,-1*b.weight,b.unit,b.storeno,b.store,b.rackno
 from view_worka a left join view_workas b on a.noa=b.noa
 where a.typea='1'
 and (b.productno=@t_pno or len(@t_pno)=0) 
 and (b.storeno=@t_storeno or len(@t_storeno)=0)
 and (b.uno=@t_uno or len(@t_uno)=0)
+and (b.rackno=@t_rackno or len(@t_rackno)=0)
 and a.datea<=@t_datea and a.noa!=@t_noa
 ------------------------------------------------------------------------
 --調撥出庫
-insert #tmp (typea,uno,productno,product,spec,style,datea,mount,weight,unit,storeno,store)
-select '9-1',b.uno,b.productno,b.product,b.spec,b.style,a.datea,-1*b.mount,-1*b.weight,b.unit,a.storeno,a.store
+insert #tmp (typea,uno,productno,product,spec,style,datea,mount,weight,unit,storeno,store,rackno)
+select '9-1',b.uno,b.productno,b.product,b.spec,b.style,a.datea,-1*b.mount,-1*b.weight,b.unit,a.storeno,a.store,a.rackno
 from view_cng a left join view_cngs b on a.noa=b.noa
 where (b.productno=@t_pno or len(@t_pno)=0) 
 and (a.storeno=@t_storeno or len(@t_storeno)=0)
 and (b.uno=@t_uno or len(@t_uno)=0)
+and (a.rackno=@t_rackno or len(@t_rackno)=0)
 and a.datea<=@t_datea and a.noa!=@t_noa
 
 --調撥入庫
-insert #tmp (typea,uno,productno,product,spec,style,datea,mount,weight,unit,storeno,store)
-select '9-2',b.uno,b.productno,b.product,b.spec,b.style,a.datea,b.mount,b.weight,b.unit,a.storeinno,a.storein
+insert #tmp (typea,uno,productno,product,spec,style,datea,mount,weight,unit,storeno,store,rackno)
+select '9-2',b.uno,b.productno,b.product,b.spec,b.style,a.datea,b.mount,b.weight,b.unit,a.storeinno,a.storein,a.rackinno
 from view_cng a left join view_cngs b on a.noa=b.noa
 where (b.productno=@t_pno or len(@t_pno)=0) 
 and (a.storeinno=@t_storeno or len(@t_storeno)=0)
 and (b.uno=@t_uno or len(@t_uno)=0)
+and (a.rackinno=@t_rackno or len(@t_rackno)=0)
 and a.datea<=@t_datea and a.noa!=@t_noa
 ------------------------------------------------------------------------
 update #tmp
-set uno=ISNULL(uno,''),productno=ISNULL(productno,''),spec=ISNULL(spec,''),style=ISNULL(style,''),storeno=ISNULL(storeno,'')
+set uno=ISNULL(uno,''),productno=ISNULL(productno,''),spec=ISNULL(spec,''),style=ISNULL(style,''),storeno=ISNULL(storeno,''),rackno=ISNULL(rackno,'')
 ,mount=ISNULL(mount,0),weight=ISNULL(weight,0)
+
+create index #tmpindex on #tmp(productno,storeno,rackno,datea,uno)
 
 delete a from #tmp a where not exists (select * from view_ucaucc where noa=a.productno)
 and not exists (select * from uca where groupkno=a.productno and isnull(groupkno,'')!='')
@@ -163,23 +179,23 @@ set indate=isnull(b.indate,'')
 from #tmp a outer apply (select MIN(datea) indate from #tmp where uno=a.uno and productno=a.productno and spec=a.spec and style=a.style and typea<'5') b
 
 delete a 
-from #tmp a outer apply (select MAX(datea)udate from #tmp where typea='0' and uno=a.uno and productno=a.productno and spec=a.spec and style=a.style and storeno=a.storeno)b --盤點
+from #tmp a outer apply (select MAX(datea)udate from #tmp where typea='0' and uno=a.uno and productno=a.productno and spec=a.spec and style=a.style and storeno=a.storeno and rackno=a.rackno)b --盤點
 where typea!='0' and datea<isnull(udate,'')
 
 
 if(@t_isworkgno='1')
 begin
 	--使用指定庫存 不分倉庫
-	insert #tmp (typea,uno,productno,product,spec,style,datea,indate,mount,weight,unit,storeno,store,lengthb,engpro,ucaucc,bmount,bweight)
-	select '99',uno,productno,'',spec,style,'',indate,SUM(mount),SUM(weight),'','','',0,'','',0,0
+	insert #tmp (typea,uno,productno,product,spec,style,datea,indate,mount,weight,unit,storeno,store,rackno,lengthb,engpro,ucaucc,bmount,bweight)
+	select '99',uno,productno,'',spec,style,'',indate,SUM(mount),SUM(weight),'','','','',0,'','',0,0
 	from #tmp group by uno,productno,spec,style,indate
 end
 else
 begin
 	--正常庫存
-	insert #tmp (typea,uno,productno,product,spec,style,datea,indate,mount,weight,unit,storeno,store,lengthb,engpro,ucaucc,bmount,bweight)
-	select '99',uno,productno,'',spec,style,'',indate,SUM(mount),SUM(weight),'',storeno,'',0,'','',0,0
-	from #tmp group by uno,productno,spec,style,storeno,indate
+	insert #tmp (typea,uno,productno,product,spec,style,datea,indate,mount,weight,unit,storeno,store,rackno,lengthb,engpro,ucaucc,bmount,bweight)
+	select '99',uno,productno,'',spec,style,'',indate,SUM(mount),SUM(weight),'',storeno,'',rackno,0,'','',0,0
+	from #tmp group by uno,productno,spec,style,storeno,rackno,indate
 end
 
 --刪除明細
@@ -229,8 +245,8 @@ begin
 end
 
 --輸出
-select uno,productno,product,spec,style,datea,indate,mount,weight,unit,storeno,store,lengthb,engpro,ucaucc,bmount,bweight
-from #tmp order by storeno,productno,uno,spec,style,typea
+select uno,productno,product,spec,style,datea,indate,mount,weight,unit,storeno,store,rackno,lengthb,engpro,ucaucc,bmount,bweight
+from #tmp order by storeno,rackno,productno,uno,spec,style,typea
 
 IF OBJECT_ID('tempdb..#tmp')is not null
 BEGIN
@@ -463,6 +479,8 @@ where a.datea<=@t_todate
 update #tmp
 set uno=ISNULL(uno,''),productno=ISNULL(productno,''),spec=ISNULL(spec,''),style=ISNULL(style,''),storeno=ISNULL(storeno,'')
 ,mount=ISNULL(mount,0),weight=ISNULL(weight,0)
+
+create index #tmpindex on #tmp(productno,storeno,datea,uno)
 
 delete a from #tmp a where not exists (select * from view_ucaucc where noa=a.productno)
 and not exists (select * from uca where groupkno=a.productno and isnull(groupkno,'')!='')
@@ -966,6 +984,8 @@ update #tmp
 set uno=ISNULL(uno,''),productno=ISNULL(productno,''),spec=ISNULL(spec,''),style=ISNULL(style,''),storeno=ISNULL(storeno,'')
 ,mount=ISNULL(mount,0),weight=ISNULL(weight,0)
 
+create index #tmpindex on #tmp(productno,storeno,datea,uno)
+
 delete a from #tmp a where not exists (select * from view_ucaucc where noa=a.productno)
 and not exists (select * from uca where groupkno=a.productno and isnull(groupkno,'')!='')
 and not exists (select * from uca where grouplno=a.productno and isnull(grouplno,'')!='')
@@ -1351,6 +1371,7 @@ begin
 		unit nvarchar(50),
 		storeno nvarchar(50),
 		store nvarchar(150),
+		rackno nvarchar(50),
 		lengthb float, --標準長
 		engpro nvarchar(MAX), --舊成品編碼
 		ucaucc nvarchar(MAX),--2成品,3半成,8再製,4原料 5物料
@@ -1361,74 +1382,76 @@ begin
 	) 
 
 	--盤點
-	insert #tmp (typea,uno,productno,product,spec,style,datea,mount,weight,unit,storeno,store)
-	select '0',b.uno,b.productno,b.product,b.spec,b.style,a.datea,b.mount,b.weight,b.unit,b.storeno,b.store
+	insert #tmp (typea,uno,productno,product,spec,style,datea,mount,weight,unit,storeno,store,rackno)
+	select '0',b.uno,b.productno,b.product,b.spec,b.style,a.datea,b.mount,b.weight,b.unit,b.storeno,b.store,b.rackno
 	from view_ucce a left join view_ucces b on a.noa=b.noa 
 		-------------------------------------------------------------------------
 	--進貨
-	insert #tmp (typea,uno,productno,product,spec,style,datea,mount,weight,unit,storeno,store)
-	select '1',b.uno,b.productno,b.product,b.spec,b.style,a.datea,b.mount,b.weight,b.unit,b.storeno,b.store
+	insert #tmp (typea,uno,productno,product,spec,style,datea,mount,weight,unit,storeno,store,rackno)
+	select '1',b.uno,b.productno,b.product,b.spec,b.style,a.datea,b.mount,b.weight,b.unit,b.storeno,b.store,b.rackno
 	from view_rc2 a left join view_rc2s b on a.noa=b.noa 
 	where a.typea='1'
 
 	--入庫
-	insert #tmp (typea,uno,productno,product,spec,style,datea,mount,weight,unit,storeno,store)
-	select '2',b.uno,b.productno,b.product,b.spec,b.style,a.datea,b.mount,b.weight,b.unit,b.storeno,b.store
+	insert #tmp (typea,uno,productno,product,spec,style,datea,mount,weight,unit,storeno,store,rackno)
+	select '2',b.uno,b.productno,b.product,b.spec,b.style,a.datea,b.mount,b.weight,b.unit,b.storeno,b.store,a.rackno
 	from view_ina a left join view_inas b on a.noa=b.noa
 
 	--生產
-	insert #tmp (typea,uno,productno,product,spec,style,datea,mount,weight,unit,storeno,store)
-	select '3',b.uno,b.productno,b.product,b.spec,b.style,a.datea,b.mount,b.weight,b.unit,b.storeno,b.store
+	insert #tmp (typea,uno,productno,product,spec,style,datea,mount,weight,unit,storeno,store,rackno)
+	select '3',b.uno,b.productno,b.product,b.spec,b.style,a.datea,b.mount,b.weight,b.unit,b.storeno,b.store,b.rackno
 	from view_workb a left join view_workbs b on a.noa=b.noa
 
 	--出貨退回
-	insert #tmp (typea,uno,productno,product,spec,style,datea,mount,weight,unit,storeno,store)
-	select '4',b.uno,b.productno,b.product,b.spec,b.style,a.datea,b.mount,b.weight,b.unit,b.storeno,b.store
+	insert #tmp (typea,uno,productno,product,spec,style,datea,mount,weight,unit,storeno,store,rackno)
+	select '4',b.uno,b.productno,b.product,b.spec,b.style,a.datea,b.mount,b.weight,b.unit,b.storeno,b.store,b.rackno
 	from view_vcc a left join view_vccs b on a.noa=b.noa 
 	where a.typea='2' 
 	
 	--生產領料退回
-	insert #tmp (typea,uno,productno,product,spec,style,datea,mount,weight,unit,storeno,store)
-	select '4',b.uno,b.productno,b.product,b.spec,b.style,a.datea,b.mount,b.weight,b.unit,b.storeno,b.store
+	insert #tmp (typea,uno,productno,product,spec,style,datea,mount,weight,unit,storeno,store,rackno)
+	select '4',b.uno,b.productno,b.product,b.spec,b.style,a.datea,b.mount,b.weight,b.unit,b.storeno,b.store,b.rackno
 	from view_worka a left join view_workas b on a.noa=b.noa
 	where a.typea='2'
 	------------------------------------------------------------------------
 	--進貨退回
-	insert #tmp (typea,uno,productno,product,spec,style,datea,mount,weight,unit,storeno,store)
-	select '5',b.uno,b.productno,b.product,b.spec,b.style,a.datea,-1*b.mount,-1*b.weight,b.unit,b.storeno,b.store
+	insert #tmp (typea,uno,productno,product,spec,style,datea,mount,weight,unit,storeno,store,rackno)
+	select '5',b.uno,b.productno,b.product,b.spec,b.style,a.datea,-1*b.mount,-1*b.weight,b.unit,b.storeno,b.store,b.rackno
 	from view_rc2 a left join view_rc2s b on a.noa=b.noa 
 	where a.typea='2' 
 
 	--出貨
-	insert #tmp (typea,uno,productno,product,spec,style,datea,mount,weight,unit,storeno,store)
-	select '6',b.uno,b.productno,b.product,b.spec,b.style,a.datea,-1*b.mount,-1*b.weight,b.unit,b.storeno,b.store
+	insert #tmp (typea,uno,productno,product,spec,style,datea,mount,weight,unit,storeno,store,rackno)
+	select '6',b.uno,b.productno,b.product,b.spec,b.style,a.datea,-1*b.mount,-1*b.weight,b.unit,b.storeno,b.store,b.rackno
 	from view_vcc a left join view_vccs b on a.noa=b.noa 
 	where a.typea='1' 
 
 	--領料
-	insert #tmp (typea,uno,productno,product,spec,style,datea,mount,weight,unit,storeno,store)
-	select '7',b.uno,b.productno,b.product,b.spec,b.style,a.datea,-1*b.mount,-1*b.weight,b.unit,b.storeno,b.store
+	insert #tmp (typea,uno,productno,product,spec,style,datea,mount,weight,unit,storeno,store,rackno)
+	select '7',b.uno,b.productno,b.product,b.spec,b.style,a.datea,-1*b.mount,-1*b.weight,b.unit,b.storeno,b.store,a.rackno
 	from view_get a left join view_gets b on a.noa=b.noa
 
 	--生產領料
-	insert #tmp (typea,uno,productno,product,spec,style,datea,mount,weight,unit,storeno,store)
-	select '8',b.uno,b.productno,b.product,b.spec,b.style,a.datea,-1*b.mount,-1*b.weight,b.unit,b.storeno,b.store
+	insert #tmp (typea,uno,productno,product,spec,style,datea,mount,weight,unit,storeno,store,rackno)
+	select '8',b.uno,b.productno,b.product,b.spec,b.style,a.datea,-1*b.mount,-1*b.weight,b.unit,b.storeno,b.store,b.rackno
 	from view_worka a left join view_workas b on a.noa=b.noa
 	where a.typea='1' 
 	------------------------------------------------------------------------
 	--調撥出庫
-	insert #tmp (typea,uno,productno,product,spec,style,datea,mount,weight,unit,storeno,store)
-	select '9-1',b.uno,b.productno,b.product,b.spec,b.style,a.datea,-1*b.mount,-1*b.weight,b.unit,a.storeno,a.store
+	insert #tmp (typea,uno,productno,product,spec,style,datea,mount,weight,unit,storeno,store,rackno)
+	select '9-1',b.uno,b.productno,b.product,b.spec,b.style,a.datea,-1*b.mount,-1*b.weight,b.unit,a.storeno,a.store,a.rackno
 	from view_cng a left join view_cngs b on a.noa=b.noa
 
 	--調撥入庫
-	insert #tmp (typea,uno,productno,product,spec,style,datea,mount,weight,unit,storeno,store)
-	select '9-2',b.uno,b.productno,b.product,b.spec,b.style,a.datea,b.mount,b.weight,b.unit,a.storeinno,a.storein
+	insert #tmp (typea,uno,productno,product,spec,style,datea,mount,weight,unit,storeno,store,rackno)
+	select '9-2',b.uno,b.productno,b.product,b.spec,b.style,a.datea,b.mount,b.weight,b.unit,a.storeinno,a.storein,a.rackinno
 	from view_cng a left join view_cngs b on a.noa=b.noa
 	------------------------------------------------------------------------
 	update #tmp
-	set uno=ISNULL(uno,''),productno=ISNULL(productno,''),spec=ISNULL(spec,''),style=ISNULL(style,''),storeno=ISNULL(storeno,'')
+	set uno=ISNULL(uno,''),productno=ISNULL(productno,''),spec=ISNULL(spec,''),style=ISNULL(style,''),storeno=ISNULL(storeno,''),rackno=ISNULL(rackno,'')
 	,mount=ISNULL(mount,0),weight=ISNULL(weight,0)
+
+	create index #tmpindex on #tmp(productno,storeno,rackno,datea,uno)
 	
 	delete a from #tmp a where not exists (select * from view_ucaucc where noa=a.productno)
 	and not exists (select * from uca where groupkno=a.productno and isnull(groupkno,'')!='')
@@ -1439,13 +1462,13 @@ begin
 	from #tmp a outer apply (select MIN(datea) indate from #tmp where uno=a.uno and productno=a.productno and spec=a.spec and style=a.style and typea<'5') b
 
 	delete a 
-	from #tmp a outer apply (select MAX(datea)udate from #tmp where typea='0' and uno=a.uno and productno=a.productno and spec=a.spec and style=a.style and storeno=a.storeno)b --盤點
+	from #tmp a outer apply (select MAX(datea)udate from #tmp where typea='0' and uno=a.uno and productno=a.productno and spec=a.spec and style=a.style and storeno=a.storeno and rackno=a.rackno)b --盤點
 	where typea!='0' and datea<isnull(udate,'')
 	
 	--正常庫存
-	insert #tmp (typea,uno,productno,product,spec,style,datea,indate,mount,weight,unit,storeno,store,lengthb,engpro,ucaucc,bmount,bweight)
-	select '99',uno,productno,'',spec,style,'',indate,SUM(mount),SUM(weight),'',storeno,'',0,'','',0,0
-	from #tmp group by uno,productno,spec,style,storeno,indate
+	insert #tmp (typea,uno,productno,product,spec,style,datea,indate,mount,weight,unit,storeno,store,rackno,lengthb,engpro,ucaucc,bmount,bweight)
+	select '99',uno,productno,'',spec,style,'',indate,SUM(mount),SUM(weight),'',storeno,'',rackno,0,'','',0,0
+	from #tmp group by uno,productno,spec,style,storeno,rackno,indate
 	
 	--刪除明細
 	delete #tmp where typea!='99'
@@ -1476,7 +1499,7 @@ begin
 	select a.noa,'5',a.datea,'','',a.noq
 	,c.productno --皮料號
 	,case when c.no2='4' then '上紙' else '' end --上紙製程段
-	,isnull((select top 1 storeno from #tmp where uno=c.uno and spec=c.spec),'')--儲位
+	,isnull((select top 1 rackno from #tmp where uno=c.uno and spec=c.spec),'')--儲位
 	,c.mount --支數
 	,d.reserve --長(M) 標準長
 	,c.weight--小計
@@ -1774,6 +1797,8 @@ from view_cng a left join view_cngs b on a.noa=b.noa
 update #tmp
 set uno=ISNULL(uno,''),productno=ISNULL(productno,''),spec=ISNULL(spec,''),style=ISNULL(style,''),storeno=ISNULL(storeno,'')
 ,mount=ISNULL(mount,0),weight=ISNULL(weight,0)
+
+create index #tmpindex on #tmp(productno,storeno,datea,uno)
 
 delete a from #tmp a where not exists (select * from view_ucaucc where noa=a.productno)
 and not exists (select * from uca where groupkno=a.productno and isnull(groupkno,'')!='')
@@ -2587,6 +2612,8 @@ update #tmp
 set uno=ISNULL(uno,''),productno=ISNULL(productno,''),spec=ISNULL(spec,''),style=ISNULL(style,''),storeno=ISNULL(storeno,'')
 ,mount=ISNULL(mount,0),weight=ISNULL(weight,0)
 
+create index #tmpindex on #tmp(productno,storeno,datea,uno)
+
 delete a from #tmp a where not exists (select * from view_ucaucc where noa=a.productno)
 and not exists (select * from uca where groupkno=a.productno and isnull(groupkno,'')!='')
 and not exists (select * from uca where grouplno=a.productno and isnull(grouplno,'')!='')
@@ -2844,6 +2871,8 @@ update #tmp
 set uno=ISNULL(uno,''),productno=ISNULL(productno,''),spec=ISNULL(spec,''),style=ISNULL(style,''),storeno=ISNULL(storeno,'')
 ,mount=ISNULL(mount,0),weight=ISNULL(weight,0)
 
+create index #tmpindex on #tmp(productno,storeno,datea,uno)
+
 delete a from #tmp a where not exists (select * from view_ucaucc where noa=a.productno)
 and not exists (select * from uca where groupkno=a.productno and isnull(groupkno,'')!='')
 and not exists (select * from uca where grouplno=a.productno and isnull(grouplno,'')!='')
@@ -3019,6 +3048,8 @@ from view_cng a left join view_cngs b on a.noa=b.noa
 update #tmp
 set uno=ISNULL(uno,''),productno=ISNULL(productno,''),spec=ISNULL(spec,''),style=ISNULL(style,''),storeno=ISNULL(storeno,'')
 ,mount=ISNULL(mount,0),weight=ISNULL(weight,0)
+
+create index #tmpindex on #tmp(productno,storeno,datea,uno)
 
 delete a from #tmp a where not exists (select * from view_ucaucc where noa=a.productno)
 and not exists (select * from uca where groupkno=a.productno and isnull(groupkno,'')!='')
@@ -3252,6 +3283,8 @@ and (b.productno=@t_pno or b.productno=@t_pno2 or b.productno=@t_pno3)
 update #tmp
 set uno=ISNULL(uno,''),productno=ISNULL(productno,''),spec=ISNULL(spec,''),style=ISNULL(style,''),storeno=ISNULL(storeno,'')
 ,mount=ISNULL(mount,0),weight=ISNULL(weight,0)
+
+create index #tmpindex on #tmp(productno,storeno,datea,uno)
 
 delete a from #tmp a where not exists (select * from view_ucaucc where noa=a.productno)
 and not exists (select * from uca where groupkno=a.productno and isnull(groupkno,'')!='')

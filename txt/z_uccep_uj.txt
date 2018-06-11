@@ -6,6 +6,8 @@ declare @t_estoreno nvarchar(30)
 declare @t_bproductno nvarchar(30)
 declare @t_eproductno nvarchar(30)
 declare @t_noa nvarchar(30)
+declare @t_brackno nvarchar(40)
+declare @t_erackno nvarchar(40)
 set @t_bdate = case when '#non' = [2] then '' else [2] end
 set @t_edate = case when '#non' = [3] then CHAR(255) else [3] end
 set @t_bstoreno = case when '#non' = [4] then '' else [4] end
@@ -13,12 +15,15 @@ set @t_estoreno = case when '#non' = [5] then CHAR(255) else [5] end
 set @t_bproductno = case when '#non' = [6] then '' else [6] end
 set @t_eproductno = case when '#non' = [7] then CHAR(255) else [7] end
 set @t_noa=case when '#non' = [8] then '' else [8] end
+set @t_brackno = case when '#non' = [10] then '' else [10] end
+set @t_erackno = case when '#non' = [11] then CHAR(255) else [11] end
 --************************************************************************
 declare @tmp table(
 	gno nvarchar(1),
 	datea nvarchar(10),
 	noa nvarchar(30),
 	store nvarchar(30),
+	rackno nvarchar(50),
 	uno nvarchar(50),
 	productno nvarchar(50),
 	products nvarchar(MAX),
@@ -35,7 +40,7 @@ declare @tmp table(
 	memo nvarchar(max)
 )
 	insert into @tmp
-	select '0',a.datea,a.noa,b.store,b.uno,b.productno,b.product,b.spec,b.style
+	select '0',a.datea,a.noa,b.store,b.rackno,b.uno,b.productno,b.product,b.spec,b.style
 	,b.emount2,b.mount,b.eweight2,b.weight
 	,isnull(b.emount2,0)-isnull(b.mount,0)
 	,isnull(b.eweight2,0)-isnull(b.weight,0)
@@ -48,12 +53,13 @@ declare @tmp table(
 	(b.storeno between @t_bstoreno and @t_estoreno) and
 	(b.productno between @t_bproductno and @t_eproductno) and
 	(len(@t_noa)=0 or a.noa=@t_noa)
+	and isnull(b.rackno,'') between @t_brackno and @t_erackno
 			 
 insert into @tmp(gno,noa,emount2,amount,eweight2,aweight,diffm,diffw,dmoney)
 select '1',noa,sum(emount2),sum(amount),sum(eweight2),sum(aweight),sum(diffm),sum(diffw),sum(dmoney)
 from @tmp group by noa
 
-select gno,datea,noa,store,uno,productno,products,spec,style
+select gno,datea,noa,store,rackno,uno,productno,products,spec,style
 	,dbo.getComma(emount2,-1)emount2
 	,dbo.getComma(amount,-1)amount
 	,dbo.getComma(eweight2,-1)eweight2

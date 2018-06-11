@@ -90,14 +90,14 @@
 					return;
 				}
 				//如果表身倉庫沒填，表頭倉庫帶入
-				for (var i = 0; i < q_bbsCount; i++) {
+				/*for (var i = 0; i < q_bbsCount; i++) {
 					if (emp($('#txtStoreno_' + i).val())) {
 						if (!emp($('#txtProductno_' + i).val())) {
 							$('#txtStoreno_' + i).val($('#txtStoreno').val());
 							$('#txtStore_' + i).val($('#txtStore').val());
 						}
 					}
-				}
+				}*/
 
 				if(q_cur==1){
 					$('#txtWorker').val(r_name);
@@ -131,7 +131,7 @@
 							
 							var t_datea=emp($('#txtDatea').val())?q_date():$('#txtDatea').val();
 							if(!emp($('#txtUno_'+b_seq).val())){
-								q_func('qtxt.query.stk_uj', 'orde_uj.txt,stk_uj,' + encodeURI(t_datea)+';'+encodeURI($('#txtUno_'+b_seq).val())+';'+encodeURI('#non')+';'+encodeURI('#non')+';'+encodeURI($('#txtNoa').val())+';'+encodeURI('#non')+';'+encodeURI('#non'),r_accy,1);
+								q_func('qtxt.query.stk_uj', 'orde_uj.txt,stk_uj,' + encodeURI(t_datea)+';'+encodeURI($('#txtUno_'+b_seq).val())+';'+encodeURI('#non')+';'+encodeURI('#non')+';'+encodeURI('#non')+';'+encodeURI($('#txtNoa').val())+';'+encodeURI('#non')+';'+encodeURI('#non'),r_accy,1);
 								var as = _q_appendData("tmp0", "", true, true);
 								if (as[0] != undefined) {
 									if((as[0].mount<=0 || as[0].weight<=0) && $('#cmbTypea').val()=='1'){
@@ -144,6 +144,7 @@
 										$('#txtStyle_'+b_seq).val(as[0].style);
 										$('#txtStoreno_'+b_seq).val(as[0].storeno);
 										$('#txtStore_'+b_seq).val(as[0].store);
+										$('#txtRackno_'+b_seq).val(as[0].rackno);
 										
 										if($('#cmbTypea').val()=='1'){									
 											$('#txtMount_'+b_seq).val(as[0].mount);
@@ -442,11 +443,11 @@
 						<td><input id="txtMechno" type="text" class="txt c2"/></td>
 						<td><span> </span><a id='lblWorkno_uj' class="lbl">派工單號</a></td>
 						<td><input id="txtWorkno" type="text" class="txt c1"/></td>
-						<td><span> </span><a id='lblStore' class="lbl"> </a></td>
+						<!--<td><span> </span><a id='lblStore' class="lbl"> </a></td>
 						<td>
 							<input id="txtStoreno" type="text" class="txt c2"/>
 							<input id="txtStore" type="text" class="txt c3"/>
-						</td>
+						</td>-->
 					</tr>
 					<tr>
 						<td><span> </span><a id='lblMemo_uj' class="lbl">備註</a></td>
@@ -469,7 +470,7 @@
 					</td>
 					<td align="center" style="width:20px;"> </td>
 					<td align="center" style="width:120px;"><a id='lblUno_uj_s'>批號</a></td>
-					<td align="center" style="width:180px;"><a id='lblProductno_uj_s'>料號</a></td>
+					<td align="center" style="width:150px;"><a id='lblProductno_uj_s'>料號</a></td>
 					<td align="center" style="width:180px;"><a id='lblProduct_uj_s'>品名/參照</a></td>
 					<td align="center" style="width:110px;">
 						<a id='lblSpec_uj_s'>列管備註</a><BR>
@@ -477,7 +478,8 @@
 					</td>
 					<td align="center" style="width:80px;"><a id='lblMount_uj_s'>領料數量</a></td>
 					<td align="center" style="width:80px;"><a id='lblWeight_uj_s'>領料長度</a></td>
-					<td align="center" style="width:150px;"><a id='lblStore_uj_s'>倉庫</a></td>
+					<td align="center" style="width:130px;"><a id='lblStore_uj_s'>倉庫</a></td>
+					<td align="center" style="width:100px;"><a id='lblRackno_uj_s'>儲位</a></td>
 					<td align="center"><a id='lblMemo_uj_s'>備註</a></td>
 					<td align="center" style="display: none;"><a id='lblWorkno_uj_s'>日報表</a></td>
 				</tr>
@@ -503,6 +505,7 @@
 						<input id="txtStoreno.*" type="text" class="txt c2" style="width: 34%;"/>
 						<input id="txtStore.*" type="text" class="txt c3"  style="width: 59%;"/>
 					</td>
+					<td><input id="txtRackno.*" type="text" class="txt c1"/></td>
 					<td>
 						<input id="txtMemo.*" type="text" class="txt c1"/>
 						<input id="txtOrdeno.*" type="text" class="txt c3"/>

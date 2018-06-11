@@ -1087,8 +1087,9 @@
 							
 							var tpno=$('#txtProductno_'+b_seq).val();
 							var tsno=$('#txtStoreno_'+b_seq).val();
-							var tuno=$('#txtUno_'+b_seq).val();
-							var tnoa=$('#txtNoa').val();
+							var trno=emp($('#txtRackno_'+b_seq).val())?'#non':$('#txtRackno_'+b_seq).val();
+							var tuno=emp($('#txtUno_'+b_seq).val())?'#non':$('#txtUno_'+b_seq).val();
+							var tnoa=emp($('#txtNoa').val())?'#non':$('#txtNoa').val();
 							var tdatea=emp($('#txtDatea').val())?q_date():$('#txtDatea').val();
 							
 							if(!(q_cur==1 || q_cur==2)){
@@ -1096,7 +1097,7 @@
 							}
 							if(tpno.length>0 && tsno.length>0){
 								$('#Stkuj_Seq').val(b_seq);
-								q_func('qtxt.query.div_stk_uj', 'orde_uj.txt,stk_uj,' + encodeURI(tdatea)+';'+encodeURI('#non')+';'+encodeURI(tpno)+';'+encodeURI(tsno)+';'+encodeURI(tnoa)+';'+encodeURI('#non')+';'+encodeURI('#non'),r_accy,1);
+								q_func('qtxt.query.div_stk_uj', 'orde_uj.txt,stk_uj,' + encodeURI(tdatea)+';'+encodeURI('#non')+';'+encodeURI(tpno)+';'+encodeURI(tsno)+';'+encodeURI(trno)+';'+encodeURI(tnoa)+';'+encodeURI('#non')+';'+encodeURI('#non'),r_accy,1);
 								var as = _q_appendData("tmp0", "", true, true);
 								//扣除表身已存在的庫存
 								for (var k = 0; k < q_bbsCount; k++) {
@@ -1495,9 +1496,13 @@
 							
 							//庫存
 							var t_sno=$('#txtStoreno_'+b_seq).val();
+							var t_rno=$('#txtRackno_'+b_seq).val();
 							var t_uno=$('#txtUno_'+b_seq).val();
 							if(t_sno.length==0){
 								t_sno='#non';
+							}
+							if(t_rno.length==0){
+								t_rno='#non';
 							}
 							if(t_uno.length==0){
 								t_uno='#non';
@@ -1505,7 +1510,7 @@
 							if(t_pno.length>0){
 								var t_mount=0;
 								var tdatea=emp($('#txtDatea').val())?q_date():$('#txtDatea').val();
-								q_func('qtxt.query.stk_uj', 'orde_uj.txt,stk_uj,' + encodeURI(tdatea)+';'+encodeURI(t_uno)+';'+encodeURI(t_pno)+';'+encodeURI(t_sno)+';'+encodeURI('#non')+';'+encodeURI('#non')+';'+encodeURI('#non'),r_accy,1);
+								q_func('qtxt.query.stk_uj', 'orde_uj.txt,stk_uj,' + encodeURI(tdatea)+';'+encodeURI(t_uno)+';'+encodeURI(t_pno)+';'+encodeURI(t_sno)+';'+encodeURI(t_rno)+';'+encodeURI('#non')+';'+encodeURI('#non')+';'+encodeURI('#non'),r_accy,1);
 								var as = _q_appendData("tmp0", "", true, true);
 								for(var j=0;j<as.length;j++){
 									if(as[j].storeno==$('#txtStoreno_'+b_seq).val())
@@ -1545,9 +1550,13 @@
 					case 'txtStoreno_':
 						var t_pno=$('#txtProductno_'+b_seq).val();
 						var t_sno=$('#txtStoreno_'+b_seq).val();
+						var t_rno=$('#txtRackno_'+b_seq).val();
 						var t_uno=$('#txtUno_'+b_seq).val();
 						if(t_sno.length==0){
 							t_sno='#non';
+						}
+						if(t_rno.length==0){
+							t_rno='#non';
 						}
 						if(t_uno.length==0){
 							t_uno='#non';
@@ -1555,7 +1564,7 @@
 						if(t_pno.length>0){
 							var t_mount=0;
 							var tdatea=emp($('#txtDatea').val())?q_date():$('#txtDatea').val();
-							q_func('qtxt.query.stk_uj', 'orde_uj.txt,stk_uj,' + encodeURI(tdatea)+';'+encodeURI(t_uno)+';'+encodeURI(t_pno)+';'+encodeURI(t_sno)+';'+encodeURI('#non')+';'+encodeURI('#non')+';'+encodeURI('#non'),r_accy,1);
+							q_func('qtxt.query.stk_uj', 'orde_uj.txt,stk_uj,' + encodeURI(tdatea)+';'+encodeURI(t_uno)+';'+encodeURI(t_pno)+';'+encodeURI(t_sno)+';'+encodeURI(t_rno)+';'+encodeURI('#non')+';'+encodeURI('#non')+';'+encodeURI('#non'),r_accy,1);
 							var as = _q_appendData("tmp0", "", true, true);
 							for(var j=0;j<as.length;j++){
 								if(as[j].storeno==$('#txtStoreno_'+b_seq).val())
@@ -1986,6 +1995,7 @@
 					<td align="center" style="width:170px;"><a id='lblProduct_uj_s'>出貨名稱</a></td>
 					<td align="center" style="width:55px;"><a id='lblF01_uj_s'>銷售<BR>政策</a></td>
 					<td align="center" style="width:60px;"><a id='lblStoreno_uj_s'>出貨<BR>倉別</a></td>
+					<td align="center" style="width:60px;"><a id='lblRackno_uj_s'>儲位</a></td>
 					<td align="center" style="width:75px;"><a id='lblWcost_uj_s'>庫存</a></td>
 					<td align="center" style="width:140px;"><a id='lblUno_uj_s'>批號</a></td>
 					<td align="center" style="width:110px;"><a id='lblSpec_uj_s'>列管備註<BR>加工/製造備註</a></td>
@@ -2022,6 +2032,7 @@
 						<!--<input class="btn" id="btnStoreno.*" type="button" value='.' style=" font-weight: bold;" />-->
 						<input class="txt c1" id="txtStore.*" type="text" style="display: none;"/>
 					</td>
+					<td><input class="txt c1" id="txtRackno.*" type="text" /></td>
 					<td><input class="txt num c1" id="txtWcost.*" type="text" /></td>
 					<td>
 						<input class="txt c1" id="txtUno.*" type="text" style="width: 115px;" />
