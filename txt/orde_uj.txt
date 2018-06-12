@@ -185,10 +185,10 @@ where typea!='0' and datea<isnull(udate,'')
 
 if(@t_isworkgno='1')
 begin
-	--使用指定庫存 不分倉庫
+	--使用指定庫存 不分倉庫,但分儲位
 	insert #tmp (typea,uno,productno,product,spec,style,datea,indate,mount,weight,unit,storeno,store,rackno,lengthb,engpro,ucaucc,bmount,bweight)
-	select '99',uno,productno,'',spec,style,'',indate,SUM(mount),SUM(weight),'','','','',0,'','',0,0
-	from #tmp group by uno,productno,spec,style,indate
+	select '99',uno,productno,'',spec,style,'',indate,SUM(mount),SUM(weight),'','','',rackno,0,'','',0,0
+	from #tmp group by uno,productno,spec,style,indate,rackno
 end
 else
 begin
@@ -225,10 +225,11 @@ begin
 	update a
 	set bmount=b.bmount,bweight=b.bweight
 	from #tmp a outer apply(
-		select productno,uno,spec,style,SUM(mount)bmount,SUM(weight)bweight 
+		select productno,uno,spec,style,storeno,rackno,SUM(mount)bmount,SUM(weight)bweight 
 		from view_workgt xa where noa!=@t_workgno
 		and not exists(select * from view_workas where ordeno=xa.noa and no2=xa.no2) --排除已領料的單號
-		group by productno,uno,spec,style having productno=a.productno and uno=a.uno and spec=a.spec and style=a.style
+		group by productno,uno,spec,style,storeno,rackno having productno=a.productno and uno=a.uno and spec=a.spec and style=a.style
+		and storeno=a.storeno and rackno=a.rackno
 	)b where b.productno is not null
 	
 	--指定(數量大於1且不符合標準長另外取出，成品在逐筆列出>不考慮 入庫存時就每一個數量一個批號即可)
@@ -1499,7 +1500,7 @@ begin
 	select a.noa,'5',a.datea,'','',a.noq
 	,c.productno --皮料號
 	,case when c.no2='4' then '上紙' else '' end --上紙製程段
-	,isnull((select top 1 rackno from #tmp where uno=c.uno and spec=c.spec),'')--儲位
+	,c.rackno--isnull((select top 1 rackno from #tmp where uno=c.uno and spec=c.spec),'')--儲位
 	,c.mount --支數
 	,d.reserve --長(M) 標準長
 	,c.weight--小計

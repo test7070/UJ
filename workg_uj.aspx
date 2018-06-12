@@ -424,12 +424,14 @@
 								'spec':$('#stk_tdSpec_'+i).text(),
 								'mount':$('#stk_txtMount_'+i).val(),
 								'weight':$('#stk_txtWeight_'+i).val(),
-								'memo':$('#stk_tdindate_'+i).text()+'#^#'+$('#stk_tdUnit_'+i).text(),
+								'memo':$('#stk_tdIndate_'+i).text()+'#^#'+$('#stk_tdUnit_'+i).text(),
+								'storeno':$('#stk_tdStoreno_'+i).text(),
+								'rackno':$('#stk_tdRackno_'+i).text(),
 							});
 						}
 					}
-					q_gridAddRow(bbtHtm, 'tbbt', 'txtOrdeno,txtNo2,txtUno,txtProductno,txtSpec,txtMount,txtWeight,txtMemo'
-					, as.length, as, 'ordeno,no2,uno,productno,spec,mount,weight,memo', 'txtOrdeno,txtNo2,txtUno,txtProductno,txtSpec');
+					q_gridAddRow(bbtHtm, 'tbbt', 'txtOrdeno,txtNo2,txtUno,txtProductno,txtSpec,txtMount,txtWeight,txtMemo,txtStoreno,txtRackno'
+					, as.length, as, 'ordeno,no2,uno,productno,spec,mount,weight,memo,storeno,rackno', 'txtOrdeno,txtNo2,txtUno,txtProductno,txtSpec');
 					
                 	$('#div_stk').hide();
 				});
@@ -2473,6 +2475,8 @@
 										'weight':$('#txtWeight__'+i).val(),
 										'indate':$('#txtMemo__'+i).val().split('#^#')[0]==undefined?'':$('#txtMemo__'+i).val().split('#^#')[0],
 										'unit':$('#txtMemo__'+i).val().split('#^#')[1]==undefined?'':$('#txtMemo__'+i).val().split('#^#')[1],
+										'storeno':$('#txtStoreno__'+i).val(),
+										'rackno':$('#txtRackno__'+i).val(),
 									});
 								}else{
 									dbbtas.push({
@@ -2485,6 +2489,8 @@
 										'weight':$('#txtWeight__'+i).val(),
 										'indate':$('#txtMemo__'+i).val().split('#^#')[0]==undefined?'':$('#txtMemo__'+i).val().split('#^#')[0],
 										'unit':$('#txtMemo__'+i).val().split('#^#')[1]==undefined?'':$('#txtMemo__'+i).val().split('#^#')[1],
+										'storeno':$('#txtStoreno__'+i).val(),
+										'rackno':$('#txtRackno__'+i).val(),
 									});
 								}
 							}
@@ -2492,7 +2498,8 @@
 							//刪除本單已被其他項目指定的庫存
 							for(var j=0;j<dbbtas.length;j++){
 								for (var i = 0; i < as.length; i++) {
-									if(dbbtas[j].uno==as[i].uno && dbbtas[j].productno==as[i].productno && dbbtas[j].spec==as[i].spec){
+									if(dbbtas[j].uno==as[i].uno && dbbtas[j].productno==as[i].productno && dbbtas[j].spec==as[i].spec
+									&& dbbtas[j].storeno==as[i].storeno && dbbtas[j].rackno==as[i].rackno){
 										as[i].bmount=q_add(dec(as[i].bmount),dec(dbbtas[j].mount));
 										as[i].bweight=q_add(dec(as[i].bweight),dec(dbbtas[j].weight));
 										break;
@@ -2524,7 +2531,8 @@
 								var t_btmount=0,t_btweight=0;
 								
 								for (var j = 0; j < bbtas.length; j++) {
-									if(bbtas[j].uno==as[i].uno && bbtas[j].spec==as[i].spec && bbtas[j].productno==as[i].productno){
+									if(bbtas[j].uno==as[i].uno && bbtas[j].spec==as[i].spec && bbtas[j].productno==as[i].productno
+									&& bbtas[j].storeno==as[i].storeno && bbtas[j].rackno==as[i].rackno){
 										t_btmount=bbtas[j].mount;
 										t_btweight=bbtas[j].weight;
 										bbtas.splice(j, 1);
@@ -2535,8 +2543,10 @@
 								var tr = document.createElement("tr");
 								tr.id = "bbs_"+i;
 								tr.innerHTML+="<td id='stk_tdUno_"+i+"'>"+as[i].uno+"</td>"; //身分證號
+								tr.innerHTML+="<td id='stk_tdStoreno_"+i+"' style='display:none'>"+as[i].storeno+"</td>"; //倉庫
+								tr.innerHTML+="<td id='stk_tdRackno_"+i+"'>"+as[i].rackno+"</td>"; //儲位
 								tr.innerHTML+="<td id='stk_tdSpec_"+i+"'>"+as[i].spec+"</td>"; //列管品
-								tr.innerHTML+="<td id='stk_tdindate_"+i+"' align='center'>"+as[i].indate+"</td>"; //進貨(生產)日
+								tr.innerHTML+="<td id='stk_tdIndate_"+i+"' align='center'>"+as[i].indate+"</td>"; //進貨(生產)日
 								tr.innerHTML+="<td id='stk_tdMount_"+i+"'style='text-align: right;'>"+FormatNumber(as[i].mount)+"</td>"; //數量
 								tr.innerHTML+="<td id='stk_tdUnit_"+i+"'>"+as[i].unit+"</td>"; //單位
 								tr.innerHTML+="<td id='stk_tdLengthb_"+i+"'style='text-align: right;'>"+FormatNumber(as[i].lengthb)+"</td>"; //標準長(M)同規格
@@ -2614,8 +2624,10 @@
 	                				var tr = document.createElement("tr");
 									tr.id = "bbs_"+i;
 									tr.innerHTML+="<td id='stk_tdUno_"+(trows+j)+"'>"+bbtas[j].uno+"</td>"; //身分證號
+									tr.innerHTML+="<td id='stk_tdStoreno_"+(trows+j)+"' style='display:none'>"+bbtas[j].storeno+"</td>"; //倉庫
+									tr.innerHTML+="<td id='stk_tdRackno_"+(trows+j)+"'>"+bbtas[j].rackno+"</td>"; //儲位
 									tr.innerHTML+="<td id='stk_tdSpec_"+(trows+j)+"'>"+bbtas[j].spec+"</td>"; //列管品
-									tr.innerHTML+="<td id='stk_tdindate_"+(trows+j)+"' align='center'>"+bbtas[j].indate+"</td>"; //進貨(生產)日
+									tr.innerHTML+="<td id='stk_tdIndate_"+(trows+j)+"' align='center'>"+bbtas[j].indate+"</td>"; //進貨(生產)日
 									tr.innerHTML+="<td id='stk_tdMount_"+(trows+j)+"'style='text-align: right;'></td>"; //數量
 									tr.innerHTML+="<td id='stk_tdUnit_"+(trows+j)+"'>"+bbtas[j].unit+"</td>"; //單位
 									tr.innerHTML+="<td id='stk_tdLengthb_"+(trows+j)+"'style='text-align: right;'></td>"; //標準長(M)同規格
@@ -2902,7 +2914,7 @@
 				border: 2px lightgrey double;
 			}
 			#dbbt {
-				width: 900px;
+				width: 1100px;
 			}
 			#tbbt {
 				margin: 0;
@@ -2985,7 +2997,7 @@
 						<input id='s_bbsnoq' type="hidden">
 						<input id='s_bbssource' type="hidden">
 					</td>
-					<td align="center">訂單名稱</td>
+					<td colspan="2" align="center">訂單名稱</td>
 					<td colspan="2" align="center">指定料號</td>
 					<td align="center">料名</td>
 					<td align="center">需求(M)</td>
@@ -2997,7 +3009,7 @@
 				</tr>
 				<tr>
 					<td id='s_cubno'> </td>
-					<td id='s_cubname'> </td>
+					<td colspan="2" id='s_cubname'> </td>
 					<td colspan="2" id='s_productno'> </td>
 					<td id='s_product' align="center"> </td>
 					<td id='s_weight' align="right"> </td>
@@ -3009,6 +3021,7 @@
 				</tr>
 				<tr>
 					<td style="width:150px;" align="center">身分證號</td>
+					<td style="width:80px;" align="center">儲位</td>
 					<td style="width:100px;" align="center">列管品</td>
 					<td style="width:100px;" align="center">進貨<BR>(生產)日</td>
 					<td style="width:100px;" align="center">數量</td>
@@ -3021,7 +3034,7 @@
 					<td style="width:100px;" align="center">餘</td>
 				</tr>
 				<tr id='stk_close'>
-					<td align="center" colspan='11'>
+					<td align="center" colspan='12'>
 						<input id="btnClose_div_stk" type="button" value="確定">
 						<input id="btnClose_div_stk2" type="button" value="取消">
 					</td>
@@ -3558,6 +3571,8 @@
 					<td style="width:100px; text-align: center;"><a id='lblMount_uj_t'>指定數量</a></td>
 					<td style="width:100px; text-align: center;"><a id='lblWeight_uj_t'>指定長度</a></td>
 					<td style="width:130px; text-align: center;"><a id='lblMemo_uj_t'>進貨日期/單位</a></td>
+					<td style="width:100px; text-align: center;"><a id='lblStoreno_uj_t'>倉庫</a></td>
+					<td style="width:100px; text-align: center;"><a id='lblRackno_uj_t'>儲位</a></td>
 				</tr>
 				<tr>
 					<td>
@@ -3573,6 +3588,8 @@
 					<td><input id="txtMount..*" type="text" class="txt c1 num"/></td>
 					<td><input id="txtWeight..*" type="text" class="txt c1 num"/></td>
 					<td><input id="txtMemo..*" type="text" class="txt c1"/></td>
+					<td><input id="txtStoreno..*" type="text" class="txt c1"/></td>
+					<td><input id="txtRackno..*" type="text" class="txt c1"/></td>
 				</tr>
 			</table>
 		</div>

@@ -138,7 +138,12 @@
 								q_func('qtxt.query.stk_uj', 'orde_uj.txt,stk_uj,' + encodeURI(t_datea)+';'+encodeURI($('#txtUno_'+b_seq).val())+';'+encodeURI('#non')+';'+encodeURI('#non')+';'+encodeURI('#non')+';'+encodeURI($('#txtNoa').val())+';'+encodeURI('#non')+';'+encodeURI('#non'),r_accy,1);
 								var as = _q_appendData("tmp0", "", true, true);
 								if (as[0] != undefined) {
-									$('#txtProductno_'+b_seq).val(as[0].productno);
+									$('#btnMinus_'+b_seq).click();
+									
+									q_gridAddRow(bbsHtm, 'tbbs', 'txtUno,txtProductno,txtProduct,txtSpec,txtStyle,txtUnit,txtStoreno,txtStore,txtRackno,txtEmount2,txtWmount2'
+									, as.length, as, 'uno,productno,product,spec,style,unit,storeno,store,rackno,mount,weight', 'txtUno,txtProductno,txtProduct,txtStoreno,txtRackno');									
+										
+									/*$('#txtProductno_'+b_seq).val(as[0].productno);
 									$('#txtProduct_'+b_seq).val(as[0].product);
 									$('#txtSpec_'+b_seq).val(as[0].spec);
 									$('#txtStyle_'+b_seq).val(as[0].style);
@@ -149,7 +154,7 @@
 									if(!(as[0].mount<=0 || as[0].weight<=0)){
 										$('#txtEmount2_'+b_seq).val(as[0].mount);
 										$('#txtWmount2_'+b_seq).val(as[0].weight);
-									}
+									}*/
 								}else{
 									alert('【'+$('#txtUno_'+b_seq).val()+'】批號不存在!!');
 								}

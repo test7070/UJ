@@ -402,6 +402,7 @@
 								$('#txtSize_'+t_n).val($('#txtSize_'+t_on).val());
 							}
 							$('#txtUno_'+t_n).val($('#stk_tdUno_'+td_n).text());
+							$('#txtRackno_'+t_n).val($('#stk_tdRackno_'+td_n).text());
 							$('#txtSpec_'+t_n).val($('#stk_tdSpec_'+td_n).text());
 							$('#txtStyle_'+t_n).val($('#stk_tdStyle_'+td_n).text());
 							$('#txtWcost_'+t_n).val($('#stk_tdMount_'+td_n).text());
@@ -1135,6 +1136,7 @@
 									tr.id = "bbs_"+j;
 									tr.innerHTML+="<td><input id='stk_tdSel_"+j+"' type='checkbox'></td>"; //chk
 									tr.innerHTML+="<td id='stk_tdUno_"+j+"'>"+as[j].uno+"</td>"; //身分證號
+									tr.innerHTML+="<td id='stk_tdRackno_"+j+"'>"+as[j].rackno+"</td>"; //儲位
 									tr.innerHTML+="<td id='stk_tdSpec_"+j+"'>"+as[j].spec+"</td>"; //列管品
 									tr.innerHTML+="<td id='stk_tdStyle_"+j+"' style='display:none;'>"+as[j].style+"</td>"; //加工製造備註
 									tr.innerHTML+="<td id='stk_tdIndate_"+j+"' style='text-align:center;'>"+as[j].indate+"</td>"; //進貨(生產)日
@@ -1795,11 +1797,12 @@
 			</table>
 		</div>
 		
-		<div id="div_stkuj" style="position:absolute; top:180px; left:20px; display:none; width:850px; background-color: #CDFFCE; border: 5px solid gray;">
+		<div id="div_stkuj" style="position:absolute; top:180px; left:20px; display:none; width:950px; background-color: #CDFFCE; border: 5px solid gray;">
 			<table id="table_stkuj" style="width:100%;" border="1" cellpadding='2' cellspacing='0'>
 				<tr>
 					<td style="width:20px;" align="center">選擇</td>
 					<td style="width:150px;" align="center">身分證號</td>
+					<td style="width:100px;" align="center">儲位</td>
 					<td style="width:100px;" align="center">列管品</td>
 					<td style="width:100px;" align="center">進貨<BR>(生產)日</td>
 					<td style="width:100px;" align="center">數量</td>
