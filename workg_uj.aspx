@@ -610,6 +610,7 @@
 					$('.M3').show();
 					$('#lblWadate_uj').text('指定排程日期');
 					$('.dbbs').css('width','5000px');
+					$('.tbbs').css('width','5000px');
 					$('.dbbstop').css('width','5000px');
 				}else{
 					$('.M3').hide();
@@ -617,6 +618,7 @@
 					$('.M2').show();
 					$('#lblWadate_uj').text('建議加工日');
 					$('.dbbs').css('width','8000px');
+					$('.tbbs').css('width','8000px');
 					$('.dbbstop').css('width','8000px');
 				}
 			}

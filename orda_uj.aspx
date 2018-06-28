@@ -81,10 +81,10 @@
 			function q_gtPost(t_name) {
 				switch (t_name) {
 				    case 'modfixc':
-                        as = _q_appendData("modfixcs", "", true);
+                        var as = _q_appendData("modfixcs", "", true);
                         q_gridAddRow(bbsHtm, 'tbbs', 'txtProductno,txtProduct,textM6,textM14,txtNetmount,textM10,textM11,textM15'
                         , as.length, as, 'productno,product,bottom,mount,brepair,erepair,weight,etime', 'txtProductno,txtProduct','');
-                        for ( i = 0; i < q_bbsCount; i++) {
+                        for (var i = 0; i < q_bbsCount; i++) {
                             if (i < as.length) {
                             }else{
                                 _btnMinus("btnMinus_" + i);
@@ -94,11 +94,13 @@
                         $('#txtNoa').focus();
                         break;
                     case 'ucc':
-                        as = _q_appendData("ucc", "", true);
-                        for ( i = 0; i < q_bbsCount; i++) {
-                            if($('#txtProductno_'+i).val()==as[0].noa){
-                                $('#txtGmount_'+i).val(q_mul($('#txtMount_'+i).val(),as[0].uweight));
-                            }
+                        var as = _q_appendData("ucc", "", true);
+                        if(as[0] != undefined){
+	                        for (var i = 0; i < q_bbsCount; i++) {
+	                            if($('#txtProductno_'+i).val()==as[0].noa){
+	                                $('#txtGmount_'+i).val(q_mul($('#txtMount_'+i).val(),as[0].uweight));
+	                            }
+	                        }
                         }
                         break;				
 					case q_name:

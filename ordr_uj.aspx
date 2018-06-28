@@ -1,4 +1,3 @@
-﻿
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" dir="ltr">
 	<head>
@@ -132,39 +131,43 @@
 			function q_gtPost(t_name) {
 				switch (t_name) {
 				    case 'ucc':
-                        as = _q_appendData("ucc", "", true);
-                        for ( i = 0; i < q_bbsCount; i++) {
+                        var as = _q_appendData("ucc", "", true);
+                        for (var i = 0; i < q_bbsCount; i++) {
                             if($('#cmbUccgano').val()=='希得'){
-                                if($('#txtProductno_'+i).val()==as[0].noa){
-                                    $('#txtWeight_'+i).val(round(q_div($('#txtGweight_'+i).val(),as[0].uweight),0));
-                                    $('#txtMount_'+i).val(round(q_div($('#txtWeight_'+i).val(),as[0].reserve),0));
-                                    $('#txtSchmount_'+i).val(round(q_mul($('#txtWeight_'+i).val(),as[0].uweight),0));
-                                }
+                            	if(as[0] != undefined){
+	                                if($('#txtProductno_'+i).val()==as[0].noa){
+	                                    $('#txtWeight_'+i).val(round(q_div($('#txtGweight_'+i).val(),as[0].uweight),0));
+	                                    $('#txtMount_'+i).val(round(q_div($('#txtWeight_'+i).val(),as[0].reserve),0));
+	                                    $('#txtSchmount_'+i).val(round(q_mul($('#txtWeight_'+i).val(),as[0].uweight),0));
+	                                }
+                               }
                             }else{
                                 //採購量(M)
                                 if($('#textTtype_'+i).val()=='X'){
                                     $('#txtWeight_'+i).val('');
                                 }else{
                                     var t_t1=0,t_t2=0;
-                                    if($('#txtProductno_'+i).val()==as[0].noa){
-                                        if($('#txtUnit_'+i).val()=='M' && dec($('#txtApvmount_'+i).val())>0){
-                                           if(dec($('#txtNetmount_'+i).val())>dec($('#txtApvmount_'+i).val())){
-                                               t_t1=dec($('#txtNetmount_'+i).val());
-                                           }else{
-                                               t_t1=dec($('#txtApvmount_'+i).val());
-                                           }
-                                        }else{
-                                           t_t1=0; 
-                                        }
-                                        if($('#txtUnit_'+i).val()=='KG' && dec($('#txtFmount_'+i).val())>0){
-                                           if(dec($('#txtNetmount_'+i).val())>dec($('#txtFmount_'+i).val())){
-                                               t_t2=round(q_div(dec($('#txtNetmount_'+i).val()),as[0].uweight),0);
-                                           }else{
-                                               t_t2=round(q_div(dec($('#txtFmount_'+i).val()),as[0].uweight),0);
-                                           }
-                                        }else{
-                                           t_t2=0; 
-                                        }
+                                    if(as[0] != undefined){
+	                                    if($('#txtProductno_'+i).val()==as[0].noa){
+	                                        if($('#txtUnit_'+i).val()=='M' && dec($('#txtApvmount_'+i).val())>0){
+	                                           if(dec($('#txtNetmount_'+i).val())>dec($('#txtApvmount_'+i).val())){
+	                                               t_t1=dec($('#txtNetmount_'+i).val());
+	                                           }else{
+	                                               t_t1=dec($('#txtApvmount_'+i).val());
+	                                           }
+	                                        }else{
+	                                           t_t1=0; 
+	                                        }
+	                                        if($('#txtUnit_'+i).val()=='KG' && dec($('#txtFmount_'+i).val())>0){
+	                                           if(dec($('#txtNetmount_'+i).val())>dec($('#txtFmount_'+i).val())){
+	                                               t_t2=round(q_div(dec($('#txtNetmount_'+i).val()),as[0].uweight),0);
+	                                           }else{
+	                                               t_t2=round(q_div(dec($('#txtFmount_'+i).val()),as[0].uweight),0);
+	                                           }
+	                                        }else{
+	                                           t_t2=0; 
+	                                        }
+	                                    }
                                     }
                                     $('#txtWeight_'+i).val(q_add(t_t1,t_t2));
                                 }

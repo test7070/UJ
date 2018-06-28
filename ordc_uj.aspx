@@ -41,9 +41,9 @@
 			brwNowPage = 0;
 			brwKey = 'Odate';
 			aPop = new Array(
-				['txtProductno1_', 'btnProduct1_', 'ucaucc2', 'noa,product,unit', 'txtProductno1_,txtProduct_,txtUnit2_', 'ucaucc2_b.aspx'],
-				['txtProductno2_', 'btnProduct2_', 'bcc', 'noa,product,unit', 'txtProductno2_,txtProduct_,txtUnit2_,txtMount_', 'bcc_b.aspx'],
-				['txtProductno3_', 'btnProduct3_', 'fixucc', 'noa,namea,unit', 'txtProductno3_,txtProduct_,txtUnit2_,txtMount_', 'fixucc_b.aspx'],
+				['txtProductno1_', 'btnProduct1_', 'ucc', 'noa,product,unit,unit2', 'txtProductno1_,txtProduct_,txtUnit_,txtUnit2_', 'ucc_b.aspx'],
+				['txtProductno2_', 'btnProduct2_', 'bcc', 'noa,product,unit', 'txtProductno2_,txtProduct_,txtUnit_,txtMount_', 'bcc_b.aspx'],
+				['txtProductno3_', 'btnProduct3_', 'fixucc', 'noa,namea,unit', 'txtProductno3_,txtProduct_,txtUnit_,txtMount_', 'fixucc_b.aspx'],
 				['txtSalesno', 'lblSales', 'sss', 'noa,namea', 'txtSalesno,txtSales', 'sss_b.aspx'],
 				['txtCno', 'lblAcomp', 'acomp', 'noa,acomp,addr', 'txtCno,txtAcomp,txtAddr2', 'acomp_b.aspx'],
 				['txtTggno', 'lblTgg', 'tgg', 'noa,comp,trantype,paytype,salesno,sales,tel,fax,zip_comp,addr_comp'
@@ -265,7 +265,7 @@
                             for (var i = 0; i< q_bbsCount; i++) {
                                 if($('#txtProductno_'+i).val()==as[0].noa){
                                    $('#txtSizea_'+i).val(as[0].area);
-                                   $('#txtUnit2_'+i).val(as[0].unit);
+                                   $('#txtUnit2_'+i).val(as[0].unit2);
                                 }
                                 var t_where = "where=^^ tggno='"+$('#txtTggno').val()+"' and productno='"+$('#txtProductno_'+i).val()+"' order by datea desc^^ stop=1";
                                 q_gt('view_rc2s', t_where, 0, 0, 0, "rc2s");
@@ -1114,14 +1114,16 @@
 			<div class='dbbm' >
 				<table class="tbbm" id="tbbm" style="width: 872px;">
 					<tr>
-						<td style="width: 108px;"><span> </span><a id='lblKind' class="lbl"> </a></td>
-						<td style="width: 108px;"><select id="cmbKind" class="txt c1 lef"> </select></td>
+						<td style="width: 108px;display: none;"><span> </span><a id='lblKind' class="lbl"> </a></td>
+						<td style="width: 108px;display: none;"><select id="cmbKind" class="txt c1 lef"> </select></td>
 						<td style="width: 108px;"><span> </span><a id='lblKind2' class="lbl">類別名稱</a></td>
                         <td style="width: 108px;"><select id="cmbKind2" class="txt c1 lef"> </select></td>
 						<td style="width: 108px;"><span> </span><a id='lblOdate' class="lbl"> </a></td>
 						<td style="width: 108px;"><input id="txtOdate" type="text" class="txt c1 lef"/></td>
 						<td style="width: 108px;"><span> </span><a id='lblDatea' class="lbl"> </a></td>
 						<td style="width: 108px;"><input id="txtDatea" type="text" class="txt c1 lef"/></td>
+						<td style="width: 108px;"> </td>
+						<td style="width: 108px;"> </td>
 					</tr>
 					<tr>
 						<td><span> </span><a id="lblAcomp" class="lbl btn" > </a></td>
